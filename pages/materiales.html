@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Materiales - SILAB 3D</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/custom.css">
 </head>
 <body>
     <!-- Navegación -->
     <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <h1>SILAB 3D</h1>
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <a href="#" class="btn-presupuesto">Solicita tu presupuesto</a>
+            </div>
+            <div class="navbar-center">
+                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo">
             </div>
             <ul class="nav-links">
                 <li><a href="../index.html">Inicio</a></li>
@@ -33,164 +40,126 @@
     <section class="materiales-intro">
         <div class="container">
             <h2>Nuestro Catálogo de Materiales</h2>
-            <p>En SILAB 3D ofrecemos una amplia variedad de materiales de impresión 3D de las mejores marcas. Cada material tiene características únicas que lo hacen ideal para diferentes aplicaciones. Seleccionamos cuidadosamente nuestros proveedores para garantizar la mejor calidad.</p>
+            <p>Explora nuestra colección de filamentos 3D, disponibles en una amplia variedad de materiales y colores. Encuentra la mejor configuración para tu proyecto.</p>
+            <p><strong>Disponemos de servicio de impresión multicolor</strong>, siempre que los colores pertenezcan al mismo material.</p>
         </div>
     </section>
 
-    <!-- Materiales Grid -->
-    <section class="materiales">
+    <!-- PLA Section -->
+    <section class="materiales material-category">
         <div class="container">
-            <div class="materiales-grid">
-                <!-- Materia 1: PLA -->
-                <div class="material-card">
-                    <div class="material-icon">♻️</div>
-                    <h3>PLA (Ácido Poliláctico)</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Biodegradable y ecológico</li>
-                            <li>Fácil de imprimir</li>
-                            <li>Gran variedad de colores</li>
-                            <li>Baja temperatura de impresión</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Figuras, modelos decorativos, prototipos, piezas funcionales de baja exigencia</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">20€ - 25€ kg</p>
+            <div class="material-container">
+                <div class="material-header">
+                    <h2 class="material-type-title">PLA <span class="material-subtitle">(Ácido Poliláctico)</span></h2>
+                    <p class="material-description">El material más versátil y fácil de imprimir. Biodegradable, de origen vegetal y disponible en múltiples colores vibrantes. Perfecto para prototipos, decoración y proyectos creativos que no requieran alta resistencia térmica.</p>
+                </div>
+                <div class="material-features">
+                    <div class="feature-badge">🌱 Biodegradable</div>
+                    <div class="feature-badge">⚡ Fácil impresión</div>
+                    <div class="feature-badge">💰 Económico</div>
+                    <div class="feature-badge">🎨 Acabado brillante</div>
+                </div>
+                <h3 class="colores-title">Colores disponibles</h3>
+                <div class="colores-grid">
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #87CEEB;"></div>
+                        <h4>Sky Blue</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #98FF98;"></div>
+                        <h4>Mint Green</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #FF8C42;"></div>
+                        <h4>Sunny Orange</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #FFF44F;"></div>
+                        <h4>Lemon Yellow</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #1a1a1a;"></div>
+                        <h4>Black</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #C0C0C0;"></div>
+                        <h4>Silver</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #F5F5F5; border: 2px solid #ddd;"></div>
+                        <h4>White</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);"></div>
+                        <h4>Wood</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #FFB7C5;"></div>
+                        <h4>Sakura Pink</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #E6E6FA;"></div>
+                        <h4>Lavender Purple</h4>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Material 2: ABS -->
-                <div class="material-card">
-                    <div class="material-icon">💪</div>
-                    <h3>ABS (Acrilonitrilo Butadieno Estireno)</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Muy resistente y duradero</li>
-                            <li>Excelente resistencia al impacto</li>
-                            <li>Resistente al calor</li>
-                            <li>Mecanizable y pintable</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Piezas funcionales de alta resistencia, componentes mecánicos, prototipos industriales</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">28€ - 35€ kg</p>
+    <!-- PETG Section -->
+    <section class="materiales material-category" style="background-color: #f3f4f6;">
+        <div class="container">
+            <div class="material-container">
+                <div class="material-header">
+                    <h2 class="material-type-title">PETG <span class="material-subtitle">(Tereftalato de Polietileno Glicol)</span></h2>
+                    <p class="material-description">El equilibrio perfecto entre durabilidad y facilidad de impresión. Combina la resistencia del ABS con la sencillez del PLA. Ideal para piezas funcionales que requieran propiedades mecánicas, químicas y térmicas superiores.</p>
+                </div>
+                <div class="material-features">
+                    <div class="feature-badge">💪 Alta durabilidad</div>
+                    <div class="feature-badge">🛡️ Protección química</div>
+                    <div class="feature-badge">🔥 Resistente al calor</div>
+                    <div class="feature-badge">🔨 Absorbe impactos</div>
+                </div>
+                <h3 class="colores-title">Colores disponibles</h3>
+                <div class="colores-grid">
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #1a1a1a;"></div>
+                        <h4>Black</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #F5F5F5; border: 2px solid #ddd;"></div>
+                        <h4>White</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #4169E1;"></div>
+                        <h4>Blue</h4>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-circle" style="background-color: #DC143C;"></div>
+                        <h4>Red</h4>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Material 3: PETG -->
-                <div class="material-card">
-                    <div class="material-icon">🛡️</div>
-                    <h3>PETG (Tereftalato de Polietileno)</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Muy fuerte y flexible</li>
-                            <li>Resistente a sustancias químicas</li>
-                            <li>Excelente resistencia al agua</li>
-                            <li>Fácil post-procesamiento</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Piezas funcionales exteriores, recipientes, componentes mecánicos resistentes</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">25€ - 32€ kg</p>
-                    </div>
+    <!-- Sección Recomendaciones -->
+    <section class="recomendaciones">
+        <div class="container">
+            <h2>¿Qué material elegir?</h2>
+            <div class="recommendations-grid">
+                <div class="recommendation-card">
+                    <h3><strong>Decoración y prototipos: Elige PLA por su versatilidad</strong></h3>
+                    <p>Figuras decorativas, jarrones, llaveros personalizados, litofanías, maquetas arquitectónicas, prototipos de diseño, organizadores de escritorio, juguetes educativos y accesorios para el hogar.</p>
                 </div>
-
-                <!-- Material 4: TPU -->
-                <div class="material-card">
-                    <div class="material-icon">🎯</div>
-                    <h3>TPU (Poliuretano Termoplástico)</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Extremadamente flexible</li>
-                            <li>Resistente al desgarro</li>
-                            <li>Elasticidad excepcional</li>
-                            <li>Amortiguación de impactos</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Piezas flexibles, sellos, amortiguadores, figuras articuladas, calzado</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">35€ - 45€ kg</p>
-                    </div>
+                <div class="recommendation-card">
+                    <h3><strong>Piezas funcionales: Elige PETG por su resistencia</strong></h3>
+                    <p>Piezas mecánicas funcionales, contenedores para exteriores, soportes de carga, protectores y carcasas, componentes expuestos a humedad o químicos, piezas que requieran flexibilidad y accesorios de uso intensivo.</p>
                 </div>
-
-                <!-- Material 5: Nylon -->
-                <div class="material-card">
-                    <div class="material-icon">🧵</div>
-                    <h3>Nylon / Poliamida</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Muy resistente y duradero</li>
-                            <li>Bajo rozamiento</li>
-                            <li>Buena rigidez</li>
-                            <li>Resistencia a la fatiga</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Engranajes, bisagras, piezas mecánicas de precisión, herramientas</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">40€ - 55€ kg</p>
-                    </div>
-                </div>
-
-                <!-- Material 6: Resina -->
-                <div class="material-card">
-                    <div class="material-icon">💎</div>
-                    <h3>Resina (Impresión SLA/DLP)</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Precisión extremadamente alta</li>
-                            <li>Acabado muy suave</li>
-                            <li>Detalles muy finos</li>
-                            <li>Resistencia moderada</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Modelos detallados, joyería, dentistería, figuras de alta precisión, miniaturas</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">50€ - 70€ litro</p>
-                    </div>
-                </div>
-
-                <!-- Material 7: Filamento Flexible -->
-                <div class="material-card">
-                    <div class="material-icon">🎨</div>
-                    <h3>Filamentos de Color Especial</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Colores brillantes y metalizados</li>
-                            <li>Efecto luminiscente disponible</li>
-                            <li>Acabado satinado o brillante</li>
-                            <li>Personalización visual</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Proyectos personalizados, objetos decorativos, figuras artísticas</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">28€ - 38€ kg</p>
-                    </div>
-                </div>
-
-                <!-- Material 8: Composite -->
-                <div class="material-card">
-                    <div class="material-icon">⚡</div>
-                    <h3>Filamentos Composite</h3>
-                    <div class="material-details">
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>PLA + Fibra de carbono</li>
-                            <li>Extremadamente rígido</li>
-                            <li>Muy ligero</li>
-                            <li>Acabado profesional</li>
-                        </ul>
-                        <h4>Aplicaciones:</h4>
-                        <p>Piezas estructurales, prototipos aerodinámicos, componentes de deportes</p>
-                        <h4>Precio:</h4>
-                        <p class="precio">45€ - 60€ kg</p>
-                    </div>
+                <div class="recommendation-card">
+                    <h3><strong>¿Necesitas asesoramiento?</strong></h3>
+                    <p>Nuestro equipo de expertos está disponible para ayudarte a elegir el material perfecto para tu proyecto. Contáctanos y te asesoraremos sin compromiso.</p>
+                    <a href="../index.html" class="cta-button" style="margin-top: 1rem;">Contactar con nosotros</a>
                 </div>
             </div>
         </div>
@@ -209,7 +178,6 @@
                             <th>Flexibilidad</th>
                             <th>Precisión</th>
                             <th>Durabilidad</th>
-                            <th>Coste</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -219,15 +187,6 @@
                             <td>⭐</td>
                             <td>⭐⭐⭐⭐</td>
                             <td>⭐⭐</td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                        </tr>
-                        <tr>
-                            <td><strong>ABS</strong></td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                            <td>⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                            <td>⭐⭐⭐⭐</td>
                         </tr>
                         <tr>
                             <td><strong>PETG</strong></td>
@@ -235,69 +194,10 @@
                             <td>⭐⭐⭐</td>
                             <td>⭐⭐⭐</td>
                             <td>⭐⭐⭐⭐</td>
-                            <td>⭐⭐⭐⭐</td>
-                        </tr>
-                        <tr>
-                            <td><strong>TPU</strong></td>
-                            <td>⭐⭐</td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                            <td>⭐⭐</td>
-                            <td>⭐⭐⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Nylon</strong></td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                            <td>⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Resina</strong></td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐</td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐⭐</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-    </section>
-
-    <!-- Sección Recomendaciones -->
-    <section class="recomendaciones">
-        <div class="container">
-            <h2>¿Qué material elegir?</h2>
-            <div class="recommendations-grid">
-                <div class="recommendation-card">
-                    <h3>📦 Para Prototipos Rápidos</h3>
-                    <p>Recomendamos <strong>PLA</strong> por su facilidad de impresión, variedad de colores y coste accesible.</p>
-                </div>
-                <div class="recommendation-card">
-                    <h3>⚙️ Para Piezas Funcionales</h3>
-                    <p>Usa <strong>PETG</strong> o <strong>ABS</strong> por su resistencia y durabilidad en aplicaciones mecánicas.</p>
-                </div>
-                <div class="recommendation-card">
-                    <h3>🎯 Para Piezas Flexibles</h3>
-                    <p>El <strong>TPU</strong> es ideal para crear articulaciones y componentes que requieran elasticidad.</p>
-                </div>
-                <div class="recommendation-card">
-                    <h3>✨ Para Máxima Precisión</h3>
-                    <p>La <strong>Resina</strong> ofrece detalles extremadamente finos y acabado suave inigualable.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección Contact CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>¿Necesitas asesoramiento sobre materiales?</h2>
-            <p>Nuestro equipo de expertos está disponible para ayudarte a elegir el material perfecto para tu proyecto</p>
-            <a href="../index.html" class="cta-button">Contactar con nosotros</a>
         </div>
     </section>
 
@@ -308,5 +208,7 @@
             <p>📧 contacto@silab3d.com | 📱 +34 XXX XXX XXX</p>
         </div>
     </footer>
+
+    <script src="../js/script.js"></script>
 </body>
 </html>

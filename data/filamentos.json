@@ -1,0 +1,109 @@
+{
+  "filamentos": [
+    {
+      "id": 1,
+      "nombre": "PLA (Ácido Poliláctico)",
+      "icono": "♻️",
+      "caracteristicas": [
+        "Biodegradable y ecológico",
+        "Fácil de imprimir",
+        "Gran variedad de colores",
+        "Baja temperatura de impresión"
+      ],
+      "aplicaciones": "Figuras, modelos decorativos, prototipos, piezas funcionales de baja exigencia",
+      "precioMin": 20,
+      "precioMax": 25,
+      "precioUnidad": "€/kg"
+    },
+    {
+      "id": 2,
+      "nombre": "ABS (Acrilonitrilo Butadieno Estireno)",
+      "icono": "💪",
+      "caracteristicas": [
+        "Muy resistente y duradero",
+        "Excelente resistencia al impacto",
+        "Resistente al calor",
+        "Mecanizable y pintable"
+      ],
+      "aplicaciones": "Piezas funcionales de alta resistencia, componentes mecánicos, prototipos industriales",
+      "precioMin": 28,
+      "precioMax": 35,
+      "precioUnidad": "€/kg"
+    },
+    {
+      "id": 3,
+      "nombre": "PETG (Tereftalato de Polietileno)",
+      "icono": "🛡️",
+      "caracteristicas": [
+        "Muy fuerte y flexible",
+        "Resistente a sustancias químicas",
+        "Excelente resistencia al agua",
+        "Fácil post-procesamiento"
+      ],
+      "aplicaciones": "Piezas funcionales exteriores, recipientes, componentes mecánicos resistentes",
+      "precioMin": 25,
+      "precioMax": 32,
+      "precioUnidad": "€/kg"
+    },
+    {
+      "id": 4,
+      "nombre": "TPU (Poliuretano Termoplástico)",
+      "icono": "🤸",
+      "caracteristicas": [
+        "Flexible y elástico",
+        "Excelente resistencia al desgarro",
+        "Buena resistencia al aceite",
+        "Ideal para piezas móviles"
+      ],
+      "aplicaciones": "Piezas flexibles, amortiguadores, sellos, componentes con movimiento",
+      "precioMin": 35,
+      "precioMax": 45,
+      "precioUnidad": "€/kg"
+    },
+    {
+      "id": 5,
+      "nombre": "Nylon (PA)",
+      "icono": "🔗",
+      "caracteristicas": [
+        "Extremadamente resistente",
+        "Muy durable y tenaz",
+        "Baja fricción",
+        "Resistente a sustancias químicas"
+      ],
+      "aplicaciones": "Piezas de ingeniería, engranajes, componentes de máquinas, bisagras",
+      "precioMin": 40,
+      "precioMax": 50,
+      "precioUnidad": "€/kg"
+    },
+    {
+      "id": 6,
+      "nombre": "Resina UV",
+      "icono": "💎",
+      "caracteristicas": [
+        "Excelente precisión y detalles",
+        "Acabado liso y brillante",
+        "Rápido curado",
+        "Múltiples colores disponibles"
+      ],
+      "aplicaciones": "Joyería, miniaturas de precisión, prototipos detallados, modelos artísticos",
+      "precioMin": 50,
+      "precioMax": 70,
+      "precioUnidad": "€/litro"
+    }
+    ,{
+      "id": 7,
+      "nombre": "Filamento de Madera",
+      "icono": "🌲",
+      "caracteristicas": [
+        "Aspecto y textura de madera real",
+        "Fácil de lijar y pintar",
+        "Combinación de PLA y fibras de madera",
+        "Aroma agradable al imprimir"
+      ],
+      "aplicaciones": "Modelos decorativos, maquetas arquitectónicas, artesanías, objetos artísticos",
+      "precioMin": 30,
+      "precioMax": 40,
+      "precioUnidad": "€/kg"
+    }
+  ]
+}

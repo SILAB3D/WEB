@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SILAB 3D - Impresión 3D Profesional</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/custom.css">
 </head>
 <body>
     <!-- Navegación -->
     <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <h1>SILAB 3D</h1>
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <a href="#" class="btn-presupuesto">Solicita tu presupuesto</a>
+            </div>
+            <div class="navbar-center">
+                <img src="img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo">
             </div>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Inicio</a></li>
@@ -21,76 +28,103 @@
         </div>
     </nav>
 
-    <!-- Sección Hero -->
-    <section class="hero">
-        <div class="hero-content">
-            <h2>Bienvenido a SILAB 3D</h2>
-            <p>Innovación en Impresión 3D</p>
-            <a href="#about" class="cta-button">Descubre más</a>
+    <!-- Sección Hero Principal -->
+    <section class="hero-main">
+        <div class="hero-main-container">
+            <div class="hero-main-image">
+                <img src="img/68f6ce99-4517-4fdb-ac02-fe173afcc1f4.png" alt="SILAB 3D Impresión 3D" class="hero-image-circular">
+            </div>
+            <div class="hero-main-content">
+                <h1 class="hero-main-title">Innovación capa a capa</h1>
+                <p class="hero-main-text">Damos vida a tus ideas con impresión 3D de alta calidad. Ya sea para prototipos, piezas personalizadas o proyectos creativos, ofrecemos soluciones rápidas, precisas y a tu medida.</p>
+                <a href="#productos" class="cta-button">Descubre nuestros servicios</a>
+            </div>
         </div>
     </section>
 
-    <!-- Sección Quiénes Somos -->
-    <section id="about" class="about">
+    <!-- Sección Productos -->
+    <section id="productos" class="productos-section">
         <div class="container">
-            <h2>¿Quiénes Somos?</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>SILAB 3D es una empresa dedicada a la impresión tridimensional de alta calidad. Con más de 5 años de experiencia en el sector, nos especializamos en la creación de prototipos, piezas funcionales y modelos personalizados para empresas e individuos.</p>
-                    <p>Contamos con tecnología de punta y un equipo profesional comprometido con la excelencia en cada proyecto.</p>
+            <h2>Productos</h2>
+            <p class="section-intro">Descubre nuestra colección de productos impresos en 3D: llaveros personalizables, jarrones modernos, figuras únicas, litofanías luminosas y diseños a medida. Creatividad, utilidad y personalización en cada detalle.</p>
+            
+            <div class="productos-grid">
+                <div class="producto-card">
+                    <div class="producto-image">🔑</div>
+                    <h3>Llaveros</h3>
+                    <p>Personalizables con tus diseños favoritos</p>
                 </div>
-                <div class="about-image">
-                    <div class="image-placeholder">🖨️ Impresoras 3D</div>
+                <div class="producto-card">
+                    <div class="producto-image">🏺</div>
+                    <h3>Jarrones</h3>
+                    <p>Diseños modernos y elegantes para tu hogar</p>
+                </div>
+                <div class="producto-card">
+                    <div class="producto-image">🎨</div>
+                    <h3>Figuras</h3>
+                    <p>Esculturas y figuras decorativas únicas</p>
+                </div>
+                <div class="producto-card">
+                    <div class="producto-image">🖼️</div>
+                    <h3>Litofanías</h3>
+                    <p>Imágenes iluminadas con efecto 3D</p>
+                </div>
+                <div class="producto-card">
+                    <div class="producto-image">✨</div>
+                    <h3>Diseños a medida</h3>
+                    <p>Creamos lo que imaginas, adaptado a ti</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sección Lo Que Ofrecemos -->
-    <section class="services">
+    <!-- Sección Materiales Preview -->
+    <section class="materiales-preview">
         <div class="container">
-            <h2>Lo que Ofrecemos</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">📐</div>
-                    <h3>Diseño Personalizado</h3>
-                    <p>Convertimos tus ideas en modelos 3D precisos y detallados según tus especificaciones.</p>
+            <h2>Materiales</h2>
+            <p class="section-intro">Explora nuestra colección de filamentos 3D, disponibles en una amplia variedad de materiales y colores. Perfectos para cualquier proyecto. Encuentra la combinación ideal para tus impresiones.</p>
+            
+            <div class="materiales-preview-grid">
+                <div class="material-preview-card">
+                    <div class="material-preview-icon">🧵</div>
+                    <h3>PLA</h3>
+                    <p>Biodegradable y fácil de imprimir</p>
+                    <a href="pages/materiales.html" class="link-arrow">Ver más →</a>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">⚙️</div>
-                    <h3>Impresión Profesional</h3>
-                    <p>Utilizamos tecnología de última generación para garantizar la máxima calidad en cada impresión.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🎨</div>
-                    <h3>Acabados Especiales</h3>
-                    <p>Pintura, pulido y tratamientos especiales para dar vida a tus proyectos.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🚀</div>
-                    <h3>Prototipos Rápidos</h3>
-                    <p>Realizamos entregas ágiles sin sacrificar la calidad de nuestros productos.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🏭</div>
-                    <h3>Producción en Serie</h3>
-                    <p>Capacidad para fabricar múltiples unidades de manera eficiente y económica.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">💼</div>
-                    <h3>Consultoría Técnica</h3>
-                    <p>Asesoramiento experto para optimizar tus proyectos de impresión 3D.</p>
+                <div class="material-preview-card">
+                    <div class="material-preview-icon">💪</div>
+                    <h3>PETG</h3>
+                    <p>Resistente y duradero</p>
+                    <a href="pages/materiales.html" class="link-arrow">Ver más →</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sección CTA -->
-    <section class="cta-section">
+    <!-- Sección Contacto -->
+    <section class="contacto-section">
         <div class="container">
-            <h2>¿Listo para dar vida a tu idea?</h2>
-            <p>Visita nuestra tienda exclusiva y descubre nuestras piezas disponibles</p>
-            <a href="pages/tienda.html" class="cta-button">Ir a la Tienda</a>
+            <h2>Contacto</h2>
+            <p class="section-intro">Tu proyecto empieza con un hola 👋. Contacta con nosotros mediante las siguientes alternativas.</p>
+            
+            <div class="contacto-grid">
+                <div class="contacto-card">
+                    <div class="contacto-icon">📱</div>
+                    <h3>WhatsApp</h3>
+                    <p>+34 644 07 04 87</p>
+                    <a href="https://wa.me/34644070487?text=¡Hola!%20Me%20gustaría%20solicitar%20un%20presupuesto%20de%20impresión." class="cta-button" target="_blank">Solicita tu presupuesto</a>
+                </div>
+                <div class="contacto-card">
+                    <div class="contacto-icon">📧</div>
+                    <h3>Email</h3>
+                    <p>silab3d@gmail.com</p>
+                </div>
+                <div class="contacto-card">
+                    <div class="contacto-icon">📍</div>
+                    <h3>Ubicación</h3>
+                    <p>SILAB 3D<br>(Salamanca, España)</p>
+                </div>
+            </div>
         </div>
     </section>
 

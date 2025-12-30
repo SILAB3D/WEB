@@ -1,5 +1,37 @@
-// Script para filtrado de productos
-document.addEventListener('DOMContentLoaded', function() {
+// Script para cargar y mostrar materiales desde filamentos.json
+document.addEventListener('DOMContentLoaded', async function() {
+    // Cargar materiales si estamos en la página de materiales
+    const materialesGrid = document.getElementById('materialesGrid');
+    if (materialesGrid) {
+        try {
+            const response = await fetch('../data/filamentos.json');
+            const data = await response.json();
+            const filamentos = data.filamentos;
+
+            // Generar las tarjetas de materiales
+            materialesGrid.innerHTML = filamentos.map(filamento => `
+                <div class="material-card">
+                    <div class="material-icon">${filamento.icono}</div>
+                    <h3>${filamento.nombre}</h3>
+                    <div class="material-details">
+                        <h4>Características:</h4>
+                        <ul>
+                            ${filamento.caracteristicas.map(car => `<li>${car}</li>`).join('')}
+                        </ul>
+                        <h4>Aplicaciones:</h4>
+                        <p>${filamento.aplicaciones}</p>
+                        <h4>Precio:</h4>
+                        <p class="precio">${filamento.precioMin}€ - ${filamento.precioMax}€ ${filamento.precioUnidad}</p>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error cargando los materiales:', error);
+            materialesGrid.innerHTML = '<p>Error al cargar los materiales. Por favor, intenta más tarde.</p>';
+        }
+    }
+
+    // Script para filtrado de productos
     const filterButtons = document.querySelectorAll('.filter-btn');
     const productCards = document.querySelectorAll('.product-card');
 

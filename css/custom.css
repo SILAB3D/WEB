@@ -1,0 +1,1111 @@
+/* Estilos personalizados complementarios a Tailwind CSS */
+
+/* Variables de color */
+:root {
+    --primary-color: #470C3B;
+    --secondary-color: #7F2F56;
+    --accent-color: #C0576F;
+    --light-accent: #E3B679;
+    --lighter-accent: #FFBDB3;
+    --dark-color: #202124;
+    --light-color: #f8f9fa;
+    --text-color: #3c4043;
+}
+
+/* Global Font */
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: #470C3B;
+    color: white;
+    padding: 0.25rem 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-container > * {
+    min-width: 0;
+}
+
+.navbar-left {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.navbar-center {
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-logo {
+    height: 130px;
+    width: auto;
+}
+
+.btn-presupuesto {
+    background-color: #C0576F;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-presupuesto:hover {
+    background-color: #7F2F56;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(192, 87, 111, 0.3);
+}
+
+.navbar .logo h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #FFBDB3;
+    margin: 0;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    justify-content: flex-end;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #FFBDB3;
+    border-bottom-color: #FFBDB3;
+}
+
+/* Hero Main */
+.hero-main {
+    background-color: #f3f4f6;
+    padding: 4rem 0;
+}
+
+.hero-main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.hero-main-content {
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.hero-main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #470C3B;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.hero-main-text {
+    font-size: 1.1rem;
+    color: #374151;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-main-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-image-circular {
+    width: 400px;
+    height: 400px;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 20px 40px rgba(71, 12, 59, 0.3);
+}
+
+.hero-main-image .image-placeholder {
+    width: 400px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8rem;
+    background: linear-gradient(to right, #7F2F56, #C0576F, #E3B679);
+    border-radius: 50%;
+    box-shadow: 0 20px 40px rgba(71, 12, 59, 0.2);
+}
+
+/* Productos Section */
+.productos-section {
+    padding: 4rem 0;
+    background-color: white;
+}
+
+.productos-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #470C3B;
+}
+
+.section-intro {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #374151;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+}
+
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.producto-card {
+    background-color: #f3f4f6;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border-top: 4px solid #C0576F;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(192, 87, 111, 0.2);
+}
+
+.producto-image {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.producto-card h3 {
+    color: #470C3B;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.producto-card p {
+    color: #4b5563;
+    font-size: 0.95rem;
+}
+
+/* Materiales Preview */
+.materiales-preview {
+    padding: 4rem 0;
+    background-color: #f9fafb;
+}
+
+.materiales-preview h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #470C3B;
+}
+
+.materiales-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.material-preview-card {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 5px solid #7F2F56;
+}
+
+.material-preview-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(127, 47, 86, 0.2);
+}
+
+.material-preview-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.material-preview-card h3 {
+    color: #470C3B;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.material-preview-card p {
+    color: #4b5563;
+    margin-bottom: 1rem;
+}
+
+.link-arrow {
+    color: #C0576F;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.link-arrow:hover {
+    color: #7F2F56;
+}
+
+/* Contacto Section */
+.contacto-section {
+    padding: 4rem 0;
+    background-color: white;
+}
+
+.contacto-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #470C3B;
+}
+
+.contacto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.contacto-card {
+    background: linear-gradient(to bottom, #f3f4f6, #FFBDB3);
+    padding: 2.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.contacto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(192, 87, 111, 0.2);
+}
+
+.contacto-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.contacto-card h3 {
+    color: #470C3B;
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.contacto-card p {
+    color: #374151;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.contacto-card .cta-button {
+    margin-top: 1rem;
+}
+
+/* Hero */
+.hero {
+    background: linear-gradient(to right, #470C3B, #7F2F56, #C0576F);
+    color: white;
+    padding: 8rem 1.25rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.hero-content h2 {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.tienda-hero {
+    background: linear-gradient(to right, #7F2F56, #C0576F, #E3B679);
+}
+
+.materiales-hero {
+    background: linear-gradient(to right, #C0576F, #E3B679, #FFBDB3);
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-block;
+    background-color: #E3B679;
+    color: #111827;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.cta-button:hover {
+    background-color: #FFBDB3;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(227, 182, 121, 0.3);
+}
+
+/* About Section */
+.about {
+    padding: 4rem 0;
+    background-color: #f3f4f6;
+}
+
+.about h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 3rem;
+    color: #470C3B;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #374151;
+    text-align: justify;
+}
+
+.image-placeholder {
+    background: linear-gradient(to right, #7F2F56, #C0576F, #E3B679);
+    color: white;
+    border-radius: 0.5rem;
+    padding: 5rem 1.25rem;
+    text-align: center;
+    font-size: 4rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Services Section */
+.services {
+    padding: 4rem 0;
+}
+
+.services h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 3rem;
+    color: #470C3B;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.service-card {
+    background-color: #f3f4f6;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    border-left: 4px solid #C0576F;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.service-card h3 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.service-card p {
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(to right, #7F2F56, #C0576F, #E3B679);
+    color: white;
+    padding: 4rem 1.25rem;
+    text-align: center;
+    margin: 3rem 0;
+}
+
+.cta-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.cta-section p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Tienda */
+.tienda {
+    padding: 4rem 0;
+}
+
+.tienda h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid #d1d5db;
+    background-color: white;
+    color: #374151;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background-color: #C0576F;
+    color: white;
+    border-color: #C0576F;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.product-card {
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(to right, #a855f7, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+}
+
+.product-card h3 {
+    padding: 1rem 1rem 0.5rem;
+    color: #1f2937;
+    font-size: 1.1rem;
+}
+
+.product-card .description {
+    padding: 0 1rem;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.product-card .material {
+    padding: 0 1rem 0.5rem;
+    color: #9ca3af;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-top: auto;
+    border-top: 1px solid #d1d5db;
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #C0576F;
+}
+
+.btn-comprar {
+    background-color: #C0576F;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-comprar:hover {
+    background-color: #7F2F56;
+    transform: scale(1.05);
+}
+
+/* Info Compra */
+.info-compra {
+    padding: 4rem 0;
+    background-color: #f3f4f6;
+}
+
+.info-compra h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.info-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h3 {
+    color: #C0576F;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.info-card p {
+    color: #374151;
+}
+
+/* Materiales */
+.materiales-intro {
+    padding: 4rem 0;
+    text-align: center;
+    background-color: #f3f4f6;
+}
+
+.materiales-intro h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #470C3B;
+}
+
+.materiales-intro p {
+    font-size: 1.1rem;
+    color: #374151;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.materiales {
+    padding: 4rem 0;
+}
+
+.material-category {
+    padding: 4rem 0;
+}
+
+.material-container {
+    background-color: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(71, 12, 59, 0.1);
+    transition: all 0.3s ease;
+}
+
+.material-container:hover {
+    box-shadow: 0 15px 40px rgba(71, 12, 59, 0.15);
+    transform: translateY(-5px);
+}
+
+.material-header {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 2rem;
+}
+
+.material-type-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #470C3B;
+}
+
+.material-subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #7F2F56;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.material-description {
+    font-size: 1.1rem;
+    color: #374151;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+
+.material-features {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.feature-badge {
+    background: linear-gradient(135deg, #C0576F, #E3B679);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(192, 87, 111, 0.2);
+    transition: all 0.3s ease;
+}
+
+.feature-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(192, 87, 111, 0.3);
+}
+
+.colores-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #470C3B;
+    margin-bottom: 2rem;
+}
+
+.colores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.color-card {
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.color-card:hover {
+    transform: translateY(-5px);
+}
+
+.color-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.color-card:hover .color-circle {
+    box-shadow: 0 8px 20px rgba(71, 12, 59, 0.3);
+    transform: scale(1.05);
+}
+
+.color-card h4 {
+    color: #1f2937;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.materiales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.material-card {
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 5px solid #C0576F;
+}
+
+.material-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.material-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.material-card h3 {
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+}
+
+.material-details h4 {
+    color: #C0576F;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.material-details ul {
+    margin-left: 1.5rem;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+.material-details li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.material-details p {
+    color: #374151;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.precio {
+    color: #C0576F;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Tabla Comparativa */
+.comparativa {
+    padding: 4rem 0;
+    background-color: #f3f4f6;
+}
+
+.comparativa h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.comparison-table thead {
+    background-color: #470C3B;
+    color: white;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.comparison-table tbody tr:hover {
+    background-color: #f3f4f6;
+}
+
+.comparison-table td:first-child,
+.comparison-table th:first-child {
+    text-align: left;
+}
+
+/* Recomendaciones */
+.recomendaciones {
+    padding: 4rem 0;
+}
+
+.recomendaciones h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.recommendation-card {
+    background: linear-gradient(to right, #f3f4f6, #FFBDB3);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #C0576F;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-card h3 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.recommendation-card p {
+    color: #374151;
+    line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+    background-color: #470C3B;
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+.footer p {
+    margin: 0.5rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .navbar-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .navbar-left,
+    .nav-links {
+        justify-content: center;
+    }
+
+    .navbar-logo {
+        height: 80px;
+    }
+
+    .nav-links {
+        flex-direction: row;
+        gap: 1rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    .hero-main-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .hero-main-title {
+        font-size: 2rem;
+    }
+
+    .hero-main-image .image-placeholder {
+        width: 300px;
+        height: 300px;
+        font-size: 6rem;
+    }
+
+    .hero-image-circular {
+        width: 300px;
+        height: 300px;
+    }
+
+    .productos-section h2,
+    .materiales-preview h2,
+    .contacto-section h2 {
+        font-size: 1.75rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+    }
+
+    .services-grid,
+    .info-grid,
+    .materiales-grid,
+    .recommendations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .filters {
+        justify-content: flex-start;
+    }
+
+    .comparison-table {
+        font-size: 0.85rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 5rem 1.25rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.25rem;
+    }
+
+    .services h2,
+    .about h2,
+    .materiales-intro h2 {
+        font-size: 1.5rem;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-section h2 {
+        font-size: 1.25rem;
+    }
+
+    .comparison-table {
+        font-size: 0.75rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 0.5rem;
+    }
+}
