@@ -2100,18 +2100,35 @@ html {
     }
 
     /* Tabla comparativa - Mobile */
-    .comparison-table {
-        display: grid !important;
-        grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr !important;
-        gap: 0.75rem !important;
-        background: white;
-        border-radius: 1.25rem;
-        box-shadow: 0 8px 25px rgba(71, 12, 59, 0.12);
-        padding: 1.5rem 1rem;
-        border-collapse: collapse;
+    .comparativa .container {
+        padding: 0 1rem;
     }
 
-    .comparison-table thead,
+    .table-responsive {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem 1rem;
+        box-shadow: 0 12px 40px rgba(71, 12, 59, 0.2);
+        border: 2px solid rgba(192, 87, 111, 0.15);
+    }
+
+    .comparison-table {
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        border-collapse: collapse;
+        display: grid !important;
+        grid-template-columns: 1.5fr 1fr 1fr;
+        grid-template-rows: auto auto auto auto auto;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .comparison-table thead {
+        display: contents;
+    }
+
     .comparison-table tbody {
         display: contents;
     }
@@ -2120,18 +2137,54 @@ html {
         display: contents;
     }
 
+    /* Encabezados de fila */
+    .comparison-table thead th:nth-child(1) { grid-column: 1; grid-row: 1; }
+    .comparison-table thead th:nth-child(2) { grid-column: 1; grid-row: 2; }
+    .comparison-table thead th:nth-child(3) { grid-column: 1; grid-row: 3; }
+    .comparison-table thead th:nth-child(4) { grid-column: 1; grid-row: 4; }
+    .comparison-table thead th:nth-child(5) { grid-column: 1; grid-row: 5; }
+
+    /* Valores PLA */
+    .comparison-table tbody tr:nth-child(1) td:nth-child(1) { grid-column: 2; grid-row: 1; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(2) { grid-column: 2; grid-row: 2; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(3) { grid-column: 2; grid-row: 3; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(4) { grid-column: 2; grid-row: 4; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(5) { grid-column: 2; grid-row: 5; }
+
+    /* Valores PETG */
+    .comparison-table tbody tr:nth-child(2) td:nth-child(1) { grid-column: 3; grid-row: 1; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(2) { grid-column: 3; grid-row: 2; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(3) { grid-column: 3; grid-row: 3; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(4) { grid-column: 3; grid-row: 4; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(5) { grid-column: 3; grid-row: 5; }
+
     .comparison-table th,
     .comparison-table td {
-        padding: 0.75rem !important;
+        padding: 0.6rem 0.4rem !important;
         border: none !important;
+        font-size: 0.8rem;
         text-align: center;
     }
 
-    .comparison-table th:first-child,
-    .comparison-table td:first-child {
+    .comparison-table th {
         text-align: left;
         font-weight: 600;
         color: var(--primary-color);
+    }
+
+    .comparison-table tbody td:nth-child(1) {
+        font-weight: 700;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 0.5rem !important;
+        text-align: left;
+        border: none !important;
+        display: revert !important;
+        font-size: 0.85rem;
     }
 
     .comparison-table td:before {
@@ -2334,6 +2387,37 @@ html {
     }
 
     .comparison-table thead {
+        display: none;
+    }
+
+    .comparativa .container {
+        padding: 0 1rem;
+    }
+
+    .table-responsive {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.5rem 1rem;
+        box-shadow: 0 12px 40px rgba(71, 12, 59, 0.2);
+        border: 2px solid rgba(192, 87, 111, 0.15);
+        margin: 0;
+    }
+
+    .comparison-table {
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        overflow: visible;
+        display: grid !important;
+        grid-template-columns: 1.5fr 1fr 1fr;
+        grid-template-rows: auto auto auto auto auto;
+        gap: 0.5rem;
+        border-collapse: collapse;
+        align-items: center;
+    }
+
+    .comparison-table thead {
         display: contents;
     }
 
@@ -2341,53 +2425,82 @@ html {
         display: contents;
     }
 
-    .comparison-table,
-    .comparison-table tbody,
-    .comparison-table tr,
-    .comparison-table td,
-    .comparison-table th {
-        display: revert;
-        width: auto;
+    .comparison-table tr {
+        display: contents;
     }
 
-    .comparison-table {
-        background: white;
-        border-radius: 1.25rem;
-        box-shadow: 0 8px 25px rgba(71, 12, 59, 0.12);
-        padding: 1.5rem 1rem;
-        overflow: hidden;
-        display: grid !important;
-        grid-auto-flow: column;
-        grid-template-rows: repeat(5, auto) !important;
-        gap: 0.75rem;
-        border-collapse: collapse;
-    }
+    /* Encabezados de fila */
+    .comparison-table thead th:nth-child(1) { grid-column: 1; grid-row: 1; }
+    .comparison-table thead th:nth-child(2) { grid-column: 1; grid-row: 2; }
+    .comparison-table thead th:nth-child(3) { grid-column: 1; grid-row: 3; }
+    .comparison-table thead th:nth-child(4) { grid-column: 1; grid-row: 4; }
+    .comparison-table thead th:nth-child(5) { grid-column: 1; grid-row: 5; }
+
+    /* Valores PLA */
+    .comparison-table tbody tr:nth-child(1) td:nth-child(1) { grid-column: 2; grid-row: 1; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(2) { grid-column: 2; grid-row: 2; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(3) { grid-column: 2; grid-row: 3; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(4) { grid-column: 2; grid-row: 4; }
+    .comparison-table tbody tr:nth-child(1) td:nth-child(5) { grid-column: 2; grid-row: 5; }
+
+    /* Valores PETG */
+    .comparison-table tbody tr:nth-child(2) td:nth-child(1) { grid-column: 3; grid-row: 1; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(2) { grid-column: 3; grid-row: 2; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(3) { grid-column: 3; grid-row: 3; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(4) { grid-column: 3; grid-row: 4; }
+    .comparison-table tbody tr:nth-child(2) td:nth-child(5) { grid-column: 3; grid-row: 5; }
 
     .comparison-table th,
     .comparison-table td {
-        padding: 0.75rem !important;
-        text-align: center;
+        padding: 0.6rem 0.4rem !important;
         border: none !important;
-        display: revert;
+        font-size: 0.8rem;
+        text-align: center;
     }
 
-    .comparison-table th:first-child,
-    .comparison-table td:first-child {
+    .comparison-table th {
         text-align: left;
         font-weight: 600;
         color: var(--primary-color);
     }
 
-    .comparison-table tr {
-        display: contents;
-    }
-
-    .comparison-table tbody tr:first-child td:first-child {
+    .comparison-table tbody td:nth-child(1) {
         font-weight: 700;
-        font-size: 1.1rem;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--accent-color);
     }
 
     .comparison-table td:before {
+        content: '';
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 0.5rem 0 !important;
+        text-align: left;
+        border: none !important;
+        display: block !important;
+        font-size: 0.85rem;
+    }
+
+    .comparison-table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .comparison-table td:first-child {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem !important;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .comparison-table td:first-child:before {
         content: '';
     }
 
