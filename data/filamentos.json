@@ -1,136 +1,31 @@
 {
   "filamentos": [
     {
-      "id": 1,
-      "nombre": "PLA (Ácido Poliláctico)",
-      "nombreCorto": "PLA",
-      "subtitulo": "Ácido Poliláctico",
-      "icono": "♻️",
-      "descripcion": "El material más versátil y fácil de imprimir. Biodegradable, de origen vegetal y disponible en múltiples colores vibrantes. Perfecto para prototipos, decoración y proyectos creativos que no requieran alta resistencia térmica.",
-      "caracteristicas": [
-        "🌱 Biodegradable",
-        "⚡ Fácil impresión",
-        "💰 Económico",
-        "🎨 Acabado brillante"
-      ],
+      "nombre": "PLA",
       "colores": [
         {"nombre": "Black", "hex": "#000000"},
         {"nombre": "Silver", "hex": "#bbbec3"},
         {"nombre": "White", "hex": "#ffffff"},
         {"nombre": "Wood", "hex": "#cdae81"},
         {"nombre": "Coffee Brown", "hex": "#533421"},
-        {"nombre": "Sakura Pink", "hex": "#ffb7c5"},
-        {"nombre": "Lavender Purple", "hex": "#9b7dc8"},
+        {"nombre": "Sakura Pink", "hex": "#f2a8b3"},
+        {"nombre": "Lavender Purple", "hex": "#7358c3"},
         {"nombre": "Sky Blue", "hex": "#63c9f0"},
-        {"nombre": "Mint Green", "hex": "#41ab9f"},
-        {"nombre": "Sunny Orange", "hex": "#ff904c"},
+        {"nombre": "Mint Green", "hex": "#6ed9ce"},
+        {"nombre": "Sunny Orange", "hex": "#ff7a29"},
         {"nombre": "Lemon Yellow", "hex": "#fbf9ac"},
         {"nombre": "Grass Green", "hex": "#0a9077"},
         {"nombre": "Silk Yellow", "hex": "#f1c402"}
-      ],
-      "aplicaciones": "Figuras decorativas, jarrones, llaveros personalizados, litofanías, maquetas arquitectónicas, prototipos de diseño, organizadores de escritorio, juguetes educativos y accesorios para el hogar.",
-      "precioMin": 20,
-      "precioMax": 25,
-      "precioUnidad": "€/kg"
+      ]
     },
     {
-      "id": 2,
-      "nombre": "ABS (Acrilonitrilo Butadieno Estireno)",
-      "icono": "💪",
-      "caracteristicas": [
-        "Muy resistente y duradero",
-        "Excelente resistencia al impacto",
-        "Resistente al calor",
-        "Mecanizable y pintable"
-      ],
-      "aplicaciones": "Piezas funcionales de alta resistencia, componentes mecánicos, prototipos industriales",
-      "precioMin": 28,
-      "precioMax": 35,
-      "precioUnidad": "€/kg"
-    },
-    {
-      "id": 3,
-      "nombre": "PETG (Tereftalato de Polietileno Glicol)",
-      "nombreCorto": "PETG",
-      "subtitulo": "Tereftalato de Polietileno Glicol",
-      "icono": "🛡️",
-      "descripcion": "El equilibrio perfecto entre durabilidad y facilidad de impresión. Combina la resistencia del ABS con la sencillez del PLA. Ideal para piezas funcionales que requieran propiedades mecánicas, químicas y térmicas superiores.",
-      "caracteristicas": [
-        "💪 Alta durabilidad",
-        "🛡️ Protección química",
-        "🔥 Resistente al calor",
-        "🔨 Absorbe impactos"
-      ],
+      "nombre": "PETG",
       "colores": [
         {"nombre": "Black", "hex": "#000000"},
         {"nombre": "White", "hex": "#ffffff"},
-        {"nombre": "Blue", "hex": "#2563eb"},
+        {"nombre": "Blue", "hex": "#1800ac"},
         {"nombre": "Red", "hex": "#ff3131"}
-      ],
-      "aplicaciones": "Piezas mecánicas funcionales, contenedores para exteriores, soportes de carga, protectores y carcasas, componentes expuestos a humedad o químicos, piezas que requieran flexibilidad y accesorios de uso intensivo.",
-      "precioMin": 25,
-      "precioMax": 32,
-      "precioUnidad": "€/kg"
-    },
-    {
-      "id": 4,
-      "nombre": "TPU (Poliuretano Termoplástico)",
-      "icono": "🤸",
-      "caracteristicas": [
-        "Flexible y elástico",
-        "Excelente resistencia al desgarro",
-        "Buena resistencia al aceite",
-        "Ideal para piezas móviles"
-      ],
-      "aplicaciones": "Piezas flexibles, amortiguadores, sellos, componentes con movimiento",
-      "precioMin": 35,
-      "precioMax": 45,
-      "precioUnidad": "€/kg"
-    },
-    {
-      "id": 5,
-      "nombre": "Nylon (PA)",
-      "icono": "🔗",
-      "caracteristicas": [
-        "Extremadamente resistente",
-        "Muy durable y tenaz",
-        "Baja fricción",
-        "Resistente a sustancias químicas"
-      ],
-      "aplicaciones": "Piezas de ingeniería, engranajes, componentes de máquinas, bisagras",
-      "precioMin": 40,
-      "precioMax": 50,
-      "precioUnidad": "€/kg"
-    },
-    {
-      "id": 6,
-      "nombre": "Resina UV",
-      "icono": "💎",
-      "caracteristicas": [
-        "Excelente precisión y detalles",
-        "Acabado liso y brillante",
-        "Rápido curado",
-        "Múltiples colores disponibles"
-      ],
-      "aplicaciones": "Joyería, miniaturas de precisión, prototipos detallados, modelos artísticos",
-      "precioMin": 50,
-      "precioMax": 70,
-      "precioUnidad": "€/litro"
-    }
-    ,{
-      "id": 7,
-      "nombre": "Filamento de Madera",
-      "icono": "🌲",
-      "caracteristicas": [
-        "Aspecto y textura de madera real",
-        "Fácil de lijar y pintar",
-        "Combinación de PLA y fibras de madera",
-        "Aroma agradable al imprimir"
-      ],
-      "aplicaciones": "Modelos decorativos, maquetas arquitectónicas, artesanías, objetos artísticos",
-      "precioMin": 30,
-      "precioMax": 40,
-      "precioUnidad": "€/kg"
+      ]
     }
   ]
 }
