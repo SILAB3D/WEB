@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const productCards = document.querySelectorAll('.product-card');
     const productsGrid = document.querySelector('.products-grid');
 
-    if (filterButtons.length > 0) {
+    if (filterButtons.length > 0 && productsGrid) {
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const filterValue = this.getAttribute('data-filter');

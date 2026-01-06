@@ -18,12 +18,15 @@
         {"nombre": "Silver", "hex": "#bbbec3"},
         {"nombre": "White", "hex": "#ffffff"},
         {"nombre": "Wood", "hex": "#cdae81"},
-        {"nombre": "Sakura Pink", "hex": "#f2a8b3"},
-        {"nombre": "Lavender Purple", "hex": "#7358c3"},
+        {"nombre": "Coffee Brown", "hex": "#533421"},
+        {"nombre": "Sakura Pink", "hex": "#ffb7c5"},
+        {"nombre": "Lavender Purple", "hex": "#9b7dc8"},
         {"nombre": "Sky Blue", "hex": "#63c9f0"},
         {"nombre": "Mint Green", "hex": "#41ab9f"},
         {"nombre": "Sunny Orange", "hex": "#ff904c"},
-        {"nombre": "Lemon Yellow", "hex": "#fbf9ac"}
+        {"nombre": "Lemon Yellow", "hex": "#fbf9ac"},
+        {"nombre": "Grass Green", "hex": "#0a9077"},
+        {"nombre": "Silk Yellow", "hex": "#f1c402"}
       ],
       "aplicaciones": "Figuras decorativas, jarrones, llaveros personalizados, litofanías, maquetas arquitectónicas, prototipos de diseño, organizadores de escritorio, juguetes educativos y accesorios para el hogar.",
       "precioMin": 20,
@@ -61,7 +64,7 @@
       "colores": [
         {"nombre": "Black", "hex": "#000000"},
         {"nombre": "White", "hex": "#ffffff"},
-        {"nombre": "Blue", "hex": "#1800ac"},
+        {"nombre": "Blue", "hex": "#2563eb"},
         {"nombre": "Red", "hex": "#ff3131"}
       ],
       "aplicaciones": "Piezas mecánicas funcionales, contenedores para exteriores, soportes de carga, protectores y carcasas, componentes expuestos a humedad o químicos, piezas que requieran flexibilidad y accesorios de uso intensivo.",
