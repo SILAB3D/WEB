@@ -3050,6 +3050,28 @@ html {
         background-size: 100% 100%;
     }
 
+    .tienda-hero::after {
+        height: 70px;
+        bottom: -35px;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 60'%3E%3C!-- Bobina --%3E%3Ccircle cx='100' cy='30' r='28' fill='%23470C3B' opacity='0.3'/%3E%3Ccircle cx='100' cy='30' r='21' fill='none' stroke='%237F2F56' stroke-width='2.5' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='12' fill='none' stroke='%23C0576F' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='7' fill='%23FAF9F7'/%3E%3C!-- Filamento --%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%23C0576F' stroke-width='2.5' fill='none' opacity='0.4'/%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%237F2F56' stroke-width='1.5' fill='none' opacity='0.3' transform='translate(0, 2)'/%3E%3C/svg%3E");
+        background-size: 100% 100%;
+    }
+
+    .materiales-hero::after {
+        height: 70px;
+        bottom: -35px;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 60'%3E%3C!-- Bobina --%3E%3Ccircle cx='100' cy='30' r='28' fill='%23470C3B' opacity='0.3'/%3E%3Ccircle cx='100' cy='30' r='21' fill='none' stroke='%237F2F56' stroke-width='2.5' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='12' fill='none' stroke='%23C0576F' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='7' fill='%23FAF9F7'/%3E%3C!-- Filamento --%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%23C0576F' stroke-width='2.5' fill='none' opacity='0.4'/%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%237F2F56' stroke-width='1.5' fill='none' opacity='0.3' transform='translate(0, 2)'/%3E%3C/svg%3E");
+        background-size: 100% 100%;
+    }
+
     .hero-main-container {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -3302,6 +3324,28 @@ html {
         background-size: 100% 100%;
     }
 
+    .tienda-hero::after {
+        height: 70px;
+        bottom: -35px;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 60'%3E%3C!-- Bobina --%3E%3Ccircle cx='100' cy='30' r='28' fill='%23470C3B' opacity='0.3'/%3E%3Ccircle cx='100' cy='30' r='21' fill='none' stroke='%237F2F56' stroke-width='2.5' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='12' fill='none' stroke='%23C0576F' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='7' fill='%23FAF9F7'/%3E%3C!-- Filamento --%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%23C0576F' stroke-width='2.5' fill='none' opacity='0.4'/%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%237F2F56' stroke-width='1.5' fill='none' opacity='0.3' transform='translate(0, 2)'/%3E%3C/svg%3E");
+        background-size: 100% 100%;
+    }
+
+    .materiales-hero::after {
+        height: 70px;
+        bottom: -35px;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 60'%3E%3C!-- Bobina --%3E%3Ccircle cx='100' cy='30' r='28' fill='%23470C3B' opacity='0.3'/%3E%3Ccircle cx='100' cy='30' r='21' fill='none' stroke='%237F2F56' stroke-width='2.5' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='12' fill='none' stroke='%23C0576F' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='100' cy='30' r='7' fill='%23FAF9F7'/%3E%3C!-- Filamento --%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%23C0576F' stroke-width='2.5' fill='none' opacity='0.4'/%3E%3Cpath d='M 125 30 Q 180 25 240 30 T 400 30 T 600 30 T 800 30 L 900 30' stroke='%237F2F56' stroke-width='1.5' fill='none' opacity='0.3' transform='translate(0, 2)'/%3E%3C/svg%3E");
+        background-size: 100% 100%;
+    }
+
     .hero-main-container {
         padding: 0 1rem;
     }
@@ -3543,6 +3587,14 @@ html {
 
 /* Móviles muy pequeños (max-width: 360px) */
 @media (max-width: 360px) {
+    .hero-main::after,
+    .productos-section::after,
+    .tienda-hero::after,
+    .materiales-hero::after {
+        height: 60px;
+        bottom: -30px;
+    }
+
     .hero-main-title {
         font-size: 1.5rem;
     }
