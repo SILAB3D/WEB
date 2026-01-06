@@ -3,14 +3,29 @@
     {
       "id": 1,
       "nombre": "PLA (Ácido Poliláctico)",
+      "nombreCorto": "PLA",
+      "subtitulo": "Ácido Poliláctico",
       "icono": "♻️",
+      "descripcion": "El material más versátil y fácil de imprimir. Biodegradable, de origen vegetal y disponible en múltiples colores vibrantes. Perfecto para prototipos, decoración y proyectos creativos que no requieran alta resistencia térmica.",
       "caracteristicas": [
-        "Biodegradable y ecológico",
-        "Fácil de imprimir",
-        "Gran variedad de colores",
-        "Baja temperatura de impresión"
+        "🌱 Biodegradable",
+        "⚡ Fácil impresión",
+        "💰 Económico",
+        "🎨 Acabado brillante"
       ],
-      "aplicaciones": "Figuras, modelos decorativos, prototipos, piezas funcionales de baja exigencia",
+      "colores": [
+        {"nombre": "Black", "hex": "#000000"},
+        {"nombre": "Silver", "hex": "#bbbec3"},
+        {"nombre": "White", "hex": "#ffffff"},
+        {"nombre": "Wood", "hex": "#cdae81"},
+        {"nombre": "Sakura Pink", "hex": "#f2a8b3"},
+        {"nombre": "Lavender Purple", "hex": "#7358c3"},
+        {"nombre": "Sky Blue", "hex": "#63c9f0"},
+        {"nombre": "Mint Green", "hex": "#41ab9f"},
+        {"nombre": "Sunny Orange", "hex": "#ff904c"},
+        {"nombre": "Lemon Yellow", "hex": "#fbf9ac"}
+      ],
+      "aplicaciones": "Figuras decorativas, jarrones, llaveros personalizados, litofanías, maquetas arquitectónicas, prototipos de diseño, organizadores de escritorio, juguetes educativos y accesorios para el hogar.",
       "precioMin": 20,
       "precioMax": 25,
       "precioUnidad": "€/kg"
@@ -32,15 +47,24 @@
     },
     {
       "id": 3,
-      "nombre": "PETG (Tereftalato de Polietileno)",
+      "nombre": "PETG (Tereftalato de Polietileno Glicol)",
+      "nombreCorto": "PETG",
+      "subtitulo": "Tereftalato de Polietileno Glicol",
       "icono": "🛡️",
+      "descripcion": "El equilibrio perfecto entre durabilidad y facilidad de impresión. Combina la resistencia del ABS con la sencillez del PLA. Ideal para piezas funcionales que requieran propiedades mecánicas, químicas y térmicas superiores.",
       "caracteristicas": [
-        "Muy fuerte y flexible",
-        "Resistente a sustancias químicas",
-        "Excelente resistencia al agua",
-        "Fácil post-procesamiento"
+        "💪 Alta durabilidad",
+        "🛡️ Protección química",
+        "🔥 Resistente al calor",
+        "🔨 Absorbe impactos"
       ],
-      "aplicaciones": "Piezas funcionales exteriores, recipientes, componentes mecánicos resistentes",
+      "colores": [
+        {"nombre": "Black", "hex": "#000000"},
+        {"nombre": "White", "hex": "#ffffff"},
+        {"nombre": "Blue", "hex": "#1800ac"},
+        {"nombre": "Red", "hex": "#ff3131"}
+      ],
+      "aplicaciones": "Piezas mecánicas funcionales, contenedores para exteriores, soportes de carga, protectores y carcasas, componentes expuestos a humedad o químicos, piezas que requieran flexibilidad y accesorios de uso intensivo.",
       "precioMin": 25,
       "precioMax": 32,
       "precioUnidad": "€/kg"

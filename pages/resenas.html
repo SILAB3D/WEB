@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseñas - SILAB 3D</title>
+    <link rel="icon" type="image/png" href="../img/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/custom.css">
+</head>
+<body class="page-resenas">
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <a href="https://wa.me/34644070487?text=¡Hola!%20Me%20gustaría%20solicitar%20un%20presupuesto%20de%20impresión." class="btn-presupuesto" target="_blank">Solicita tu presupuesto</a>
+            </div>
+            <div class="navbar-center">
+                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Inicio</a></li>
+                <li><a href="tienda.html">Productos</a></li>
+                <li><a href="materiales.html">Materiales</a></li>
+                <li><a href="resenas.html" class="active">Reseñas</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sección Hero Principal -->
+    <section class="hero-main">
+        <div class="hero-main-container">
+            <div class="hero-main-image">
+                <img src="../img/68f6ce99-4517-4fdb-ac02-fe173afcc1f4.png" alt="SILAB 3D Impresión 3D" class="hero-image-circular">
+            </div>
+            <div class="hero-main-content">
+                <h1 class="hero-main-title">Nuestra comunidad nos impulsa</h1>
+                <p class="hero-main-text">Descubre las <strong>experiencias reales</strong> de quienes han confiado en nosotros. Cada proyecto refleja nuestro <strong>compromiso con la calidad</strong> y la satisfacción de nuestros clientes. Tu opinión es <strong>el motor de nuestra mejora continua</strong>.</p>
+                <a href="#instagram" class="cta-button">Ver nuestro trabajo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Separador -->
+    <div class="separator-resenas separator-1"></div>
+
+    <!-- Grid de Instagram -->
+    <div class="instagram-feed-wrapper">
+        <h2>Nuestros Trabajos</h2>
+        <p class="section-intro">Descubre nuestras <strong>últimas creaciones</strong> y proyectos en Instagram. Cada pieza cuenta una historia de <strong>innovación y calidad</strong>.</p>
+        
+        <!-- Elfsight Instagram Feed -->
+        <script src="https://elfsightcdn.com/platform.js" async></script>
+        <div class="elfsight-app-87db6e33-c967-470a-9ba7-0526ecad277f" data-elfsight-app-lazy></div>
+        
+        <!-- Botón a Instagram -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="https://www.instagram.com/silab3d/" target="_blank" class="cta-button">
+                Visítanos en Instagram
+            </a>
+        </div>
+    </div>
+
+    <!-- Separador -->
+    <div class="separator-resenas separator-2"></div>
+
+    <!-- Widget de reseñas de Google -->
+    <div class="google-reviews-container">
+        <h2>Opiniones de Nuestros Clientes</h2>
+        <p class="section-intro">Conoce lo que nuestros clientes dicen sobre nosotros. Tu opinión nos ayuda a <strong>mejorar continuamente</strong> y ofrecer el mejor servicio.</p>
+        
+        <!-- Elfsight Google Reviews -->
+        <script src="https://elfsightcdn.com/platform.js" async></script>
+        <div class="elfsight-app-edc44958-1c18-4f03-a2bc-7e5eb0ad4aed" data-elfsight-app-lazy></div>
+
+        <!-- Botón para escribir reseña -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="https://www.google.com/search?q=SILAB+3D+Impresiones+3D&oq=SILAB+3D#lrd=0x0:0x0,3" target="_blank" class="cta-button cta-button-primary">
+                Escribir una reseña en Google
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SILAB 3D. Todos los derechos reservados.</p>
+            <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
+            <p><a href="terminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a></p>
+        </div>
+    </footer>
+
+    <!-- Modal Formulario de Presupuesto -->
+    <div id="quoteFormModal" class="quote-modal">
+        <div class="quote-modal-content">
+            <span class="quote-modal-close">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Solicita tu presupuesto</h2>
+            <form id="quoteForm">
+                <div class="form-group">
+                    <label for="customerName">Nombre *</label>
+                    <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre completo">
+                </div>
+                <div class="form-group">
+                    <label for="customerContact">Teléfono / Email de contacto *</label>
+                    <input type="text" id="customerContact" name="customerContact" required placeholder="Teléfono o email">
+                </div>
+                <div class="form-group">
+                    <label for="projectName">Nombre del proyecto *</label>
+                    <input type="text" id="projectName" name="projectName" required placeholder="Ej: Prototipo de pieza mecánica">
+                </div>
+                <div class="form-group">
+                    <label for="projectDescription">Descripción del proyecto *</label>
+                    <textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="5"></textarea>
+                </div>
+                <p style="font-size: 0.9rem; color: #6b7280; line-height: 1.5; margin-top: 1rem; text-align: center;">
+                    Incluye las medidas estimadas del modelo, así como toda la información que pueda ser necesaria para llevarlo a cabo. En caso de disponer de un proyecto, inclúyelo en el siguiente paso.
+                </p>
+                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Siguiente →</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Método de Contacto -->
+    <div id="quoteContactModal" class="quote-modal">
+        <div class="quote-modal-content">
+            <span class="quote-contact-modal-close">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Elige cómo prefieres contactar</h2>
+            <div class="contact-options-grid">
+                <a id="quoteModalWhatsApp" href="#" target="_blank" class="contact-option-card">
+                    <div class="contact-option-icon">📱</div>
+                    <h3>WhatsApp</h3>
+                    <p>Respuesta inmediata</p>
+                </a>
+                <a id="quoteModalEmail" href="#" target="_blank" class="contact-option-card">
+                    <div class="contact-option-icon">📧</div>
+                    <h3>Email</h3>
+                    <p>Comunicación formal</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up de Términos y Condiciones -->
+    <div id="termsPopup" class="terms-popup">
+        <div class="terms-popup-content">
+            <p>Al navegar en esta web, aceptas los <a href="terminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
+            <div class="terms-popup-buttons">
+                <button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button>
+                <button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>

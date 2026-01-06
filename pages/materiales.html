@@ -4,102 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Materiales - SILAB 3D</title>
+    <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../css/custom.css">
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
 </head>
 <body>
     <!-- Navegación -->
     <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-left">
-                <a href="#" class="btn-presupuesto">Solicita tu presupuesto</a>
+                <a href="https://wa.me/34644070487?text=¡Hola!%20Me%20gustaría%20solicitar%20un%20presupuesto%20de%20impresión." class="btn-presupuesto" target="_blank">Solicita tu presupuesto</a>
             </div>
             <div class="navbar-center">
                 <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo">
             </div>
             <ul class="nav-links">
                 <li><a href="../index.html">Inicio</a></li>
-                <li><a href="tienda.html">Tienda</a></li>
+                <li><a href="tienda.html">Productos</a></li>
                 <li><a href="materiales.html" class="active">Materiales</a></li>
+                <li><a href="resenas.html">Reseñas</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Sección Hero -->
-    <section class="hero materiales-hero">
-        <div class="hero-content">
-            <h2>Materiales de Impresión</h2>
-            <p>Conoce los materiales que utilizamos</p>
-        </div>
-    </section>
-
-    <!-- Introducción Materiales -->
-    <section class="materiales-intro">
-        <div class="container">
-            <h2>Nuestro Catálogo de Materiales</h2>
-            <p>Explora nuestra colección de filamentos 3D, disponibles en una amplia variedad de materiales y colores. Encuentra la mejor configuración para tu proyecto.</p>
-            <p><strong>Disponemos de servicio de impresión multicolor</strong>, siempre que los colores pertenezcan al mismo material.</p>
+    <!-- Sección Hero Principal -->
+    <section class="hero-main">
+        <div class="hero-main-container">
+            <div class="hero-main-image">
+                <img src="../img/filamentos silab.png" alt="SILAB 3D Materiales" class="hero-image-circular">
+            </div>
+            <div class="hero-main-content">
+                <h1 class="hero-main-title">Nuestro Catálogo de Materiales</h1>
+                <p class="hero-main-text description">Explora nuestra colección de filamentos 3D, disponibles en una amplia variedad de materiales y colores. Encuentra la mejor configuración para tu proyecto. <strong>Disponemos de servicio de impresión multicolor</strong>, siempre que los colores pertenezcan al mismo material.</p>
+                <a href="#pla" class="btn-primary">Explora nuestros materiales</a>
+            </div>
         </div>
     </section>
 
     <!-- PLA Section -->
-    <section class="materiales material-category">
+    <section id="pla" class="materiales material-category">
         <div class="container">
-            <div class="material-container">
+            <div class="material-container container-white">
                 <div class="material-header">
-                    <h2 class="material-type-title">PLA <span class="material-subtitle">(Ácido Poliláctico)</span></h2>
-                    <p class="material-description">El material más versátil y fácil de imprimir. Biodegradable, de origen vegetal y disponible en múltiples colores vibrantes. Perfecto para prototipos, decoración y proyectos creativos que no requieran alta resistencia térmica.</p>
+                    <h2 class="material-type-title title-secondary">PLA <span class="material-subtitle"><strong>(Ácido Poliláctico)</strong></span></h2>
+                    <p class="material-description description">El material más versátil y asequible para impresión. Biodegradable, de origen vegetal y disponible en múltiples colores. Perfecto para prototipos, decoración y proyectos creativos que no requieran alta resistencia térmica.</p>
                 </div>
                 <div class="material-features">
+                    <div class="feature-badge">✨ Versátil</div>
+                    <div class="feature-badge">🎯 Preciso</div>
                     <div class="feature-badge">🌱 Biodegradable</div>
-                    <div class="feature-badge">⚡ Fácil impresión</div>
-                    <div class="feature-badge">💰 Económico</div>
-                    <div class="feature-badge">🎨 Acabado brillante</div>
                 </div>
                 <h3 class="colores-title">Colores disponibles</h3>
                 <div class="colores-grid">
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #87CEEB;"></div>
-                        <h4>Sky Blue</h4>
-                    </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #98FF98;"></div>
-                        <h4>Mint Green</h4>
-                    </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #FF8C42;"></div>
-                        <h4>Sunny Orange</h4>
-                    </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #FFF44F;"></div>
-                        <h4>Lemon Yellow</h4>
-                    </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #1a1a1a;"></div>
+                    <div class="color-card" data-color="#000000">
+                        <div class="color-circle" style="background-color: #000000;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Black</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #C0C0C0;"></div>
+                    <div class="color-card" data-color="#bbbec3">
+                        <div class="color-circle" style="background-color: #bbbec3;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Silver</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #F5F5F5; border: 2px solid #ddd;"></div>
+                    <div class="color-card" data-color="#ffffff">
+                        <div class="color-circle" style="background-color: #ffffff; border: 2px solid #ddd;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>White</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);"></div>
+                    <div class="color-card" data-color="#cdae81">
+                        <div class="color-circle" style="background-color: #cdae81;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Wood</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #FFB7C5;"></div>
+                    <div class="color-card" data-color="#533421">
+                        <div class="color-circle" style="background-color: #533421;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Coffee Brown</h4>
+                    </div>
+                    <div class="color-card" data-color="#f2a8b3">
+                        <div class="color-circle" style="background-color: #f2a8b3;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Sakura Pink</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #E6E6FA;"></div>
+                    <div class="color-card" data-color="#7358c3">
+                        <div class="color-circle" style="background-color: #7358c3;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Lavender Purple</h4>
+                    </div>
+                    <div class="color-card" data-color="#63c9f0">
+                        <div class="color-circle" style="background-color: #63c9f0;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Sky Blue</h4>
+                    </div>
+                    <div class="color-card" data-color="#6ed9ce">
+                        <div class="color-circle" style="background-color: #6ed9ce;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Mint Green</h4>
+                    </div>
+                    <div class="color-card" data-color="#ff904c">
+                        <div class="color-circle" style="background-color: #ff904c;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Sunny Orange</h4>
+                    </div>
+                    <div class="color-card" data-color="#fbf9ac">
+                        <div class="color-circle" style="background-color: #fbf9ac;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Lemon Yellow</h4>
+                    </div>
+                    <div class="color-card" data-color="#0a9077">
+                        <div class="color-circle" style="background-color: #0a9077;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Grass Green</h4>
+                    </div>
+                    <div class="color-card" data-color="#f1c402">
+                        <div class="color-circle silk-shine" style="background-color: #f1c402;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Silk Yellow</h4>
                     </div>
                 </div>
             </div>
@@ -107,35 +132,39 @@
     </section>
 
     <!-- PETG Section -->
-    <section class="materiales material-category" style="background-color: #f3f4f6;">
+    <section id="petg" class="materiales material-category">
         <div class="container">
-            <div class="material-container">
+            <div class="material-container container-white">
                 <div class="material-header">
-                    <h2 class="material-type-title">PETG <span class="material-subtitle">(Tereftalato de Polietileno Glicol)</span></h2>
-                    <p class="material-description">El equilibrio perfecto entre durabilidad y facilidad de impresión. Combina la resistencia del ABS con la sencillez del PLA. Ideal para piezas funcionales que requieran propiedades mecánicas, químicas y térmicas superiores.</p>
+                    <h2 class="material-type-title title-secondary">PETG <span class="material-subtitle"><strong>(Tereftalato de Polietileno Glicol)</strong></span></h2>
+                    <p class="material-description description">El equilibrio perfecto entre durabilidad y asequibilidad. Combina la resistencia del ABS con la sencillez del PLA. Ideal para piezas funcionales que requieran propiedades mecánicas, químicas y térmicas superiores.</p>
                 </div>
                 <div class="material-features">
                     <div class="feature-badge">💪 Alta durabilidad</div>
-                    <div class="feature-badge">🛡️ Protección química</div>
                     <div class="feature-badge">🔥 Resistente al calor</div>
+                    <div class="feature-badge">🛡️ Resistencia química</div>
                     <div class="feature-badge">🔨 Absorbe impactos</div>
                 </div>
                 <h3 class="colores-title">Colores disponibles</h3>
                 <div class="colores-grid">
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #1a1a1a;"></div>
+                    <div class="color-card" data-color="#000000">
+                        <div class="color-circle" style="background-color: #000000;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Black</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #F5F5F5; border: 2px solid #ddd;"></div>
+                    <div class="color-card" data-color="#ffffff">
+                        <div class="color-circle" style="background-color: #ffffff; border: 2px solid #ddd;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>White</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #4169E1;"></div>
+                    <div class="color-card" data-color="#1800ac">
+                        <div class="color-circle" style="background-color: #1800ac;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Blue</h4>
                     </div>
-                    <div class="color-card">
-                        <div class="color-circle" style="background-color: #DC143C;"></div>
+                    <div class="color-card" data-color="#ff3131">
+                        <div class="color-circle" style="background-color: #ff3131;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Red</h4>
                     </div>
                 </div>
@@ -149,17 +178,17 @@
             <h2>¿Qué material elegir?</h2>
             <div class="recommendations-grid">
                 <div class="recommendation-card">
-                    <h3><strong>Decoración y prototipos: Elige PLA por su versatilidad</strong></h3>
-                    <p>Figuras decorativas, jarrones, llaveros personalizados, litofanías, maquetas arquitectónicas, prototipos de diseño, organizadores de escritorio, juguetes educativos y accesorios para el hogar.</p>
+                    <h3><strong>PLA: Tu aliado creativo</strong></h3>
+                    <p>Perfecto para dar vida a tus ideas: figuras decorativas, jarrones únicos, llaveros personalizados, maquetas arquitectónicas, prototipos de diseño rápido, organizadores de escritorio, juguetes educativos y todo tipo de accesorios para personalizar tu hogar. Su versatilidad y facilidad de uso lo convierten en la opción ideal para proyectos creativos y educativos.</p>
                 </div>
                 <div class="recommendation-card">
-                    <h3><strong>Piezas funcionales: Elige PETG por su resistencia</strong></h3>
-                    <p>Piezas mecánicas funcionales, contenedores para exteriores, soportes de carga, protectores y carcasas, componentes expuestos a humedad o químicos, piezas que requieran flexibilidad y accesorios de uso intensivo.</p>
+                    <h3><strong>PETG: Potencia y durabilidad</strong></h3>
+                    <p>La elección profesional para aplicaciones exigentes: piezas mecánicas funcionales, contenedores resistentes para exteriores, soportes de carga estructurales, protectores y carcasas robustas, componentes expuestos a humedad o agentes químicos, elementos que requieran flexibilidad sin romperse y accesorios de uso intensivo. Su resistencia superior garantiza rendimiento a largo plazo.</p>
                 </div>
                 <div class="recommendation-card">
                     <h3><strong>¿Necesitas asesoramiento?</strong></h3>
                     <p>Nuestro equipo de expertos está disponible para ayudarte a elegir el material perfecto para tu proyecto. Contáctanos y te asesoraremos sin compromiso.</p>
-                    <a href="../index.html" class="cta-button" style="margin-top: 1rem;">Contactar con nosotros</a>
+                    <a href="https://wa.me/34644070487?text=¡Hola!%20Me%20gustaría%20solicitar%20un%20presupuesto%20de%20impresión." class="cta-button" style="margin-top: 1rem; display: block; text-align: center;" target="_blank">Contactar con nosotros</a>
                 </div>
             </div>
         </div>
@@ -183,17 +212,17 @@
                     <tbody>
                         <tr>
                             <td><strong>PLA</strong></td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐</td>
-                            <td>⭐⭐⭐⭐</td>
-                            <td>⭐⭐</td>
+                            <td data-label="Resistencia">⭐⭐⭐</td>
+                            <td data-label="Flexibilidad">⭐</td>
+                            <td data-label="Precisión">⭐⭐⭐⭐</td>
+                            <td data-label="Durabilidad">⭐⭐</td>
                         </tr>
                         <tr>
                             <td><strong>PETG</strong></td>
-                            <td>⭐⭐⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐⭐⭐⭐</td>
+                            <td data-label="Resistencia">⭐⭐⭐⭐</td>
+                            <td data-label="Flexibilidad">⭐⭐⭐</td>
+                            <td data-label="Precisión">⭐⭐⭐</td>
+                            <td data-label="Durabilidad">⭐⭐⭐⭐</td>
                         </tr>
                     </tbody>
                 </table>
@@ -205,10 +234,335 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 SILAB 3D. Todos los derechos reservados.</p>
-            <p>📧 contacto@silab3d.com | 📱 +34 XXX XXX XXX</p>
+            <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
+            <p><a href="terminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a></p>
         </div>
     </footer>
 
+    <!-- Modal de Detalle de Color -->
+    <div id="colorModal" class="color-modal">
+        <div class="color-modal-content">
+            <button class="color-modal-close">&times;</button>
+            <div class="color-modal-grid">
+                <div class="color-modal-left">
+                    <h3 id="modalColorName">Color Name</h3>
+                    <div class="modal-model-display">
+                        <model-viewer id="modalModelViewer" src="../assets/vase_spiral.glb" alt="Vase" scale="0.4 0.4 0.4" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                    </div>
+                </div>
+                <div class="color-modal-right">
+                    <h3>Combinaciones sugeridas</h3>
+                    <div id="modalMatchingColors" class="modal-matching-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/script.js"></script>
+    <script>
+        // Base de datos de colores disponibles
+        const allColors = {
+            pla: [
+                { name: 'Black', color: '#000000', hex: '000000' },
+                { name: 'Silver', color: '#bbbec3', hex: 'bbbec3' },
+                { name: 'White', color: '#ffffff', hex: 'ffffff' },
+                { name: 'Wood', color: '#cdae81', hex: 'cdae81' },
+                { name: 'Coffee Brown', color: '#533421', hex: '533421' },
+                { name: 'Sakura Pink', color: '#f2a8b3', hex: 'f2a8b3' },
+                { name: 'Lavender Purple', color: '#7358c3', hex: '7358c3' },
+                { name: 'Sky Blue', color: '#63c9f0', hex: '63c9f0' },
+                { name: 'Mint Green', color: '#6ed9ce', hex: '6ed9ce' },
+                { name: 'Sunny Orange', color: '#ff904c', hex: 'ff904c' },
+                { name: 'Lemon Yellow', color: '#fbf9ac', hex: 'fbf9ac' },
+                { name: 'Grass Green', color: '#0a9077', hex: '0a9077' },
+                { name: 'Silk Yellow', color: '#f1c402', hex: 'f1c402' }
+            ],
+            petg: [
+                { name: 'Black', color: '#000000', hex: '000000' },
+                { name: 'White', color: '#ffffff', hex: 'ffffff' },
+                { name: 'Blue', color: '#1800ac', hex: '1800ac' },
+                { name: 'Red', color: '#ff3131', hex: 'ff3131' }
+            ]
+        };
+
+        // Función para convertir hex a RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // Función para convertir RGB a HSL
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            return { h: h * 360, s: s * 100, l: l * 100 };
+        }
+
+        // Función para calcular score de combinación basado en teoría del color
+        function calculateColorMatch(selectedColor, candidateColor) {
+            const rgb1 = hexToRgb(selectedColor);
+            const rgb2 = hexToRgb(candidateColor);
+            const hsl1 = rgbToHsl(rgb1.r, rgb1.g, rgb1.b);
+            const hsl2 = rgbToHsl(rgb2.r, rgb2.g, rgb2.b);
+
+            // Diferencia de tono (0-180, donde 180 es complementario perfecto)
+            let hueDiff = Math.abs(hsl1.h - hsl2.h);
+            if (hueDiff > 180) hueDiff = 360 - hueDiff;
+
+            // Diferencia de luminosidad (0-100)
+            const lightDiff = Math.abs(hsl1.l - hsl2.l);
+
+            // Preferir combinaciones complementarias (120-180°) o análogas cercanas (30-60°)
+            let hueScore;
+            if (hueDiff >= 120 && hueDiff <= 180) {
+                // Complementarios - muy bueno
+                hueScore = 100;
+            } else if (hueDiff >= 30 && hueDiff <= 60) {
+                // Análogos moderados - bueno
+                hueScore = 80;
+            } else if (hueDiff >= 90 && hueDiff <= 120) {
+                // Triádicos - bueno
+                hueScore = 85;
+            } else {
+                // Otros - penalizar
+                hueScore = Math.max(0, 50 - Math.abs(hueDiff - 45));
+            }
+
+            // Bonus por buen contraste de luminosidad (20-60% diferencia)
+            let lightScore = 0;
+            if (lightDiff >= 20 && lightDiff <= 60) {
+                lightScore = 30;
+            } else if (lightDiff > 60) {
+                lightScore = 15; // Contraste muy alto puede ser chocante
+            }
+
+            // Penalizar colores muy similares en saturación
+            const satDiff = Math.abs(hsl1.s - hsl2.s);
+            const satScore = Math.min(20, satDiff / 3);
+
+            return hueScore + lightScore + satScore;
+        }
+
+        // Función para encontrar colores que combinan bien
+        function findMatchingColors(selectedColor, allColorsList, count = 3) {
+            const matches = allColorsList
+                .filter(c => c.color !== selectedColor)
+                .map(c => ({
+                    ...c,
+                    score: calculateColorMatch(selectedColor, c.color)
+                }))
+                .sort((a, b) => b.score - a.score); // Mayor score = mejor combinación
+            
+            return matches.slice(0, count);
+        }
+
+        // Aplicar colores a los modelos 3D y controlar visibilidad
+        document.addEventListener('DOMContentLoaded', function() {
+            const colorCards = document.querySelectorAll('.color-card');
+            const modal = document.getElementById('colorModal');
+            const modalClose = document.querySelector('.color-modal-close');
+            const modalModelViewer = document.getElementById('modalModelViewer');
+            const modalColorName = document.getElementById('modalColorName');
+            const modalMatchingColors = document.getElementById('modalMatchingColors');
+            
+            colorCards.forEach(card => {
+                const viewer = card.querySelector('.color-model');
+                const colorCircle = card.querySelector('.color-circle');
+                const color = card.getAttribute('data-color');
+                const colorName = card.querySelector('h4').textContent;
+                
+                // Aplicar color al modelo cuando cargue
+                viewer.addEventListener('load', () => {
+                    if (color && viewer.model && viewer.model.materials[0]) {
+                        const material = viewer.model.materials[0];
+                        material.pbrMetallicRoughness.setBaseColorFactor(color);
+                    }
+                });
+                
+                // Mostrar modelo en hover - las transiciones CSS manejarán el efecto orgánico
+                card.addEventListener('mouseenter', () => {
+                    card.classList.add('hovering');
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.classList.remove('hovering');
+                });
+
+                // Abrir modal al hacer click
+                card.addEventListener('click', () => {
+                    // Determinar si es PLA o PETG según la sección
+                    const section = card.closest('.material-category');
+                    const isPLA = section.querySelector('.material-type-title').textContent.includes('PLA');
+                    const colorsList = isPLA ? allColors.pla : allColors.petg;
+
+                    // Configurar modal
+                    modalColorName.textContent = colorName;
+                    
+                    // Aplicar color al modelo del modal
+                    modalModelViewer.addEventListener('load', () => {
+                        if (modalModelViewer.model && modalModelViewer.model.materials[0]) {
+                            const material = modalModelViewer.model.materials[0];
+                            material.pbrMetallicRoughness.setBaseColorFactor(color);
+                        }
+                    });
+
+                    // Si el modelo ya está cargado, aplicar color inmediatamente
+                    if (modalModelViewer.model && modalModelViewer.model.materials[0]) {
+                        const material = modalModelViewer.model.materials[0];
+                        material.pbrMetallicRoughness.setBaseColorFactor(color);
+                    }
+
+                    // Encontrar colores que combinan
+                    const matchCount = isPLA ? 3 : 2;
+                    const matchingColors = findMatchingColors(color, colorsList, matchCount);
+                    
+                    // Ajustar grid según cantidad de combinaciones
+                    modalMatchingColors.style.gridTemplateColumns = isPLA ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
+                    
+                    // Mostrar colores que combinan
+                    modalMatchingColors.innerHTML = matchingColors.map(match => `
+                        <div class="modal-matching-card" data-color="${match.color}" data-color-name="${match.name}" data-is-pla="${isPLA}">
+                            <div class="modal-matching-circle" style="background-color: ${match.color};"></div>
+                            <h4>${match.name}</h4>
+                        </div>
+                    `).join('');
+
+                    // Mostrar modal
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // Cerrar modal
+            modalClose.addEventListener('click', () => {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+
+            // Cerrar modal al hacer click fuera
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Abrir modal al hacer click en combinaciones sugeridas
+            modal.addEventListener('click', (e) => {
+                const matchingCard = e.target.closest('.modal-matching-card');
+                if (matchingCard) {
+                    const color = matchingCard.getAttribute('data-color');
+                    const colorName = matchingCard.getAttribute('data-color-name');
+                    const isPLA = matchingCard.getAttribute('data-is-pla') === 'true';
+                    const colorsList = isPLA ? allColors.pla : allColors.petg;
+
+                    // Configurar modal con el nuevo color
+                    modalColorName.textContent = colorName;
+                    
+                    // Aplicar color al modelo del modal
+                    if (modalModelViewer.model && modalModelViewer.model.materials[0]) {
+                        const material = modalModelViewer.model.materials[0];
+                        material.pbrMetallicRoughness.setBaseColorFactor(color);
+                    }
+
+                    // Encontrar nuevas combinaciones
+                    const matchCount = isPLA ? 3 : 2;
+                    const matchingColors = findMatchingColors(color, colorsList, matchCount);
+                    
+                    // Ajustar grid según cantidad de combinaciones
+                    modalMatchingColors.style.gridTemplateColumns = isPLA ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
+                    
+                    // Mostrar colores que combinan
+                    modalMatchingColors.innerHTML = matchingColors.map(match => `
+                        <div class="modal-matching-card" data-color="${match.color}" data-color-name="${match.name}" data-is-pla="${isPLA}">
+                            <div class="modal-matching-circle" style="background-color: ${match.color};"></div>
+                            <h4>${match.name}</h4>
+                        </div>
+                    `).join('');
+                }
+            });
+        });
+    </script>
+
+    <!-- Modal Formulario de Presupuesto -->
+    <div id="quoteFormModal" class="quote-modal">
+        <div class="quote-modal-content">
+            <span class="quote-modal-close">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Solicita tu presupuesto</h2>
+            <form id="quoteForm">
+                <div class="form-group">
+                    <label for="customerName">Nombre *</label>
+                    <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre completo">
+                </div>
+                <div class="form-group">
+                    <label for="customerContact">Teléfono / Email de contacto *</label>
+                    <input type="text" id="customerContact" name="customerContact" required placeholder="Teléfono o email">
+                </div>
+                <div class="form-group">
+                    <label for="projectName">Nombre del proyecto *</label>
+                    <input type="text" id="projectName" name="projectName" required placeholder="Ej: Prototipo de pieza mecánica">
+                </div>
+                <div class="form-group">
+                    <label for="projectDescription">Descripción del proyecto *</label>
+                    <textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="5"></textarea>
+                </div>
+                <p style="font-size: 0.9rem; color: #6b7280; line-height: 1.5; margin-top: 1rem; text-align: center;">
+                    Incluye las medidas estimadas del modelo, así como toda la información que pueda ser necesaria para llevarlo a cabo. En caso de disponer de un proyecto, inclúyelo en el siguiente paso.
+                </p>
+                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Siguiente →</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Método de Contacto -->
+    <div id="quoteContactModal" class="quote-modal">
+        <div class="quote-modal-content">
+            <span class="quote-contact-modal-close">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Elige cómo prefieres contactar</h2>
+            <div class="contact-options-grid">
+                <a id="quoteModalWhatsApp" href="#" target="_blank" class="contact-option-card">
+                    <div class="contact-option-icon">📱</div>
+                    <h3>WhatsApp</h3>
+                    <p>Respuesta inmediata</p>
+                </a>
+                <a id="quoteModalEmail" href="#" target="_blank" class="contact-option-card">
+                    <div class="contact-option-icon">📧</div>
+                    <h3>Email</h3>
+                    <p>Comunicación formal</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up de Términos y Condiciones -->
+    <div id="termsPopup" class="terms-popup">
+        <div class="terms-popup-content">
+            <p>Al navegar en esta web, aceptas los <a href="terminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
+            <div class="terms-popup-buttons">
+                <button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button>
+                <button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

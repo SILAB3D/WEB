@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SILAB 3D - Impresión 3D Profesional</title>
+    <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,15 +16,16 @@
     <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-left">
-                <a href="#" class="btn-presupuesto">Solicita tu presupuesto</a>
+                <a href="https://wa.me/34644070487?text=¡Hola!%20Me%20gustaría%20solicitar%20un%20presupuesto%20de%20impresión." class="btn-presupuesto" target="_blank">Solicita tu presupuesto</a>
             </div>
             <div class="navbar-center">
                 <img src="img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo">
             </div>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Inicio</a></li>
-                <li><a href="pages/tienda.html">Tienda</a></li>
+                <li><a href="pages/tienda.html">Productos</a></li>
                 <li><a href="pages/materiales.html">Materiales</a></li>
+                <li><a href="pages/resenas.html">Reseñas</a></li>
             </ul>
         </div>
     </nav>
@@ -36,8 +38,8 @@
             </div>
             <div class="hero-main-content">
                 <h1 class="hero-main-title">Innovación capa a capa</h1>
-                <p class="hero-main-text">Damos vida a tus ideas con impresión 3D de alta calidad. Ya sea para prototipos, piezas personalizadas o proyectos creativos, ofrecemos soluciones rápidas, precisas y a tu medida.</p>
-                <a href="#productos" class="cta-button">Descubre nuestros servicios</a>
+                <p class="hero-main-text">Damos vida a tus ideas con <strong>impresión 3D de alta calidad</strong>. Ya sea para prototipos, <strong>piezas personalizadas</strong> o proyectos creativos, ofrecemos soluciones <strong>rápidas, precisas y a tu medida</strong>.</p>
+                <a href="#productos" class="btn-primary">Descubre nuestros servicios</a>
             </div>
         </div>
     </section>
@@ -45,35 +47,35 @@
     <!-- Sección Productos -->
     <section id="productos" class="productos-section">
         <div class="container">
-            <h2>Productos</h2>
-            <p class="section-intro">Descubre nuestra colección de productos impresos en 3D: llaveros personalizables, jarrones modernos, figuras únicas, litofanías luminosas y diseños a medida. Creatividad, utilidad y personalización en cada detalle.</p>
+            <h2 class="title-secondary">Productos</h2>
+            <p class="section-intro description">Descubre nuestra colección de <strong>productos impresos en 3D</strong>: llaveros personalizables, jarrones modernos, figuras únicas, litofanías luminosas y <strong>diseños a medida</strong>. Creatividad, utilidad y personalización en cada detalle.</p>
             
             <div class="productos-grid">
-                <div class="producto-card">
+                <a href="pages/tienda.html#productos" onclick="sessionStorage.setItem('filterCategory', 'llaveros');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
                     <div class="producto-image">🔑</div>
-                    <h3>Llaveros</h3>
-                    <p>Personalizables con tus diseños favoritos</p>
-                </div>
-                <div class="producto-card">
+                    <h3 class="subtitle">Llaveros</h3>
+                    <p class="description">Personalizables con tus diseños favoritos</p>
+                </a>
+                <a href="pages/tienda.html#productos" onclick="sessionStorage.setItem('filterCategory', 'jarrones');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
                     <div class="producto-image">🏺</div>
-                    <h3>Jarrones</h3>
-                    <p>Diseños modernos y elegantes para tu hogar</p>
-                </div>
-                <div class="producto-card">
+                    <h3 class="subtitle">Jarrones</h3>
+                    <p class="description">Diseños modernos y elegantes para tu hogar</p>
+                </a>
+                <a href="pages/tienda.html#productos" onclick="sessionStorage.setItem('filterCategory', 'figuras');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
                     <div class="producto-image">🎨</div>
-                    <h3>Figuras</h3>
-                    <p>Esculturas y figuras decorativas únicas</p>
-                </div>
-                <div class="producto-card">
+                    <h3 class="subtitle">Figuras</h3>
+                    <p class="description">Esculturas y figuras decorativas únicas</p>
+                </a>
+                <a href="pages/tienda.html#productos" onclick="sessionStorage.setItem('filterCategory', 'ilustracion');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
                     <div class="producto-image">🖼️</div>
-                    <h3>Litofanías</h3>
-                    <p>Imágenes iluminadas con efecto 3D</p>
-                </div>
-                <div class="producto-card">
+                    <h3 class="subtitle">Ilustraciones</h3>
+                    <p class="description">Litofanías luminosas y cuadros geométricos</p>
+                </a>
+                <a href="pages/tienda.html#productos" onclick="sessionStorage.setItem('filterCategory', 'medida');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
                     <div class="producto-image">✨</div>
-                    <h3>Diseños a medida</h3>
-                    <p>Creamos lo que imaginas, adaptado a ti</p>
-                </div>
+                    <h3 class="subtitle">Diseños a medida</h3>
+                    <p class="description">Creamos lo que imaginas, adaptado a ti</p>
+                </a>
             </div>
         </div>
     </section>
@@ -81,49 +83,49 @@
     <!-- Sección Materiales Preview -->
     <section class="materiales-preview">
         <div class="container">
-            <h2>Materiales</h2>
-            <p class="section-intro">Explora nuestra colección de filamentos 3D, disponibles en una amplia variedad de materiales y colores. Perfectos para cualquier proyecto. Encuentra la combinación ideal para tus impresiones.</p>
+            <h2 class="title-secondary">Materiales</h2>
+            <p class="section-intro description">Explora nuestra colección de <strong>filamentos 3D</strong>, disponibles en una <strong>amplia variedad de materiales y colores</strong>. Perfectos para cualquier proyecto. Encuentra la <strong>combinación ideal</strong> para tus impresiones.</p>
             
             <div class="materiales-preview-grid">
-                <div class="material-preview-card">
-                    <div class="material-preview-icon">🧵</div>
-                    <h3>PLA</h3>
-                    <p>Biodegradable y fácil de imprimir</p>
-                    <a href="pages/materiales.html" class="link-arrow">Ver más →</a>
-                </div>
-                <div class="material-preview-card">
-                    <div class="material-preview-icon">💪</div>
-                    <h3>PETG</h3>
-                    <p>Resistente y duradero</p>
-                    <a href="pages/materiales.html" class="link-arrow">Ver más →</a>
-                </div>
+                <a href="pages/materiales.html#pla" class="material-preview-card container-light pla-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <h3 class="subtitle"><strong>PLA</strong></h3>
+                    <p class="description">Elige versatilidad</p>
+                    <span class="link-arrow">Ver más →</span>
+                </a>
+                <a href="pages/materiales.html#petg" class="material-preview-card container-light petg-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <h3 class="subtitle"><strong>PETG</strong></h3>
+                    <p class="description">Elige resistencia</p>
+                    <span class="link-arrow">Ver más →</span>
+                </a>
             </div>
         </div>
     </section>
 
+    <!-- Separador -->
+    <div class="separator-resenas separator-1"></div>
+
     <!-- Sección Contacto -->
     <section class="contacto-section">
         <div class="container">
-            <h2>Contacto</h2>
-            <p class="section-intro">Tu proyecto empieza con un hola 👋. Contacta con nosotros mediante las siguientes alternativas.</p>
+            <h2 class="title-secondary">Contacto</h2>
+            <p class="section-intro description"><strong>Tu proyecto empieza con un hola</strong> 👋.<br>Contacta con nosotros mediante las siguientes <strong>alternativas interactivas</strong>.</p>
             
             <div class="contacto-grid">
-                <div class="contacto-card">
+                <a href="https://api.whatsapp.com/send/?phone=34644070487&text=%C2%A1Hola%21+Me+gustar%C3%ADa+solicitar+un+presupuesto+de+impresi%C3%B3n.&type=phone_number&app_absent=0" class="contacto-card container-dark" target="_blank">
                     <div class="contacto-icon">📱</div>
-                    <h3>WhatsApp</h3>
-                    <p>+34 644 07 04 87</p>
-                    <a href="https://wa.me/34644070487?text=¡Hola!%20Me%20gustaría%20solicitar%20un%20presupuesto%20de%20impresión." class="cta-button" target="_blank">Solicita tu presupuesto</a>
-                </div>
-                <div class="contacto-card">
+                    <h3 class="subtitle"><strong>WhatsApp</strong></h3>
+                    <p class="description">+34 644 07 04 87</p>
+                </a>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=silab3d@gmail.com&su=Presupuesto%20de%20impresi%C3%B3n&body=%C2%A1Hola!%20Me%20gustar%C3%ADa%20solicitar%20presupuesto%20para%20el%20siguiente%20proyecto%3A" class="contacto-card container-dark" target="_blank">
                     <div class="contacto-icon">📧</div>
-                    <h3>Email</h3>
-                    <p>silab3d@gmail.com</p>
-                </div>
-                <div class="contacto-card">
-                    <div class="contacto-icon">📍</div>
-                    <h3>Ubicación</h3>
-                    <p>SILAB 3D<br>(Salamanca, España)</p>
-                </div>
+                    <h3 class="subtitle"><strong>Email</strong></h3>
+                    <p class="description">silab3d@gmail.com</p>
+                </a>
+                <a href="https://ig.me/m/silab3d" class="contacto-card container-dark" target="_blank">
+                    <div class="contacto-icon">📸</div>
+                    <h3 class="subtitle"><strong>Instagram</strong></h3>
+                    <p class="description">@silab3d</p>
+                </a>
             </div>
         </div>
     </section>
@@ -132,8 +134,72 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 SILAB 3D. Todos los derechos reservados.</p>
-            <p>📧 contacto@silab3d.com | 📱 +34 XXX XXX XXX</p>
+            <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
+            <p><a href="pages/terminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a></p>
         </div>
     </footer>
+
+    <!-- Modal Formulario de Presupuesto -->
+    <div id="quoteFormModal" class="quote-modal">
+        <div class="quote-modal-content">
+            <span class="quote-modal-close">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Solicita tu presupuesto</h2>
+            <form id="quoteForm">
+                <div class="form-group">
+                    <label for="customerName">Nombre *</label>
+                    <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre completo">
+                </div>
+                <div class="form-group">
+                    <label for="customerContact">Teléfono / Email de contacto *</label>
+                    <input type="text" id="customerContact" name="customerContact" required placeholder="Teléfono o email">
+                </div>
+                <div class="form-group">
+                    <label for="projectName">Nombre del proyecto *</label>
+                    <input type="text" id="projectName" name="projectName" required placeholder="Ej: Prototipo de pieza mecánica">
+                </div>
+                <div class="form-group">
+                    <label for="projectDescription">Descripción del proyecto *</label>
+                    <textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="5"></textarea>
+                </div>
+                <p style="font-size: 0.9rem; color: #6b7280; line-height: 1.5; margin-top: 1rem; text-align: center;">
+                    Incluye las medidas estimadas del modelo, así como toda la información que pueda ser necesaria para llevarlo a cabo. En caso de disponer de un proyecto, inclúyelo en el siguiente paso.
+                </p>
+                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Siguiente →</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Método de Contacto -->
+    <div id="quoteContactModal" class="quote-modal">
+        <div class="quote-modal-content">
+            <span class="quote-contact-modal-close">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Elige cómo prefieres contactar</h2>
+            <div class="contact-options-grid">
+                <a id="quoteModalWhatsApp" href="#" target="_blank" class="contact-option-card">
+                    <div class="contact-option-icon">📱</div>
+                    <h3>WhatsApp</h3>
+                    <p>Respuesta inmediata</p>
+                </a>
+                <a id="quoteModalEmail" href="#" target="_blank" class="contact-option-card">
+                    <div class="contact-option-icon">📧</div>
+                    <h3>Email</h3>
+                    <p>Comunicación formal</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up de Términos y Condiciones -->
+    <div id="termsPopup" class="terms-popup">
+        <div class="terms-popup-content">
+            <p>Al navegar en esta web, aceptas los <a href="pages/terminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
+            <div class="terms-popup-buttons">
+                <button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button>
+                <button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
