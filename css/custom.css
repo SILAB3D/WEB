@@ -2099,57 +2099,47 @@ html {
         font-size: 0.85rem;
     }
 
-    /* Tabla comparativa en formato vertical para móvil */
-    .comparison-table thead {
-        display: none;
+    /* Tabla comparativa - Mobile */
+    .comparison-table {
+        display: grid !important;
+        grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr !important;
+        gap: 0.75rem !important;
+        background: white;
+        border-radius: 1.25rem;
+        box-shadow: 0 8px 25px rgba(71, 12, 59, 0.12);
+        padding: 1.5rem 1rem;
+        border-collapse: collapse;
     }
 
-    .comparison-table,
-    .comparison-table tbody,
-    .comparison-table tr,
-    .comparison-table td {
-        display: block;
-        width: 100%;
+    .comparison-table thead,
+    .comparison-table tbody {
+        display: contents;
     }
 
     .comparison-table tr {
-        margin-bottom: 2rem;
-        border: none;
-        border-radius: 1.25rem;
-        padding: 1.75rem 1.5rem;
-        background: white;
-        box-shadow: 0 8px 25px rgba(71, 12, 59, 0.12);
+        display: contents;
     }
 
+    .comparison-table th,
     .comparison-table td {
+        padding: 0.75rem !important;
+        border: none !important;
+        text-align: center;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
         text-align: left;
-        padding: 0.85rem 0;
-        border: none;
-        display: grid;
-        grid-template-columns: 40% 60%;
-        align-items: center;
-        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
     }
 
     .comparison-table td:before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--primary-color);
-        font-size: 0.95rem;
-    }
-
-    .comparison-table td:first-child {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        display: block;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid var(--accent-color);
-        padding-bottom: 1rem;
+        content: '';
     }
 
     .comparison-table td:first-child:before {
-        content: none;
+        content: '';
     }
 
     /* Contenedores de reseñas */
@@ -2344,44 +2334,61 @@ html {
     }
 
     .comparison-table thead {
-        display: none;
+        display: contents;
+    }
+
+    .comparison-table tbody {
+        display: contents;
     }
 
     .comparison-table,
     .comparison-table tbody,
     .comparison-table tr,
+    .comparison-table td,
+    .comparison-table th {
+        display: revert;
+        width: auto;
+    }
+
+    .comparison-table {
+        background: white;
+        border-radius: 1.25rem;
+        box-shadow: 0 8px 25px rgba(71, 12, 59, 0.12);
+        padding: 1.5rem 1rem;
+        overflow: hidden;
+        display: grid !important;
+        grid-auto-flow: column;
+        grid-template-rows: repeat(5, auto) !important;
+        gap: 0.75rem;
+        border-collapse: collapse;
+    }
+
+    .comparison-table th,
     .comparison-table td {
-        display: block;
-        width: 100%;
+        padding: 0.75rem !important;
+        text-align: center;
+        border: none !important;
+        display: revert;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+        text-align: left;
+        font-weight: 600;
+        color: var(--primary-color);
     }
 
     .comparison-table tr {
-        margin-bottom: 2rem;
-        margin-left: 0;
-        margin-right: 0;
-        border: none;
-        border-radius: 1.25rem;
-        padding: 2rem 1rem;
-        background: white;
-        box-shadow: 0 8px 25px rgba(71, 12, 59, 0.12);
+        display: contents;
     }
 
-    .comparison-table td {
-        text-align: left;
-        padding: 1rem 0;
-        border: none;
-        display: grid;
-        grid-template-columns: 35% 65%;
-        align-items: center;
-        gap: 1.5rem;
+    .comparison-table tbody tr:first-child td:first-child {
+        font-weight: 700;
+        font-size: 1.1rem;
     }
 
     .comparison-table td:before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--primary-color);
-        font-size: 0.9rem;
-        word-wrap: break-word;
+        content: '';
     }
 
     .comparison-table td:first-child {
