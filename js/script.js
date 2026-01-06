@@ -1,37 +1,6 @@
 // Script para cargar y mostrar materiales desde filamentos.json
 document.addEventListener('DOMContentLoaded', async function() {
-    // Navbar ocultar/mostrar en scroll (solo móvil)
-    let lastScrollTop = 0;
-    const navbar = document.querySelector('.navbar');
-    const scrollThreshold = 100; // píxeles antes de activar el efecto
-    
-    function handleNavbarScroll() {
-        // Solo aplicar en móvil (ancho menor a 768px)
-        if (window.innerWidth <= 768) {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            if (scrollTop > scrollThreshold) {
-                if (scrollTop > lastScrollTop) {
-                    // Scroll hacia abajo - ocultar navbar
-                    navbar.classList.add('navbar-hidden');
-                } else {
-                    // Scroll hacia arriba - mostrar navbar
-                    navbar.classList.remove('navbar-hidden');
-                }
-            } else {
-                // En la parte superior, siempre mostrar
-                navbar.classList.remove('navbar-hidden');
-            }
-            
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        } else {
-            // En escritorio, siempre visible
-            navbar.classList.remove('navbar-hidden');
-        }
-    }
-    
-    window.addEventListener('scroll', handleNavbarScroll, { passive: true });
-    window.addEventListener('resize', handleNavbarScroll);
+    // Navbar siempre visible (anclada)
 
     // Cargar materiales si estamos en la página de materiales
     const materialesGrid = document.getElementById('materialesGrid');

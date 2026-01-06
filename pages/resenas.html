@@ -13,13 +13,9 @@
     <!-- Cargar Google Fonts sin bloquear con preload -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
-    <!-- Preload CSS para evitar bloqueos -->
-    <link rel="preload" href="../css/tailwind.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../css/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="../css/tailwind.min.css">
-        <link rel="stylesheet" href="../css/custom.css">
-    </noscript>
+    <!-- CSS bloqueante para evitar FOUC -->
+    <link rel="stylesheet" href="../css/tailwind.min.css">
+    <link rel="stylesheet" href="../css/custom.css">
 </head>
 <body class="page-resenas">
     <!-- Navegación -->
@@ -35,7 +31,7 @@
                 <li><a href="../index.html">Inicio</a></li>
                 <li><a href="productos.html">Productos</a></li>
                 <li><a href="materiales.html">Materiales</a></li>
-                <li><a href="rese�as.html" class="active">Reseñas</a></li>
+                <li><a href="resenas.html" class="active">Reseñas</a></li>
             </ul>
         </div>
     </nav>
@@ -44,7 +40,7 @@
     <section class="hero-main">
         <div class="hero-main-container">
             <div class="hero-main-image">
-                <img src="../img/68f6ce99-4517-4fdb-ac02-fe173afcc1f4.webp" alt="SILAB 3D Impresión 3D" class="hero-image-circular" width="400" height="400">
+                <img src="../img/inicio.webp" alt="SILAB 3D Impresión 3D" class="hero-image-circular" width="500" height="500">
             </div>
             <div class="hero-main-content">
                 <h1 class="hero-main-title">Nuestra comunidad nos impulsa</h1>
@@ -99,7 +95,7 @@
         <div class="container">
             <p>&copy; 2025 SILAB 3D. Todos los derechos reservados.</p>
             <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
-            <p><a href="t�rminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a></p>
+            <p><a href="terminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a></p>
         </div>
     </footer>
 
@@ -156,7 +152,7 @@
     <!-- Pop-up de Términos y Condiciones -->
     <div id="termsPopup" class="terms-popup">
         <div class="terms-popup-content">
-            <p>Al navegar en esta web, aceptas los <a href="t�rminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
+            <p>Al navegar en esta web, aceptas los <a href="terminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
             <div class="terms-popup-buttons">
                 <button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button>
                 <button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button>

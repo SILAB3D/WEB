@@ -12,13 +12,9 @@
     <!-- Cargar Google Fonts sin bloquear con preload -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
-    <!-- Preload CSS para evitar bloqueos -->
-    <link rel="preload" href="../css/tailwind.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../css/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="../css/tailwind.min.css">
-        <link rel="stylesheet" href="../css/custom.css">
-    </noscript>
+    <!-- CSS bloqueante para evitar FOUC -->
+    <link rel="stylesheet" href="../css/tailwind.min.css">
+    <link rel="stylesheet" href="../css/custom.css">
 </head>
 <body>
     <!-- Navegación -->
@@ -28,13 +24,13 @@
                 <a href="https://wa.me/34644070487?text=¡Hola!%20Me%20gustaría%20solicitar%20un%20presupuesto%20de%20impresión." class="btn-presupuesto" target="_blank">Solicita tu presupuesto</a>
             </div>
             <div class="navbar-center">
-                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo">
+                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo" width="130" height="130">
             </div>
             <ul class="nav-links">
                 <li><a href="../index.html">Inicio</a></li>
                 <li><a href="productos.html" class="active">Productos</a></li>
                 <li><a href="materiales.html">Materiales</a></li>
-                <li><a href="rese�as.html">Reseñas</a></li>
+                <li><a href="resenas.html">Reseñas</a></li>
             </ul>
         </div>
     </nav>
@@ -43,7 +39,7 @@
     <section class="hero-main">
         <div class="hero-main-container">
             <div class="hero-main-image">
-                <img src="../img/productos silab.webp" alt="SILAB 3D Productos" class="hero-image-circular">
+                <img src="../img/productos.webp" alt="SILAB 3D Productos" class="hero-image-circular" width="500" height="500">
             </div>
             <div class="hero-main-content">
                 <h1 class="hero-main-title">Productos</h1>
@@ -70,7 +66,7 @@
                 <!-- Llaveros -->
                 <div class="product-card" data-category="llaveros">
                     <div class="product-image">
-                        <img src="../img/Ilustración simple.webp" alt="Ilustración simple">
+                        <img src="../img/Ilustración simple.webp" alt="Ilustración simple" width="240" height="240">
                     </div>
                     <h3 class="subtitle">Ilustración simple</h3>
                     <p class="description">Llavero con tu ilustración favorita impresa en 3D</p>
@@ -81,7 +77,7 @@
 
                 <div class="product-card" data-category="llaveros">
                     <div class="product-image">
-                        <img src="../img/Código de Spotify.webp" alt="Código de Spotify">
+                        <img src="../img/Código de Spotify.webp" alt="Código de Spotify" width="240" height="240">
                     </div>
                     <h3 class="subtitle">Código de Spotify</h3>
                     <p class="description">Tu canción favorita en un llavero escaneable</p>
@@ -92,7 +88,7 @@
 
                 <div class="product-card" data-category="llaveros">
                     <div class="product-image">
-                        <img src="../img/Llaveros personalizados.webp" alt="Llavero personalizado">
+                        <img src="../img/Llaveros personalizados.webp" alt="Llavero personalizado" width="240" height="240">
                     </div>
                     <h3 class="subtitle">Llavero personalizado</h3>
                     <p class="description">Diseña tu propio llavero único y original</p>
@@ -104,7 +100,7 @@
                 <!-- Jarrones -->
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
-                        <img src="../img/Geo.webp" alt="Geo">
+                        <img src="../img/Geo.webp" alt="Geo" width="240" height="240">
                     </div>
                     <h3>Geo</h3>
                     <p class="description">Diseño geométrico moderno y elegante</p>
@@ -115,7 +111,7 @@
 
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
-                        <img src="../img/Wave.webp" alt="Wave">
+                        <img src="../img/Wave.webp" alt="Wave" width="240" height="240">
                     </div>
                     <h3>Wave</h3>
                     <p class="description">Formas onduladas que evocan el movimiento del agua</p>
@@ -126,7 +122,7 @@
 
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
-                        <img src="../img/Aura.webp" alt="Aura">
+                        <img src="../img/Aura.webp" alt="Aura" width="240" height="240">
                     </div>
                     <h3>Aura</h3>
                     <p class="description">Elegancia minimalista con luz propia</p>
@@ -137,7 +133,7 @@
 
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
-                        <img src="../img/Classic.webp" alt="Classic">
+                        <img src="../img/Classic.webp" alt="Classic" width="240" height="240">
                     </div>
                     <h3>Classic</h3>
                     <p class="description">El modelo icónico de impresión 3D por excelencia</p>
@@ -148,7 +144,7 @@
 
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
-                        <img src="../img/Romance.webp" alt="Romance">
+                        <img src="../img/Romance.webp" alt="Romance" width="240" height="240">
                     </div>
                     <h3>Romance</h3>
                     <p class="description">Delicados detalles para ambientes románticos</p>
@@ -159,7 +155,7 @@
 
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
-                        <img src="../img/Straight.webp" alt="Straight">
+                        <img src="../img/Straight.webp" alt="Straight" width="240" height="240">
                     </div>
                     <h3>Straight</h3>
                     <p class="description">Líneas rectas y limpias para espacios contemporáneos</p>
@@ -171,7 +167,7 @@
                 <!-- Figuras -->
                 <div class="product-card" data-category="figuras">
                     <div class="product-image">
-                        <img src="../img/figuras-predefinidos.svg" alt="Figuras - diseños predefinidos">
+                        <img src="../img/figuras-predefinidos.svg" alt="Figuras - diseños predefinidos" width="240" height="240">
                     </div>
                     <h3>Figura con diseño predefinido</h3>
                     <p class="description">Amplio catálogo de figuras prediseñadas listas para imprimir</p>
@@ -182,7 +178,7 @@
 
                 <div class="product-card" data-category="figuras">
                     <div class="product-image">
-                        <img src="../img/figuras-personalizados.svg" alt="Figuras - diseños personalizados">
+                        <img src="../img/figuras-personalizados.svg" alt="Figuras - diseños personalizados" width="240" height="240">
                     </div>
                     <h3>Figura con diseño personalizado</h3>
                     <p class="description">Diseñamos tu figura única según tu concepto e ideas</p>
@@ -194,7 +190,7 @@
                 <!-- Ilustración -->
                 <div class="product-card" data-category="ilustracion">
                     <div class="product-image">
-                        <img src="../img/litofania-individual.svg" alt="Litofanías - individuales">
+                        <img src="../img/litofania-individual.svg" alt="Litofanías - individuales" width="240" height="240">
                     </div>
                     <h3>Litofanías individuales</h3>
                     <p class="description">Convertimos tu foto favorita en una litofanía luminosa</p>
@@ -205,7 +201,7 @@
 
                 <div class="product-card" data-category="ilustracion">
                     <div class="product-image">
-                        <img src="../img/litofania-estructural.svg" alt="Litofanías - estructural">
+                        <img src="../img/litofania-estructural.svg" alt="Litofanías - estructural" width="240" height="240">
                     </div>
                     <h3>Litofanía estructural</h3>
                     <p class="description">Conjunto de 4 imágenes con soporte de lámpara (no incluída)</p>
@@ -217,7 +213,7 @@
                 <!-- Cuadros geométricos -->
                 <div class="product-card" data-category="ilustracion">
                     <div class="product-image">
-                        <img src="../img/cuadro-geometrico.svg" alt="Cuadro geométrico">
+                        <img src="../img/cuadro-geometrico.svg" alt="Cuadro geométrico" width="240" height="240">
                     </div>
                     <h3>Cuadro geométrico</h3>
                     <p class="description">Arte minimalista para decorar tus espacios. Diseños geométricos de animales y figuras</p>
@@ -229,7 +225,7 @@
                 <!-- Diseños a medida -->
                 <div class="product-card" data-category="medida">
                     <div class="product-image">
-                        <img src="../img/disenos-a-medida.svg" alt="Diseños a medida">
+                        <img src="../img/disenos-a-medida.svg" alt="Diseños a medida" width="240" height="240">
                     </div>
                     <h3>Diseños a medida</h3>
                     <p class="description">Diseñamos y damos forma a tus ideas. Objetos 3D personalizados según tus necesidades.</p>
@@ -265,7 +261,7 @@
         <div class="container">
             <p>&copy; 2025 SILAB 3D. Todos los derechos reservados.</p>
             <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
-            <p><a href="t�rminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a></p>
+            <p><a href="terminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a></p>
         </div>
     </footer>
 
@@ -322,7 +318,7 @@
     <!-- Pop-up de Términos y Condiciones -->
     <div id="termsPopup" class="terms-popup">
         <div class="terms-popup-content">
-            <p>Al navegar en esta web, aceptas los <a href="t�rminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
+            <p>Al navegar en esta web, aceptas los <a href="terminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
             <div class="terms-popup-buttons">
                 <button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button>
                 <button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button>
