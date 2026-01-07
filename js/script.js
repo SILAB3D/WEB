@@ -178,6 +178,22 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+    // Abrir modal desde el botón móvil del menú hamburguesa
+    const btnPresupuestoMobile = document.getElementById('btnPresupuestoMobile');
+    if (btnPresupuestoMobile) {
+        btnPresupuestoMobile.addEventListener('click', function(e) {
+            e.preventDefault();
+            quoteFormModal.classList.add('active');
+            // Cerrar menú hamburguesa
+            const hamburgerMenu = document.getElementById('hamburgerMenu');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (hamburgerMenu && mobileMenu) {
+                hamburgerMenu.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+    }
+
     // Cerrar modales
     if (quoteModalClose) {
         quoteModalClose.addEventListener('click', function() {
@@ -312,5 +328,34 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
                 }, 100);
             });
         }
+    }
+
+    // Menú Hamburguesa para móvil
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (hamburgerMenu && mobileMenu) {
+        hamburgerMenu.addEventListener('click', function() {
+            hamburgerMenu.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Cerrar menú al hacer clic en un enlace
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                hamburgerMenu.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Cerrar menú al hacer clic fuera de él
+        document.addEventListener('click', function(event) {
+            const isClickInside = hamburgerMenu.contains(event.target) || mobileMenu.contains(event.target);
+            if (!isClickInside && mobileMenu.classList.contains('active')) {
+                hamburgerMenu.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
     }
 });
