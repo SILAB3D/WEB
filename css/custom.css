@@ -3902,7 +3902,7 @@ html {
 
     /* Contacto Cards */
     .contacto-card {
-        padding: 1.75rem 1.25rem;
+        padding: 0;
     }
 
     .contacto-icon {
@@ -4037,6 +4037,17 @@ html {
 
     .contact-option-icon {
         font-size: 2.5rem;
+    }
+
+    /* Ocultar opción email en móvil */
+    #quoteModalEmail {
+        display: none;
+    }
+
+    .contact-options-grid {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+        margin: 0 auto;
     }
 
     /* Pop-up términos */
