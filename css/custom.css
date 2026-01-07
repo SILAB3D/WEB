@@ -41,6 +41,7 @@ body {
     color: var(--text-color);
     font-size: var(--font-body);
     line-height: 1.6;
+    padding-top: 160px; /* Compensar navbar fixed */
 }
 
 /* Títulos unificados */
@@ -291,8 +292,9 @@ html {
 
 /* Navbar */
 .navbar {
-    position: sticky;
+    position: fixed;
     top: 0;
+    width: 100%;
     z-index: 50;
     background-color: #470C3B;
     color: white;
@@ -1711,6 +1713,16 @@ html {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    /* Navbar como franja de contenido en móvil */
+    .navbar {
+        position: relative;
+    }
+
+    /* Eliminar padding del body en móvil */
+    body {
+        padding-top: 0;
+    }
+
     /* Centrado general */
     .container {
         text-align: center;
@@ -1747,7 +1759,7 @@ html {
     }
 
     .navbar-logo {
-        height: 120px;
+        height: 140px;
         margin: 0.2rem auto;
         transition: opacity 0.3s ease, transform 0.3s ease;
     }
@@ -2055,6 +2067,10 @@ html {
     }
 
     /* Colores grid - 3 por fila para mejor visualización */
+    .colores-title {
+        margin-bottom: 0.75rem;
+    }
+
     .colores-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
@@ -2101,13 +2117,14 @@ html {
 
     /* Tabla comparativa - Mobile */
     .comparativa .container {
-        padding: 0 1rem;
+        padding: 0 1.5rem;
     }
 
     .table-responsive {
         background: white;
         border-radius: 1.5rem;
-        padding: 2rem 1rem;
+        padding: 3rem 1rem;
+        min-height: 280px;
         box-shadow: 0 12px 40px rgba(71, 12, 59, 0.2);
         border: 2px solid rgba(192, 87, 111, 0.15);
     }
@@ -2189,6 +2206,17 @@ html {
 
     .comparison-table td:before {
         content: '';
+        display: none;
+    }
+
+    .comparison-table td::before {
+        content: '' !important;
+        display: none !important;
+    }
+
+    .comparison-table td[data-label]::before {
+        content: '' !important;
+        display: none !important;
     }
 
     .comparison-table td:first-child:before {
@@ -2206,7 +2234,7 @@ html {
 @media (max-width: 480px) {
     /* Centrado general en móviles pequeños */
     .container {
-        padding: 0 15px;
+        padding: 0 20px;
         text-align: center;
     }
 
@@ -2391,7 +2419,7 @@ html {
     }
 
     .comparativa .container {
-        padding: 0 1rem;
+        padding: 0 1.5rem;
     }
 
     .table-responsive {
@@ -2484,11 +2512,8 @@ html {
     }
 
     .comparison-table td:before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--primary-color);
-        display: block;
-        margin-bottom: 0.25rem;
+        content: '';
+        display: none;
     }
 
     .comparison-table td:first-child {
@@ -2523,7 +2548,7 @@ html {
     }
 
     .comparativa .container {
-        padding: 0;
+        padding: 0 1.5rem;
         width: 100%;
         max-width: 100%;
     }
