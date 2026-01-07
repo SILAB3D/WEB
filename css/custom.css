@@ -2078,7 +2078,7 @@ html {
     }
 
     .contacto-card p {
-        font-size: 0.85rem;
+        font-size: 0.68rem;
         line-height: 1.3;
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -2856,11 +2856,12 @@ html {
     .modal-matching-circle {
         width: 60px;
         height: 60px;
-        margin: 0 auto 0.15rem;
+        margin: 0 auto 0.15rem !important;
     }
 
     .modal-matching-card h4 {
         font-size: 0.75rem;
+        margin-top: 0;
     }
 
     .modal-static-circle {
