@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const modalWhatsApp = document.getElementById('modalWhatsApp');
     const modalEmail = document.getElementById('modalEmail');
     const closeModal = document.querySelector('.contact-modal-close');
-    const buyButtons = document.querySelectorAll('.btn-comprar');
+    const buyButtons = document.querySelectorAll('.btn-comprar, .btn-action');
 
     // Función para generar URLs personalizadas
     function generateContactURLs(productName, category) {
