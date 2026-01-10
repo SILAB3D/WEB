@@ -1951,7 +1951,7 @@ html {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
-        margin: 0 auto;
+        margin: 2rem auto 0 auto;
         width: 100%;
         max-width: 380px;
         padding: 0 1rem;
@@ -1978,6 +1978,11 @@ html {
     .producto-image {
         font-size: 2.25rem;
         margin-bottom: 0.5rem;
+    }
+
+    .producto-image img {
+        width: 95px !important;
+        height: 95px !important;
     }
 
     .producto-card h3 {
@@ -2049,7 +2054,7 @@ html {
         flex-wrap: wrap;
         gap: 0.75rem;
         justify-content: center;
-        margin: 0 auto;
+        margin: 2rem auto 0 auto;
         width: 100%;
         max-width: 100%;
         padding: 0 0.5rem;
@@ -2062,11 +2067,22 @@ html {
         padding: 1.25rem 0.85rem;
         text-align: center;
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .contacto-icon {
         font-size: 2.25rem;
         margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .contacto-icon img {
+        width: 70px !important;
+        height: 70px !important;
     }
 
     .contacto-card h3 {
