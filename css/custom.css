@@ -845,6 +845,21 @@ html {
     min-width: 0;
 }
 
+.producto-card h3.subtitle {
+    font-size: 1.05rem;
+    line-height: 1.3;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 0.4rem;
+}
+
+.producto-card p.description {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
 .producto-image {
     font-size: 4rem;
     margin-bottom: 1rem;
