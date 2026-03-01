@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -41,11 +41,30 @@
             </ul>
         </div>
         <div class="mobile-menu" id="mobileMenu">
-            <a href="#" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">Calcula tu proyecto</a>
-            <a href="index.html" class="active">Inicio</a>
-            <a href="pages/productos.html">Productos</a>
-            <a href="pages/materiales.html">Materiales</a>
-            <a href="pages/resenas.html">Reseñas</a>
+            <div class="mobile-menu-header">
+                <img src="img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="mobile-menu-logo" width="130" height="130">
+            </div>
+            <nav class="mobile-menu-nav">
+                <a href="index.html" class="mobile-menu-link active">
+                    <span class="mobile-menu-icon">🏠</span>
+                    <span class="mobile-menu-label">Inicio</span>
+                </a>
+                <a href="pages/productos.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🛍️</span>
+                    <span class="mobile-menu-label">Productos</span>
+                </a>
+                <a href="pages/materiales.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🎨</span>
+                    <span class="mobile-menu-label">Materiales</span>
+                </a>
+                <a href="pages/resenas.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">⭐</span>
+                    <span class="mobile-menu-label">Reseñas</span>
+                </a>
+            </nav>
+            <div class="mobile-menu-footer">
+                <a href="#" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">✨ Calcula tu proyecto</a>
+            </div>
         </div>
     </nav>
 
@@ -53,7 +72,7 @@
     <section class="hero-main">
         <div class="hero-main-container">
             <div class="hero-main-image">
-                <img src="img/inicio.webp" alt="SILAB 3D Impresión 3D" class="hero-image-circular" width="500" height="500">
+                <img src="img/inicio2.webp" alt="SILAB 3D Impresión 3D" class="hero-image-circular" width="500" height="500">
             </div>
             <div class="hero-main-content">
                 <h1 class="hero-main-title">Innovación capa a capa</h1>
@@ -71,7 +90,7 @@
             
             <div class="productos-grid">
                 <a href="pages/productos.html#productos" onclick="sessionStorage.setItem('filterCategory', 'llaveros');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
-                    <div class="producto-image" style="display: flex; justify-content: center; align-items: center;"><img src="img/Llaveros.png" alt="Llaveros" width="128" height="128" style="max-width: 100%; height: auto;"></div>
+                    <div class="producto-image" style="display: flex; justify-content: center; align-items: center;"><img src="img/Llaveros.png" alt="Llaveros" width="100" height="100" style="max-width: 100%; height: auto;"></div>
                     <h3 class="subtitle">Llaveros</h3>
                     <p class="description">Personalizables con tus diseños favoritos</p>
                 </a>
@@ -89,6 +108,11 @@
                     <div class="producto-image" style="display: flex; justify-content: center; align-items: center;"><img src="img/Ilustraciones.png" alt="Ilustraciones" width="128" height="128" style="max-width: 100%; height: auto;"></div>
                     <h3 class="subtitle">Ilustraciones</h3>
                     <p class="description">Litofanías luminosas y cuadros geométricos</p>
+                </a>
+                <a href="pages/productos.html#productos" onclick="sessionStorage.setItem('filterCategory', 'eventos');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
+                    <div class="producto-image" style="display: flex; justify-content: center; align-items: center;"><img src="img/trophy_flat.svg" alt="Eventos" width="96" height="96" style="max-width: 100%; height: auto;"></div>
+                    <h3 class="subtitle">Eventos</h3>
+                    <p class="description">Trofeos, nombres personalizados y tartas</p>
                 </a>
                 <a href="pages/productos.html#productos" onclick="sessionStorage.setItem('filterCategory', 'medida');" class="producto-card container-light" style="text-decoration: none; color: inherit;">
                     <div class="producto-image" style="display: flex; justify-content: center; align-items: center;"><img src="img/Diseños a medida_emoji.png" alt="Diseños a medida" width="128" height="128" style="max-width: 100%; height: auto;"></div>
@@ -208,7 +232,7 @@
     <!-- Pop-up de Términos y Condiciones -->
     <div id="termsPopup" class="terms-popup">
         <div class="terms-popup-content">
-            <p>Al navegar en esta web, aceptas los <a href="pages/t�rminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
+            <p>Al navegar en esta web, aceptas los <a href="pages/terminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
             <div class="terms-popup-buttons">
                 <button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button>
                 <button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button>

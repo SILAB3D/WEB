@@ -15,7 +15,11 @@
         {"nombre": "Sunny Orange", "hex": "#ff7a29"},
         {"nombre": "Lemon Yellow", "hex": "#fbf9ac"},
         {"nombre": "Grass Green", "hex": "#0a9077"},
-        {"nombre": "Silk Yellow", "hex": "#f1c402"}
+        {"nombre": "Silk Yellow", "hex": "#f1c402"},
+        {"nombre": "Matte Red", "hex": "#a82c2f"},
+        {"nombre": "Cherry Red", "hex": "#f46974"},
+        {"nombre": "Beige", "hex": "#f0e0d6"},
+        {"nombre": "Marble (Mármol)", "hex": ["#d7d4cc", "#55524b"]}
       ]
     },
     {

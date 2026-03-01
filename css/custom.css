@@ -1,67 +1,9 @@
 @media (max-width: 1024px) {
-    .mobile-menu {
-        padding-top: 0;
-        border-top: none !important;
-        box-shadow: none !important;
-        margin-top: 0 !important;
-        outline: none !important;
-        background-clip: border-box !important;
-        border-width: 0 !important;
-        border-style: none !important;
-        background-position: top !important;
-    }
     .navbar {
         margin-bottom: 0 !important;
         border-bottom: none !important;
         box-shadow: none !important;
         padding-bottom: 0 !important;
-    }
-}
-@media (max-width: 1024px) {
-    .mobile-menu a {
-        box-shadow: 0 6px 20px rgba(0,0,0,0.32) !important;
-    }
-}
-@media (max-width: 1024px) {
-    .mobile-menu .btn-presupuesto-mobile {
-        text-align: center;
-        display: block;
-    }
-}
-@media (max-width: 1024px) {
-    .mobile-menu a:not(.btn-presupuesto-mobile) {
-        text-align: center;
-    }
-}
-@media (max-width: 1024px) {
-    .mobile-menu {
-        box-shadow: none;
-    }
-}
-@media (max-width: 1024px) {
-    .mobile-menu {
-        min-height: 100vh;
-        background: linear-gradient(to bottom, rgba(71, 12, 59, 1) 0%, rgba(71, 12, 59, 0) 100%);
-    }
-}
-@media (max-width: 1024px) {
-    .mobile-menu a:not(.btn-presupuesto-mobile) {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-    .mobile-menu .btn-presupuesto-mobile {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-}
-@media (max-width: 1024px) {
-    .mobile-menu a:not(.btn-presupuesto-mobile),
-    .mobile-menu a.active:not(.btn-presupuesto-mobile) {
-        background: linear-gradient(135deg, var(--lighter-accent) 0%, var(--accent-color) 40%, var(--secondary-color) 70%, var(--primary-color) 100%);
-        color: #fff;
-        font-weight: 800;
-        text-shadow: 0 4px 16px rgba(0,0,0,0.18);
-        opacity: 1;
     }
 }
 /* ============================================
@@ -364,7 +306,7 @@ html {
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 50;
+    z-index: 9999;
     background-color: #470C3B;
     color: white;
     padding: 0.25rem 0;
@@ -495,55 +437,137 @@ html {
 .mobile-menu {
     display: none;
     flex-direction: column;
-    background: linear-gradient(to bottom, rgba(71, 12, 59, 1) 0%, rgba(71, 12, 59, 0) 100%);
-    backdrop-filter: blur(0px);
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 0;
     left: 0;
     width: 100%;
-    z-index: 999;
-    border-top: none;
-    box-shadow: none;
-    margin-top: 0;
-}
-
-.mobile-menu a {
-    color: white;
-    text-decoration: none;
-    padding: 1rem 2rem;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: background 0.3s, box-shadow 0.3s;
-    border-radius: 1.5rem;
-    margin: 0.5rem 1rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-}
-
-.mobile-menu a:hover,
-.mobile-menu a.active {
-    background: rgba(255, 189, 179, 0.2);
-    color: #FFBDB3;
-}
-
-.mobile-menu .btn-presupuesto-mobile {
-    background: var(--accent-color);
-    color: white;
-    font-weight: 700;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.mobile-menu .btn-presupuesto-mobile:hover {
-    background: #d04b63;
+    height: 100vh;
+    background: linear-gradient(160deg, #2a0625 0%, #470C3B 40%, #7F2F56 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9998;
+    padding: 2rem 1.5rem 3rem;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .mobile-menu.active {
     display: flex;
+    animation: menuFadeIn 0.3s ease forwards;
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header del menú */
+.mobile-menu-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0 1.5rem;
+    border-bottom: 1px solid rgba(255, 189, 179, 0.2);
+    margin-bottom: 1.5rem;
+}
+
+.mobile-menu-logo {
+    height: 90px;
+    width: auto;
+    opacity: 0.95;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+}
+
+/* Navegación */
+.mobile-menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.mobile-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.15rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+    border: 1px solid transparent;
+    letter-spacing: 0.01em;
+}
+
+.mobile-menu-link:hover {
+    background: rgba(255, 189, 179, 0.12);
+    color: #FFBDB3;
+    border-color: rgba(255, 189, 179, 0.2);
+    transform: translateX(4px);
+}
+
+.mobile-menu-link.active {
+    background: rgba(192, 87, 111, 0.25);
+    color: #FFBDB3;
+    border-color: rgba(192, 87, 111, 0.4);
+}
+
+.mobile-menu-icon {
+    font-size: 1.4rem;
+    width: 2rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.mobile-menu-label {
+    flex: 1;
+}
+
+/* Footer del menú */
+.mobile-menu-footer {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 189, 179, 0.2);
+    margin-top: 1rem;
+}
+
+.btn-presupuesto-mobile {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #ffffff;
+    color: var(--primary-color) !important;
+    font-weight: 800 !important;
+    font-size: 1.05rem !important;
+    padding: 1rem 2rem !important;
+    border-radius: 9999px !important;
+    text-decoration: none !important;
+    border: none !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    letter-spacing: 0.02em;
+}
+
+.btn-presupuesto-mobile:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    background: #FFBDB3 !important;
+    color: var(--primary-color) !important;
 }
 
 /* Hero Main */
 .hero-main {
     background: #ffffff;
-    padding: 4rem 0 5rem 0;
+    padding: 5rem 0 7rem 0;
     position: relative;
 }
 
@@ -738,7 +762,7 @@ html {
 
 /* Productos Section */
 .productos-section {
-    padding: 3rem 0 3rem 0;
+    padding: 5rem 0 6rem 0;
     background: #ffffff;
     position: relative;
 }
@@ -805,26 +829,34 @@ html {
 
 .productos-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 1.5rem;
     margin-top: 2rem;
+    align-items: stretch;
+    justify-items: stretch;
 }
 
 /* Estilos de producto-card heredan de container-light */
 .producto-card {
-    padding: 2rem;
+    padding: 1.25rem;
     text-align: center;
     cursor: pointer;
+    box-sizing: border-box;
+    min-width: 0;
 }
 
 .producto-image {
     font-size: 4rem;
     margin-bottom: 1rem;
+    height: 128px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Materiales Preview */
 .materiales-preview {
-    padding: 3rem 0 6rem 0;
+    padding: 5rem 0 8rem 0;
     background: #ffffff;
     position: relative;
 }
@@ -893,7 +925,7 @@ html {
 
 /* Contacto Section */
 .contacto-section {
-    padding: 3rem 0;
+    padding: 5rem 0 6rem 0;
     background: #ffffff;
 }
 
@@ -1566,8 +1598,17 @@ html {
     font-size: 1.5rem;
     font-weight: 600;
     color: #470C3B;
-    margin-bottom: 2rem;
+    margin-bottom: 6rem;
 }
+
+.premium-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--accent-color);
+    border-radius: 1rem;
+}
+
+
 
 .colores-grid {
     display: flex;
@@ -1671,6 +1712,23 @@ html {
 .color-card:hover .color-circle {
     opacity: 0;
     transform: scale(0.5) rotate(45deg);
+}
+
+/* Sin animación hover en tarjetas premium */
+.premium-section .color-card {
+    cursor: default;
+}
+.premium-section .color-card:hover {
+    transform: none;
+}
+.premium-section .color-card:hover .color-model {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+    pointer-events: none;
+}
+.premium-section .color-card:hover .color-circle {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
 }
 
 .color-model::part(default-progress-bar) {
@@ -1946,9 +2004,9 @@ html {
     }
 
     /* Menú móvil con elementos más pequeños */
-    .mobile-menu a {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.85rem;
+    .mobile-menu-link {
+        padding: 0.85rem 1.25rem;
+        font-size: 1rem;
     }
 
     .btn-presupuesto {

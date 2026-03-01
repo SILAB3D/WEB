@@ -42,11 +42,30 @@
             </ul>
         </div>
         <div class="mobile-menu" id="mobileMenu">
-            <a href="#" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">Calcula tu proyecto</a>
-            <a href="../index.html">Inicio</a>
-            <a href="productos.html">Productos</a>
-            <a href="materiales.html" class="active">Materiales</a>
-            <a href="resenas.html">Reseñas</a>
+            <div class="mobile-menu-header">
+                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="mobile-menu-logo" width="130" height="130">
+            </div>
+            <nav class="mobile-menu-nav">
+                <a href="../index.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🏠</span>
+                    <span class="mobile-menu-label">Inicio</span>
+                </a>
+                <a href="productos.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🛍️</span>
+                    <span class="mobile-menu-label">Productos</span>
+                </a>
+                <a href="materiales.html" class="mobile-menu-link active">
+                    <span class="mobile-menu-icon">🎨</span>
+                    <span class="mobile-menu-label">Materiales</span>
+                </a>
+                <a href="resenas.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">⭐</span>
+                    <span class="mobile-menu-label">Reseñas</span>
+                </a>
+            </nav>
+            <div class="mobile-menu-footer">
+                <a href="#" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">✨ Calcula tu proyecto</a>
+            </div>
         </div>
     </nav>
 
@@ -77,7 +96,7 @@
                     <div class="feature-badge">🎯 Preciso</div>
                     <div class="feature-badge">🌱 Biodegradable</div>
                 </div>
-                <h3 class="colores-title">Colores disponibles</h3>
+                <h3 class="colores-title">Colores básicos</h3>
                 <div class="colores-grid">
                     <div class="color-card" data-color="#000000">
                         <div class="color-circle" style="background-color: #000000;"></div>
@@ -94,35 +113,25 @@
                         <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>White</h4>
                     </div>
-                    <div class="color-card" data-color="#cdae81">
-                        <div class="color-circle" style="background-color: #cdae81;"></div>
+                    <div class="color-card" data-color="#f0e0d6">
+                        <div class="color-circle" style="background-color: #f0e0d6;"></div>
                         <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
-                        <h4>Wood</h4>
+                        <h4>Beige</h4>
                     </div>
-                    <div class="color-card" data-color="#533421">
-                        <div class="color-circle" style="background-color: #533421;"></div>
+                    <div class="color-card" data-color="#a82c2f">
+                        <div class="color-circle" style="background-color: #a82c2f;"></div>
                         <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
-                        <h4>Coffee Brown</h4>
+                        <h4>Matte Red</h4>
+                    </div>
+                    <div class="color-card" data-color="#f46974">
+                        <div class="color-circle" style="background-color: #f46974;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Cherry Red</h4>
                     </div>
                     <div class="color-card" data-color="#f2a8b3">
                         <div class="color-circle" style="background-color: #f2a8b3;"></div>
                         <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Sakura Pink</h4>
-                    </div>
-                    <div class="color-card" data-color="#7358c3">
-                        <div class="color-circle" style="background-color: #7358c3;"></div>
-                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
-                        <h4>Lavender Purple</h4>
-                    </div>
-                    <div class="color-card" data-color="#63c9f0">
-                        <div class="color-circle" style="background-color: #63c9f0;"></div>
-                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
-                        <h4>Sky Blue</h4>
-                    </div>
-                    <div class="color-card" data-color="#6ed9ce">
-                        <div class="color-circle" style="background-color: #6ed9ce;"></div>
-                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
-                        <h4>Mint Green</h4>
                     </div>
                     <div class="color-card" data-color="#ff7a29">
                         <div class="color-circle" style="background-color: #ff7a29;"></div>
@@ -134,15 +143,50 @@
                         <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Lemon Yellow</h4>
                     </div>
+                    <div class="color-card" data-color="#cdae81">
+                        <div class="color-circle" style="background-color: #cdae81;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Wood</h4>
+                    </div>
+                    <div class="color-card" data-color="#533421">
+                        <div class="color-circle" style="background-color: #533421;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Coffee Brown</h4>
+                    </div>
                     <div class="color-card" data-color="#0a9077">
                         <div class="color-circle" style="background-color: #0a9077;"></div>
                         <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
                         <h4>Grass Green</h4>
                     </div>
-                    <div class="color-card" data-color="#f1c402">
-                        <div class="color-circle silk-shine" style="background-color: #f1c402;"></div>
+                    <div class="color-card" data-color="#6ed9ce">
+                        <div class="color-circle" style="background-color: #6ed9ce;"></div>
                         <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
-                        <h4>Silk Yellow</h4>
+                        <h4>Mint Green</h4>
+                    </div>
+                    <div class="color-card" data-color="#63c9f0">
+                        <div class="color-circle" style="background-color: #63c9f0;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Sky Blue</h4>
+                    </div>
+                    <div class="color-card" data-color="#7358c3">
+                        <div class="color-circle" style="background-color: #7358c3;"></div>
+                        <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                        <h4>Lavender Purple</h4>
+                    </div>
+                </div>
+                <div class="premium-section">
+                    <h3 class="colores-title">Colores Premium</h3>
+                    <div class="colores-grid">
+                        <div class="color-card" data-color="#f1c402">
+                            <div class="color-circle silk-shine" style="background-color: #f1c402;"></div>
+                            <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                            <h4>Silk Yellow</h4>
+                        </div>
+                        <div class="color-card" data-color="#d7d4cc">
+                            <div class="color-circle" style="background-image: url('../img/marble-texture.webp'); background-size: cover; background-position: center;"></div>
+                            <model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>
+                            <h4>Marble (Mármol)</h4>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -163,7 +207,7 @@
                     <div class="feature-badge">🛡️ Resistencia química</div>
                     <div class="feature-badge">🔨 Absorbe impactos</div>
                 </div>
-                <h3 class="colores-title">Colores disponibles</h3>
+                <h3 class="colores-title">Colores básicos</h3>
                 <div class="colores-grid">
                     <div class="color-card" data-color="#000000">
                         <div class="color-circle" style="background-color: #000000;"></div>
@@ -293,7 +337,11 @@
                 { name: 'Sunny Orange', color: '#ff7a29', hex: 'ff7a29' },
                 { name: 'Lemon Yellow', color: '#fbf9ac', hex: 'fbf9ac' },
                 { name: 'Grass Green', color: '#0a9077', hex: '0a9077' },
-                { name: 'Silk Yellow', color: '#f1c402', hex: 'f1c402' }
+                { name: 'Silk Yellow', color: '#f1c402', hex: 'f1c402', premium: true },
+                { name: 'Matte Red', color: '#a82c2f', hex: 'a82c2f' },
+                { name: 'Cherry Red', color: '#f46974', hex: 'f46974' },
+                { name: 'Beige', color: '#f0e0d6', hex: 'f0e0d6' },
+                { name: 'Marble', color: '#d7d4cc', hex: 'd7d4cc', premium: true }
             ],
             petg: [
                 { name: 'Black', color: '#000000', hex: '000000' },
@@ -394,7 +442,7 @@
         // Función para encontrar colores que combinan bien
         function findMatchingColors(selectedColor, allColorsList, count = 3) {
             const matches = allColorsList
-                .filter(c => c.color !== selectedColor)
+                .filter(c => c.color !== selectedColor && !c.premium)
                 .map(c => ({
                     ...c,
                     score: calculateColorMatch(selectedColor, c.color)
@@ -439,8 +487,9 @@
                     card.classList.remove('hovering');
                 });
 
-                // Abrir modal al hacer click
+                // Abrir modal al hacer click (no en colores premium)
                 card.addEventListener('click', () => {
+                    if (card.closest('.premium-section')) return;
                     // Determinar si es PLA o PETG según la sección
                     const section = card.closest('.material-category');
                     const isPLA = section.querySelector('.material-type-title').textContent.includes('PLA');

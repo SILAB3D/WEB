@@ -39,11 +39,30 @@
             </ul>
         </div>
         <div class="mobile-menu" id="mobileMenu">
-            <a href="#" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">Calcula tu proyecto</a>
-            <a href="../index.html">Inicio</a>
-            <a href="productos.html" class="active">Productos</a>
-            <a href="materiales.html">Materiales</a>
-            <a href="resenas.html">Reseñas</a>
+            <div class="mobile-menu-header">
+                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="mobile-menu-logo" width="130" height="130">
+            </div>
+            <nav class="mobile-menu-nav">
+                <a href="../index.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🏠</span>
+                    <span class="mobile-menu-label">Inicio</span>
+                </a>
+                <a href="productos.html" class="mobile-menu-link active">
+                    <span class="mobile-menu-icon">🛍️</span>
+                    <span class="mobile-menu-label">Productos</span>
+                </a>
+                <a href="materiales.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🎨</span>
+                    <span class="mobile-menu-label">Materiales</span>
+                </a>
+                <a href="resenas.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">⭐</span>
+                    <span class="mobile-menu-label">Reseñas</span>
+                </a>
+            </nav>
+            <div class="mobile-menu-footer">
+                <a href="#" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">✨ Calcula tu proyecto</a>
+            </div>
         </div>
     </nav>
 
@@ -71,67 +90,12 @@
                 <button class="filter-btn" data-filter="jarrones">Jarrones</button>
                 <button class="filter-btn" data-filter="figuras">Figuras</button>
                 <button class="filter-btn" data-filter="ilustracion">Ilustraciones</button>
+                <button class="filter-btn" data-filter="eventos">Eventos</button>
                 <button class="filter-btn" data-filter="medida">Diseños a medida</button>
             </div>
 
             <div class="products-grid">
-                <!-- Llaveros -->
-                <div class="product-card" data-category="llaveros">
-                    <div class="product-image">
-                        <img src="../img/Ilustración simple.webp" alt="Ilustración simple" width="240" height="240">
-                    </div>
-                    <h3 class="subtitle">Ilustración simple</h3>
-                    <p class="description">Llavero con tu ilustración favorita impresa en 3D</p>
-                    <div class="product-footer">
-                        <button class="btn-action" data-product="Ilustración simple" data-category="llavero">Solicitar</button>
-                    </div>
-                </div>
-
-                <div class="product-card" data-category="llaveros">
-                    <div class="product-image">
-                        <img src="../img/Código de Spotify.webp" alt="Código de Spotify" width="240" height="240">
-                    </div>
-                    <h3 class="subtitle">Código de Spotify</h3>
-                    <p class="description">Tu canción favorita en un llavero escaneable</p>
-                    <div class="product-footer">
-                        <button class="btn-action" data-product="Código de Spotify" data-category="llavero">Solicitar</button>
-                    </div>
-                </div>
-
-                <div class="product-card" data-category="llaveros">
-                    <div class="product-image">
-                        <img src="../img/Llaveros personalizados.webp" alt="Llavero personalizado" width="240" height="240">
-                    </div>
-                    <h3 class="subtitle">Llavero personalizado</h3>
-                    <p class="description">Diseña tu propio llavero único y original</p>
-                    <div class="product-footer">
-                        <button class="btn-action" data-product="Llavero personalizado" data-category="llavero">Solicitar</button>
-                    </div>
-                </div>
-
-                <!-- Jarrones -->
-                <div class="product-card" data-category="jarrones">
-                    <div class="product-image">
-                        <img src="../img/Geo.webp" alt="Geo" width="240" height="240">
-                    </div>
-                    <h3>Geo</h3>
-                    <p class="description">Diseño geométrico moderno y elegante</p>
-                    <div class="product-footer">
-                        <button class="btn-comprar" data-product="Geo" data-category="jarrón">Solicitar</button>
-                    </div>
-                </div>
-
-                <div class="product-card" data-category="jarrones">
-                    <div class="product-image">
-                        <img src="../img/Wave.webp" alt="Wave" width="240" height="240">
-                    </div>
-                    <h3>Wave</h3>
-                    <p class="description">Formas onduladas que evocan el movimiento del agua</p>
-                    <div class="product-footer">
-                        <button class="btn-comprar" data-product="Wave" data-category="jarrón">Solicitar</button>
-                    </div>
-                </div>
-
+                <!-- Aura -->
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
                         <img src="../img/Aura.webp" alt="Aura" width="240" height="240">
@@ -143,6 +107,7 @@
                     </div>
                 </div>
 
+                <!-- Classic -->
                 <div class="product-card" data-category="jarrones">
                     <div class="product-image">
                         <img src="../img/Classic.webp" alt="Classic" width="240" height="240">
@@ -154,75 +119,19 @@
                     </div>
                 </div>
 
-                <div class="product-card" data-category="jarrones">
+                <!-- Código de Spotify -->
+                <div class="product-card" data-category="llaveros">
                     <div class="product-image">
-                        <img src="../img/Romance.webp" alt="Romance" width="240" height="240">
+                        <img src="../img/Código de Spotify.webp" alt="Código de Spotify" width="240" height="240">
                     </div>
-                    <h3>Romance</h3>
-                    <p class="description">Delicados detalles para ambientes románticos</p>
+                    <h3 class="subtitle">Código de Spotify</h3>
+                    <p class="description">Tu canción favorita en un llavero escaneable</p>
                     <div class="product-footer">
-                        <button class="btn-comprar" data-product="Romance" data-category="jarrón">Solicitar</button>
+                        <button class="btn-action" data-product="Código de Spotify" data-category="llavero">Solicitar</button>
                     </div>
                 </div>
 
-                <div class="product-card" data-category="jarrones">
-                    <div class="product-image">
-                        <img src="../img/Straight.webp" alt="Straight" width="240" height="240">
-                    </div>
-                    <h3>Straight</h3>
-                    <p class="description">Líneas rectas y limpias para espacios contemporáneos</p>
-                    <div class="product-footer">
-                        <button class="btn-comprar" data-product="Straight" data-category="jarrón">Solicitar</button>
-                    </div>
-                </div>
-
-                <!-- Figuras -->
-                <div class="product-card" data-category="figuras">
-                    <div class="product-image">
-                        <img src="../img/Figura con diseño predefinido.webp" alt="Figuras - diseños predefinidos" width="240" height="300">
-                    </div>
-                    <h3>Figura con diseño predefinido</h3>
-                    <p class="description">Amplio catálogo de figuras prediseñadas listas para imprimir</p>
-                    <div class="product-footer">
-                        <button class="btn-comprar" data-product="Figura con diseño predefinido" data-category="figura">Solicitar</button>
-                    </div>
-                </div>
-
-                <div class="product-card" data-category="figuras">
-                    <div class="product-image">
-                        <img src="../img/Figura con diseño personalizado.webp" alt="Figuras - diseños personalizados" width="240" height="300">
-                    </div>
-                    <h3>Figura con diseño personalizado</h3>
-                    <p class="description">Diseñamos tu figura única según tu concepto e ideas</p>
-                    <div class="product-footer">
-                        <button class="btn-comprar" data-product="Figura con diseño personalizado" data-category="figura">Solicitar</button>
-                    </div>
-                </div>
-
-                <!-- Ilustración -->
-                <div class="product-card" data-category="ilustracion">
-                    <div class="product-image">
-                        <img src="../img/Litofanías individuales.webp" alt="Litofanías - individuales" width="240" height="300">
-                    </div>
-                    <h3>Litofanías individuales</h3>
-                    <p class="description">Convertimos tu foto favorita en una litofanía luminosa</p>
-                    <div class="product-footer">
-                        <button class="btn-comprar" data-product="Litofanías individuales" data-category="litofanía">Solicitar</button>
-                    </div>
-                </div>
-
-                <div class="product-card" data-category="ilustracion">
-                    <div class="product-image">
-                        <img src="../img/Litofanía estructural.webp" alt="Litofanías - estructural" width="240" height="300">
-                    </div>
-                    <h3>Litofanía estructural</h3>
-                    <p class="description">Conjunto de 4 imágenes con soporte de lámpara (no incluída)</p>
-                    <div class="product-footer">
-                        <button class="btn-comprar" data-product="Litofanía estructural" data-category="litofanía">Solicitar</button>
-                    </div>
-                </div>
-
-                <!-- Cuadros geométricos -->
+                <!-- Cuadro geométrico -->
                 <div class="product-card" data-category="ilustracion">
                     <div class="product-image">
                         <img src="../img/Cuadro geomético.webp" alt="Cuadro geométrico" width="240" height="300">
@@ -231,6 +140,18 @@
                     <p class="description">Arte minimalista para decorar tus espacios. Diseños geométricos de animales y figuras</p>
                     <div class="product-footer">
                         <button class="btn-comprar" data-product="Cuadro geométrico" data-category="cuadro decorativo">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Discos de vinilo -->
+                <div class="product-card" data-category="ilustracion">
+                    <div class="product-image">
+                        <img src="../img/disco-vinilo.webp" alt="Disco de vinilo decorativo" width="240" height="240">
+                    </div>
+                    <h3>Discos de vinilo</h3>
+                    <p class="description">Platos decorativos con efecto litofanía al trasluz.</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Disco de vinilo" data-category="decoración">Solicitar</button>
                     </div>
                 </div>
 
@@ -243,6 +164,186 @@
                     <p class="description">Diseñamos y damos forma a tus ideas. Objetos 3D personalizados según tus necesidades.</p>
                     <div class="product-footer">
                         <button class="btn-comprar" data-product="Diseños a medida" data-category="diseño personalizado">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Figura con diseño personalizado -->
+                <div class="product-card" data-category="figuras">
+                    <div class="product-image">
+                        <img src="../img/Figura con diseño personalizado.webp" alt="Figuras - diseños personalizados" width="240" height="300">
+                    </div>
+                    <h3>Figura con diseño personalizado</h3>
+                    <p class="description">Diseñamos tu figura única según tu concepto e ideas</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Figura con diseño personalizado" data-category="figura">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Figura con diseño predefinido -->
+                <div class="product-card" data-category="figuras">
+                    <div class="product-image">
+                        <img src="../img/Figura con diseño predefinido.webp" alt="Figuras - diseños predefinidos" width="240" height="300">
+                    </div>
+                    <h3>Figura con diseño predefinido</h3>
+                    <p class="description">Amplio catálogo de figuras prediseñadas listas para imprimir</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Figura con diseño predefinido" data-category="figura">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Geo -->
+                <div class="product-card" data-category="jarrones">
+                    <div class="product-image">
+                        <img src="../img/Geo.webp" alt="Geo" width="240" height="240">
+                    </div>
+                    <h3>Geo</h3>
+                    <p class="description">Diseño geométrico moderno y elegante</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Geo" data-category="jarrón">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Ilustración simple -->
+                <div class="product-card" data-category="llaveros">
+                    <div class="product-image">
+                        <img src="../img/Ilustración simple.webp" alt="Ilustración simple" width="240" height="240">
+                    </div>
+                    <h3 class="subtitle">Ilustración simple</h3>
+                    <p class="description">Llavero con tu ilustración favorita impresa en 3D</p>
+                    <div class="product-footer">
+                        <button class="btn-action" data-product="Ilustración simple" data-category="llavero">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Láminas bicolor -->
+                <div class="product-card" data-category="ilustracion">
+                    <div class="product-image">
+                        <img src="../img/lamina-bicolor.webp" alt="Lámina bicolor" width="240" height="240">
+                    </div>
+                    <h3>Láminas bicolor</h3>
+                    <p class="description">Ilustraciones en dos colores para decorar tus espacios.</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Lámina bicolor" data-category="ilustración">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Litofanía estructural -->
+                <div class="product-card" data-category="ilustracion">
+                    <div class="product-image">
+                        <img src="../img/Litofanía estructural.webp" alt="Litofanías - estructural" width="240" height="300">
+                    </div>
+                    <h3>Litofanía estructural</h3>
+                    <p class="description">Conjunto de 4 imágenes con soporte de lámpara (no incluída)</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Litofanía estructural" data-category="litofanía">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Litofanías individuales -->
+                <div class="product-card" data-category="ilustracion">
+                    <div class="product-image">
+                        <img src="../img/Litofanías individuales.webp" alt="Litofanías - individuales" width="240" height="300">
+                    </div>
+                    <h3>Litofanías individuales</h3>
+                    <p class="description">Convertimos tu foto favorita en una litofanía luminosa</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Litofanías individuales" data-category="litofanía">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Llavero personalizado -->
+                <div class="product-card" data-category="llaveros">
+                    <div class="product-image">
+                        <img src="../img/Llaveros personalizados.webp" alt="Llavero personalizado" width="240" height="240">
+                    </div>
+                    <h3 class="subtitle">Llavero personalizado</h3>
+                    <p class="description">Diseña tu propio llavero único y original</p>
+                    <div class="product-footer">
+                        <button class="btn-action" data-product="Llavero personalizado" data-category="llavero">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Nombres personalizados -->
+                <div class="product-card" data-category="eventos">
+                    <div class="product-image">
+                        <img src="../img/nombres-personalizados.webp" alt="Nombre personalizado" width="240" height="240">
+                    </div>
+                    <h3>Nombres personalizados</h3>
+                    <p class="description">Letras y nombres en 3D para cualquier espacio o evento.</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Nombre personalizado" data-category="diseño personalizado">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Romance -->
+                <div class="product-card" data-category="jarrones">
+                    <div class="product-image">
+                        <img src="../img/Romance.webp" alt="Romance" width="240" height="240">
+                    </div>
+                    <h3>Romance</h3>
+                    <p class="description">Delicados detalles para ambientes románticos</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Romance" data-category="jarrón">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Skylines -->
+                <div class="product-card" data-category="ilustracion">
+                    <div class="product-image">
+                        <img src="../img/skyline.webp" alt="Skyline" width="240" height="240">
+                    </div>
+                    <h3>Skylines</h3>
+                    <p class="description">Siluetas de ciudades para estantes o paredes.</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Skyline" data-category="decoración">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Straight -->
+                <div class="product-card" data-category="jarrones">
+                    <div class="product-image">
+                        <img src="../img/Straight.webp" alt="Straight" width="240" height="240">
+                    </div>
+                    <h3>Straight</h3>
+                    <p class="description">Líneas rectas y limpias para espacios contemporáneos</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Straight" data-category="jarrón">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Tartas -->
+                <div class="product-card" data-category="eventos">
+                    <div class="product-image">
+                        <img src="../img/tarta.webp" alt="Tarta decorativa" width="240" height="240">
+                    </div>
+                    <h3>Tartas</h3>
+                    <p class="description">Tartas decorativas en 3D para bodas, cumpleaños y más.</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Tarta" data-category="celebración">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Trofeos y medallas -->
+                <div class="product-card" data-category="eventos">
+                    <div class="product-image">
+                        <img src="../img/trofeos.webp" alt="Trofeos y medallas" width="240" height="240">
+                    </div>
+                    <h3>Trofeos y medallas</h3>
+                    <p class="description">Premios personalizables con nombre, fecha o logotipo.</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Trofeos y medallas" data-category="trofeo">Solicitar</button>
+                    </div>
+                </div>
+
+                <!-- Wave -->
+                <div class="product-card" data-category="jarrones">
+                    <div class="product-image">
+                        <img src="../img/Wave.webp" alt="Wave" width="240" height="240">
+                    </div>
+                    <h3>Wave</h3>
+                    <p class="description">Formas onduladas que evocan el movimiento del agua</p>
+                    <div class="product-footer">
+                        <button class="btn-comprar" data-product="Wave" data-category="jarrón">Solicitar</button>
                     </div>
                 </div>
             </div>
