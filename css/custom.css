@@ -1,4 +1,4 @@
-@media (max-width: 1024px) {
+﻿@media (max-width: 1024px) {
     .navbar {
         margin-bottom: 0 !important;
         border-bottom: none !important;
@@ -7,7 +7,7 @@
     }
 }
 /* ============================================
-   SILAB 3D - SISTEMA DE DISEÑO UNIFICADO
+   SILAB 3D - SISTEMA DE DISE├æO UNIFICADO
    ============================================ */
 
 /* === VARIABLES GLOBALES === */
@@ -22,11 +22,11 @@
     --light-color: #f8f9fa;
     --text-color: #3c4043;
     
-    /* Tipografía unificada */
-    --font-title: 2.5rem;           /* Títulos principales (h1, h2) */
-    --font-subtitle: 1.5rem;        /* Subtítulos (h3) */
+    /* Tipograf├¡a unificada */
+    --font-title: 2.5rem;           /* T├¡tulos principales (h1, h2) */
+    --font-subtitle: 1.5rem;        /* Subt├¡tulos (h3) */
     --font-body: 1.1rem;            /* Texto descriptivo */
-    --font-small: 0.95rem;          /* Texto pequeño */
+    --font-small: 0.95rem;          /* Texto peque├▒o */
     
     --weight-bold: 700;
     --weight-semibold: 600;
@@ -41,7 +41,7 @@
     --spacing-xl: 3rem;
 }
 
-/* === TIPOGRAFÍA BASE === */
+/* === TIPOGRAF├ìA BASE === */
 body {
     font-family: 'Montserrat', sans-serif;
     background-color: #ffffff;
@@ -52,7 +52,7 @@ body {
     padding-top: 160px; /* Compensar navbar fixed */
 }
 
-/* Títulos unificados */
+/* T├¡tulos unificados */
 h1, .title-primary {
     font-size: var(--font-title);
     font-weight: var(--weight-bold);
@@ -77,7 +77,7 @@ h3, .subtitle {
     margin-bottom: var(--spacing-sm);
 }
 
-/* Descripciones y párrafos */
+/* Descripciones y p├írrafos */
 p, .description {
     font-size: var(--font-body);
     color: #374151;
@@ -91,7 +91,7 @@ p, .description {
 
 /* === SISTEMA DE BOTONES UNIFICADO === */
 
-/* Botón Primario - Fondo color principal */
+/* Bot├│n Primario - Fondo color principal */
 .btn-primary, .cta-button {
     display: inline-block;
     background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
@@ -113,7 +113,7 @@ p, .description {
     box-shadow: 0 10px 20px rgba(192, 87, 111, 0.4);
 }
 
-/* Botón Secundario - Fondo dorado claro */
+/* Bot├│n Secundario - Fondo dorado claro */
 .btn-secondary {
     display: inline-block;
     background: linear-gradient(135deg, var(--light-accent) 0%, #f5d89f 100%);
@@ -136,7 +136,7 @@ p, .description {
     color: white;
 }
 
-/* Botón de acción (solicitar, comprar, etc.) */
+/* Bot├│n de acci├│n (solicitar, comprar, etc.) */
 .btn-comprar, .btn-action {
     background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
     color: white;
@@ -161,7 +161,7 @@ p, .description {
     box-shadow: 0 8px 16px rgba(192, 87, 111, 0.4);
 }
 
-/* Botón presupuesto navbar */
+/* Bot├│n presupuesto navbar */
 .btn-presupuesto {
     background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
     color: white;
@@ -261,7 +261,7 @@ p, .description {
     font-weight: var(--weight-regular);
 }
 
-/* Contenedor blanco - Para reseñas y contenido limpio */
+/* Contenedor blanco - Para rese├▒as y contenido limpio */
 .container-white, .material-container {
     background-color: white;
     padding: var(--spacing-xl);
@@ -470,7 +470,7 @@ html {
     }
 }
 
-/* Header del menú */
+/* Header del men├║ */
 .mobile-menu-header {
     display: flex;
     justify-content: center;
@@ -487,7 +487,7 @@ html {
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
 }
 
-/* Navegación */
+/* Navegaci├│n */
 .mobile-menu-nav {
     display: flex;
     flex-direction: column;
@@ -537,7 +537,7 @@ html {
     flex: 1;
 }
 
-/* Footer del menú */
+/* Footer del men├║ */
 .mobile-menu-footer {
     padding-top: 2rem;
     border-top: 1px solid rgba(255, 189, 179, 0.2);
@@ -568,7 +568,7 @@ html {
     color: var(--primary-color) !important;
 }
 
-/* Ajuste para pantallas de poca altura (móviles con barra del navegador visible) */
+/* Ajuste para pantallas de poca altura (m├│viles con barra del navegador visible) */
 @media (max-height: 680px) {
     .mobile-menu {
         padding: 1rem 1.5rem;
@@ -615,13 +615,13 @@ html {
     z-index: 10;
 }
 
-/* Ocultar separadores en página de reseñas */
+/* Ocultar separadores en p├ígina de rese├▒as */
 .page-resenas .hero-main::after,
 .page-resenas .productos-section::after {
     display: none;
 }
 
-/* Separadores personalizados para página de reseñas */
+/* Separadores personalizados para p├ígina de rese├▒as */
 .separator-resenas {
     position: relative;
     height: 60px;
@@ -651,7 +651,7 @@ html {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3C!-- Filamento --%3E%3Cpath d='M 0 30 L 240 30 T 400 30 T 600 30 T 800 30 T 1000 30 T 1200 30 Q 1260 35 1315 30' stroke='%23C0576F' stroke-width='2' fill='none' opacity='0.4'/%3E%3Cpath d='M 0 30 L 240 30 T 400 30 T 600 30 T 800 30 T 1000 30 T 1200 30 Q 1260 35 1315 30' stroke='%237F2F56' stroke-width='1' fill='none' opacity='0.3' transform='translate(0, 2)'/%3E%3C!-- Bobina a la derecha --%3E%3Ccircle cx='1340' cy='30' r='25' fill='%23470C3B' opacity='0.3'/%3E%3Ccircle cx='1340' cy='30' r='18' fill='none' stroke='%237F2F56' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='1340' cy='30' r='12' fill='none' stroke='%23C0576F' stroke-width='1.5' opacity='0.5'/%3E%3Ccircle cx='1340' cy='30' r='6' fill='%23ffffff'/%3E%3C/svg%3E");
 }
 
-/* Pop-up de Términos y Condiciones */
+/* Pop-up de T├®rminos y Condiciones */
 .terms-popup {
     position: fixed;
     bottom: 20px;
@@ -811,7 +811,7 @@ html {
     z-index: 10;
 }
 
-/* Títulos de sección unificados */
+/* T├¡tulos de secci├│n unificados */
 .productos-section h2,
 .materiales-preview h2,
 .contacto-section h2,
@@ -855,7 +855,7 @@ html {
     line-height: 1.6;
 }
 
-/* Eliminamos las definiciones duplicadas de títulos */
+/* Eliminamos las definiciones duplicadas de t├¡tulos */
 
 .productos-grid {
     display: grid;
@@ -920,7 +920,7 @@ html {
     z-index: 10;
 }
 
-/* materiales-preview h2 ya definido en títulos de sección unificados */
+/* materiales-preview h2 ya definido en t├¡tulos de secci├│n unificados */
 
 .materiales-preview-grid {
     display: flex;
@@ -941,7 +941,7 @@ html {
     cursor: pointer;
 }
 
-/* PLA Card - Tonos cálidos - usa gradiente de container-light por defecto */
+/* PLA Card - Tonos c├ílidos - usa gradiente de container-light por defecto */
 .pla-card {
     /* Hereda estilos de container-light */
 }
@@ -1335,7 +1335,7 @@ html {
 
 /* btn-comprar ya definido en sistema de botones unificado */
 
-/* Product card large para diseños a medida */
+/* Product card large para dise├▒os a medida */
 .product-card-large {
     grid-column: span 3;
     max-width: 600px;
@@ -1370,7 +1370,7 @@ html {
 }
 
 .requirements-list li::before {
-    content: "✓";
+    content: "Ô£ô";
     position: absolute;
     left: 0;
     color: #C0576F;
@@ -1710,8 +1710,8 @@ html {
     transition: all 0.5s ease;
 }
 
-/* Hover eliminado: ya no transformamos a diamante, solo ocultamos el círculo 
-   y mostramos el modelo 3D - ver reglas más abajo */
+/* Hover eliminado: ya no transformamos a diamante, solo ocultamos el c├¡rculo 
+   y mostramos el modelo 3D - ver reglas m├ís abajo */
 
 .color-card h4 {
     color: #1f2937;
@@ -1753,13 +1753,13 @@ html {
     transform: translateX(-50%) scale(1);
 }
 
-/* Al hacer hover, ocultar el círculo de color */
+/* Al hacer hover, ocultar el c├¡rculo de color */
 .color-card:hover .color-circle {
     opacity: 0;
     transform: scale(0.5) rotate(45deg);
 }
 
-/* Sin animación hover en tarjetas premium */
+/* Sin animaci├│n hover en tarjetas premium */
 .premium-section .color-card {
     cursor: default;
 }
@@ -1970,12 +1970,12 @@ html {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    /* Navbar como franja de contenido en móvil */
+    /* Navbar como franja de contenido en m├│vil */
     .navbar {
         position: relative;
     }
 
-    /* Eliminar padding del body en móvil */
+    /* Eliminar padding del body en m├│vil */
     body {
         padding-top: 0;
     }
@@ -2004,7 +2004,7 @@ html {
     }
 
     .navbar-left {
-        display: none; /* Ocultar en móvil, el botón está en el menú hamburguesa */
+        display: none; /* Ocultar en m├│vil, el bot├│n est├í en el men├║ hamburguesa */
     }
 
     .nav-links {
@@ -2035,10 +2035,10 @@ html {
         text-align: center;
         justify-content: center;
         font-size: 0.8rem;
-        display: none; /* Ocultar en móvil */
+        display: none; /* Ocultar en m├│vil */
     }
 
-    /* Mostrar hamburger menu en móvil */
+    /* Mostrar hamburger menu en m├│vil */
     .hamburger-menu {
         display: flex;
         position: relative;
@@ -2048,7 +2048,7 @@ html {
         margin: 0.5rem auto 0;
     }
 
-    /* Menú móvil con elementos más pequeños */
+    /* Men├║ m├│vil con elementos m├ís peque├▒os */
     .mobile-menu-link {
         padding: 0.85rem 1.25rem;
         font-size: 1rem;
@@ -2127,7 +2127,7 @@ html {
         margin-right: auto;
     }
 
-    /* Grid de productos - 2 por fila en móvil */
+    /* Grid de productos - 2 por fila en m├│vil */
     .productos-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -2189,7 +2189,7 @@ html {
         overflow-wrap: break-word;
     }
 
-    /* Grid de materiales preview - 2 por fila en móvil */
+    /* Grid de materiales preview - 2 por fila en m├│vil */
     .materiales-preview-grid {
         display: flex;
         flex-wrap: wrap;
@@ -2359,7 +2359,7 @@ html {
         padding: 0.4rem 0.8rem;
     }
 
-    /* Colores grid - 3 por fila para mejor visualización */
+    /* Colores grid - 3 por fila para mejor visualizaci├│n */
     .colores-title {
         margin-bottom: 0.75rem;
     }
@@ -2516,7 +2516,7 @@ html {
         content: '';
     }
 
-    /* Contenedores de reseñas */
+    /* Contenedores de rese├▒as */
     .instagram-feed-wrapper,
     .google-reviews-container {
         padding: 2rem 1.5rem;
@@ -2525,7 +2525,7 @@ html {
 }
 
 @media (max-width: 480px) {
-    /* Centrado general en móviles pequeños */
+    /* Centrado general en m├│viles peque├▒os */
     .container {
         padding: 0 25px;
         text-align: center;
@@ -2583,7 +2583,7 @@ html {
         text-align: center;
     }
 
-    /* Mantener 2 columnas en móviles pequeños */
+    /* Mantener 2 columnas en m├│viles peque├▒os */
     .productos-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -3081,7 +3081,7 @@ html {
     }
 }
 
-/* Modal de Método de Contacto */
+/* Modal de M├®todo de Contacto */
 .contact-modal {
     display: none;
     position: fixed;
@@ -3204,7 +3204,7 @@ html {
     font-size: 1.1rem;
 }
 
-/* Sección Instagram */
+/* Secci├│n Instagram */
 .instagram-section {
     padding: 4rem 0;
     background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
@@ -3297,7 +3297,7 @@ html {
     margin-top: 3rem;
 }
 
-/* Sección Reseñas */
+/* Secci├│n Rese├▒as */
 .resenas-section {
     padding: 4rem 0;
     background: white;
@@ -3432,7 +3432,7 @@ html {
 .quote-modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 10000;
     left: 0;
     top: 0;
     width: 100%;
@@ -3588,7 +3588,7 @@ html {
 
 /* Tablets y dispositivos medianos (max-width: 768px) */
 @media (max-width: 768px) {
-    /* Navegación */
+    /* Navegaci├│n */
     .navbar-container {
         flex-direction: column;
         gap: 1rem;
@@ -3864,7 +3864,7 @@ html {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 528 60'%3E%3C!-- Filamento --%3E%3Cpath d='M 0 30 L 100 30 T 260 30 Q 360 35 472 30' stroke='%23C0576F' stroke-width='2.5' fill='none' opacity='0.4'/%3E%3Cpath d='M 0 30 L 100 30 T 260 30 Q 360 35 472 30' stroke='%237F2F56' stroke-width='1.5' fill='none' opacity='0.3' transform='translate(0, 2)'/%3E%3C!-- Bobina a la derecha --%3E%3Ccircle cx='500' cy='30' r='28' fill='%23470C3B' opacity='0.3'/%3E%3Ccircle cx='500' cy='30' r='21' fill='none' stroke='%237F2F56' stroke-width='2.5' opacity='0.5'/%3E%3Ccircle cx='500' cy='30' r='12' fill='none' stroke='%23C0576F' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='500' cy='30' r='7' fill='%23ffffff'/%3E%3C/svg%3E");
     }
 
-    /* Contenedores de reseñas */
+    /* Contenedores de rese├▒as */
     .instagram-feed-wrapper,
     .google-reviews-container {
         max-width: 100%;
@@ -3902,7 +3902,7 @@ html {
         right: 1rem;
     }
 
-    /* Pop-up términos */
+    /* Pop-up t├®rminos */
     .terms-popup {
         width: 90%;
         max-width: 340px;
@@ -3951,7 +3951,7 @@ html {
         display: none;
     }
 
-    /* Ocultar separadores decorativos en móvil */
+    /* Ocultar separadores decorativos en m├│vil */
     .section-separator {
         display: none !important;
     }
@@ -3974,7 +3974,7 @@ html {
         display: none !important;
     }
 
-    /* Títulos de sección */
+    /* T├¡tulos de secci├│n */
     .productos-section h2,
     .materiales-preview h2,
     .contacto-section h2 {
@@ -3982,9 +3982,9 @@ html {
     }
 }
 
-/* Móviles pequeños (max-width: 480px) */
+/* M├│viles peque├▒os (max-width: 480px) */
 @media (max-width: 480px) {
-    /* Navegación */
+    /* Navegaci├│n */
     .navbar {
         padding: 0.75rem 0;
     }
@@ -4147,7 +4147,7 @@ html {
         font-size: 2.5rem;
     }
 
-    /* Separadores más pequeños */
+    /* Separadores m├ís peque├▒os */
     .separator-resenas {
         height: 60px;
         margin: 1.5rem 0;
@@ -4205,7 +4205,7 @@ html {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 528 60'%3E%3C!-- Filamento --%3E%3Cpath d='M 0 30 L 100 30 T 260 30 Q 360 35 472 30' stroke='%23C0576F' stroke-width='2.5' fill='none' opacity='0.4'/%3E%3Cpath d='M 0 30 L 100 30 T 260 30 Q 360 35 472 30' stroke='%237F2F56' stroke-width='1.5' fill='none' opacity='0.3' transform='translate(0, 2)'/%3E%3C!-- Bobina a la derecha --%3E%3Ccircle cx='500' cy='30' r='28' fill='%23470C3B' opacity='0.3'/%3E%3Ccircle cx='500' cy='30' r='21' fill='none' stroke='%237F2F56' stroke-width='2.5' opacity='0.5'/%3E%3Ccircle cx='500' cy='30' r='12' fill='none' stroke='%23C0576F' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='500' cy='30' r='7' fill='%23ffffff'/%3E%3C/svg%3E");
     }
 
-    /* Contenedores de reseñas */
+    /* Contenedores de rese├▒as */
     .instagram-feed-wrapper,
     .google-reviews-container {
         padding: 1.5rem 1rem;
@@ -4277,7 +4277,7 @@ html {
         font-size: 2.5rem;
     }
 
-    /* Ocultar opción email en móvil */
+    /* Ocultar opci├│n email en m├│vil */
     #quoteModalEmail {
         display: none;
     }
@@ -4288,7 +4288,7 @@ html {
         margin: 0 auto;
     }
 
-    /* Pop-up términos */
+    /* Pop-up t├®rminos */
     .terms-popup {
         width: calc(100% - 40px);
         max-width: 340px;
@@ -4313,7 +4313,7 @@ html {
         display: none;
     }
 
-    /* Ocultar separadores decorativos en móvil */
+    /* Ocultar separadores decorativos en m├│vil */
     .section-separator {
         display: none !important;
     }
@@ -4336,7 +4336,7 @@ html {
         display: none !important;
     }
 
-    /* Títulos de sección */
+    /* T├¡tulos de secci├│n */
     .productos-section h2,
     .materiales-preview h2,
     .contacto-section h2 {
@@ -4354,7 +4354,7 @@ html {
         font-size: 0.85rem;
     }
 
-    /* Página de términos */
+    /* P├ígina de t├®rminos */
     .terminos-section .container > div {
         padding: 2rem 1.5rem !important;
         border-radius: 1rem !important;
@@ -4388,7 +4388,7 @@ html {
     }
 }
 
-/* Móviles muy pequeños (max-width: 360px) */
+/* M├│viles muy peque├▒os (max-width: 360px) */
 @media (max-width: 360px) {
     .hero-main::after,
     .productos-section::after,
