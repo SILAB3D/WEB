@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const modal = document.getElementById('contactModal');
     const modalWhatsApp = document.getElementById('modalWhatsApp');
     const modalEmail = document.getElementById('modalEmail');
-    const closeModal = document.querySelector('.contact-modal-close');
+    const closeModal = document.querySelector('#contactModal .contact-modal-close');
     const buyButtons = document.querySelectorAll('.btn-comprar, .btn-action');
 
     // Función para generar URLs personalizadas
@@ -155,12 +155,32 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Cerrar modal con tecla Escape
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
-            modal.classList.remove('active');
+        if (e.key === 'Escape') {
+            if (modal && modal.classList.contains('active')) modal.classList.remove('active');
+            if (libraryModal && libraryModal.classList.contains('active')) libraryModal.classList.remove('active');
         }
     });
 
-    // Sistema de formulario de presupuesto
+    // Modal Bibliotecas 3D
+    const libraryModal = document.getElementById('libraryModal');
+    const btnExplorar = document.getElementById('btnExplorarBibliotecas');
+    const libraryModalClose = document.getElementById('libraryModalClose');
+
+    if (btnExplorar && libraryModal) {
+        btnExplorar.addEventListener('click', function() {
+            libraryModal.classList.add('active');
+        });
+    }
+    if (libraryModalClose) {
+        libraryModalClose.addEventListener('click', function() {
+            libraryModal.classList.remove('active');
+        });
+    }
+    if (libraryModal) {
+        libraryModal.addEventListener('click', function(e) {
+            if (e.target === libraryModal) libraryModal.classList.remove('active');
+        });
+    }
     const quoteFormModal = document.getElementById('quoteFormModal');
     const quoteContactModal = document.getElementById('quoteContactModal');
     const quoteForm = document.getElementById('quoteForm');
