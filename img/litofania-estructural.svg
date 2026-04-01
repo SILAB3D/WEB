@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="Litofanía estructural">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#F8F9FA"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <radialGradient id="blob1" cx="30%" cy="22%" r="55%">
+      <stop offset="0" stop-color="#7F2F56" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#7F2F56" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob2" cx="85%" cy="35%" r="60%">
+      <stop offset="0" stop-color="#E3B679" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#E3B679" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob3" cx="60%" cy="90%" r="65%">
+      <stop offset="0" stop-color="#C0576F" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#C0576F" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="table" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#F1F5F9"/>
+    </linearGradient>
+
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7F2F56"/>
+      <stop offset="0.55" stop-color="#C0576F"/>
+      <stop offset="1" stop-color="#E3B679"/>
+    </linearGradient>
+
+    <radialGradient id="glow" cx="50%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#470C3B" flood-opacity="0.20"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- Minimal colorful studio background -->
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect width="800" height="800" fill="url(#blob1)"/>
+  <rect width="800" height="800" fill="url(#blob2)"/>
+  <rect width="800" height="800" fill="url(#blob3)"/>
+
+  <!-- Table / surface -->
+  <path d="M0 570 C150 520 330 510 520 540 C650 560 740 595 800 620 L800 800 L0 800 Z" fill="url(#table)"/>
+
+  <!-- Structural litophany set: 4 frames + lamp stand -->
+  <g filter="url(#shadow)">
+    <ellipse cx="410" cy="620" rx="250" ry="64" fill="#111827" opacity="0.10"/>
+
+    <g filter="url(#soft)">
+      <!-- lamp base -->
+      <path d="M305 635 C320 595 345 572 380 560 H510 C545 572 570 595 585 635 C600 682 575 710 535 720 H355 C315 710 290 682 305 635 Z" fill="#ffffff"/>
+      <path d="M335 630 C345 608 360 595 385 588 H505 C530 595 545 608 555 630" fill="none" stroke="#E5E7EB" stroke-width="6" opacity="0.9"/>
+
+      <!-- 2x2 panel grid -->
+      <g transform="translate(0,0)">
+        <rect x="265" y="240" width="140" height="150" rx="18" fill="url(#frame)"/>
+        <rect x="285" y="260" width="100" height="110" rx="14" fill="#ffffff" opacity="0.9"/>
+        <rect x="285" y="260" width="100" height="110" rx="14" fill="url(#glow)" opacity="0.55"/>
+
+        <rect x="425" y="240" width="140" height="150" rx="18" fill="url(#frame)"/>
+        <rect x="445" y="260" width="100" height="110" rx="14" fill="#ffffff" opacity="0.9"/>
+        <rect x="445" y="260" width="100" height="110" rx="14" fill="url(#glow)" opacity="0.55"/>
+
+        <rect x="265" y="405" width="140" height="150" rx="18" fill="url(#frame)"/>
+        <rect x="285" y="425" width="100" height="110" rx="14" fill="#ffffff" opacity="0.9"/>
+        <rect x="285" y="425" width="100" height="110" rx="14" fill="url(#glow)" opacity="0.55"/>
+
+        <rect x="425" y="405" width="140" height="150" rx="18" fill="url(#frame)"/>
+        <rect x="445" y="425" width="100" height="110" rx="14" fill="#ffffff" opacity="0.9"/>
+        <rect x="445" y="425" width="100" height="110" rx="14" fill="url(#glow)" opacity="0.55"/>
+      </g>
+    </g>
+  </g>
+</svg>

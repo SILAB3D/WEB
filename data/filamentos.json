@@ -1,0 +1,36 @@
+{
+  "filamentos": [
+    {
+      "nombre": "PLA",
+      "colores": [
+        {"nombre": "Black", "hex": "#000000"},
+        {"nombre": "Silver", "hex": "#bbbec3"},
+        {"nombre": "White", "hex": "#ffffff"},
+        {"nombre": "Wood", "hex": "#cdae81"},
+        {"nombre": "Coffee Brown", "hex": "#533421"},
+        {"nombre": "Sakura Pink", "hex": "#f2a8b3"},
+        {"nombre": "Lavender Purple", "hex": "#7358c3"},
+        {"nombre": "Sky Blue", "hex": "#63c9f0"},
+        {"nombre": "Mint Green", "hex": "#6ed9ce"},
+        {"nombre": "Sunny Orange", "hex": "#ff7a29"},
+        {"nombre": "Lemon Yellow", "hex": "#fbf9ac"},
+        {"nombre": "Grass Green", "hex": "#0a9077"},
+        {"nombre": "Olive Green", "hex": "#5a6d3d"},
+        {"nombre": "Silk Yellow", "hex": "#f1c402"},
+        {"nombre": "Matte Red", "hex": "#a82c2f"},
+        {"nombre": "Cherry Red", "hex": "#f46974"},
+        {"nombre": "Beige", "hex": "#f0e0d6"},
+        {"nombre": "Marble (Mármol)", "hex": ["#d7d4cc", "#55524b"]}
+      ]
+    },
+    {
+      "nombre": "PETG",
+      "colores": [
+        {"nombre": "Black", "hex": "#000000"},
+        {"nombre": "White", "hex": "#ffffff"},
+        {"nombre": "Blue", "hex": "#1800ac"},
+        {"nombre": "Red", "hex": "#ff3131"}
+      ]
+    }
+  ]
+}

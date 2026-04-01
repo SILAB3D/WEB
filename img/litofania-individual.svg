@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="Litofanías individuales">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#F8F9FA"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <radialGradient id="blob1" cx="22%" cy="28%" r="55%">
+      <stop offset="0" stop-color="#E3B679" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#E3B679" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob2" cx="85%" cy="40%" r="60%">
+      <stop offset="0" stop-color="#C0576F" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#C0576F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob3" cx="60%" cy="90%" r="65%">
+      <stop offset="0" stop-color="#7F2F56" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#7F2F56" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="table" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#F1F5F9"/>
+    </linearGradient>
+
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7F2F56"/>
+      <stop offset="0.55" stop-color="#C0576F"/>
+      <stop offset="1" stop-color="#E3B679"/>
+    </linearGradient>
+
+    <radialGradient id="glow" cx="50%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#470C3B" flood-opacity="0.20"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- Minimal colorful studio background -->
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect width="800" height="800" fill="url(#blob1)"/>
+  <rect width="800" height="800" fill="url(#blob2)"/>
+  <rect width="800" height="800" fill="url(#blob3)"/>
+
+  <!-- Table / surface -->
+  <path d="M0 570 C150 520 330 510 520 540 C650 560 740 595 800 620 L800 800 L0 800 Z" fill="url(#table)"/>
+
+  <!-- Litophany on stand (photo-like) -->
+  <g filter="url(#shadow)">
+    <ellipse cx="420" cy="620" rx="240" ry="62" fill="#111827" opacity="0.10"/>
+
+    <g filter="url(#soft)">
+      <!-- stand -->
+      <path d="M300 610 C310 575 330 555 360 545 H505 C535 555 555 575 565 610 C575 652 555 680 515 690 H350 C310 680 290 652 300 610 Z" fill="#ffffff"/>
+      <path d="M330 605 C338 585 352 572 375 565 H490 C513 572 527 585 535 605" fill="none" stroke="#E5E7EB" stroke-width="6" opacity="0.9"/>
+
+      <!-- frame -->
+      <rect x="280" y="220" width="320" height="360" rx="26" fill="url(#frame)"/>
+      <rect x="305" y="245" width="270" height="310" rx="20" fill="#ffffff" opacity="0.9"/>
+      <!-- inner “image” relief gradient -->
+      <path d="M315 515 C365 460 400 450 440 475 C480 500 515 490 565 445 L565 555 L315 555 Z" fill="#7F2F56" opacity="0.12"/>
+      <circle cx="360" cy="320" r="18" fill="#C0576F" opacity="0.22"/>
+      <!-- glow -->
+      <rect x="305" y="245" width="270" height="310" rx="20" fill="url(#glow)" opacity="0.55"/>
+    </g>
+  </g>
+</svg>
