@@ -29,7 +29,7 @@
         {"nombre": "Black", "hex": "#000000"},
         {"nombre": "White", "hex": "#ffffff"},
         {"nombre": "Blue", "hex": "#1800ac"},
-        {"nombre": "Red", "hex": "#ff3131"}
+        {"nombre": "Red", "hex": "#ff6060"}
       ]
     }
   ]
