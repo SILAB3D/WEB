@@ -12,9 +12,9 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     <link rel="stylesheet" href="../css/tailwind.min.css">
-    <link rel="stylesheet" href="../css/custom.css?v=20260423j">
+    <link rel="stylesheet" href="../css/custom.css?v=20260424b">
 </head>
-<body>
+<body class="page-configura-tu-proyecto">
     <nav class="navbar">
         <div class="navbar-container">
             <button class="hamburger-menu" id="hamburgerMenu" aria-label="Menú">
@@ -72,25 +72,28 @@
         </div>
     </section>
 
-    <section class="quote-page">
+    <section class="quote-page" style="padding-top: 0;">
         <div class="container">
-            <div class="quote-modal-content">
-                <form id="projectQuoteForm" class="modern-quote-form">
-                    <section class="quote-section-card">
+            <div class="quote-modal-content" style="margin-top: -0.85rem;">
+                <form id="projectQuoteForm" class="modern-quote-form" novalidate>
+                    <section class="quote-section-card" data-form-step="1">
                         <h3 class="quote-section-title">Datos de contacto</h3>
                         <div class="quote-form-grid quote-form-grid-2">
                             <div class="form-group">
                                 <label for="projectCustomerName">Tu nombre *</label>
-                                <input type="text" id="projectCustomerName" name="projectCustomerName" required placeholder="Tu nombre completo">
+                                <input type="text" id="projectCustomerName" name="projectCustomerName" required placeholder="Un nombre para comunicarnos">
                             </div>
                             <div class="form-group">
                                 <label for="projectCustomerContact">Teléfono / Email de contacto *</label>
-                                <input type="text" id="projectCustomerContact" name="projectCustomerContact" required placeholder="Teléfono o email">
+                                <input type="text" id="projectCustomerContact" name="projectCustomerContact" required placeholder="Tu método de contacto preferido">
                             </div>
+                        </div>
+                        <div class="quote-step-actions">
+                            <button type="button" class="cta-button quote-submit-button quote-step-button" id="projectNextToDetails">Siguiente →</button>
                         </div>
                     </section>
 
-                    <section class="quote-section-card">
+                    <section class="quote-section-card" data-form-step="2" hidden>
                         <h3 class="quote-section-title">Detalles del proyecto</h3>
                         <div class="quote-form-grid quote-form-grid-2">
                             <div class="form-group form-group-span-2">
@@ -99,27 +102,31 @@
                             </div>
                             <div class="form-group form-group-span-2">
                                 <label for="projectDescription">Descripción del proyecto *</label>
-                                <textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="6"></textarea>
+                                <textarea id="projectDescription" name="projectDescription" required placeholder="Cuéntanos toda la información que consideres importante para llevar a cabo tu proyecto" rows="6"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="projectMeasures">Medidas del proyecto</label>
-                                <input type="text" id="projectMeasures" name="projectMeasures" placeholder="Ej: 12 cm x 8 cm x 4 cm">
+                                <input type="text" id="projectMeasures" name="projectMeasures" placeholder="Algún valor aproximado...">
                             </div>
                             <div class="form-group">
                                 <label for="projectReferenceFiles">Proyecto o imágenes de referencia *</label>
                                 <select id="projectReferenceFiles" name="projectReferenceFiles" required>
-                                    <option value="" selected disabled>Selecciona una opción</option>
+                                    <option value="" selected disabled>¿Puedes compartirnos alguna referencia?</option>
                                     <option value="si">Sí (incluye los archivos en el siguiente paso)</option>
                                     <option value="no">No</option>
                                 </select>
                             </div>
                         </div>
+                        <div class="quote-step-actions">
+                            <button type="button" class="cta-button quote-submit-button quote-step-button quote-step-button-secondary" id="projectBackToDetails">Anterior</button>
+                            <button type="button" class="cta-button quote-submit-button quote-step-button" id="projectNextToColors">Siguiente →</button>
+                        </div>
                     </section>
 
-                    <section class="quote-section-card">
-                        <h3 class="quote-section-title">Acabados y colores</h3>
+                    <section class="quote-section-card" data-form-step="3" hidden>
+                        <h3 class="quote-section-title">Colores y materiales</h3>
                         <div class="form-group form-group-colors">
-                            <label>Colores del proyecto *</label>
+                            <label>Explora nuestras opciones... o lo dejamos para más tarde</label>
                             <div id="projectColorsBoard" class="project-colors-board">
                                 <!-- Material Categories Grid -->
                                 <div class="color-material-selector">
@@ -147,7 +154,7 @@
 
                                 <!-- Selected Colors Display -->
                                 <div class="color-selection-display" hidden>
-                                    <h4 class="selection-title" hidden>Colores seleccionados</h4>
+                                    <h4 class="selection-title" hidden>Colores seleccionados (cada pieza individual puede estar compuesta hasta por 4 colores diferentes de un mismo material)</h4>
                                     <div id="projectSelectedColorChips" class="color-chips-container">
                                         <div class="color-chips-empty">
                                             <span class="empty-icon">🎯</span>
@@ -162,16 +169,16 @@
                                 </div>
                             </div>
                         </div>
-                    </section>
 
-                    <div class="quote-submit-zone">
-                        <p class="quote-submit-note">El botón siguiente abrirá las opciones de contacto para enviar toda la configuración que acabas de completar.</p>
-                        <button type="submit" class="cta-button quote-submit-button">Siguiente →</button>
-                    </div>
+                        <div class="quote-step-actions">
+                            <button type="button" class="cta-button quote-submit-button quote-step-button quote-step-button-secondary" id="projectBackToProjectDetails">Anterior</button>
+                            <button type="button" class="cta-button quote-submit-button quote-step-button" id="projectShowContactOptions">Siguiente →</button>
+                        </div>
+                    </section>
                 </form>
 
-                <div id="projectContactOptions" class="quote-page-contact">
-                    <h2 class="contact-options-title">Elige cómo prefieres contactar</h2>
+                <div id="projectContactOptions" class="quote-page-contact" data-form-step="4" hidden>
+                    <h2 class="contact-options-title">¡Listo! Comparte con nosotros tu proyecto para hacerlo realidad. Escoge tu método de contacto preferido</h2>
                     <div class="contact-options-grid">
                         <a id="projectWhatsApp" href="#" target="_blank" class="contact-option-card">
                             <div class="contact-option-icon">📱</div>
@@ -183,6 +190,9 @@
                             <h3>Email</h3>
                             <p>Comunicación formal</p>
                         </a>
+                    </div>
+                    <div class="quote-step-actions">
+                        <button type="button" class="cta-button quote-submit-button quote-step-button quote-step-button-secondary" id="projectBackToColors">Anterior</button>
                     </div>
                 </div>
             </div>

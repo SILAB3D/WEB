@@ -3,6 +3,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const contactOptions = document.getElementById('projectContactOptions');
     const whatsappLink = document.getElementById('projectWhatsApp');
     const emailLink = document.getElementById('projectEmail');
+    const formSteps = Array.from(document.querySelectorAll('[data-form-step]'));
+    const nextToDetailsButton = document.getElementById('projectNextToDetails');
+    const backToDetailsButton = document.getElementById('projectBackToDetails');
+    const nextToColorsButton = document.getElementById('projectNextToColors');
+    const showContactOptionsButton = document.getElementById('projectShowContactOptions');
+    const backToProjectDetailsButton = document.getElementById('projectBackToProjectDetails');
+    const backToColorsButton = document.getElementById('projectBackToColors');
+    const queryParams = new URLSearchParams(window.location.search);
+    const presetProductName = queryParams.get('producto');
 
     const colorsBoard = document.getElementById('projectColorsBoard');
     const selectedColorChips = document.getElementById('projectSelectedColorChips');
@@ -19,10 +28,20 @@ document.addEventListener('DOMContentLoaded', function () {
         petg: []
     };
     const selectedColorState = {};
+    let activeStep = 1;
 
-    if (!form || !contactOptions || !whatsappLink || !emailLink || !colorsBoard || !selectedColorChips || !categoryButtons.length || !colorCatalog || !colorCatalogSections) {
+    if (!form || !contactOptions || !whatsappLink || !emailLink || !colorsBoard || !selectedColorChips || !categoryButtons.length || !colorCatalog || !colorCatalogSections || !formSteps.length) {
         return;
     }
+
+    if (presetProductName) {
+        const projectNameField = document.getElementById('projectName');
+        if (projectNameField && !projectNameField.value.trim()) {
+            projectNameField.value = presetProductName;
+        }
+    }
+
+    showStep(1);
 
     initColorCatalog();
     updateColorCounts();
@@ -42,9 +61,152 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateSelectedBoard();
 
+    if (nextToDetailsButton) {
+        nextToDetailsButton.addEventListener('click', function () {
+            goToNextStep(1);
+        });
+    }
+
+    if (backToDetailsButton) {
+        backToDetailsButton.addEventListener('click', function () {
+            goToPreviousStep(2);
+        });
+    }
+
+    if (nextToColorsButton) {
+        nextToColorsButton.addEventListener('click', function () {
+            goToNextStep(2);
+        });
+    }
+
+    if (backToProjectDetailsButton) {
+        backToProjectDetailsButton.addEventListener('click', function () {
+            goToPreviousStep(3);
+        });
+    }
+
+    if (showContactOptionsButton) {
+        showContactOptionsButton.addEventListener('click', function () {
+            goToNextStep(3);
+        });
+    }
+
+    if (backToColorsButton) {
+        backToColorsButton.addEventListener('click', function () {
+            contactOptions.classList.remove('active');
+            showStep(3);
+            const colorsSection = formSteps.find((step) => Number(step.getAttribute('data-form-step')) === 3);
+            if (colorsSection) {
+                colorsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    if (whatsappLink) {
+        whatsappLink.addEventListener('click', function (event) {
+            if (!whatsappLink.href || whatsappLink.href === '#') {
+                event.preventDefault();
+                return;
+            }
+
+            event.preventDefault();
+            window.open(whatsappLink.href, '_blank', 'noopener,noreferrer');
+        });
+    }
+
+    if (emailLink) {
+        emailLink.addEventListener('click', function (event) {
+            if (!emailLink.href || emailLink.href === '#') {
+                event.preventDefault();
+                return;
+            }
+
+            event.preventDefault();
+            window.open(emailLink.href, '_blank', 'noopener,noreferrer');
+        });
+    }
+
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
+        if (activeStep < 3) {
+            goToNextStep(activeStep);
+            return;
+        }
+
+        if (!buildContactOptions()) {
+            return;
+        }
+    });
+
+    function showStep(stepNumber) {
+        activeStep = stepNumber;
+
+        formSteps.forEach((step) => {
+            const stepValue = Number(step.getAttribute('data-form-step'));
+            step.hidden = stepValue !== stepNumber;
+        });
+
+        const isContactStep = stepNumber === 4;
+        contactOptions.hidden = !isContactStep;
+        contactOptions.classList.toggle('active', isContactStep);
+
+        if (stepNumber < 4) {
+            contactOptions.classList.remove('active');
+        }
+    }
+
+    function goToNextStep(currentStep) {
+        const currentSection = formSteps.find((step) => Number(step.getAttribute('data-form-step')) === currentStep);
+        if (!currentSection || !validateStep(currentSection)) {
+            return;
+        }
+
+        const nextStep = currentStep + 1;
+        if (nextStep <= 3) {
+            showStep(nextStep);
+            const nextSection = formSteps.find((step) => Number(step.getAttribute('data-form-step')) === nextStep);
+            if (nextSection) {
+                nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            if (!buildContactOptions()) {
+                return;
+            }
+
+            showStep(4);
+            contactOptions.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function goToPreviousStep(currentStep) {
+        const previousStep = currentStep - 1;
+        if (previousStep < 1) {
+            return;
+        }
+
+        showStep(previousStep);
+
+        const previousSection = formSteps.find((step) => Number(step.getAttribute('data-form-step')) === previousStep);
+        if (previousSection) {
+            previousSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function validateStep(section) {
+        const fields = Array.from(section.querySelectorAll('input, textarea, select'));
+        for (const field of fields) {
+            if (field.checkValidity && !field.checkValidity()) {
+                field.reportValidity();
+                field.focus();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function buildContactOptions() {
         const customerName = document.getElementById('projectCustomerName').value.trim();
         const customerContact = document.getElementById('projectCustomerContact').value.trim();
         const projectName = document.getElementById('projectName').value.trim();
@@ -60,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!selectedGroupValues.length && !selectedColorLabels.length) {
             colorsBoard.classList.add('error');
             colorsBoard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
+            return false;
         }
 
         colorsBoard.classList.remove('error');
@@ -103,8 +265,8 @@ document.addEventListener('DOMContentLoaded', function () {
         emailLink.href = emailURL;
 
         contactOptions.classList.add('active');
-        contactOptions.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+        return true;
+    }
 
     async function initColorCatalog() {
         try {

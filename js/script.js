@@ -107,7 +107,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     const closeModal = document.querySelector('#contactModal .contact-modal-close');
     const buyButtons = document.querySelectorAll('.btn-comprar, .btn-action');
 
-    // Función para generar URLs personalizadas
+    function shouldRedirectToConfigurator(productName) {
+        return productName === 'Trofeos y medallas' || productName === 'Figura con diseño personalizado';
+    }
+
     function generateContactURLs(productName, category) {
         const whatsappMessage = `¡Hola! Me gustaría obtener más información acerca de ${productName}.`;
         const emailSubject = `Consulta sobre ${productName}`;
@@ -119,32 +122,51 @@ document.addEventListener('DOMContentLoaded', async function() {
         };
     }
 
-    // Abrir modal al hacer clic en botón de comprar
+    // Abrir configurador o modal según el producto
     if (buyButtons.length > 0) {
         buyButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const productName = this.getAttribute('data-product');
                 const category = this.getAttribute('data-category');
+                if (shouldRedirectToConfigurator(productName)) {
+                    const configuratorURL = new URL('configura-tu-proyecto.html', window.location.href);
+
+                    if (productName) {
+                        configuratorURL.searchParams.set('producto', productName);
+                    }
+
+                    if (category) {
+                        configuratorURL.searchParams.set('categoria', category);
+                    }
+
+                    window.location.href = configuratorURL.toString();
+                    return;
+                }
+
                 const urls = generateContactURLs(productName, category);
 
-                // Actualizar URLs del modal
-                modalWhatsApp.href = urls.whatsapp;
-                modalEmail.href = urls.email;
+                if (modalWhatsApp) {
+                    modalWhatsApp.href = urls.whatsapp;
+                }
+                if (modalEmail) {
+                    modalEmail.href = urls.email;
+                }
 
-                // Mostrar modal
-                modal.classList.add('active');
+                if (modal) {
+                    modal.classList.add('active');
+                }
             });
         });
     }
 
-    // Cerrar modal
     if (closeModal) {
         closeModal.addEventListener('click', function() {
-            modal.classList.remove('active');
+            if (modal) {
+                modal.classList.remove('active');
+            }
         });
     }
 
-    // Cerrar modal al hacer clic fuera del contenido
     if (modal) {
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
