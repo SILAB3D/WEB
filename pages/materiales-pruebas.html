@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materiales - SILAB 3D</title>
+    <title>Materiales Pruebas - SILAB 3D</title>
     <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -16,6 +16,7 @@
     <!-- CSS bloqueante para evitar FOUC -->
     <link rel="stylesheet" href="../css/tailwind.min.css">
     <link rel="stylesheet" href="../css/custom.css">
+    <link rel="stylesheet" href="../css/materiales-pruebas.css">
     <!-- Model Viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
 </head>
@@ -37,7 +38,7 @@
             <ul class="nav-links">
                 <li><a href="../index.html">Inicio</a></li>
                 <li><a href="productos.html">Productos</a></li>
-                <li><a href="materiales.html" class="active">Materiales</a></li>
+                <li><a href="materiales-pruebas.html" class="active">Materiales</a></li>
                 <li><a href="resenas.html">Reseñas</a></li>
             </ul>
         </div>
@@ -54,7 +55,7 @@
                     <span class="mobile-menu-icon">🛍️</span>
                     <span class="mobile-menu-label">Productos</span>
                 </a>
-                <a href="materiales.html" class="mobile-menu-link active">
+                <a href="materiales-pruebas.html" class="mobile-menu-link active">
                     <span class="mobile-menu-icon">🎨</span>
                     <span class="mobile-menu-label">Materiales</span>
                 </a>
@@ -79,6 +80,36 @@
                 <h1 class="hero-main-title">Nuestro Catálogo de Materiales</h1>
                 <p class="hero-main-text description">Explora nuestra colección de filamentos 3D, disponibles en una amplia variedad de materiales y colores. Encuentra la mejor configuración para tu proyecto. <strong>Disponemos de servicio de impresión multicolor</strong>, siempre que los colores pertenezcan al mismo material.</p>
                 <a href="#pla" class="btn-primary">Explora nuestros materiales</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="materiales material-category">
+        <div class="container">
+            <div class="material-container container-white planner-card">
+                <div class="material-header">
+                    <h2 class="material-type-title title-secondary">Configura tu proyecto</h2>
+                    <p class="material-description description">Diseña cada figura a tu manera en pocos pasos: elige material, combina hasta 4 colores por pieza y exporta tu configuración completa para pedir presupuesto al instante.</p>
+                </div>
+
+                <p id="plannerStatus" class="planner-status" aria-live="polite"></p>
+
+                <div class="planner-layout">
+                    <div class="planner-figuras-panel">
+                        <h3 class="planner-subtitle">Figuras</h3>
+                        <div id="figurasList" class="planner-figuras-list"></div>
+                        <button class="btn-primary planner-btn planner-btn-small" id="addFiguraBtn" type="button">+ Añadir figura</button>
+                    </div>
+
+                    <div class="planner-editor-panel">
+                        <h3 class="planner-subtitle">Colores seleccionados</h3>
+                        <div id="figuraEditor" class="planner-editor-empty">Selecciona o crea una figura para comenzar.</div>
+                    </div>
+                </div>
+
+                <div class="planner-export-wrap">
+                    <button class="cta-button planner-btn planner-btn-small planner-export-btn" id="copyListaBtn" type="button">Exportar proyecto</button>
+                </div>
             </div>
         </div>
     </section>
@@ -326,6 +357,7 @@
     </div>
 
     <script defer src="../js/script.js"></script>
+    <script defer src="../js/materiales-pruebas.js"></script>
     <script defer>
         // Base de datos de colores disponibles
         let allColors = {

@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const quoteModalEmail = document.getElementById('quoteModalEmail');
 
     // Abrir modal de formulario al hacer clic en "Solicita tu presupuesto"
-    if (btnPresupuesto) {
+    if (btnPresupuesto && quoteFormModal && btnPresupuesto.getAttribute('href') === '#') {
         btnPresupuesto.addEventListener('click', function(e) {
             e.preventDefault();
             quoteFormModal.classList.add('active');
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Abrir modal desde el botón móvil del menú hamburguesa
     const btnPresupuestoMobile = document.getElementById('btnPresupuestoMobile');
-    if (btnPresupuestoMobile) {
+    if (btnPresupuestoMobile && quoteFormModal && btnPresupuestoMobile.getAttribute('href') === '#') {
         btnPresupuestoMobile.addEventListener('click', function(e) {
             e.preventDefault();
             quoteFormModal.classList.add('active');

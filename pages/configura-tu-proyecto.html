@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configura Tu Proyecto - SILAB 3D</title>
+    <link rel="icon" type="image/png" href="../img/favicon.png">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="../css/tailwind.min.css">
+    <link rel="stylesheet" href="../css/custom.css?v=20260423j">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <button class="hamburger-menu" id="hamburgerMenu" aria-label="Menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="navbar-left">
+                <a href="configura-tu-proyecto.html" class="btn-presupuesto">Configura tu proyecto</a>
+            </div>
+            <div class="navbar-center">
+                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo" width="130" height="130">
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Inicio</a></li>
+                <li><a href="productos.html">Productos</a></li>
+                <li><a href="materiales.html">Materiales</a></li>
+                <li><a href="resenas.html">Reseñas</a></li>
+            </ul>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-header">
+                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="mobile-menu-logo" width="130" height="130">
+            </div>
+            <nav class="mobile-menu-nav">
+                <a href="../index.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🏠</span>
+                    <span class="mobile-menu-label">Inicio</span>
+                </a>
+                <a href="productos.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🛍️</span>
+                    <span class="mobile-menu-label">Productos</span>
+                </a>
+                <a href="materiales.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">🎨</span>
+                    <span class="mobile-menu-label">Materiales</span>
+                </a>
+                <a href="resenas.html" class="mobile-menu-link">
+                    <span class="mobile-menu-icon">⭐</span>
+                    <span class="mobile-menu-label">Reseñas</span>
+                </a>
+            </nav>
+            <div class="mobile-menu-footer">
+                <a href="configura-tu-proyecto.html" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">✨ Configura tu proyecto</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-main">
+        <div class="hero-main-container">
+            <div class="hero-main-content" style="max-width: 900px; margin: 0 auto; text-align: center;">
+                <h1 class="hero-main-title">Configura tu proyecto</h1>
+                <p class="hero-main-text description">Cuéntanos lo esencial y te guiaremos al canal de contacto para cerrar tu presupuesto rápido.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="quote-page">
+        <div class="container">
+            <div class="quote-modal-content">
+                <form id="projectQuoteForm" class="modern-quote-form">
+                    <section class="quote-section-card">
+                        <h3 class="quote-section-title">Datos de contacto</h3>
+                        <div class="quote-form-grid quote-form-grid-2">
+                            <div class="form-group">
+                                <label for="projectCustomerName">Tu nombre *</label>
+                                <input type="text" id="projectCustomerName" name="projectCustomerName" required placeholder="Tu nombre completo">
+                            </div>
+                            <div class="form-group">
+                                <label for="projectCustomerContact">Teléfono / Email de contacto *</label>
+                                <input type="text" id="projectCustomerContact" name="projectCustomerContact" required placeholder="Teléfono o email">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="quote-section-card">
+                        <h3 class="quote-section-title">Detalles del proyecto</h3>
+                        <div class="quote-form-grid quote-form-grid-2">
+                            <div class="form-group form-group-span-2">
+                                <label for="projectName">Nombre del proyecto *</label>
+                                <input type="text" id="projectName" name="projectName" required placeholder="Ej: Prototipo de pieza mecánica">
+                            </div>
+                            <div class="form-group form-group-span-2">
+                                <label for="projectDescription">Descripción del proyecto *</label>
+                                <textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="6"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectMeasures">Medidas del proyecto</label>
+                                <input type="text" id="projectMeasures" name="projectMeasures" placeholder="Ej: 12 cm x 8 cm x 4 cm">
+                            </div>
+                            <div class="form-group">
+                                <label for="projectReferenceFiles">Proyecto o imágenes de referencia *</label>
+                                <select id="projectReferenceFiles" name="projectReferenceFiles" required>
+                                    <option value="" selected disabled>Selecciona una opción</option>
+                                    <option value="si">Sí (incluye los archivos en el siguiente paso)</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="quote-section-card">
+                        <h3 class="quote-section-title">Acabados y colores</h3>
+                        <div class="form-group form-group-colors">
+                            <label>Colores del proyecto *</label>
+                            <div id="projectColorsBoard" class="project-colors-board">
+                                <!-- Material Categories Grid -->
+                                <div class="color-material-selector">
+                                    <button type="button" class="color-material-card" data-color-group="indeterminado" data-icon="❓">
+                                        <span class="card-icon">❓</span>
+                                        <span class="card-title">Indeterminado</span>
+                                        <span class="card-subtitle">Decidir después</span>
+                                    </button>
+                                    <button type="button" class="color-material-card" data-color-group="pla-basico" data-icon="🎨">
+                                        <span class="card-icon">🎨</span>
+                                        <span class="card-title">PLA Básico</span>
+                                        <span class="card-color-count" data-count="0">0 colores</span>
+                                    </button>
+                                    <button type="button" class="color-material-card" data-color-group="pla-premium" data-icon="✨">
+                                        <span class="card-icon">✨</span>
+                                        <span class="card-title">PLA Premium</span>
+                                        <span class="card-color-count" data-count="0">0 colores</span>
+                                    </button>
+                                    <button type="button" class="color-material-card" data-color-group="petg" data-icon="💎">
+                                        <span class="card-icon">💎</span>
+                                        <span class="card-title">PETG</span>
+                                        <span class="card-color-count" data-count="0">0 colores</span>
+                                    </button>
+                                </div>
+
+                                <!-- Selected Colors Display -->
+                                <div class="color-selection-display" hidden>
+                                    <h4 class="selection-title" hidden>Colores seleccionados</h4>
+                                    <div id="projectSelectedColorChips" class="color-chips-container">
+                                        <div class="color-chips-empty">
+                                            <span class="empty-icon">🎯</span>
+                                            <span class="empty-text">Elige una categoría para comenzar</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Color Catalog - Direct Display -->
+                                <div id="projectColorCatalog" class="color-catalog-direct" hidden>
+                                    <div id="projectColorCatalogSections" class="catalog-sections"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="quote-submit-zone">
+                        <p class="quote-submit-note">El botón siguiente abrirá las opciones de contacto para enviar toda la configuración que acabas de completar.</p>
+                        <button type="submit" class="cta-button quote-submit-button">Siguiente →</button>
+                    </div>
+                </form>
+
+                <div id="projectContactOptions" class="quote-page-contact">
+                    <h2 class="contact-options-title">Elige cómo prefieres contactar</h2>
+                    <div class="contact-options-grid">
+                        <a id="projectWhatsApp" href="#" target="_blank" class="contact-option-card">
+                            <div class="contact-option-icon">📱</div>
+                            <h3>WhatsApp</h3>
+                            <p>Respuesta inmediata</p>
+                        </a>
+                        <a id="projectEmail" href="#" target="_blank" class="contact-option-card">
+                            <div class="contact-option-icon">📧</div>
+                            <h3>Email</h3>
+                            <p>Comunicación formal</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 SILAB 3D. Todos los derechos reservados.</p>
+            <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
+            <p><a href="terminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a> <span class="separator">|</span> <a href="privacidad.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Política de Privacidad</a> <span class="separator">|</span> <a href="aviso-legal.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Aviso Legal</a></p>
+        </div>
+    </footer>
+
+    <script defer src="../js/script.js"></script>
+    <script defer src="../js/configura-tu-proyecto.js?v=20260423k"></script>
+</body>
+</html>
