@@ -418,6 +418,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         '<div class="color-option-ui">' +
                             '<span class="project-color-swatch" style="background:' + escapeHtml(color.swatch) + ';"></span>' +
                             '<span class="project-color-name" title="' + escapeHtml(color.name) + '">' + escapeHtml(color.name) + '</span>' +
+                            (color.offer ? '<span class="color-offer-badge">Oferta</span>' : '') +
                         '</div>' +
                     '</label>';
             }).join('');
@@ -449,7 +450,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (selectionDisplay) {
-            selectionDisplay.hidden = false;
+                isPremium: isPremium,
+                offer: Boolean(color && color.offer)
         }
         if (selectionTitle) {
             selectionTitle.hidden = false;
