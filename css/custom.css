@@ -2069,10 +2069,15 @@ html {
     }
 
     .navbar-logo {
-        width: clamp(150px, 42vw, 260px);
+        width: clamp(207px, 60vw, 368px);
         height: auto;
         margin: 0.2rem auto;
         transition: opacity 0.3s ease;
+    }
+
+    .mobile-menu-logo {
+        width: clamp(207px, 60vw, 368px);
+        height: auto;
     }
 
     /* Ocultar logo al hacer scroll - DESHABILITADO */
@@ -4689,7 +4694,12 @@ html {
     }
 
     .navbar-logo {
-        width: max(300px, 70vw);
+        width: clamp(253px, 92vw, 391px);
+        height: auto;
+    }
+
+    .mobile-menu-logo {
+        width: clamp(253px, 92vw, 391px);
         height: auto;
     }
 
