@@ -772,7 +772,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
 
         setTimeout(() => {
             palomiteraPopup.classList.add('show');
-        }, 700);
+        }, 2000);
 
         if (palomiteraCloseBtn) {
             palomiteraCloseBtn.addEventListener('click', closePalomiteraPopup);

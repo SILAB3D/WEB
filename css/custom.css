@@ -9,6 +9,8 @@
 
 /* Popup promocional palomitera */
 .palomitera-popup-overlay {
+    /* Escala global del popup: 1 = tamaño base, 0.9 = 10% más pequeño */
+    --palomitera-popup-scale: 0.85;
     position: fixed;
     inset: 0;
     display: flex;
@@ -41,6 +43,8 @@
     padding: 1rem 0 0.95rem;
     overflow-y: auto;
     overflow-x: hidden;
+    transform: scale(var(--palomitera-popup-scale));
+    transform-origin: center center;
 }
 
 .palomitera-popup-close {
