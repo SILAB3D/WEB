@@ -1,255 +1,124 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidad - SILAB 3D</title>
-    <link rel="icon" type="image/png" href="../img/favicon.png">
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Cargar Google Fonts sin bloquear con preload -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
-    <!-- CSS bloqueante para evitar FOUC -->
-    <link rel="stylesheet" href="../css/tailwind.min.css">
-    <link rel="stylesheet" href="../css/custom.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pol�tica de Privacidad - SILAB 3D</title>
+  <meta name="description" content="Pol�tica de privacidad de SILAB 3D.">
+  <link rel="icon" type="image/png" href="../img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--primary:#BC556D;--primary-dark:#B7516B;--primary-light:#F2D6DC;--dark:#2F2F2F;--darker:#1A1A1A;--white:#FFFFFF;--gray-text:#6B7280;--radius:18px;--nav-h:72px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:'Outfit',sans-serif;color:var(--dark);background:var(--white);line-height:1.6;overflow-x:hidden}img{max-width:100%;height:auto;display:block}a{text-decoration:none;color:inherit}ul{list-style:none}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}@keyframes fadeInLeft{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:translateX(0)}}@keyframes fadeInRight{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:translateX(0)}}@keyframes fadeInUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}@keyframes spin-slow{to{transform:rotate(360deg)}}@keyframes badge-pulse{0%,100%{box-shadow:0 0 0 0 rgba(188,85,109,.4)}50%{box-shadow:0 0 0 8px rgba(188,85,109,0)}}
+    .container{max-width:1180px;margin:0 auto;padding:0 28px}.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:980;height:var(--nav-h);background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(242,214,220,.7);transition:box-shadow .3s}.navbar.scrolled{box-shadow:0 2px 24px rgba(188,85,109,.13)}.navbar-container{max-width:1180px;margin:0 auto;padding:0 28px;height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}.hamburger-menu{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px;border-radius:10px;transition:background .2s;z-index:10}.hamburger-menu:hover{background:var(--primary-light)}.hamburger-menu span{display:block;width:22px;height:2px;background:var(--dark);border-radius:2px;transition:all .3s cubic-bezier(.4,0,.2,1)}.hamburger-menu.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}.hamburger-menu.open span:nth-child(2){opacity:0;transform:scaleX(0)}.hamburger-menu.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .navbar-left .btn-presupuesto{display:inline-flex;align-items:center;gap:7px;background:var(--primary);color:#fff;padding:10px 22px;border-radius:50px;font-size:.855rem;font-weight:700;transition:all .3s;white-space:nowrap}.navbar-left .btn-presupuesto:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 6px 22px rgba(188,85,109,.38)}.navbar-center{display:flex;align-items:center}.navbar-logo{height:48px;width:auto;transition:transform .3s}.navbar-logo:hover{transform:scale(1.04)}.nav-links{display:flex;align-items:center;gap:4px}.nav-links a{color:var(--dark);font-size:.9rem;font-weight:500;padding:8px 14px;border-radius:10px;transition:all .2s;position:relative}.nav-links a:hover{color:var(--primary);background:var(--primary-light)}.nav-links a.active{color:var(--primary);font-weight:700}.nav-links a.active::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:14px;height:2.5px;background:var(--primary);border-radius:2px}
+    .menu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:950}.menu-overlay.show{display:block}.mobile-menu{position:fixed;top:0;left:0;width:290px;height:100vh;background:var(--white);z-index:960;transform:translateX(-100%);transition:transform .38s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:6px 0 40px rgba(0,0,0,.14)}.mobile-menu.open{transform:translateX(0)}.mobile-menu-header{padding:26px 22px 20px;border-bottom:1px solid var(--primary-light)}.mobile-menu-logo{height:42px;width:auto}.mobile-menu-nav{flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}.mobile-menu-link{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;font-weight:500;font-size:1rem;transition:all .2s;color:var(--dark)}.mobile-menu-link:hover,.mobile-menu-link.active{background:var(--primary-light);color:var(--primary)}.mobile-menu-icon{font-size:1.15rem}.mobile-menu-footer{padding:18px 20px 24px;border-top:1px solid var(--primary-light)}.btn-presupuesto-mobile{display:block;background:var(--primary);color:white;text-align:center;padding:14px;border-radius:14px;font-weight:700;font-size:.95rem;transition:background .2s,transform .2s}.btn-presupuesto-mobile:hover{background:var(--primary-dark);transform:translateY(-1px)}
+    .hero-main{padding-top:var(--nav-h);min-height:72vh;display:flex;align-items:center;background-color:var(--white);background-image:radial-gradient(circle, rgba(188,85,109,.11) 1.5px, transparent 1.5px);background-size:30px 30px;position:relative;overflow:hidden}.hero-main::before{content:'';position:absolute;top:-80px;right:-80px;width:560px;height:560px;background:radial-gradient(circle, rgba(242,214,220,.6) 0%, transparent 68%);pointer-events:none}.hero-main::after{content:'';position:absolute;bottom:-60px;left:-60px;width:420px;height:420px;background:radial-gradient(circle, rgba(188,85,109,.07) 0%, transparent 70%);pointer-events:none}.hero-main-container{max-width:1180px;margin:0 auto;padding:80px 28px;display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:center}.hero-main-image{display:flex;justify-content:center;align-items:center;animation:fadeInLeft 1s ease .1s both}.hero-img-wrap{position:relative;width:380px;height:380px;display:flex;align-items:center;justify-content:center}.ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(188,85,109,.22)}.ring:nth-child(2){inset:-22px;border-color:rgba(188,85,109,.13)}.ring:nth-child(3){inset:-44px;border-color:rgba(188,85,109,.07)}.ring-spin{position:absolute;inset:-66px;border-radius:50%;border:1.5px dashed rgba(188,85,109,.3);animation:spin-slow 22s linear infinite}.hero-image-circular{width:330px;height:330px;border-radius:50%;object-fit:cover;box-shadow:0 24px 70px rgba(188,85,109,.28),0 0 0 6px var(--primary-light);animation:float 5.5s ease-in-out infinite;position:relative;z-index:2}.hero-main-content{animation:fadeInRight 1s ease .25s both}.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--primary-light);color:var(--primary-dark);padding:7px 16px;border-radius:50px;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);animation:badge-pulse 2s infinite}.hero-main-title{font-size:clamp(2.3rem,5vw,3.5rem);font-weight:900;line-height:1.12;color:var(--dark);letter-spacing:-.04em;margin-bottom:18px}.hero-main-title .accent{color:var(--primary);display:block}.hero-main-text{font-size:1.02rem;color:#5a5a5a;line-height:1.78;margin-bottom:22px;max-width:560px;font-weight:400}.hero-main-text strong{color:var(--dark);font-weight:600}.btn-primary{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;padding:15px 28px;border-radius:50px;font-size:1rem;font-weight:700;transition:all .35s;box-shadow:0 8px 32px rgba(188,85,109,.38);position:relative;overflow:hidden;border:none;cursor:pointer}.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 44px rgba(188,85,109,.5)}
+    .section-shell{padding:84px 0}.section-shell.alt{background:#fdf8f9;border-top:1px solid rgba(188,85,109,.12);border-bottom:1px solid rgba(188,85,109,.12)}.section-header{text-align:center;margin-bottom:32px}.section-label{display:inline-block;color:var(--primary);font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px}.section-title{font-size:clamp(2rem,4vw,2.7rem);font-weight:800;color:var(--dark);letter-spacing:-.03em;line-height:1.18;margin-bottom:14px}.section-desc{font-size:1.04rem;color:var(--gray-text);max-width:760px;margin:0 auto;line-height:1.72}.section-desc strong{color:var(--dark);font-weight:600}.content-card{border:1.5px solid rgba(188,85,109,.15);border-radius:22px;background:var(--white);box-shadow:0 14px 44px rgba(188,85,109,.1);padding:28px 22px}.legal-body h2{color:#470C3B;font-size:1.85rem;font-weight:700;margin:2rem 0 1.15rem;padding-bottom:.75rem;border-bottom:3px solid #FFE8EC}.legal-body h2:first-child{margin-top:0}.legal-body p,.legal-body li{color:#374151;line-height:2;font-size:1.03rem}.legal-body ul{padding-left:2.3rem;list-style-type:disc;margin-bottom:1rem}.notice-box{background:linear-gradient(135deg,#FFEBEE 0%, #FFD1D9 100%);padding:1.3rem;border-radius:.75rem;margin:1.2rem 0;border:2px solid #C0576F}.info-box{background:linear-gradient(135deg,#FFF5F7 0%, #FFE8EC 100%);padding:1.3rem;border-radius:.75rem;margin:1rem 0;border-left:4px solid #C0576F}
+    .footer{background:var(--darker);padding:40px 0;border-top:1px solid rgba(188,85,109,.2)}.footer .container{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}.footer p{font-size:.875rem;color:rgba(255,255,255,.42)}.footer a{color:var(--primary);font-weight:600;transition:color .2s}.footer a:hover{color:#e899ae}.footer .sep{color:rgba(255,255,255,.2);margin:0 8px}
+    .quote-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:1800;align-items:center;justify-content:center;padding:24px}.quote-modal[style*="display: block"],.quote-modal[style*="display:block"]{display:flex !important}.quote-modal-content{background:var(--white);border-radius:24px;padding:44px 40px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;position:relative;animation:fadeInUp .38s ease;box-shadow:0 30px 80px rgba(0,0,0,.2)}.quote-modal-content h2{font-size:1.75rem;font-weight:800;color:var(--dark);letter-spacing:-.025em;margin-bottom:28px;text-align:center}.quote-modal-close,.quote-contact-modal-close{position:absolute;top:18px;right:20px;font-size:1.6rem;cursor:pointer;color:#bbb;line-height:1;transition:color .2s,transform .2s;background:none;border:none;font-family:inherit}.quote-modal-close:hover,.quote-contact-modal-close:hover{color:var(--primary);transform:rotate(90deg)}.form-group{margin-bottom:20px}.form-group label{display:block;font-size:.875rem;font-weight:600;color:var(--dark);margin-bottom:7px}.form-group input,.form-group textarea{width:100%;padding:12px 16px;border:1.5px solid #E5E7EB;border-radius:12px;font-family:'Outfit',sans-serif;font-size:.95rem;color:var(--dark);outline:none;resize:vertical;transition:border-color .25s,box-shadow .25s;background:#FDFCFC}.form-group input:focus,.form-group textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(188,85,109,.11);background:var(--white)}.form-note{font-size:.82rem;color:#999;line-height:1.55;margin-top:14px;text-align:center}.cta-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;padding:14px 28px;border-radius:50px;font-size:1rem;font-weight:700;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .3s;width:100%;margin-top:16px}.cta-button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(188,85,109,.42)}.contact-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}.contact-option-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:30px 20px;border:1.5px solid #E5E7EB;border-radius:18px;transition:all .28s;color:var(--dark);cursor:pointer}.contact-option-card:hover{border-color:var(--primary);background:var(--primary-light);transform:translateY(-5px);box-shadow:0 12px 32px rgba(188,85,109,.18)}.contact-option-icon{font-size:2.2rem}.contact-option-card h3{font-size:1.05rem;font-weight:700}.contact-option-card p{font-size:.82rem;color:#888;text-align:center}
+    .terms-popup{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:700px;background:var(--white);border:1.5px solid #E5E7EB;border-radius:18px;box-shadow:0 10px 50px rgba(0,0,0,.16);z-index:1700;padding:22px 28px;animation:fadeInUp .4s ease}.terms-popup.show{display:block}.terms-popup-content{display:flex;align-items:center;gap:20px;flex-wrap:wrap}.terms-popup-content>p{flex:1;font-size:.875rem;color:#555;line-height:1.55;min-width:200px}.terms-popup-buttons{display:flex;gap:10px}.terms-btn{padding:10px 22px;border-radius:50px;font-size:.875rem;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all .2s}.terms-btn-accept{background:var(--primary);color:white}.terms-btn-accept:hover{background:var(--primary-dark);box-shadow:0 4px 16px rgba(188,85,109,.35)}.terms-btn-reject{background:#F3F4F6;color:#666}.terms-btn-reject:hover{background:#E5E7EB}
+    @media (max-width:768px){.hamburger-menu{display:flex}.navbar-left,.nav-links{display:none}.navbar-container{justify-content:space-between}.navbar-center{position:absolute;left:50%;transform:translateX(-50%)}.hero-main-container{grid-template-columns:1fr;text-align:center;gap:34px;padding:70px 24px}.hero-main-image{order:-1}.hero-img-wrap{width:280px;height:280px}.hero-image-circular{width:250px;height:250px}.ring-spin{inset:-40px}.hero-main-text{margin:0 auto}.section-shell{padding:70px 0}.contact-options-grid{grid-template-columns:1fr}.quote-modal-content{padding:30px 22px}.terms-popup-content{flex-direction:column;gap:16px}}
+  </style>
 </head>
 <body>
-    <!-- Navegación -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <button class="hamburger-menu" id="hamburgerMenu" aria-label="Menú">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <div class="navbar-left">
-                <a href="configura-tu-proyecto.html" class="btn-presupuesto">Configura tu proyecto</a>
-            </div>
-            <div class="navbar-center">
-                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="navbar-logo" width="130" height="130">
-            </div>
-            <ul class="nav-links">
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="productos.html">Productos</a></li>
-                <li><a href="materiales.html">Materiales</a></li>
-                <li><a href="resenas.html">Reseñas</a></li>
-            </ul>
-        </div>
-        <div class="mobile-menu" id="mobileMenu">
-            <div class="mobile-menu-header">
-                <img src="../img/SILAB-LOGO-lateral.png" alt="SILAB 3D" class="mobile-menu-logo" width="130" height="130">
-            </div>
-            <nav class="mobile-menu-nav">
-                <a href="../index.html" class="mobile-menu-link">
-                    <span class="mobile-menu-icon">🏠</span>
-                    <span class="mobile-menu-label">Inicio</span>
-                </a>
-                <a href="productos.html" class="mobile-menu-link">
-                    <span class="mobile-menu-icon">🛍️</span>
-                    <span class="mobile-menu-label">Productos</span>
-                </a>
-                <a href="materiales.html" class="mobile-menu-link">
-                    <span class="mobile-menu-icon">🎨</span>
-                    <span class="mobile-menu-label">Materiales</span>
-                </a>
-                <a href="resenas.html" class="mobile-menu-link">
-                    <span class="mobile-menu-icon">⭐</span>
-                    <span class="mobile-menu-label">Reseñas</span>
-                </a>
-            </nav>
-            <div class="mobile-menu-footer">
-                <a href="configura-tu-proyecto.html" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">✨ Configura tu proyecto</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Sección Hero Principal -->
-    <section class="hero-main" style="padding: 4rem 0 1.5rem 0;">
-        <div class="hero-main-container">
-            <div class="hero-main-content" style="grid-column: 1 / -1; max-width: 900px; margin: 0 auto;">
-                <h1 class="hero-main-title" style="white-space: normal;">Política de Privacidad</h1>
-                <p class="hero-main-text">Última actualización: enero de 2026</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección de Contenido -->
-    <section class="terminos-section" style="padding: 2.5rem 0 2.5rem 0; background: linear-gradient(to bottom, #ffffff 0%, #fef7f9 100%);">
-        <div class="container" style="max-width: 900px;">
-            <div style="background: white; padding: 3.5rem; border-radius: 1.5rem; box-shadow: 0 8px 24px rgba(71, 12, 59, 0.12); border: 1px solid rgba(192, 87, 111, 0.1);">
-                
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD) se informa a los usuarios de esta página web sobre el tratamiento de sus datos personales.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 1.5rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">1. Responsable del tratamiento</h2>
-                <div style="background: linear-gradient(135deg, #FFF5F7 0%, #FFE8EC 100%); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0; border-left: 4px solid #C0576F;">
-                    <p style="color: #374151; line-height: 1.8; margin-bottom: 0.75rem; font-size: 1.05rem;">
-                        • <strong style="color: #7F2F56;">Titular:</strong> SILAB 3D
-                    </p>
-                    <p style="color: #374151; line-height: 1.8; margin-bottom: 0.75rem; font-size: 1.05rem;">
-                        • <strong style="color: #7F2F56;">País de operación:</strong> España
-                    </p>
-                    <p style="color: #374151; line-height: 1.8; margin-bottom: 0; font-size: 1.05rem;">
-                        • <strong style="color: #7F2F56;">Correo electrónico de contacto:</strong> silab3d@gmail.com
-                    </p>
-                </div>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">2. Datos personales que se recogen</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 1rem; font-size: 1.05rem;">
-                    Esta página web recoge únicamente los siguientes datos personales:
-                </p>
-                <ul style="color: #374151; line-height: 2; margin-bottom: 1rem; padding-left: 2.5rem; font-size: 1.05rem; list-style-type: disc;">
-                    <li style="margin-bottom: 0.75rem;">Nombre</li>
-                    <li style="margin-bottom: 0.75rem;">Dirección de correo electrónico</li>
-                    <li style="margin-bottom: 0.75rem;">Número de teléfono</li>
-                </ul>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    Los datos son facilitados de forma voluntaria por el usuario a través de los medios de contacto habilitados en la web.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">3. Finalidad del tratamiento</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 1rem; font-size: 1.05rem;">
-                    Los datos personales recogidos se utilizan exclusivamente para:
-                </p>
-                <ul style="color: #374151; line-height: 2; margin-bottom: 1rem; padding-left: 2.5rem; font-size: 1.05rem; list-style-type: disc;">
-                    <li style="margin-bottom: 0.75rem;">Enviar información relacionada con los productos o actividades de impresión 3D</li>
-                    <li style="margin-bottom: 0.75rem;">Responder a solicitudes de información realizadas por los usuarios</li>
-                </ul>
-                <div style="background: #FFF5F7; padding: 1.25rem; border-radius: 0.75rem; margin: 1.5rem 0; border-left: 4px solid #C0576F;">
-                    <p style="color: #470C3B; line-height: 1.8; margin-bottom: 0; font-size: 1.05rem;">
-                        <strong>En ningún caso se utilizarán los datos para fines comerciales ni publicitarios.</strong>
-                    </p>
-                </div>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">4. Legitimación</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    La base legal para el tratamiento de los datos es el <strong>consentimiento explícito del usuario</strong>, otorgado al facilitar sus datos de contacto y solicitar información.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">5. Conservación de los datos</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    Los datos personales se conservarán únicamente durante el tiempo necesario para atender la solicitud del usuario o mientras este no solicite su supresión.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">6. Destinatarios de los datos</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    No se cederán datos personales a terceros ni se realizarán transferencias internacionales de datos.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">7. Derechos del usuario</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 1rem; font-size: 1.05rem;">
-                    El usuario tiene derecho a:
-                </p>
-                <ul style="color: #374151; line-height: 2; margin-bottom: 1rem; padding-left: 2.5rem; font-size: 1.05rem; list-style-type: disc;">
-                    <li style="margin-bottom: 0.75rem;">Acceder a sus datos personales</li>
-                    <li style="margin-bottom: 0.75rem;">Solicitar la rectificación de los datos inexactos</li>
-                    <li style="margin-bottom: 0.75rem;">Solicitar la supresión de sus datos</li>
-                    <li style="margin-bottom: 0.75rem;">Solicitar la limitación u oposición al tratamiento</li>
-                </ul>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    Para ejercer estos derechos, el usuario puede enviar una solicitud al correo electrónico indicado, indicando claramente el derecho que desea ejercer.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">8. Medidas de seguridad</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    El responsable del tratamiento adopta las medidas técnicas y organizativas necesarias para garantizar la confidencialidad, integridad y seguridad de los datos personales.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">9. Uso de cookies</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    Esta web no utiliza cookies propias ni de terceros salvo las estrictamente necesarias para el funcionamiento del sitio o de los formularios de contacto. No se realiza seguimiento de los usuarios ni se recogen datos de navegación con fines analíticos o publicitarios. El usuario puede configurar su navegador para bloquear o eliminar las cookies si lo desea.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">10. Cambios en la política de privacidad</h2>
-                <p style="color: #374151; line-height: 2; margin-bottom: 2rem; font-size: 1.05rem;">
-                    El responsable se reserva el derecho a modificar la presente política de privacidad para adaptarla a posibles cambios legislativos o de funcionamiento de la web.
-                </p>
-
-                <h2 style="color: #470C3B; font-size: 1.9rem; font-weight: 700; margin-bottom: 1.25rem; margin-top: 2rem; padding-bottom: 0.75rem; border-bottom: 3px solid #FFE8EC;">11. Aceptación</h2>
-                <div style="background: linear-gradient(135deg, #FFEBEE 0%, #FFD1D9 100%); padding: 1.5rem; border-radius: 0.75rem; margin: 1.5rem 0 3rem 0; border: 2px solid #C0576F;">
-                    <p style="color: #470C3B; line-height: 1.8; margin-bottom: 0; font-size: 1.05rem;">
-                        <strong>El uso de esta página web implica la aceptación de la presente Política de Privacidad.</strong>
-                    </p>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer" style="margin-top: 0;">
-        <div class="container">
-            <p>&copy; 2026 SILAB 3D. Todos los derechos reservados.</p>
-            <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
-            <p><a href="terminos.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Términos y Condiciones</a> <span class="separator">|</span> <a href="privacidad.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Política de Privacidad</a> <span class="separator">|</span> <a href="aviso-legal.html" style="color: #C0576F; text-decoration: none; font-weight: 500;">Aviso Legal</a></p>
-        </div>
-    </footer>
-
-    <!-- Modal Formulario de Presupuesto -->
-    <div id="quoteFormModal" class="quote-modal">
-        <div class="quote-modal-content">
-            <span class="quote-modal-close">&times;</span>
-            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Solicita tu presupuesto</h2>
-            <form id="quoteForm">
-                <div class="form-group">
-                    <label for="customerName">Nombre *</label>
-                    <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre completo">
-                </div>
-                <div class="form-group">
-                    <label for="customerContact">Teléfono / Email de contacto *</label>
-                    <input type="text" id="customerContact" name="customerContact" required placeholder="Teléfono o email">
-                </div>
-                <div class="form-group">
-                    <label for="projectName">Nombre del proyecto *</label>
-                    <input type="text" id="projectName" name="projectName" required placeholder="Ej: Prototipo de pieza mecánica">
-                </div>
-                <div class="form-group">
-                    <label for="projectDescription">Descripción del proyecto *</label>
-                    <textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="5"></textarea>
-                </div>
-                <p style="font-size: 0.9rem; color: #6b7280; line-height: 1.5; margin-top: 1rem; text-align: center;">
-                    Incluye las medidas estimadas del modelo, así como toda la información que pueda ser necesaria para llevarlo a cabo. En caso de disponer de un proyecto, inclúyelo en el siguiente paso.
-                </p>
-                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Siguiente →</button>
-            </form>
-        </div>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <button class="hamburger-menu" id="hamburgerMenu" aria-label="Abrir men�"><span></span><span></span><span></span></button>
+      <div class="navbar-left"><a href="configura-tu-proyecto.html" class="btn-presupuesto">? Configura tu proyecto</a></div>
+      <div class="navbar-center"><a href="../index.html"><img src="../img/SILAB-LOGO-lateral-negro-compressed.png" alt="SILAB 3D" class="navbar-logo" width="130" height="130"></a></div>
+      <ul class="nav-links">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="materiales.html">Materiales</a></li>
+        <li><a href="resenas.html">Rese�as</a></li>
+      </ul>
     </div>
-
-    <!-- Modal Método de Contacto -->
-    <div id="quoteContactModal" class="quote-modal">
-        <div class="quote-modal-content">
-            <span class="quote-contact-modal-close">&times;</span>
-            <h2 style="margin-bottom: 1.5rem; color: #470C3B; font-weight: 700; font-size: 2.25rem; text-align: center;">Elige cómo prefieres contactar</h2>
-            <div class="contact-options-grid">
-                <a id="quoteModalWhatsApp" href="#" target="_blank" class="contact-option-card">
-                    <div class="contact-option-icon">📱</div>
-                    <h3>WhatsApp</h3>
-                    <p>Respuesta inmediata</p>
-                </a>
-                <a id="quoteModalEmail" href="#" target="_blank" class="contact-option-card">
-                    <div class="contact-option-icon">📧</div>
-                    <h3>Email</h3>
-                    <p>Comunicación formal</p>
-                </a>
-            </div>
-        </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu-header"><img src="../img/SILAB-LOGO-lateral-negro-compressed.png" alt="SILAB 3D" class="mobile-menu-logo" width="130" height="130"></div>
+      <nav class="mobile-menu-nav">
+        <a href="../index.html" class="mobile-menu-link"><span class="mobile-menu-icon">??</span><span class="mobile-menu-label">Inicio</span></a>
+        <a href="productos.html" class="mobile-menu-link"><span class="mobile-menu-icon">???</span><span class="mobile-menu-label">Productos</span></a>
+        <a href="materiales.html" class="mobile-menu-link"><span class="mobile-menu-icon">??</span><span class="mobile-menu-label">Materiales</span></a>
+        <a href="resenas.html" class="mobile-menu-link"><span class="mobile-menu-icon">?</span><span class="mobile-menu-label">Rese�as</span></a>
+      </nav>
+      <div class="mobile-menu-footer"><a href="configura-tu-proyecto.html" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">? Configura tu proyecto</a></div>
     </div>
-
-    <!-- Pop-up de Términos y Condiciones -->
-    <div id="termsPopup" class="terms-popup">
-        <div class="terms-popup-content">
-            <p>Al navegar en esta web, aceptas los <a href="terminos.html" target="_blank" style="color: #C0576F; font-weight: 600; text-decoration: underline;">Términos y Condiciones</a> de la misma.</p>
-            <div class="terms-popup-buttons">
-                <button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button>
-                <button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button>
-            </div>
-        </div>
+  </nav>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <section class="hero-main">
+    <div class="hero-main-container">
+      <div class="hero-main-image"><div class="hero-img-wrap"><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring-spin"></div><img src="../img/inicio3.webp" alt="Privacidad SILAB 3D" class="hero-image-circular" width="330" height="330"></div></div>
+      <div class="hero-main-content">
+        <div class="hero-badge"><span class="badge-dot"></span>Privacidad � SILAB 3D</div>
+        <h1 class="hero-main-title">Pol�tica de <span class="accent">Privacidad</span></h1>
+        <p class="hero-main-text">�ltima actualizaci�n: enero de 2026. Aqu� se explica qu� datos se recogen, para qu� se usan y qu� derechos tiene el usuario sobre su informaci�n personal.</p>
+        <a href="#contenido" class="btn-primary">Leer pol�tica</a>
+      </div>
     </div>
-
-    <script defer src="../js/script.js"></script>
+  </section>
+  <section id="contenido" class="section-shell alt">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Protecci�n de datos</span>
+        <h2 class="section-title">Tratamiento de informaci�n personal</h2>
+        <p class="section-desc">Resumen de responsables, datos recogidos, finalidades, derechos y seguridad.</p>
+      </div>
+      <div class="content-card legal-body reveal">
+        <p>En cumplimiento del RGPD y la LOPDGDD, informamos sobre el tratamiento de los datos personales facilitados por los usuarios a trav�s de esta web.</p>
+        <h2>1. Responsable del tratamiento</h2>
+        <div class="info-box"><p><strong>Titular:</strong> SILAB 3D</p><p><strong>Pa�s de operaci�n:</strong> Espa�a</p><p><strong>Correo electr�nico:</strong> silab3d@gmail.com</p></div>
+        <h2>2. Datos personales que se recogen</h2>
+        <ul><li>Nombre</li><li>Direcci�n de correo electr�nico</li><li>N�mero de tel�fono</li></ul>
+        <p>Los datos se facilitan de forma voluntaria por el usuario a trav�s de los medios de contacto habilitados en la web.</p>
+        <h2>3. Finalidad del tratamiento</h2>
+        <ul><li>Responder a solicitudes de informaci�n.</li><li>Gestionar comunicaciones relacionadas con productos o encargos de impresi�n 3D.</li></ul>
+        <div class="notice-box"><p><strong>En ning�n caso se usar�n los datos para fines comerciales ni publicitarios.</strong></p></div>
+        <h2>4. Legitimaci�n</h2>
+        <p>La base legal del tratamiento es el consentimiento expl�cito del usuario al facilitar sus datos de contacto.</p>
+        <h2>5. Conservaci�n de los datos</h2>
+        <p>Los datos se conservar�n durante el tiempo necesario para atender la solicitud o hasta que el usuario solicite su supresi�n.</p>
+        <h2>6. Destinatarios</h2>
+        <p>No se ceder�n datos personales a terceros ni se realizar�n transferencias internacionales de datos.</p>
+        <h2>7. Derechos del usuario</h2>
+        <ul><li>Acceder a sus datos.</li><li>Rectificarlos si son inexactos.</li><li>Solicitar su supresi�n.</li><li>Limitar u oponerse al tratamiento.</li></ul>
+        <p>Para ejercer estos derechos, el usuario puede escribir al correo de contacto indicando claramente la solicitud.</p>
+        <h2>8. Medidas de seguridad</h2>
+        <p>Se adoptan medidas t�cnicas y organizativas para garantizar la confidencialidad, integridad y seguridad de los datos.</p>
+        <h2>9. Uso de cookies</h2>
+        <p>Esta web no utiliza cookies propias ni de terceros, salvo las estrictamente necesarias para su funcionamiento o para los formularios de contacto.</p>
+        <h2>10. Cambios en la pol�tica</h2>
+        <p>El responsable podr� modificar esta pol�tica para adaptarla a cambios legales o t�cnicos de la web.</p>
+        <div class="notice-box"><p><strong>El uso de esta web implica la aceptaci�n de la presente Pol�tica de Privacidad.</strong></p></div>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SILAB 3D. Todos los derechos reservados.</p>
+      <p>📧 silab3d@gmail.com &nbsp;&nbsp;|&nbsp;&nbsp; 📱 +34 644 07 04 87</p>
+      <p>
+        <a href="terminos.html">Términos y Condiciones</a>
+        <span class="sep">|</span>
+        <a href="privacidad.html">Política de Privacidad</a>
+        <span class="sep">|</span>
+        <a href="aviso-legal.html">Aviso Legal</a>
+      </p>
+    </div>
+  </footer>
+  <div id="quoteFormModal" class="quote-modal"><div class="quote-modal-content"><button class="quote-modal-close" aria-label="Cerrar">&times;</button><h2>Solicita tu presupuesto</h2><form id="quoteForm"><div class="form-group"><label for="customerName">Nombre *</label><input type="text" id="customerName" name="customerName" required placeholder="Tu nombre completo"></div><div class="form-group"><label for="customerContact">Tel�fono / Email de contacto *</label><input type="text" id="customerContact" name="customerContact" required placeholder="Tel�fono o email"></div><div class="form-group"><label for="projectName">Nombre del proyecto *</label><input type="text" id="projectName" name="projectName" required placeholder="Ej: Prototipo de pieza mec�nica"></div><div class="form-group"><label for="projectDescription">Descripci�n del proyecto *</label><textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="5"></textarea></div><p class="form-note">Incluye las medidas estimadas del modelo y la informaci�n necesaria para llevarlo a cabo.</p><button type="submit" class="cta-button">Siguiente ?</button></form></div></div>
+  <div id="quoteContactModal" class="quote-modal"><div class="quote-modal-content"><button class="quote-contact-modal-close" aria-label="Cerrar">&times;</button><h2>Elige c�mo prefieres contactar</h2><div class="contact-options-grid"><a id="quoteModalWhatsApp" href="#" target="_blank" class="contact-option-card"><div class="contact-option-icon">??</div><h3>WhatsApp</h3><p>Respuesta inmediata</p></a><a id="quoteModalEmail" href="#" target="_blank" class="contact-option-card"><div class="contact-option-icon">??</div><h3>Email</h3><p>Comunicaci�n formal</p></a></div></div></div>
+  <div id="termsPopup" class="terms-popup"><div class="terms-popup-content"><p>Al navegar en esta web, aceptas los <a href="terminos.html" target="_blank" style="color:var(--primary);font-weight:700;text-decoration:underline;">T�rminos y Condiciones</a> de la misma.</p><div class="terms-popup-buttons"><button id="acceptTerms" class="terms-btn terms-btn-accept">Aceptar</button><button id="rejectTerms" class="terms-btn terms-btn-reject">Rechazar</button></div></div></div>
+  <script>
+    const navbar=document.getElementById('navbar');window.addEventListener('scroll',()=>{navbar.classList.toggle('scrolled',window.scrollY>20)},{passive:true});const hamburger=document.getElementById('hamburgerMenu'),mobileMenu=document.getElementById('mobileMenu'),overlay=document.getElementById('menuOverlay');function openMenu(){mobileMenu.classList.add('open');hamburger.classList.add('open');overlay.classList.add('show');document.body.style.overflow='hidden'}function closeMenu(){mobileMenu.classList.remove('open');hamburger.classList.remove('open');overlay.classList.remove('show');document.body.style.overflow=''}hamburger.addEventListener('click',()=>mobileMenu.classList.contains('open')?closeMenu():openMenu());overlay.addEventListener('click',closeMenu);const revealEls=document.querySelectorAll('.reveal');const revealObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.1});revealEls.forEach(el=>revealObs.observe(el));const termsPopup=document.getElementById('termsPopup');if(!localStorage.getItem('silab_terms_accepted')){setTimeout(()=>termsPopup.classList.add('show'),1800)}document.getElementById('acceptTerms').addEventListener('click',()=>{localStorage.setItem('silab_terms_accepted','1');termsPopup.classList.remove('show')});document.getElementById('rejectTerms').addEventListener('click',()=>{termsPopup.classList.remove('show')});function openModal(id){const m=document.getElementById(id);if(m){m.style.display='flex';document.body.style.overflow='hidden'}}function closeModal(id){const m=document.getElementById(id);if(m){m.style.display='none';document.body.style.overflow=''}}document.querySelector('.quote-modal-close')?.addEventListener('click',()=>closeModal('quoteFormModal'));document.querySelector('.quote-contact-modal-close')?.addEventListener('click',()=>closeModal('quoteContactModal'));document.querySelectorAll('.quote-modal').forEach(modal=>modal.addEventListener('click',e=>{if(e.target===modal){modal.style.display='none';document.body.style.overflow=''}}));window.openModal=openModal;window.closeModal=closeModal;
+  </script>
+  <script defer src="../js/script.js"></script>
 </body>
 </html>
+
+
+

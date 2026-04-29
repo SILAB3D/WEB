@@ -54,8 +54,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     colorCatalogSections.addEventListener('change', function (event) {
         if (event.target && event.target.matches('input[name="projectColorChoices"]')) {
+            const label = event.target.closest('.catalog-color-item');
+            if (label) {
+                label.classList.toggle('selected', event.target.checked);
+            }
             syncSelectedColorsFromRenderedInputs();
             updateSelectedBoard();
+        }
+    });
+
+    selectedColorChips.addEventListener('click', function (event) {
+        const removeBtn = event.target.closest('.color-chip-remove');
+        if (removeBtn) {
+            const colorValue = removeBtn.getAttribute('data-value');
+            const checkbox = colorCatalogSections.querySelector('input[value="' + CSS.escape(colorValue) + '"]');
+            if (checkbox) {
+                checkbox.checked = false;
+                const label = checkbox.closest('.catalog-color-item');
+                if (label) label.classList.remove('selected');
+                syncSelectedColorsFromRenderedInputs();
+                updateSelectedBoard();
+            }
         }
     });
 
@@ -322,7 +341,8 @@ document.addEventListener('DOMContentLoaded', function () {
             id: slugify(name + '-' + hexList.join('-')),
             name: name,
             swatch: swatch,
-            isPremium: isPremium
+            isPremium: isPremium,
+            offer: Boolean(color && color.offer)
         };
     }
 
@@ -401,8 +421,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!colors.length) {
                 return '' +
-                    '<div class="project-color-group">' +
-                        '<h4 class="project-color-group-title">' + titles[groupKey] + '</h4>' +
+                    '<div class="catalog-section">' +
+                        '<h4 class="catalog-section-title">' + titles[groupKey] + '</h4>' +
                         '<p style="color: #9ca3af; font-size: 0.9rem;">No hay colores disponibles en este momento.</p>' +
                     '</div>';
             }
@@ -412,21 +432,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 const colorLabel = groupKey === 'petg'
                     ? color.name + ' (PETG)'
                     : color.name;
+                const isSelected = selectedColorState[colorValue];
                 return '' +
-                    '<label class="project-color-option">' +
-                        '<input type="checkbox" class="color-checkbox" name="projectColorChoices" value="' + escapeHtml(colorValue) + '" data-color-label="' + escapeHtml(colorLabel) + '" data-color-swatch="' + escapeHtml(color.swatch) + '" ' + (selectedColorState[colorValue] ? 'checked' : '') + '>' +
-                        '<div class="color-option-ui">' +
-                            '<span class="project-color-swatch" style="background:' + escapeHtml(color.swatch) + ';"></span>' +
-                            '<span class="project-color-name" title="' + escapeHtml(color.name) + '">' + escapeHtml(color.name) + '</span>' +
-                            (color.offer ? '<span class="color-offer-badge">Oferta</span>' : '') +
-                        '</div>' +
+                    '<label class="catalog-color-item' + (isSelected ? ' selected' : '') + '">' +
+                        '<input type="checkbox" style="display:none;" class="color-checkbox" name="projectColorChoices" value="' + escapeHtml(colorValue) + '" data-color-label="' + escapeHtml(colorLabel) + '" data-color-swatch="' + escapeHtml(color.swatch) + '" ' + (isSelected ? 'checked' : '') + '>' +
+                        '<span class="catalog-color-circle" style="background:' + escapeHtml(color.swatch) + ';"></span>' +
+                        '<span class="catalog-color-name" title="' + escapeHtml(color.name) + '">' + escapeHtml(color.name) + '</span>' +
                     '</label>';
             }).join('');
 
             return '' +
-                '<div class="project-color-group">' +
-                    '<h4 class="project-color-group-title">' + titles[groupKey] + '</h4>' +
-                    '<div class="project-color-options">' + optionsHtml + '</div>' +
+                '<div class="catalog-section">' +
+                    '<h4 class="catalog-section-title">' + titles[groupKey] + '</h4>' +
+                    '<div class="catalog-color-grid">' + optionsHtml + '</div>' +
                 '</div>';
         }).join('');
     }
@@ -450,15 +468,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (selectionDisplay) {
-                isPremium: isPremium,
-                offer: Boolean(color && color.offer)
+            selectionDisplay.hidden = false;
         }
         if (selectionTitle) {
             selectionTitle.hidden = false;
         }
 
         const colorChips = selectedColors.map((color) => {
-            return '<span class="planner-chip"><span class="planner-chip-swatch" style="background:' + escapeHtml(color.swatch) + ';"></span><span>' + escapeHtml(color.label) + '</span></span>';
+            return '<span class="color-chip">' +
+                '<span class="color-chip-dot" style="background:' + escapeHtml(color.swatch) + ';"></span>' +
+                '<span>' + escapeHtml(color.label) + '</span>' +
+                '<button type="button" class="color-chip-remove" data-value="' + escapeHtml(color.value) + '">✕</button>' +
+            '</span>';
         }).join('');
 
         selectedColorChips.innerHTML = colorChips;

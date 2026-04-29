@@ -255,7 +255,7 @@
       gap: 12px;
       padding: 13px 16px;
       border-radius: 12px;
-      font-weight: 500;
+      font-weight: 700;
       font-size: 1rem;
       transition: all 0.2s;
       color: var(--dark);
@@ -1058,14 +1058,14 @@
       .hero-main-container {
         grid-template-columns: 1fr;
         text-align: center;
-        gap: 40px;
+        gap: 56px;
         padding: 70px 24px;
       }
       .hero-main-image { order: -1; }
       .hero-img-wrap   { width: 280px; height: 280px; }
       .hero-image-circular { width: 250px; height: 250px; }
       .ring-spin       { inset: -40px; }
-      .hero-main-text  { margin: 0 auto; }
+      .hero-main-text  { margin: 0 auto 32px; }
       .btn-primary     { width: 100%; justify-content: center; max-width: 340px; }
 
       .materiales-preview-grid { grid-template-columns: 1fr; }
@@ -1083,7 +1083,17 @@
     }
 
     @media (max-width: 480px) {
-      .productos-grid { grid-template-columns: 1fr; max-width: 340px; margin: 0 auto; }
+      .productos-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px;
+        max-width: 100%; 
+        margin: 0 auto; 
+      }
+      .producto-card { padding: 20px 10px; gap: 8px; }
+      .producto-img-box { width: 56px; height: 56px; border-radius: 16px; }
+      .producto-img-box img { width: 32px; height: 32px; }
+      .producto-card h3 { font-size: 0.95rem; }
+      .producto-card p { font-size: 0.8rem; }
       .section-title  { font-size: 1.9rem; }
     }
   </style>
@@ -1373,11 +1383,11 @@
       <p>&copy; 2026 SILAB 3D. Todos los derechos reservados.</p>
       <p>📧 silab3d@gmail.com &nbsp;&nbsp;|&nbsp;&nbsp; 📱 +34 644 07 04 87</p>
       <p>
-        <a href="pages/terminos.html">Términos y Condiciones</a>
+        <a href="terminos.html">Términos y Condiciones</a>
         <span class="sep">|</span>
-        <a href="pages/privacidad.html">Política de Privacidad</a>
+        <a href="privacidad.html">Política de Privacidad</a>
         <span class="sep">|</span>
-        <a href="pages/aviso-legal.html">Aviso Legal</a>
+        <a href="aviso-legal.html">Aviso Legal</a>
       </p>
     </div>
   </footer>

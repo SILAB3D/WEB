@@ -347,7 +347,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
     const rejectTermsBtn = document.getElementById('rejectTerms');
 
     // Popup promocional Palomitera
-    const isIndexPage = window.location.pathname === '/' || window.location.pathname.toLowerCase().endsWith('/index.html');
+    const isIndexPage = window.location.pathname === '/' || window.location.pathname.toLowerCase().endsWith('/index.html') || window.location.pathname.toLowerCase().endsWith('/indexv2.html');
     const inPagesFolder = window.location.pathname.toLowerCase().includes('/pages/');
     const imagePrefix = inPagesFolder ? '../img/' : 'img/';
     let palomiteraFlowReady = false;
@@ -367,7 +367,15 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
     let palomiteraActiveColorGroup = 'pla-basico';
 
     function shouldShowPalomiteraPopup() {
-        return isIndexPage;
+        if (!isIndexPage) return false;
+        const closedAt = localStorage.getItem('palomiteraPopupClosedAt');
+        if (closedAt) {
+            const timeElapsed = Date.now() - parseInt(closedAt, 10);
+            if (timeElapsed < 30 * 60 * 1000) {
+                return false;
+            }
+        }
+        return true;
     }
 
     async function loadPalomiteraCatalog() {
@@ -706,6 +714,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         const activePalomiteraPopup = document.getElementById('palomiteraPopup');
         if (activePalomiteraPopup) {
             activePalomiteraPopup.classList.remove('show');
+            localStorage.setItem('palomiteraPopupClosedAt', Date.now());
         }
         showPalomiteraRequestModal();
     }
@@ -761,6 +770,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
                 clearInterval(palomiteraIntervalId);
                 palomiteraIntervalId = null;
             }
+            localStorage.setItem('palomiteraPopupClosedAt', Date.now());
         }
 
         if (palomiteraSlides.length > 1) {

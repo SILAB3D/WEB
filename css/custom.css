@@ -741,7 +741,7 @@ html {
     text-decoration: none;
     color: rgba(255, 255, 255, 0.85);
     font-size: 1.15rem;
-    font-weight: 600;
+    font-weight: 700;
     font-family: 'Montserrat', sans-serif;
     transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
     border: 1px solid transparent;
@@ -815,7 +815,7 @@ html {
     .mobile-menu-header {
         padding: 0.5rem 0 1rem;
         margin-bottom: 0.75rem;
-    }
+            font-weight: 700;
     .mobile-menu-link {
         padding: 0.7rem 1.25rem;
         font-size: 1rem;
@@ -1987,10 +1987,14 @@ html {
     z-index: 10;
 }
 
+.materiales {
+    --material-color-hover-scale: 0.3;
+}
+
 /* Al hacer hover, mostrar el modelo 3D */
-.color-card:hover .color-model {
+.materiales .color-card:hover .color-model {
     opacity: 1;
-    transform: translateX(-50%) scale(1);
+    transform: translateX(-50%) translateY(-12px) scale(var(--material-color-hover-scale));
 }
 
 /* Al hacer hover, ocultar el c├¡rculo de color */
@@ -2329,7 +2333,7 @@ html {
 
     .hero-main-container {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 3.5rem;
         text-align: center;
         place-items: center;
     }
@@ -2349,6 +2353,7 @@ html {
 
     .hero-main-text {
         text-align: center;
+        margin-bottom: 32px;
     }
 
     .hero-main-image {
@@ -4621,7 +4626,7 @@ html {
 
     .hero-main-container {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 3.5rem;
         padding: 0 1.5rem;
     }
 
