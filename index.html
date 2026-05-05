@@ -236,10 +236,14 @@
     .mobile-menu.open { transform: translateX(0); }
 
     .mobile-menu-header {
-      padding: 26px 22px 20px;
+      padding: 20px 22px;
       border-bottom: 1px solid var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .mobile-menu-logo { height: 42px; width: auto; }
+    /* Match desktop navbar logo size and center inside header */
+    .mobile-menu-logo { height: 48px; width: auto; }
 
     .mobile-menu-nav {
       flex: 1;
@@ -1184,13 +1188,14 @@
 
     @media (max-width: 768px) {
       .navbar { z-index: 980; }
-      .hamburger-menu  { display: flex; margin: 0; position: absolute; left: 28px; top: 20px; }
+      .hamburger-menu  { display: flex; margin: 0; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); }
       .navbar-left,
       .nav-links       { display: none; }
-      .navbar-container { justify-content: space-between; }
+      .navbar-container { justify-content: center; }
       .navbar-center {
         position: absolute;
-        left: 50%; transform: translateX(-50%);
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
       }
 
       .hero-main-container {
@@ -1206,8 +1211,21 @@
       .hero-main-text  { margin: 0 auto 32px; }
       .btn-primary     { width: 100%; justify-content: center; max-width: 340px; }
 
-      .materiales-preview-grid { grid-template-columns: 1fr; }
-      .material-preview-card   { padding: 38px 30px; }
+      .materiales-preview-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      .material-preview-card {
+        width: 100%;
+        max-width: 360px;
+        padding: 38px 30px;
+        align-items: center;
+        text-align: center;
+      }
+      .material-preview-card h3 {
+        white-space: nowrap;
+        line-height: 1.05;
+      }
 
       .contacto-grid {
         grid-template-columns: 1fr;
@@ -1238,6 +1256,13 @@
       .producto-img-box img { width: 32px; height: 32px; }
       .producto-card h3 { font-size: 0.95rem; }
       .producto-card p { font-size: 0.8rem; }
+      .material-preview-card {
+        max-width: 100%;
+        padding: 34px 22px;
+      }
+      .material-preview-card h3 {
+        font-size: clamp(2rem, 12vw, 2.3rem);
+      }
       .section-title  { font-size: 1.9rem; }
     }
   </style>
@@ -1665,7 +1690,8 @@
         const base  = getActive('calcProduct',  'data-base');
         const mult  = getActive('calcMaterial', 'data-mult');
         const size  = getActive('calcSize',     'data-size');
-        const qty   = parseInt(document.getElementById('calcQtyVal').textContent) || 1;
+        const qtyEl = document.getElementById('calcQtyVal');
+        const qty   = qtyEl ? (parseInt(qtyEl.textContent) || 1) : 1;
 
         // Bulk discount: 5% per extra unit, capped at 25%
         const discount = Math.min((qty - 1) * 0.05, 0.25);
@@ -1674,6 +1700,7 @@
         const high = low * (1 + MARGIN);
 
         const el = document.getElementById('calcPrice');
+        if (!el) return;
         el.innerHTML = formatEUR(low) + '<span>– ' + formatEUR(high) + '</span>';
 
         // Pulse animation
@@ -1687,7 +1714,10 @@
 
       // Single-select chips per group
       ['calcProduct', 'calcMaterial', 'calcSize'].forEach(function (groupId) {
-        document.getElementById(groupId).addEventListener('click', function (e) {
+        const groupEl = document.getElementById(groupId);
+        if (!groupEl) return;
+
+        groupEl.addEventListener('click', function (e) {
           const btn = e.target.closest('.calc-opt');
           if (!btn) return;
           this.querySelectorAll('.calc-opt').forEach(b => b.classList.remove('active'));
@@ -1698,12 +1728,20 @@
 
       // Quantity counter
       let qty = 1;
-      document.getElementById('calcQtyDown').addEventListener('click', function () {
-        if (qty > 1) { qty--; document.getElementById('calcQtyVal').textContent = qty; updatePrice(); }
-      });
-      document.getElementById('calcQtyUp').addEventListener('click', function () {
-        if (qty < 99) { qty++; document.getElementById('calcQtyVal').textContent = qty; updatePrice(); }
-      });
+      const calcQtyDown = document.getElementById('calcQtyDown');
+      const calcQtyUp = document.getElementById('calcQtyUp');
+      const calcQtyVal = document.getElementById('calcQtyVal');
+
+      if (calcQtyDown && calcQtyVal) {
+        calcQtyDown.addEventListener('click', function () {
+          if (qty > 1) { qty--; calcQtyVal.textContent = qty; updatePrice(); }
+        });
+      }
+      if (calcQtyUp && calcQtyVal) {
+        calcQtyUp.addEventListener('click', function () {
+          if (qty < 99) { qty++; calcQtyVal.textContent = qty; updatePrice(); }
+        });
+      }
 
       updatePrice();
     })();
