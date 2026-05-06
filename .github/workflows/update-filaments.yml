@@ -1,0 +1,30 @@
+name: Update filamentos.json
+
+on:
+  schedule:
+    - cron: '0 * * * *' # hourly at minute 0 (every hour)
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Run update script
+        env:
+          SHEET_ID: 1kWsHasAfQa7kAqSKHue72_kV3ZS_7SElBD6R8lmjoPM
+          SHEET_NAME: "Stock de Filamentos"
+        run: |
+          node scripts/update-filamentos.js
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/filamentos.json || true
+          if git diff --staged --quiet; then echo "No changes"; else git commit -m "chore: update filamentos.json from spreadsheet" && git push; fi

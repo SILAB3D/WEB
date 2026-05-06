@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test - Catálogo Filamentos desde OpenSheet</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+    h1 { color: #333; }
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+    .color-card { border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; }
+    .color-swatch { width: 100%; height: 120px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #999; }
+    .loading { color: #666; font-style: italic; }
+    .error { color: red; padding: 10px; background: #fee; border-radius: 4px; }
+    .material-section { margin-top: 30px; border-top: 2px solid #333; padding-top: 20px; }
+    .material-section h2 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <h1>📊 Catálogo de Filamentos desde OpenSheet</h1>
+  <div id="status" class="loading">Cargando desde Google Sheet...</div>
+  <div id="content"></div>
+
+  <script>
+    window.FILAMENTS_SHEET = { id: '1kWsHasAfQa7kAqSKHue72_kV3ZS_7SElBD6R8lmjoPM', sheet: 'Stock de Filamentos' };
+
+    async function fetchFilamentos() {
+      const sheetId = (window.FILAMENTS_SHEET && window.FILAMENTS_SHEET.id) || '';
+      const sheetName = (window.FILAMENTS_SHEET && window.FILAMENTS_SHEET.sheet) || 'filamentos';
+
+      if (!sheetId) {
+        return { filamentos: [] };
+      }
+
+      try {
+        const opensheetUrl = 'https://opensheet.elk.sh/' + encodeURIComponent(sheetId) + '/' + encodeURIComponent(sheetName);
+        console.log('Fetching from:', opensheetUrl);
+        const resp = await fetch(opensheetUrl, { cache: 'no-store' });
+        if (!resp.ok) {
+          throw new Error('OpenSheet responded with ' + resp.status);
+        }
+        const json = await resp.json();
+        console.log('Raw data from OpenSheet:', json);
+        
+        if (Array.isArray(json)) {
+          const rows = json;
+          const first = rows[0] || {};
+          console.log('First row keys:', Object.keys(first));
+          
+          // Detectar y transformar filas planas
+          if (first['Código HEX'] || first['Color'] || first['Tipo']) {
+            const map = Object.create(null);
+            rows.forEach(r => {
+              const rawTipo = (r.Tipo || r.tipo || r.material || '').toString().trim();
+              if (!rawTipo || /^TOTAL\b/i.test(rawTipo)) return;
+              
+              const material = rawTipo;
+              const subtype = (r.Subtipo || r.subtipo || '').toString().trim();
+              const colorName = (r.Color || r.color || '').toString().trim();
+              if (!colorName) return;
+              
+              const hexRaw = (r['Código HEX'] || r['Codigo HEX'] || '').toString().trim();
+              const premiumFlag = (r.Premium || r.premium || '').toString().toLowerCase();
+              const premium = premiumFlag === 'true' || premiumFlag === '1' || /premium/i.test(subtype);
+              
+              let hex;
+              if (hexRaw.indexOf(',') >= 0) {
+                hex = hexRaw.split(',').map(h => {
+                  const t = h.trim();
+                  return t.startsWith('#') ? t : ('#' + t);
+                });
+              } else {
+                const t = hexRaw || '#cccccc';
+                hex = t.startsWith('#') ? t : ('#' + t);
+              }
+              
+              const colorObj = { nombre: colorName, hex: hex };
+              if (premium) colorObj.premium = true;
+              
+              if (!map[material]) map[material] = { nombre: material, colores: [] };
+              map[material].colores.push(colorObj);
+            });
+            
+            const filamentos = Object.keys(map).map(k => map[k]);
+            console.log('Transformed filamentos:', filamentos);
+            return { filamentos };
+          }
+        }
+        
+        return json;
+      } catch (e) {
+        console.error('Error fetching from OpenSheet:', e);
+        throw e;
+      }
+    }
+
+    async function renderCatalog() {
+      try {
+        const data = await fetchFilamentos();
+        const filamentos = data.filamentos || [];
+        
+        if (!filamentos.length) {
+          document.getElementById('status').innerHTML = '<div class="error">❌ No se encontraron filamentos</div>';
+          return;
+        }
+        
+        let html = '';
+        filamentos.forEach(material => {
+          html += `<div class="material-section">
+            <h2>${material.nombre}</h2>
+            <div class="color-grid">`;
+          
+          (material.colores || []).forEach(color => {
+            const swatchStyle = Array.isArray(color.hex)
+              ? `background: linear-gradient(135deg, ${color.hex.join(', ')})`
+              : `background: ${color.hex}`;
+            const premium = color.premium ? ' ⭐' : '';
+            html += `<div class="color-card">
+              <div class="color-swatch" style="${swatchStyle}"></div>
+              <strong>${color.nombre}${premium}</strong><br>
+              <small>${Array.isArray(color.hex) ? color.hex.join(' / ') : color.hex}</small>
+            </div>`;
+          });
+          
+          html += `</div></div>`;
+        });
+        
+        document.getElementById('status').innerHTML = `✅ Catálogo cargado: ${filamentos.length} materiales, ${filamentos.reduce((sum, m) => sum + (m.colores || []).length, 0)} colores`;
+        document.getElementById('content').innerHTML = html;
+      } catch (error) {
+        document.getElementById('status').innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+        console.error('Full error:', error);
+      }
+    }
+
+    renderCatalog();
+  </script>
+</body>
+</html>
