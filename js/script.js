@@ -1,74 +1,4 @@
 // Script para cargar y mostrar materiales desde filamentos.json
-
-// Helper: intenta cargar el catálogo desde OpenSheet y, si falla, cae al JSON local
-async function fetchFilamentos() {
-    const sheetId = (window.FILAMENTS_SHEET && window.FILAMENTS_SHEET.id) || '';
-    const sheetName = (window.FILAMENTS_SHEET && window.FILAMENTS_SHEET.sheet) || 'filamentos';
-    const inPagesFolder = window.location.pathname.toLowerCase().includes('/pages/');
-    const localPath = inPagesFolder ? '../data/filamentos.json' : 'data/filamentos.json';
-
-    if (sheetId) {
-        try {
-            const opensheetUrl = 'https://opensheet.elk.sh/' + encodeURIComponent(sheetId) + '/' + encodeURIComponent(sheetName);
-            const resp = await fetch(opensheetUrl, { cache: 'no-store' });
-            if (resp && resp.ok) {
-                const json = await resp.json();
-                if (Array.isArray(json)) {
-                    // Transformar filas planas en la estructura { filamentos: [ { nombre, colores: [...] } ] }
-                    const rows = json;
-                    const first = rows[0] || {};
-                    // Detectar filas de colores: admitir cabeceras en inglés y español
-                    if (first.hex || first.color || first.color_name || first.nombre_color || first.color_hex || first['Código HEX'] || first['Codigo HEX'] || first['Color'] || first['Tipo']) {
-                        const map = Object.create(null);
-                        rows.forEach(r => {
-                            // saltar filas resumen o vacías
-                            const rawTipo = (r.Tipo || r.Tipo || r['Tipo'] || r.material || r.nombre || r.material_name || '').toString().trim();
-                            if (!rawTipo) return;
-                            if (/^TOTAL\b/i.test(rawTipo)) return; // fila de totales
-
-                            const material = rawTipo || 'UNKNOWN';
-                            const subtype = (r.Subtipo || r.subtipo || r.subtype || '').toString().trim();
-                            const colorName = (r.Color || r.color || r.color_name || r.nombre || r.name || '').toString().trim();
-                            if (!colorName) return; // sin color no nos interesa
-                            const hexRaw = (r['Código HEX'] || r['Codigo HEX'] || r.hex || r.hex_code || r.color_hex || '').toString().trim();
-                            const premiumFlag = (r.Premium || r.premium || r.isPremium || '').toString().toLowerCase();
-                            const offerFlag = (r.Offer || r.offer || r.oferta || '').toString().toLowerCase();
-                            const premium = premiumFlag === 'true' || premiumFlag === '1' || premiumFlag === 'yes' || premiumFlag === 'si' || /premium/i.test(subtype);
-                            const offer = offerFlag === 'true' || offerFlag === '1' || offerFlag === 'yes' || offerFlag === 'si';
-                            let hex;
-                            if (hexRaw.indexOf(',') >= 0) {
-                                hex = hexRaw.split(',').map(h => { const t = h.trim(); return t.startsWith('#') ? t : ('#' + t); });
-                            } else {
-                                const t = hexRaw || '#cccccc';
-                                hex = t.startsWith('#') ? t : ('#' + t);
-                            }
-                            const colorObj = { nombre: colorName, hex: hex };
-                            if (premium) colorObj.premium = true;
-                            if (offer) colorObj.offer = true;
-                            if (!map[material]) map[material] = { nombre: material, colores: [] };
-                            map[material].colores.push(colorObj);
-                        });
-                        const filamentos = Object.keys(map).map(k => map[k]);
-                        return { filamentos };
-                    }
-                    // Si ya es el formato esperado, envolverlo
-                    return { filamentos: json };
-                }
-                return json;
-            }
-        } catch (e) {
-            // fallo al cargar desde OpenSheet, seguir con fallback local
-        }
-    }
-
-    try {
-        const r = await fetch(localPath, { cache: 'no-store' });
-        if (r && r.ok) return await r.json();
-    } catch (e) {}
-
-    return { filamentos: [] };
-}
-
 document.addEventListener('DOMContentLoaded', async function() {
     // Navbar siempre visible (anclada)
 
@@ -76,7 +6,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     const materialesGrid = document.getElementById('materialesGrid');
     if (materialesGrid) {
         try {
-            const data = await fetchFilamentos();
+            const response = await fetch('../data/filamentos.json');
+            const data = await response.json();
             const filamentos = Array.isArray(data.filamentos) ? data.filamentos : [];
             void filamentos;
         } catch (error) {
@@ -375,7 +306,14 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         }
 
         try {
-            const data = await fetchFilamentos();
+            const catalogPath = inPagesFolder ? '../data/filamentos.json' : 'data/filamentos.json';
+            const response = await fetch(catalogPath, { cache: 'no-store' });
+            if (!response.ok) {
+                palomiteraCatalogCache = { 'pla-basico': [], 'pla-premium': [] };
+                return palomiteraCatalogCache;
+            }
+
+            const data = await response.json();
             const filamentos = Array.isArray(data.filamentos) ? data.filamentos : [];
             const catalog = { 'pla-basico': [], 'pla-premium': [] };
 
