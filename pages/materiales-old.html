@@ -2056,6 +2056,13 @@
   <!-- ======================================================
        FOOTER
   ====================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 SILAB 3D. Todos los derechos reservados.</p>
+      <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
+      <p><a href="terminos.html">Términos y Condiciones</a><span class="sep">|</span><a href="privacidad.html">Política de Privacidad</a><span class="sep">|</span><a href="aviso-legal.html">Aviso Legal</a></p>
+    </div>
+  </footer>
 
 
   <!-- ======================================================
@@ -2207,7 +2214,11 @@
     // Configuración de OpenSheet para esta página
     window.FILAMENTS_SHEET = { id: '1kWsHasAfQa7kAqSKHue72_kV3ZS_7SElBD6R8lmjoPM', sheet: 'Stock de Filamentos' };
   </script>
-<!-- Color logic (preserved from original) -->
+
+  <!-- Original script.js for quote form logic -->
+  <script defer src="../js/script.js"></script>
+
+  <!-- Color logic (preserved from original) -->
   <script defer>
     let allColors = {
       pla: [
@@ -2449,108 +2460,6 @@
     });
   </script>
 
-
-  <!-- Dynamic catalog: prefer `data/filamentos.json` updated by GitHub Actions, fallback to OpenSheet -->
-  <script defer>
-    async function fetchFilamentosFromRepo() {
-      try {
-        const res = await fetch('/data/filamentos.json', { cache: 'no-store' });
-        if (!res.ok) return null;
-        const json = await res.json();
-        if (json && Array.isArray(json.filamentos)) return json;
-        // if nested under root or already flattened
-        if (json && Array.isArray(json)) return { filamentos: json };
-        return null;
-      } catch (e) {
-        return null;
-      }
-    }
-
-    async function fetchFilamentosFromSheet() {
-      if (!window.FILAMENTS_SHEET) return null;
-      try {
-        const url = `https://opensheet.elk.sh/${window.FILAMENTS_SHEET.id}/${encodeURIComponent(window.FILAMENTS_SHEET.sheet)}`;
-        const response = await fetch(url, { cache: 'no-store' });
-        if (!response.ok) return null;
-        const rows = await response.json();
-
-        const filamentos = [];
-        const materials = {};
-
-        rows.forEach(row => {
-          const tipo = (row.Tipo || row.tipo || '').trim();
-          const subtipo = (row.Subtipo || row.subtipo || '').trim();
-          const color = (row.Color || row.color || '').trim();
-          const hexRaw = (row['Código HEX'] || row['código hex'] || row['Codigo HEX'] || row.hex || '').toString().trim();
-          if (!tipo || /^TOTAL\b/i.test(color)) return;
-          if (!materials[tipo]) materials[tipo] = { nombre: tipo, colores: [] };
-          let hex = hexRaw;
-          if (hex && !hex.startsWith('#')) hex = '#' + hex;
-          const isPremium = /premium/i.test(subtipo);
-          materials[tipo].colores.push({ nombre: color, hex: hex || '#cccccc', premium: isPremium });
-        });
-
-        Object.values(materials).forEach(m => filamentos.push(m));
-        return { filamentos };
-      } catch (e) {
-        console.warn('OpenSheet error:', e);
-        return null;
-      }
-    }
-
-    function buildColorCardHtml(color) {
-      const lowerName = String(color.nombre || color.name || '').toLowerCase();
-      const hex = color.hex || color.color || '#cccccc';
-      const isWhite = /^#?fff(?:fff)?$/i.test(hex) || /white/i.test(lowerName);
-      const circleStyle = 'background-color:' + hex + (isWhite ? '; border:2px solid #ddd' : '');
-      const name = color.nombre || color.name || 'Color';
-      return '<div class="color-card" data-color="' + hex + '">' +
-        '<div class="color-circle" style="' + circleStyle + '"></div>' +
-        '<model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>' +
-        '<h4>' + name + '</h4></div>';
-    }
-
-    async function populateCatalog() {
-      // Always fetch directly from OpenSheet on each update
-      let data = await fetchFilamentosFromSheet();
-      if (!data || !data.filamentos) return;
-
-      const filamentos = data.filamentos || [];
-      let plaBasicos = [], plaPremium = [], petgColores = [];
-
-      filamentos.forEach(material => {
-        const materialName = String(material.nombre || material.name || '').toUpperCase();
-        const colors = Array.isArray(material.colores) ? material.colores : (Array.isArray(material.colors) ? material.colors : []);
-        if (materialName === 'PLA') {
-          colors.forEach(c => { if (c.premium) plaPremium.push(c); else plaBasicos.push(c); });
-        } else if (materialName === 'PETG') {
-          petgColores = petgColores.concat(colors);
-        }
-      });
-
-      const plaGrids = document.querySelectorAll('#pla .colores-grid');
-      if (plaGrids[0]) plaGrids[0].innerHTML = plaBasicos.map(c => buildColorCardHtml(c)).join('');
-
-      const premiumSection = document.querySelector('.premium-section');
-      if (plaPremium.length > 0 && premiumSection) {
-        premiumSection.style.display = 'block';
-        const premiumGrid = premiumSection.querySelector('.colores-grid');
-        if (premiumGrid) premiumGrid.innerHTML = plaPremium.map(c => buildColorCardHtml(c)).join('');
-      } else if (premiumSection) {
-        premiumSection.style.display = 'none';
-      }
-
-      const petgGrid = document.querySelector('#petg .colores-grid');
-      if (petgGrid) petgGrid.innerHTML = petgColores.map(c => buildColorCardHtml(c)).join('');
-    }
-
-    // Initial population and periodic refresh every 1 hour
-    document.addEventListener('DOMContentLoaded', () => {
-      populateCatalog();
-      // Refresh every 1 hour (3600000 ms)
-      setInterval(populateCatalog, 60 * 60 * 1000);
-    });
-  </script>
 </body>
 
 </html>

@@ -293,11 +293,14 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
     }
 
     function shouldShowPalomiteraPopup() {
+        // Solo mostrar en la página de index
+        if (!isIndexPage) return false;
+        
         try {
             const suppressUntil = Number(localStorage.getItem('palomitera_popup_suppress_until') || 0);
             if (Date.now() < suppressUntil) return false;
         } catch (e) {}
-        return true; // show on any page when not suppressed
+        return true; // show on index page when not suppressed
     }
 
     async function loadPalomiteraCatalog() {
@@ -1175,7 +1178,9 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         if (activePalomiteraPopup) {
             activePalomiteraPopup.classList.remove('show');
         }
-        showPalomiteraRequestModal();
+        // Redirigir a la página del formulario de la palomitera
+        const palomiteraFormURL = inPagesFolder ? 'palomitera-formulario.html' : 'pages/palomitera-formulario.html';
+        window.location.href = palomiteraFormURL;
     }
 
     function createPalomiteraPopup() {

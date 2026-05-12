@@ -1174,16 +1174,20 @@
 
     .modal-matching-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 118px);
       gap: 12px;
+      justify-content: center;
     }
 
     .modal-matching-card {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 8px;
-      padding: 14px 8px;
+      width: 118px;
+      min-height: 138px;
+      padding: 14px 10px;
       border: 1.5px solid #EDE0E3;
       border-radius: 14px;
       cursor: pointer;
@@ -1213,6 +1217,12 @@
       font-weight: 700;
       color: var(--dark);
       text-align: center;
+      line-height: 1.2;
+      min-height: 2.4em;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* ============================================================
@@ -1613,7 +1623,7 @@
       }
 
       .modal-matching-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 112px);
       }
     }
   </style>
@@ -2056,13 +2066,6 @@
   <!-- ======================================================
        FOOTER
   ====================================================== -->
-  <footer class="footer">
-    <div class="container">
-      <p>© 2026 SILAB 3D. Todos los derechos reservados.</p>
-      <p>📧 silab3d@gmail.com | 📱 +34 644 07 04 87</p>
-      <p><a href="terminos.html">Términos y Condiciones</a><span class="sep">|</span><a href="privacidad.html">Política de Privacidad</a><span class="sep">|</span><a href="aviso-legal.html">Aviso Legal</a></p>
-    </div>
-  </footer>
 
 
   <!-- ======================================================
@@ -2214,11 +2217,7 @@
     // Configuración de OpenSheet para esta página
     window.FILAMENTS_SHEET = { id: '1kWsHasAfQa7kAqSKHue72_kV3ZS_7SElBD6R8lmjoPM', sheet: 'Stock de Filamentos' };
   </script>
-
-  <!-- Original script.js for quote form logic -->
-  <script defer src="../js/script.js"></script>
-
-  <!-- Color logic (preserved from original) -->
+<!-- Color logic (preserved from original) -->
   <script defer>
     let allColors = {
       pla: [
@@ -2415,7 +2414,6 @@
 
           const matchCount = isPLA ? 3 : 2;
           const matchingColors = findMatchingColors(color, colorsList, matchCount);
-          modalMatchingColors.style.gridTemplateColumns = isPLA ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
           modalMatchingColors.innerHTML = matchingColors.map(match =>
             `<div class="modal-matching-card" data-color="${match.color}" data-color-name="${match.name}" data-is-pla="${isPLA}">
               <div class="modal-matching-circle" style="background-color:${match.color};"></div>
@@ -2449,7 +2447,6 @@
         }
         const matchCount = isPLA ? 3 : 2;
         const matchingColors = findMatchingColors(color, colorsList, matchCount);
-        modalMatchingColors.style.gridTemplateColumns = isPLA ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
         modalMatchingColors.innerHTML = matchingColors.map(match =>
           `<div class="modal-matching-card" data-color="${match.color}" data-color-name="${match.name}" data-is-pla="${isPLA}">
             <div class="modal-matching-circle" style="background-color:${match.color};"></div>
@@ -2460,6 +2457,60 @@
     });
   </script>
 
+
+    function buildColorCardHtml(color) {
+      const lowerName = String(color.nombre || color.name || '').toLowerCase();
+      const hex = color.hex || color.color || '#cccccc';
+      const isWhite = /^#?fff(?:fff)?$/i.test(hex) || /white/i.test(lowerName);
+      const circleStyle = 'background-color:' + hex + (isWhite ? '; border:2px solid #ddd' : '');
+      const name = color.nombre || color.name || 'Color';
+      return '<div class="color-card" data-color="' + hex + '">' +
+        '<div class="color-circle" style="' + circleStyle + '"></div>' +
+        '<model-viewer class="color-model" src="../assets/vase_spiral.glb" loading="eager" alt="Vase" scale="0.3 0.3 0.3" auto-rotate auto-rotate-delay="0" rotation-per-second="30deg" camera-orbit="45deg 75deg 5.5m" field-of-view="55deg" max-camera-orbit="auto auto 6m" disable-zoom></model-viewer>' +
+        '<h4>' + name + '</h4></div>';
+    }
+
+    async function populateCatalog() {
+      // Always fetch directly from OpenSheet on each update
+      let data = await fetchFilamentosFromSheet();
+      if (!data || !data.filamentos) return;
+
+      const filamentos = data.filamentos || [];
+      let plaBasicos = [], plaPremium = [], petgColores = [];
+
+      filamentos.forEach(material => {
+        const materialName = String(material.nombre || material.name || '').toUpperCase();
+        const colors = Array.isArray(material.colores) ? material.colores : (Array.isArray(material.colors) ? material.colors : []);
+        if (materialName === 'PLA') {
+          colors.forEach(c => { if (c.premium) plaPremium.push(c); else plaBasicos.push(c); });
+        } else if (materialName === 'PETG') {
+          petgColores = petgColores.concat(colors);
+        }
+      });
+
+      const plaGrids = document.querySelectorAll('#pla .colores-grid');
+      if (plaGrids[0]) plaGrids[0].innerHTML = plaBasicos.map(c => buildColorCardHtml(c)).join('');
+
+      const premiumSection = document.querySelector('.premium-section');
+      if (plaPremium.length > 0 && premiumSection) {
+        premiumSection.style.display = 'block';
+        const premiumGrid = premiumSection.querySelector('.colores-grid');
+        if (premiumGrid) premiumGrid.innerHTML = plaPremium.map(c => buildColorCardHtml(c)).join('');
+      } else if (premiumSection) {
+        premiumSection.style.display = 'none';
+      }
+
+      const petgGrid = document.querySelector('#petg .colores-grid');
+      if (petgGrid) petgGrid.innerHTML = petgColores.map(c => buildColorCardHtml(c)).join('');
+    }
+
+    // Initial population and periodic refresh every 1 hour
+    document.addEventListener('DOMContentLoaded', () => {
+      populateCatalog();
+      // Refresh every 1 hour (3600000 ms)
+      setInterval(populateCatalog, 60 * 60 * 1000);
+    });
+  </script>
 </body>
 
 </html>

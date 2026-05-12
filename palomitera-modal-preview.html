@@ -639,36 +639,33 @@
 
       <!-- ─── STEP 2: Contacto ─── -->
       <div class="step hidden" id="step2">
-
-        <div class="contact-header">
-          <span class="contact-icon-big">🎉</span>
-          <h2 class="contact-title">¡Casi listo!</h2>
-          <p class="contact-subtitle">
-            Elige cómo quieres enviarnos tu pedido.<br>
-            Recibirás un mensaje con todos los detalles.
-          </p>
+        <div class="quote-modal-content">
+          <button class="quote-modal-close" aria-label="Cerrar">&times;</button>
+          <h2>Solicita tu presupuesto</h2>
+          <form id="quoteForm">
+            <div class="form-group">
+              <label for="customerName">Nombre *</label>
+              <input type="text" id="customerName" name="customerName" required placeholder="Tu nombre completo">
+            </div>
+            <div class="form-group">
+              <label for="customerContact">Teléfono / Email de contacto *</label>
+              <input type="text" id="customerContact" name="customerContact" required placeholder="Teléfono o email">
+            </div>
+            <div class="form-group">
+              <label for="projectName">Nombre del proyecto *</label>
+              <input type="text" id="projectName" name="projectName" required placeholder="Ej: Prototipo de pieza mecánica">
+            </div>
+            <div class="form-group">
+              <label for="projectDescription">Descripción del proyecto *</label>
+              <textarea id="projectDescription" name="projectDescription" required placeholder="Describe tu proyecto en detalle..." rows="5"></textarea>
+            </div>
+            <p class="form-note">
+              Incluye las medidas estimadas del modelo, así como toda la información que pueda ser necesaria
+              para llevarlo a cabo. En caso de disponer de un proyecto, inclúyelo en el siguiente paso.
+            </p>
+            <button type="submit" class="cta-button">Siguiente →</button>
+          </form>
         </div>
-
-        <!-- Resumen en paso 2 -->
-        <div class="contact-summary" id="contactSummary"></div>
-
-        <div class="contact-btns">
-          <button class="btn-wa" id="btnWa">
-            <span class="btn-icon">📱</span>
-            Enviar por WhatsApp
-          </button>
-          <button class="btn-email" id="btnEmail">
-            <span class="btn-icon">📧</span>
-            Enviar por Email
-          </button>
-        </div>
-
-        <button class="btn-back" id="btnBack">← Modificar pedido</button>
-
-        <p class="modal-disclaimer">
-          Al pulsar serás redirigido a tu app con todos los detalles del pedido ya escritos.
-        </p>
-
       </div><!-- /step2 -->
 
     </div><!-- /modal-body-wrap -->
@@ -821,21 +818,6 @@
     const s1 = document.getElementById('step1');
     const s2 = document.getElementById('step2');
 
-    // Populate step-2 summary
-    const chips = [
-      { icon:'📐', text: sel.sizeName },
-      { icon:'🎨', text: sel.colorName, dot: sel.color },
-      { icon:'',   text: assemblyLabel() },
-      { icon:'',   text: deliveryLabel() },
-      { icon:'✕',  text: sel.qty + ' ud.' }
-    ];
-    document.getElementById('contactSummary').innerHTML = chips.map(c =>
-      '<span class="summary-chip">' +
-      (c.dot ? '<span class="summary-chip-dot" style="background:'+c.dot+'"></span>' : '') +
-      (c.icon ? c.icon + ' ' : '') + c.text +
-      '</span>'
-    ).join('');
-
     s1.classList.add('leaving');
     setTimeout(() => {
       s1.classList.add('hidden');
@@ -848,27 +830,16 @@
     }, 260);
   }
 
-  function goToStep1() {
-    const s1 = document.getElementById('step1');
-    const s2 = document.getElementById('step2');
-    s2.classList.add('hidden');
-    s1.classList.remove('hidden');
-    s1.classList.add('entering');
-    setTimeout(() => s1.classList.remove('entering'), 380);
-    document.querySelector('.modal-body-wrap').scrollTop = 0;
+  const btnNext = document.getElementById('btnNext');
+  if (btnNext) btnNext.addEventListener('click', goToStep2);
+
+  const quoteFormClose = document.querySelector('.quote-modal-close');
+  if (quoteFormClose) {
+    quoteFormClose.addEventListener('click', () => {
+      document.getElementById('overlay').style.display = 'none';
+      document.body.style.overflow = '';
+    });
   }
-
-  document.getElementById('btnNext').addEventListener('click', goToStep2);
-  document.getElementById('btnBack').addEventListener('click', goToStep1);
-
-  /* ── Contact handlers ── */
-  document.getElementById('btnWa').addEventListener('click', () => {
-    window.open('https://wa.me/' + PHONE + '?text=' + buildMessage(), '_blank');
-  });
-  document.getElementById('btnEmail').addEventListener('click', () => {
-    const subject = encodeURIComponent('Pedido – Palomitera de Yoshi');
-    window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + EMAIL + '&su=' + subject + '&body=' + buildMessage(), '_blank');
-  });
 
   /* Init */
   updateSummary();
