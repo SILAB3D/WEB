@@ -109,10 +109,6 @@
     .btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 44px rgba(188,85,109,.5);}
     .btn-arrow{transition:transform .3s;font-style:normal;}
     .btn-primary:hover .btn-arrow{transform:translateX(5px);}
-    /* Configurador secondary button */
-    .btn-configurador{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--primary);color:var(--primary);background:transparent;padding:13px 26px;border-radius:50px;font-size:.975rem;font-weight:700;cursor:pointer;transition:all .3s;font-family:'Outfit',sans-serif;}
-    .btn-configurador:hover{background:var(--primary);color:white;box-shadow:0 8px 24px rgba(188,85,109,.35);transform:translateY(-2px);}
-
     /* ── Section header ── */
     .section-header{text-align:center;margin-bottom:52px;}
     .section-label{display:inline-block;color:var(--primary);font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;}
@@ -374,7 +370,7 @@
       .ring-spin{inset:-40px;}
       .hero-main-text{margin:0 auto 24px;}
       .hero-cta-row{justify-content:center;}
-      .btn-primary,.btn-configurador{width:100%;max-width:340px;justify-content:center;}
+      .btn-primary{width:100%;max-width:340px;justify-content:center;}
       .mat-nav-inner{overflow-x:auto;gap:2px;padding:0 16px;}
       .mat-tab{font-size:.8rem;padding:6px 14px;}
       .material-inner{padding:28px 20px;}
@@ -459,7 +455,6 @@
         </p>
         <div class="hero-cta-row">
           <a href="#pla" class="btn-primary">Explorar materiales <em class="btn-arrow">→</em></a>
-          <button class="btn-configurador" id="btnOpenConfigurador">🔧 Configurador de proyecto</button>
         </div>
       </div>
     </div>
@@ -652,35 +647,6 @@
     </div>
   </div>
 
-  <!-- CONFIGURADOR MODAL -->
-  <div id="cfgOverlay" class="cfg-overlay" role="dialog" aria-modal="true">
-    <div class="cfg-modal">
-      <div class="cfg-header">
-        <div class="cfg-header-left">
-          <h2>🔧 Configurador de proyecto</h2>
-          <p>Crea figuras, asigna colores del mismo material (máx. 4 por figura)</p>
-        </div>
-        <button class="cfg-close" id="cfgClose">✕</button>
-      </div>
-      <div class="cfg-body" id="cfgBody">
-        <div class="cfg-empty-state" id="cfgEmpty">
-          <div class="cfg-empty-icon">🎨</div>
-          <p class="cfg-empty-text">Aún no has añadido figuras.<br>Pulsa el botón para comenzar.</p>
-        </div>
-        <div id="cfgProjectList"></div>
-        <button class="cfg-add-btn" id="cfgAddBtn">＋ Añadir figura / proyecto</button>
-      </div>
-      <div class="cfg-footer">
-        <div class="cfg-summary-box" id="cfgSummaryBox">El resumen aparecerá aquí una vez añadas figuras y colores.</div>
-        <div class="cfg-share-row">
-          <button class="cfg-share-btn cfg-btn-copy" id="cfgBtnCopy">📋 Copiar</button>
-          <button class="cfg-share-btn cfg-btn-wa" id="cfgBtnWa">📱 WhatsApp</button>
-          <button class="cfg-share-btn cfg-btn-email" id="cfgBtnEmail">📧 Email</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- QUOTE MODALS -->
   <div id="quoteFormModal" class="quote-modal">
     <div class="quote-modal-content">
@@ -781,11 +747,7 @@
     window.openModal = openModal; window.closeModal = closeModal;
   </script>
 
-  <script>
-    window.FILAMENTS_SHEET = { id: '1kWsHasAfQa7kAqSKHue72_kV3ZS_7SElBD6R8lmjoPM', sheet: 'Stock de Filamentos' };
-  </script>
-
-  <!-- Color logic + Configurador -->
+  <!-- Color logic -->
   <script defer>
     /* ── allColors (default fallback, updated by catalog sync) ── */
     let allColors = {
@@ -866,7 +828,6 @@
       if (plaPremiumGrid) plaPremiumGrid.innerHTML = allColors.pla.filter(c=>c.premium).map(buildColorCardHtml).join('');
       if (petgGrid) petgGrid.innerHTML = allColors.petg.map(buildColorCardHtml).join('');
       attachColorCardListeners();
-      cfgRender(); // refresh configurador picker if open
     }
 
     async function syncCatalogWithJson() {
@@ -1016,225 +977,10 @@
       });
     });
 
-    /* ════════════════════════════════════════
-       CONFIGURADOR DE PROYECTO
-    ════════════════════════════════════════ */
-    const PHONE = '34644070487', EMAIL_ADDR = 'silab3d@gmail.com';
-    let cfgProjects = [];
-    let cfgNextId = 1;
-    let cfgOpenPickerId = null; // 'projId-slotIdx'
-
-    function cfgColorsForMaterial(mat) {
-      if (mat === 'pla-basico')  return allColors.pla.filter(c => !c.premium);
-      if (mat === 'pla-premium') return allColors.pla.filter(c => c.premium);
-      if (mat === 'petg')        return allColors.petg;
-      return [];
-    }
-
-    function cfgMatLabel(mat) {
-      return { 'pla-basico':'PLA Básico', 'pla-premium':'PLA Premium', 'petg':'PETG' }[mat] || mat;
-    }
-
-    function cfgBuildSummary() {
-      if (cfgProjects.length === 0) return 'Sin figuras configuradas.';
-      return cfgProjects.map((p, i) => {
-        const colorsText = p.colors.length
-          ? p.colors.map(c => c.name).join(', ')
-          : 'Sin colores asignados';
-        return `• ${p.name} (${cfgMatLabel(p.material)})\n  Colores: ${colorsText}`;
-      }).join('\n\n');
-    }
-
-    function cfgUpdateSummary() {
-      document.getElementById('cfgSummaryBox').textContent = cfgBuildSummary();
-    }
-
-    function cfgRender() {
-      const list = document.getElementById('cfgProjectList');
-      const empty = document.getElementById('cfgEmpty');
-      if (!list) return;
-
-      empty.style.display = cfgProjects.length === 0 ? 'block' : 'none';
-      list.innerHTML = '';
-
-      cfgProjects.forEach((p, idx) => {
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        card.dataset.id = p.id;
-
-        // Color slots HTML
-        const slots = [];
-        for (let i = 0; i < 4; i++) {
-          const filled = i < p.colors.length;
-          const c = filled ? p.colors[i] : null;
-          const pickerId = `${p.id}-${i}`;
-          const isWhite = filled && c.hex === '#ffffff';
-          slots.push(`
-            <div class="color-slot-wrap">
-              <button class="color-slot ${filled?'filled':''}"
-                style="${filled ? `background:${c.hex};${isWhite?'border:2px solid #ddd;':''};box-shadow:0 3px 10px rgba(0,0,0,.2);` : ''}"
-                data-action="slot" data-pid="${p.id}" data-sidx="${i}" aria-label="Slot de color ${i+1}">
-                ${filled ? '' : '+'}
-              </button>
-              ${filled ? `<button class="color-slot-x" data-action="removeslot" data-pid="${p.id}" data-sidx="${i}">✕</button>` : ''}
-              <div class="slot-picker" id="picker-${pickerId}"></div>
-            </div>`);
-        }
-
-        card.innerHTML = `
-          <div class="pc-row1">
-            <div class="pc-num">${idx+1}</div>
-            <input class="pc-name-input" type="text" value="${escapeHtml(p.name)}" placeholder="Nombre de la figura" data-action="rename" data-pid="${p.id}" maxlength="40">
-            <button class="pc-del-btn" data-action="delete" data-pid="${p.id}" aria-label="Eliminar figura">🗑</button>
-          </div>
-          <div class="pc-row2">
-            <button class="mat-pill ${p.material==='pla-basico'?'active':''}" data-action="setmat" data-pid="${p.id}" data-mat="pla-basico">🎨 PLA Básico</button>
-            <button class="mat-pill ${p.material==='pla-premium'?'active gold':''}" data-action="setmat" data-pid="${p.id}" data-mat="pla-premium">✦ PLA Premium</button>
-            <button class="mat-pill ${p.material==='petg'?'active':''}" data-action="setmat" data-pid="${p.id}" data-mat="petg">💎 PETG</button>
-          </div>
-          <div class="pc-row3">
-            <span class="pc-slots-label">Colores</span>
-            ${slots.join('')}
-            <span style="font-size:.74rem;color:var(--gray-text);margin-left:4px;">${p.colors.length}/4</span>
-          </div>`;
-        list.appendChild(card);
-      });
-
-      cfgUpdateSummary();
-    }
-
-    function cfgOpenPicker(pid, sidx) {
-      const key = `${pid}-${sidx}`;
-      // Close any open picker
-      if (cfgOpenPickerId && cfgOpenPickerId !== key) {
-        const old = document.getElementById(`picker-${cfgOpenPickerId}`);
-        if (old) old.classList.remove('open');
-      }
-      const picker = document.getElementById(`picker-${key}`);
-      if (!picker) return;
-      if (picker.classList.contains('open')) { picker.classList.remove('open'); cfgOpenPickerId = null; return; }
-
-      const proj = cfgProjects.find(p => p.id === pid);
-      if (!proj) return;
-      if (proj.colors.length >= 4 && sidx >= proj.colors.length) { return; } // already full
-
-      const colors = cfgColorsForMaterial(proj.material);
-      picker.innerHTML = `<div class="slot-picker-title">Elige color — ${cfgMatLabel(proj.material)}</div>
-        <div class="slot-picker-grid">${colors.map(c => {
-          const isW = c.hex === 'ffffff' || c.color === '#ffffff';
-          return `<div class="spi" data-action="pickcolor" data-pid="${pid}" data-sidx="${sidx}" data-chex="${c.color}" data-cname="${escapeHtml(c.name)}">
-            <div class="spi-c" style="background:${c.color};${isW?'border:1.5px solid #ddd;':''}"></div>
-            <span class="spi-n">${escapeHtml(c.name)}</span>
-          </div>`;
-        }).join('')}</div>`;
-      picker.classList.add('open');
-      cfgOpenPickerId = key;
-    }
-
-    // Delegate events on the cfg-body
-    document.addEventListener('DOMContentLoaded', () => {
-      const cfgOverlay = document.getElementById('cfgOverlay');
-      const cfgBody = document.getElementById('cfgBody');
-
-      // Open/close configurador
-      document.getElementById('btnOpenConfigurador').addEventListener('click', () => {
-        cfgOverlay.classList.add('active'); document.body.style.overflow = 'hidden';
-        cfgRender();
-      });
-      document.getElementById('cfgClose').addEventListener('click', () => {
-        cfgOverlay.classList.remove('active'); document.body.style.overflow = '';
-      });
-      cfgOverlay.addEventListener('click', e => {
-        if (e.target === cfgOverlay) { cfgOverlay.classList.remove('active'); document.body.style.overflow = ''; }
-      });
-
-      // Add project
-      document.getElementById('cfgAddBtn').addEventListener('click', () => {
-        cfgProjects.push({ id: cfgNextId++, name: `Figura ${cfgProjects.length + 1}`, material: 'pla-basico', colors: [] });
-        cfgRender();
-      });
-
-      // Delegate: all actions inside cfg-body
-      cfgBody.addEventListener('click', e => {
-        const el = e.target.closest('[data-action]');
-        if (!el) {
-          // Close open picker if clicking outside
-          if (cfgOpenPickerId && !e.target.closest('.slot-picker')) {
-            const old = document.getElementById(`picker-${cfgOpenPickerId}`);
-            if (old) old.classList.remove('open');
-            cfgOpenPickerId = null;
-          }
-          return;
-        }
-        const action = el.dataset.action;
-        const pid = parseInt(el.dataset.pid);
-        const proj = cfgProjects.find(p => p.id === pid);
-
-        if (action === 'delete') {
-          cfgProjects = cfgProjects.filter(p => p.id !== pid);
-          cfgRender();
-        } else if (action === 'setmat') {
-          if (proj) { proj.material = el.dataset.mat; proj.colors = []; cfgRender(); }
-        } else if (action === 'slot') {
-          const sidx = parseInt(el.dataset.sidx);
-          if (proj && sidx <= proj.colors.length && proj.colors.length < 4) {
-            cfgOpenPicker(pid, sidx);
-          }
-        } else if (action === 'removeslot') {
-          const sidx = parseInt(el.dataset.sidx);
-          if (proj) { proj.colors.splice(sidx, 1); cfgRender(); }
-        } else if (action === 'pickcolor') {
-          const sidx = parseInt(el.dataset.sidx);
-          if (proj && proj.colors.length < 4) {
-            // Replace if slot already exists
-            if (sidx < proj.colors.length) {
-              proj.colors[sidx] = { hex: el.dataset.chex.replace('#',''), color: el.dataset.chex, name: el.dataset.cname };
-            } else {
-              proj.colors.push({ hex: el.dataset.chex.replace('#',''), color: el.dataset.chex, name: el.dataset.cname });
-            }
-            const picker = document.getElementById(`picker-${pid}-${sidx}`);
-            if (picker) picker.classList.remove('open');
-            cfgOpenPickerId = null;
-            cfgRender();
-          }
-        }
-      });
-
-      cfgBody.addEventListener('input', e => {
-        const el = e.target;
-        if (el.dataset.action === 'rename') {
-          const pid = parseInt(el.dataset.pid);
-          const proj = cfgProjects.find(p => p.id === pid);
-          if (proj) { proj.name = el.value; cfgUpdateSummary(); }
-        }
-      });
-
-      // Share buttons
-      document.getElementById('cfgBtnCopy').addEventListener('click', () => {
-        navigator.clipboard.writeText(cfgBuildSummary()).then(() => {
-          const btn = document.getElementById('cfgBtnCopy');
-          btn.textContent = '✅ Copiado';
-          setTimeout(() => btn.textContent = '📋 Copiar', 2000);
-        });
-      });
-
-      document.getElementById('cfgBtnWa').addEventListener('click', () => {
-        const msg = '¡Hola! Aquí está mi configuración de proyecto:\n\n' + cfgBuildSummary() + '\n\n¿Podéis hacer presupuesto? ¡Gracias!';
-        window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
-      });
-
-      document.getElementById('cfgBtnEmail').addEventListener('click', () => {
-        const subj = encodeURIComponent('Configuración de proyecto SILAB 3D');
-        const body = encodeURIComponent('¡Hola!\n\nAquí está mi configuración de proyecto:\n\n' + cfgBuildSummary() + '\n\n¿Podéis hacer presupuesto? ¡Gracias!');
-        window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL_ADDR}&su=${subj}&body=${body}`, '_blank');
-      });
-
-      // Initial catalog sync
-      syncCatalogWithJson();
-    });
+    syncCatalogWithJson();
   </script>
 
-  <!-- Dynamic catalog from OpenSheet -->
+  <!-- Dynamic catalog from filamentos.json -->
   <script defer>
     async function fetchFilamentosFromRepo() {
       try {
@@ -1247,32 +993,8 @@
       } catch(e) { return null; }
     }
 
-    async function fetchFilamentosFromSheet() {
-      if (!window.FILAMENTS_SHEET) return null;
-      try {
-        const url = `https://opensheet.elk.sh/${window.FILAMENTS_SHEET.id}/${encodeURIComponent(window.FILAMENTS_SHEET.sheet)}`;
-        const response = await fetch(url, { cache: 'no-store' });
-        if (!response.ok) return null;
-        const rows = await response.json();
-        const filamentos = []; const materials = {};
-        rows.forEach(row => {
-          const tipo = (row.Tipo||row.tipo||'').trim();
-          const subtipo = (row.Subtipo||row.subtipo||'').trim();
-          const color = (row.Color||row.color||'').trim();
-          const hexRaw = (row['Código HEX']||row['código hex']||row['Codigo HEX']||row.hex||'').toString().trim();
-          if (!tipo||/^TOTAL\b/i.test(color)) return;
-          if (!materials[tipo]) materials[tipo] = { nombre:tipo, colores:[] };
-          let hex = hexRaw; if (hex && !hex.startsWith('#')) hex = '#'+hex;
-          const isPremium = /premium/i.test(subtipo);
-          materials[tipo].colores.push({ nombre:color, hex:hex||'#cccccc', premium:isPremium });
-        });
-        Object.values(materials).forEach(m => filamentos.push(m));
-        return { filamentos };
-      } catch(e) { console.warn('OpenSheet error:',e); return null; }
-    }
-
     async function fetchFilamentos() {
-      return (await fetchFilamentosFromRepo()) || (await fetchFilamentosFromSheet());
+      return await fetchFilamentosFromRepo();
     }
 
     async function populateCatalog() {
