@@ -3,33 +3,106 @@
     {
       "nombre": "PLA",
       "colores": [
-        {"nombre": "Black", "hex": "#000000"},
-        {"nombre": "Silver", "hex": "#bbbec3"},
-        {"nombre": "White", "hex": "#ffffff"},
-        {"nombre": "Wood", "hex": "#cdae81"},
-        {"nombre": "Coffee Brown", "hex": "#533421"},
-        {"nombre": "Sakura Pink", "hex": "#f2a8b3"},
-        {"nombre": "Lavender Purple", "hex": "#7358c3"},
-        {"nombre": "Sky Blue", "hex": "#63c9f0"},
-        {"nombre": "Mint Green", "hex": "#6ed9ce", "offer": true},
-        {"nombre": "Sunny Orange", "hex": "#ff7a29", "offer": true},
-        {"nombre": "Lemon Yellow", "hex": "#fbf9ac", "offer": true},
-        {"nombre": "Grass Green", "hex": "#0a9077", "offer": true},
-        {"nombre": "Olive Green", "hex": "#5a6d3d", "offer": true},
-        {"nombre": "Dorado (Silk Yellow)", "hex": "#f1c402", "premium": true},
-        {"nombre": "Matte Red", "hex": "#a82c2f"},
-        {"nombre": "Cherry Red", "hex": "#f46974", "offer": true},
-        {"nombre": "Beige", "hex": "#f0e0d6"},
-        {"nombre": "Mármol (Chesnut Marble)", "hex": ["#d7d4cc", "#55524b"], "premium": true}
+        {
+          "nombre": "Black",
+          "hex": "#000000"
+        },
+        {
+          "nombre": "Silver",
+          "hex": "#BBBEC3"
+        },
+        {
+          "nombre": "White",
+          "hex": "#FFFFFF"
+        },
+        {
+          "nombre": "Beige",
+          "hex": "#F0E0D6"
+        },
+        {
+          "nombre": "Matte Red",
+          "hex": "#B0181B"
+        },
+        {
+          "nombre": "Cherry Red",
+          "hex": "#F46974"
+        },
+        {
+          "nombre": "Sakura Pink",
+          "hex": "#F2A8B3",
+          "premium": true
+        },
+        {
+          "nombre": "Sunny Orange",
+          "hex": "#FF7A29"
+        },
+        {
+          "nombre": "Lemon Yellow",
+          "hex": "#FBF9AC"
+        },
+        {
+          "nombre": "Wood",
+          "hex": "#CDAE81"
+        },
+        {
+          "nombre": "Cyan",
+          "hex": "#00A3E0"
+        },
+        {
+          "nombre": "Coffee Brown",
+          "hex": "#533421"
+        },
+        {
+          "nombre": "Grass Green",
+          "hex": "#0A9077"
+        },
+        {
+          "nombre": "Olive Green",
+          "hex": "#5A6D3D"
+        },
+        {
+          "nombre": "Mint Green",
+          "hex": "#6ED9CE"
+        },
+        {
+          "nombre": "Sky Blue",
+          "hex": "#63C9F0"
+        },
+        {
+          "nombre": "Lavender Purple",
+          "hex": "#7358C3"
+        },
+        {
+          "nombre": "Dorado (Silk Yellow)",
+          "hex": "#F1C402",
+          "premium": true
+        },
+        {
+          "nombre": "Mármol (Chesnut Marble)",
+          "hex": "#D7D4CC",
+          "premium": true
+        }
       ]
     },
     {
       "nombre": "PETG",
       "colores": [
-        {"nombre": "Black", "hex": "#000000"},
-        {"nombre": "White", "hex": "#ffffff"},
-        {"nombre": "Blue", "hex": "#1800ac"},
-        {"nombre": "Red", "hex": "#ff6060"}
+        {
+          "nombre": "Black",
+          "hex": "#000000"
+        },
+        {
+          "nombre": "White",
+          "hex": "#FFFFFF"
+        },
+        {
+          "nombre": "Blue",
+          "hex": "#1800AC"
+        },
+        {
+          "nombre": "Red",
+          "hex": "#FF3131"
+        }
       ]
     }
   ]
