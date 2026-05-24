@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const presetProductName = queryParams.get('producto');
 
     const colorsBoard = document.getElementById('projectColorsBoard');
+    const pieceTypeSelect = document.getElementById('projectPieceType');
     const selectedColorChips = document.getElementById('projectSelectedColorChips');
     const selectionDisplay = colorsBoard ? colorsBoard.querySelector('.color-selection-display') : null;
     const selectionTitle = colorsBoard ? colorsBoard.querySelector('.selection-title') : null;
@@ -27,10 +28,15 @@ document.addEventListener('DOMContentLoaded', function () {
         'pla-premium': [],
         petg: []
     };
+    const allowedGroupsByPieceType = {
+        tecnica: ['indeterminado', 'petg'],
+        artistica: ['indeterminado', 'pla-basico', 'pla-premium']
+    };
     const selectedColorState = {};
     let activeStep = 1;
+    let activePieceType = pieceTypeSelect ? pieceTypeSelect.value : '';
 
-    if (!form || !contactOptions || !whatsappLink || !emailLink || !colorsBoard || !selectedColorChips || !categoryButtons.length || !colorCatalog || !colorCatalogSections || !formSteps.length) {
+    if (!form || !contactOptions || !whatsappLink || !emailLink || !colorsBoard || !pieceTypeSelect || !selectedColorChips || !categoryButtons.length || !colorCatalog || !colorCatalogSections || !formSteps.length) {
         return;
     }
 
@@ -45,11 +51,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initColorCatalog();
     updateColorCounts();
+    applyPieceTypeFilter();
 
     categoryButtons.forEach((button) => {
         button.addEventListener('click', function () {
             onColorGroupButtonClick(button);
         });
+    });
+
+    pieceTypeSelect.addEventListener('change', function () {
+        activePieceType = pieceTypeSelect.value;
+        applyPieceTypeFilter();
     });
 
     colorCatalogSections.addEventListener('change', function (event) {
@@ -296,6 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const projectDescription = document.getElementById('projectDescription').value.trim();
         const projectMeasures = document.getElementById('projectMeasures').value.trim();
         const projectReferenceFiles = document.getElementById('projectReferenceFiles').value;
+        const pieceType = getPieceTypeLabel();
 
         const selectedGroupValues = getSelectedGroupValues();
         const selectedGroupLabels = getSelectedGroupLabels();
@@ -322,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '- *Nombre del Proyecto:*\n' + projectName + '\n\n' +
             '- *Descripcion del proyecto:*\n' + projectDescription + '\n\n' +
             '- *Medidas del proyecto:*\n' + (projectMeasures || 'No especificadas') + '\n\n' +
+            '- *Tipo de pieza:*\n' + pieceType + '\n\n' +
             '- *Colores del proyecto:*\n' + colorsSummary + '\n\n' +
             '- *Proyecto o imagenes de referencia:*\n' + referenceSummary + '\n\n' +
             'Quedo a la espera de respuesta. ¡Muchas gracias!';
@@ -335,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '- NOMBRE DEL PROYECTO:\n' + projectName + '\n\n' +
             '- DESCRIPCION DEL PROYECTO:\n' + projectDescription + '\n\n' +
             '- MEDIDAS DEL PROYECTO:\n' + (projectMeasures || 'No especificadas') + '\n\n' +
+            '- TIPO DE PIEZA:\n' + pieceType + '\n\n' +
             '- COLORES DEL PROYECTO:\n' + colorsSummary + '\n\n' +
             '- PROYECTO O IMAGENES DE REFERENCIA:\n' + referenceSummary + '\n\n' +
             '━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n' +
@@ -420,9 +435,63 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function getAllowedColorGroups() {
+        return allowedGroupsByPieceType[activePieceType] || ['indeterminado'];
+    }
+
+    function getPieceTypeLabel() {
+        if (activePieceType === 'tecnica') {
+            return 'Técnica';
+        }
+
+        if (activePieceType === 'artistica') {
+            return 'Artística';
+        }
+
+        return 'Sin especificar';
+    }
+
+    function applyPieceTypeFilter() {
+        const allowedGroups = getAllowedColorGroups();
+
+        categoryButtons.forEach((button) => {
+            const group = button.getAttribute('data-color-group');
+            const allowed = group === 'indeterminado' || allowedGroups.includes(group);
+            button.hidden = !allowed;
+            button.disabled = !allowed;
+            button.classList.toggle('is-disabled', !allowed);
+            button.setAttribute('aria-disabled', String(!allowed));
+
+            if (!allowed) {
+                button.classList.remove('active');
+            }
+        });
+
+        Object.keys(selectedColorState).forEach((value) => {
+            const groupKey = value.split(':')[0];
+            if (!allowedGroups.includes(groupKey)) {
+                delete selectedColorState[value];
+            }
+        });
+
+        if (!categoryButtons.some((button) => button.classList.contains('active') && !button.disabled)) {
+            const indeterminateBtn = categoryButtons.find((item) => item.getAttribute('data-color-group') === 'indeterminado');
+            if (indeterminateBtn && !indeterminateBtn.disabled) {
+                indeterminateBtn.classList.add('active');
+            }
+        }
+
+        renderColorCatalog();
+        updateSelectedBoard();
+    }
+
     function onColorGroupButtonClick(button) {
         const value = button.getAttribute('data-color-group');
         if (!value) {
+            return;
+        }
+
+        if (button.disabled) {
             return;
         }
 
@@ -460,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderColorCatalog() {
         syncSelectedColorsFromRenderedInputs();
 
-        const selected = getSelectedGroupValues().filter((value) => value !== 'indeterminado');
+        const selected = getSelectedGroupValues().filter((value) => value !== 'indeterminado' && getAllowedColorGroups().includes(value));
 
         if (!selected.length) {
             colorCatalog.hidden = true;
@@ -589,14 +658,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getSelectedGroupValues() {
         return categoryButtons
-            .filter((button) => button.classList.contains('active'))
+            .filter((button) => button.classList.contains('active') && !button.disabled)
             .map((button) => button.getAttribute('data-color-group'))
             .filter(Boolean);
     }
 
     function getSelectedGroupLabels() {
         return categoryButtons
-            .filter((button) => button.classList.contains('active'))
+            .filter((button) => button.classList.contains('active') && !button.disabled)
             .map((button) => button.querySelector('.card-title').textContent.trim());
     }
 
