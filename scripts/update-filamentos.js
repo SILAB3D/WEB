@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const sheetId = process.argv[2] || process.env.SHEET_ID || '1kWsHasAfQa7kAqSKHue72_kV3ZS_7SElBD6R8lmjoPM';
-const sheetName = process.argv[3] || process.env.SHEET_NAME || 'filamentos';
+const sheetName = process.argv[3] || process.env.SHEET_NAME || 'Stock de Filamentos';
 const opensheetUrl = `https://opensheet.elk.sh/${encodeURIComponent(sheetId)}/${encodeURIComponent(sheetName)}`;
 const outPath = path.join(__dirname, '..', 'data', 'filamentos.json');
 
