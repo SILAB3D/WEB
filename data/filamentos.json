@@ -101,6 +101,10 @@
         {
           "nombre": "Red",
           "hex": "#FF3131"
+        },
+        {
+          "nombre": "pURPURINO",
+          "hex": "#EFS345"
         }
       ]
     }
