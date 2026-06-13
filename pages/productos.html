@@ -1688,6 +1688,153 @@
     });
   </script>
 
+  <!-- Catálogo dinámico desde Supabase (solo lectura).
+       Si Supabase no responde, se mantienen las tarjetas estáticas de arriba. -->
+  <script>
+    (function () {
+      const SILAB_SUPABASE = {
+        url: 'https://yyezkumbjqnushwgqkzf.supabase.co',
+        key: 'sb_publishable_S-YCLKYozH7T9DFE1gMtUw_1jWLZnIf'
+      };
+
+      const ETIQUETAS_CATEGORIA = {
+        llaveros: 'Llaveros',
+        decoracion: 'Decoración',
+        figuras: 'Figuras',
+        ilustracion: 'Ilustraciones',
+        eventos: 'Eventos',
+        medida: 'Diseños a medida'
+      };
+
+      function etiqueta(cat) {
+        return ETIQUETAS_CATEGORIA[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1).replace(/-/g, ' '));
+      }
+
+      function escapeHtml(v) {
+        return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function urlImagen(img) {
+        if (!img) return '';
+        return /^https?:/.test(img) ? img : '../img/' + img;
+      }
+
+      async function api(ruta) {
+        const res = await fetch(SILAB_SUPABASE.url + '/rest/v1/' + ruta, {
+          headers: { apikey: SILAB_SUPABASE.key, Authorization: 'Bearer ' + SILAB_SUPABASE.key },
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      }
+
+      async function cargarCatalogoSupabase() {
+        try {
+          const productos = await api('productos?select=nombre,categoria,descripcion,imagen&visible=eq.true&order=nombre.asc');
+          if (!Array.isArray(productos) || !productos.length) return;
+
+          let categorias = [];
+          try { categorias = await api('categorias?select=nombre&order=nombre.asc'); } catch (e) {}
+          const usadas = [...new Set(productos.map((p) => p.categoria).filter(Boolean))];
+          const listaCategorias = categorias.length
+            ? categorias.map((c) => c.nombre).filter((c) => usadas.includes(c))
+            : usadas;
+
+          const filtros = document.querySelector('.filters');
+          const grid = document.querySelector('.products-grid');
+          if (!filtros || !grid) return;
+
+          // Conservar el filtro activo (p.ej. el que llega desde index.html)
+          const activo = document.querySelector('.filter-btn.active');
+          const filtroInicial = activo ? activo.dataset.filter : 'all';
+
+          filtros.innerHTML = '<button class="filter-btn active" data-filter="all">Todos</button>' +
+            listaCategorias.map((c) =>
+              `<button class="filter-btn" data-filter="${escapeHtml(c)}">${escapeHtml(etiqueta(c))}</button>`).join('');
+
+          grid.innerHTML = productos.map((p) => {
+            const esExplorar = p.nombre === 'Figura con diseño predefinido';
+            const img = urlImagen(p.imagen);
+            return `<div class="product-card" data-category="${escapeHtml(p.categoria || '')}">` +
+              `<div class="product-image">` +
+                (img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(p.nombre)}" width="240" height="240" loading="lazy">` : '') +
+              `</div>` +
+              `<h3>${escapeHtml(p.nombre)}</h3>` +
+              `<p>${escapeHtml(p.descripcion || '')}</p>` +
+              `<div class="product-footer">` +
+                (esExplorar
+                  ? `<button class="btn-explorar" id="btnExplorarBibliotecas">Explorar</button>`
+                  : `<button class="btn-comprar" data-product="${escapeHtml(p.nombre)}" data-category="${escapeHtml(p.categoria || '')}">Solicitar</button>`) +
+              `</div></div>`;
+          }).join('');
+
+          activarFiltros(filtroInicial);
+          activarBotones();
+        } catch (e) {
+          /* Sin conexión con Supabase: el catálogo estático sigue en pie */
+        }
+      }
+
+      function activarFiltros(filtroInicial) {
+        const btns = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.product-card');
+        btns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            btns.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const f = btn.dataset.filter;
+            cards.forEach((card) => {
+              const show = f === 'all' || card.dataset.category === f;
+              card.classList.toggle('hidden', !show);
+              if (show) {
+                card.style.animation = 'fadeInUp 0.4s ease both';
+                setTimeout(() => card.style.animation = '', 500);
+              }
+            });
+          });
+        });
+        if (filtroInicial && filtroInicial !== 'all') {
+          const b = document.querySelector(`.filter-btn[data-filter="${filtroInicial}"]`);
+          if (b) b.click();
+        }
+      }
+
+      function activarBotones() {
+        const contactModal = document.getElementById('contactModal');
+        const modalWhatsApp = document.getElementById('modalWhatsApp');
+        const modalEmail = document.getElementById('modalEmail');
+
+        document.querySelectorAll('.products-grid .btn-comprar, .products-grid .btn-action').forEach((button) => {
+          button.addEventListener('click', function () {
+            const productName = this.getAttribute('data-product');
+            const whatsappMessage = `¡Hola! Me gustaría obtener más información acerca de ${productName}.`;
+            const emailSubject = `Consulta sobre ${productName}`;
+            const emailBody = `¡Hola!%0D%0A%0D%0AMe gustaría obtener más información acerca de ${productName}.%0D%0A%0D%0AGracias.`;
+            if (modalWhatsApp) modalWhatsApp.href = `https://wa.me/34644070487?text=${encodeURIComponent(whatsappMessage)}`;
+            if (modalEmail) modalEmail.href = `https://mail.google.com/mail/?view=cm&fs=1&to=silab3d@gmail.com&su=${encodeURIComponent(emailSubject)}&body=${emailBody}`;
+            if (contactModal) {
+              contactModal.style.display = 'flex';
+              document.body.style.overflow = 'hidden';
+            }
+          });
+        });
+
+        const btnExplorar = document.getElementById('btnExplorarBibliotecas');
+        const libraryModal = document.getElementById('libraryModal');
+        if (btnExplorar && libraryModal) {
+          btnExplorar.addEventListener('click', () => libraryModal.classList.add('active'));
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', cargarCatalogoSupabase);
+      } else {
+        cargarCatalogoSupabase();
+      }
+    })();
+  </script>
+
   <script defer src="../js/script.js"></script>
 
 </body>

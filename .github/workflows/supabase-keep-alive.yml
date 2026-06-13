@@ -1,0 +1,29 @@
+name: Supabase Keep Alive
+
+# Evita que el proyecto gratuito de Supabase se pause por inactividad
+# (Supabase pausa los proyectos free tras 7 días sin actividad de base de datos).
+# Este workflow hace una escritura real (upsert) en la tabla "keep_alive"
+# dos veces por semana, lo que reinicia el contador de inactividad.
+#
+# Requiere dos "Secrets" en el repositorio (Settings → Secrets and variables → Actions):
+#   SUPABASE_URL                -> https://yyezkumbjqnushwgqkzf.supabase.co
+#   SUPABASE_SERVICE_ROLE_KEY   -> la "service_role" key (Project Settings → API)
+
+on:
+  schedule:
+    - cron: '23 6 * * 1,4'   # lunes y jueves a las 06:23 UTC
+  workflow_dispatch:          # permite lanzarlo a mano desde la pestaña "Actions"
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upsert en keep_alive
+        run: |
+          curl -sS -f -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/keep_alive" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=merge-duplicates" \
+            -d "{\"id\":1,\"last_ping\":\"$(date -u +%FT%TZ)\"}"

@@ -324,9 +324,11 @@ document.addEventListener('DOMContentLoaded', function () {
         colorsBoard.classList.remove('error');
 
         const colorsSummary = buildColorsSummary(selectedGroupValues, selectedGroupLabels, selectedColorLabels);
-        const referenceSummary = projectReferenceFiles === 'si'
-            ? 'Si (incluye los archivos en el siguiente paso)'
-            : 'No';
+        const referenceSummary = projectReferenceFiles === 'si' ? 'Si' : 'No';
+        const uploadedUrls = (typeof getUploadedFileUrls === 'function') ? getUploadedFileUrls() : [];
+        const filesBlock = uploadedUrls.length
+            ? '\n' + uploadedUrls.map(function (u, i) { return '  ' + (i + 1) + '. ' + u; }).join('\n')
+            : (projectReferenceFiles === 'si' ? '\n  (el cliente indicó que dispone de archivos)' : '');
 
         const whatsappMessage = '¡Hola!\n\nMi nombre es *' + customerName + '*.' +
             ' Me gustaria solicitar un presupuesto para el siguiente proyecto:\n\n' +
@@ -337,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '- *Medidas del proyecto:*\n' + (projectMeasures || 'No especificadas') + '\n\n' +
             '- *Tipo de pieza:*\n' + pieceType + '\n\n' +
             '- *Colores del proyecto:*\n' + colorsSummary + '\n\n' +
-            '- *Proyecto o imagenes de referencia:*\n' + referenceSummary + '\n\n' +
+            '- *Proyecto o imagenes de referencia:*\n' + referenceSummary + filesBlock + '\n\n' +
             'Quedo a la espera de respuesta. ¡Muchas gracias!';
 
         const emailSubject = 'Solicitud de Presupuesto - ' + projectName;
@@ -351,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '- MEDIDAS DEL PROYECTO:\n' + (projectMeasures || 'No especificadas') + '\n\n' +
             '- TIPO DE PIEZA:\n' + pieceType + '\n\n' +
             '- COLORES DEL PROYECTO:\n' + colorsSummary + '\n\n' +
-            '- PROYECTO O IMAGENES DE REFERENCIA:\n' + referenceSummary + '\n\n' +
+            '- PROYECTO O IMAGENES DE REFERENCIA:\n' + referenceSummary + filesBlock + '\n\n' +
             '━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n' +
             'Quedo a la espera de respuesta.\n\n' +
             '¡Muchas gracias!\n\n' + customerName;
@@ -361,6 +363,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         whatsappLink.href = whatsappURL;
         emailLink.href = emailURL;
+
+        if (typeof notifySolicitudByEmail === 'function') {
+            notifySolicitudByEmail({
+                nombre: customerName,
+                contacto: customerContact,
+                proyecto: projectName,
+                descripcion: projectDescription,
+                medidas: projectMeasures || 'No especificadas',
+                tipoPieza: pieceType,
+                colores: colorsSummary,
+                referencia: referenceSummary,
+                archivos: uploadedUrls
+            });
+        }
 
         contactOptions.classList.add('active');
         return true;
@@ -686,4 +702,223 @@ document.addEventListener('DOMContentLoaded', function () {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
     }
+
+    /* ============================================================
+       ARCHIVOS DE REFERENCIA · subida a Supabase Storage
+    ============================================================ */
+    var SB_CONF = window.SILAB_SUPABASE || {};
+    var sbClient = (window.supabase && SB_CONF.url && SB_CONF.anonKey)
+        ? window.supabase.createClient(SB_CONF.url, SB_CONF.anonKey)
+        : null;
+    var referenceFiles = [];
+    var referenceFileSeq = 0;
+    var solicitudNotificada = false;
+
+    var referenceSelect = document.getElementById('projectReferenceFiles');
+    var referenceUpload = document.getElementById('referenceUpload');
+    var referenceDropzone = document.getElementById('referenceDropzone');
+    var referenceFileInput = document.getElementById('projectFiles');
+    var referenceFilesListEl = document.getElementById('referenceFilesList');
+    var referenceFilesTotalEl = document.getElementById('referenceFilesTotal');
+    var referenceFilesError = document.getElementById('errFiles');
+
+    var ALLOWED_EXT = ['stl', 'step', 'stp', 'obj', '3mf', 'ply', 'gltf', 'glb', 'fbx', 'amf', 'igs', 'iges', 'scad', 'zip', 'rar', '7z'];
+    var MAX_FILE_BYTES = (Number(SB_CONF.maxFileMB) || 50) * 1024 * 1024;
+
+    function getUploadedFileUrls() {
+        return referenceFiles
+            .filter(function (f) { return f.status === 'done' && f.url; })
+            .map(function (f) { return f.url; });
+    }
+
+    function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function fileExtension(name) {
+        var i = String(name).lastIndexOf('.');
+        return i >= 0 ? String(name).slice(i + 1).toLowerCase() : '';
+    }
+
+    function isAllowedFile(file) {
+        if (file.type && file.type.indexOf('image/') === 0) return true;
+        return ALLOWED_EXT.indexOf(fileExtension(file.name)) >= 0;
+    }
+
+    function iconForFile(file) {
+        return (file.type && file.type.indexOf('image/') === 0) ? '🖼️' : '🧊';
+    }
+
+    function showFilesError(msg) {
+        if (!referenceFilesError) return;
+        referenceFilesError.textContent = msg;
+        referenceFilesError.classList.add('show');
+    }
+
+    function toggleReferenceUpload() {
+        if (!referenceSelect || !referenceUpload) return;
+        var show = referenceSelect.value === 'si';
+        referenceUpload.hidden = !show;
+        if (!show) {
+            referenceFiles = [];
+            if (referenceFileInput) referenceFileInput.value = '';
+            renderReferenceFiles();
+        }
+    }
+
+    function handleSelectedFiles(fileList) {
+        if (!fileList || !fileList.length) return;
+        if (referenceFilesError) referenceFilesError.classList.remove('show');
+        Array.prototype.forEach.call(fileList, function (file) {
+            if (!isAllowedFile(file)) {
+                showFilesError('“' + file.name + '” no es un tipo permitido (solo imágenes y modelos 3D).');
+                return;
+            }
+            if (file.size > MAX_FILE_BYTES) {
+                showFilesError('“' + file.name + '” supera el límite de ' + (SB_CONF.maxFileMB || 50) + ' MB.');
+                return;
+            }
+            var exists = referenceFiles.some(function (f) { return f.file.name === file.name && f.file.size === file.size; });
+            if (exists) return;
+            var item = { id: 'rf' + (++referenceFileSeq), file: file, status: 'pending', url: null };
+            referenceFiles.push(item);
+            renderReferenceFiles();
+            uploadReferenceFile(item);
+        });
+    }
+
+    function removeReferenceFile(id) {
+        referenceFiles = referenceFiles.filter(function (f) { return f.id !== id; });
+        renderReferenceFiles();
+    }
+
+    function statusLabel(status) {
+        if (status === 'uploading') return 'Subiendo…';
+        if (status === 'done') return '✓ Subido';
+        if (status === 'error') return '✕ Error';
+        return 'En cola';
+    }
+
+    function renderReferenceFiles() {
+        if (!referenceFilesListEl) return;
+        referenceFilesListEl.innerHTML = referenceFiles.map(function (item) {
+            return '' +
+                '<div class="reference-file" data-file-id="' + item.id + '">' +
+                    '<span class="reference-file-icon">' + iconForFile(item.file) + '</span>' +
+                    '<div class="reference-file-info">' +
+                        '<div class="reference-file-name" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</div>' +
+                        '<div class="reference-file-sub">' +
+                            '<span class="reference-file-meta">' + formatBytes(item.file.size) + '</span>' +
+                            '<span class="reference-file-status ' + item.status + '">' + statusLabel(item.status) + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button type="button" class="reference-file-remove" data-remove-file="' + item.id + '" aria-label="Quitar archivo">✕</button>' +
+                '</div>';
+        }).join('');
+
+        if (referenceFilesTotalEl) {
+            if (!referenceFiles.length) {
+                referenceFilesTotalEl.textContent = 'Ningún archivo seleccionado';
+            } else {
+                var total = referenceFiles.reduce(function (s, f) { return s + f.file.size; }, 0);
+                referenceFilesTotalEl.textContent = referenceFiles.length + ' archivo' + (referenceFiles.length !== 1 ? 's' : '') + ' · ' + formatBytes(total);
+            }
+        }
+    }
+
+    function slugFileName(name) {
+        var ext = fileExtension(name);
+        var base = ext ? name.slice(0, name.length - ext.length - 1) : name;
+        base = String(base)
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 60) || 'archivo';
+        return base + (ext ? '.' + ext : '');
+    }
+
+    async function uploadReferenceFile(item) {
+        if (!sbClient) {
+            item.status = 'error';
+            renderReferenceFiles();
+            showFilesError('No se pudo conectar con el almacenamiento. Podrás enviarlos por WhatsApp/Email.');
+            return;
+        }
+        item.status = 'uploading';
+        renderReferenceFiles();
+        try {
+            var bucket = SB_CONF.bucket || 'solicitudes';
+            var path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '-' + slugFileName(item.file.name);
+            var up = await sbClient.storage.from(bucket).upload(path, item.file, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: item.file.type || 'application/octet-stream'
+            });
+            if (up.error) throw up.error;
+            var pub = sbClient.storage.from(bucket).getPublicUrl(path);
+            item.url = pub && pub.data ? pub.data.publicUrl : null;
+            item.status = item.url ? 'done' : 'error';
+        } catch (err) {
+            item.status = 'error';
+            var detalle = (err && err.message) ? (' (' + err.message + ')') : '';
+            console.error('Error subiendo a Supabase Storage:', err);
+            showFilesError('No se pudo subir “' + item.file.name + '”' + detalle + '. Revisa el bucket/políticas de Supabase.');
+        }
+        renderReferenceFiles();
+    }
+
+    async function notifySolicitudByEmail(payload) {
+        if (solicitudNotificada || !SB_CONF.edgeFunction) return;
+        solicitudNotificada = true;
+        try {
+            await fetch(SB_CONF.edgeFunction, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + (SB_CONF.anonKey || ''),
+                    'apikey': SB_CONF.anonKey || ''
+                },
+                body: JSON.stringify(payload)
+            });
+        } catch (e) {
+            solicitudNotificada = false; // permite reintento si falla
+        }
+    }
+
+    if (referenceSelect) {
+        referenceSelect.addEventListener('change', toggleReferenceUpload);
+        toggleReferenceUpload();
+    }
+    if (referenceFileInput) {
+        referenceFileInput.addEventListener('change', function () {
+            handleSelectedFiles(referenceFileInput.files);
+            referenceFileInput.value = '';
+        });
+    }
+    if (referenceDropzone) {
+        ['dragenter', 'dragover'].forEach(function (evt) {
+            referenceDropzone.addEventListener(evt, function (e) { e.preventDefault(); referenceDropzone.classList.add('dragover'); });
+        });
+        ['dragleave', 'dragend', 'drop'].forEach(function (evt) {
+            referenceDropzone.addEventListener(evt, function () { referenceDropzone.classList.remove('dragover'); });
+        });
+        referenceDropzone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            if (e.dataTransfer && e.dataTransfer.files) handleSelectedFiles(e.dataTransfer.files);
+        });
+    }
+    if (referenceFilesListEl) {
+        referenceFilesListEl.addEventListener('click', function (e) {
+            var btn = e.target.closest ? e.target.closest('[data-remove-file]') : null;
+            if (btn) removeReferenceFile(btn.getAttribute('data-remove-file'));
+        });
+    }
+    // Si el usuario retrocede y reedita, permitir reenviar la notificación automática.
+    [backToProjectDetailsButton, backToDetailsButton, backToColorsButton].forEach(function (btn) {
+        if (btn) btn.addEventListener('click', function () { solicitudNotificada = false; });
+    });
 });

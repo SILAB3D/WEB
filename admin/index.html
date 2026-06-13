@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard · SILAB 3D</title>
+  <link rel="icon" type="image/png" href="../img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --texto: #2F2F2F;
+      --gris: #6B7280;
+      --primario: #BC556D;
+      --primario-hover: #B7516B;
+      --primario-claro: #F2D6DC;
+      --peligro: #dc2626;
+      --ok: #16a34a;
+      --borde: rgba(188,85,109,0.15);
+      --borde-input: #E0D0D4;
+      --radio: 18px;
+      --radio-sm: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, rgba(188,85,109,0.11) 1.5px, transparent 1.5px);
+      background-size: 30px 30px;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+    .oculto { display: none !important; }
+
+    /* ---------- LOGIN ---------- */
+    #pantalla-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .caja-login {
+      background: var(--card);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      box-shadow: 0 20px 50px rgba(188,85,109,0.2);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    .logo-login { height: 64px; width: auto; margin: 0 auto 1.2rem; display: block; }
+    .caja-login h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: .35rem;
+      text-align: center;
+    }
+    .caja-login h1 .accent { color: var(--primario); }
+    .acceso-badge {
+      display: flex;
+      width: fit-content;
+      margin: 0 auto 1.6rem;
+      align-items: center;
+      gap: 8px;
+      background: var(--primario-claro);
+      color: var(--primario-hover);
+      padding: 6px 15px;
+      border-radius: 50px;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--primario);
+      animation: badge-pulse 2s infinite;
+    }
+    @keyframes badge-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(188,85,109,0.4); }
+      50%      { box-shadow: 0 0 0 8px rgba(188,85,109,0); }
+    }
+    .caja-login label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .3rem; }
+    .caja-login input {
+      width: 100%;
+      padding: .7rem .9rem;
+      border: 1.5px solid var(--borde-input);
+      border-radius: var(--radio-sm);
+      font-size: 1rem;
+      font-family: inherit;
+      margin-bottom: 1rem;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .caja-login input:focus {
+      outline: none;
+      border-color: var(--primario);
+      box-shadow: 0 0 0 4px rgba(188,85,109,0.12);
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: .75rem 1.4rem;
+      background: var(--primario);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: .95rem;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .3s;
+    }
+    .btn:hover {
+      background: var(--primario-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(188,85,109,0.38);
+    }
+    .btn:disabled { opacity: .6; cursor: wait; transform: none; box-shadow: none; }
+    .error-msg {
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 8px;
+      padding: .6rem .8rem;
+      font-size: .85rem;
+      margin-bottom: 1rem;
+    }
+    .aviso-config {
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 8px;
+      padding: .8rem;
+      font-size: .85rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    /* ---------- DASHBOARD ---------- */
+    header.barra {
+      position: sticky;
+      top: 0;
+      z-index: 980;
+      height: 72px;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(242,214,220,0.7);
+    }
+    .barra-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 28px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .logo-barra { height: 48px; width: auto; transition: transform 0.3s; }
+    .logo-barra:hover { transform: scale(1.04); }
+    .barra-derecha { display: flex; align-items: center; }
+    header.barra .usuario { font-size: .85rem; color: var(--gris); margin-right: 1rem; }
+    .btn-salir {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--primario);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: .855rem;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+    .btn-salir:hover {
+      background: var(--primario-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(188,85,109,0.38);
+    }
+
+    nav.pestanas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      padding: 1.4rem 1.2rem 0;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    nav.pestanas button {
+      padding: 9px 20px;
+      border-radius: 50px;
+      border: 1.5px solid var(--borde-input);
+      background: var(--card);
+      color: var(--gris);
+      font-family: inherit;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .25s;
+      white-space: nowrap;
+    }
+    nav.pestanas button:hover {
+      border-color: var(--primario);
+      color: var(--primario);
+      background: var(--primario-claro);
+    }
+    nav.pestanas button.activa {
+      background: var(--primario);
+      border-color: var(--primario);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(188,85,109,0.35);
+    }
+
+    main { max-width: 1000px; margin: 0 auto; padding: 1.2rem; }
+    .panel {
+      background: var(--card);
+      border-radius: var(--radio);
+      border: 1px solid var(--borde);
+      box-shadow: 0 6px 24px rgba(188,85,109,0.07);
+      padding: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .panel h2 { font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: .9rem; }
+
+    form.fila { display: flex; flex-wrap: wrap; gap: .6rem; }
+    form.fila input, form.fila select, form.fila textarea {
+      padding: .6rem .8rem;
+      border: 1.5px solid var(--borde-input);
+      border-radius: var(--radio-sm);
+      font-size: .9rem;
+      flex: 1 1 150px;
+      font-family: inherit;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    form.fila input:focus, form.fila select:focus, form.fila textarea:focus {
+      outline: none;
+      border-color: var(--primario);
+      box-shadow: 0 0 0 4px rgba(188,85,109,0.12);
+    }
+    form.fila textarea { flex-basis: 100%; resize: vertical; min-height: 70px; }
+    form.fila button { flex: 0 0 auto; width: auto; padding: .6rem 1.5rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th { text-align: left; color: var(--gris); font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .5rem .6rem; border-bottom: 2px solid var(--primario-claro); }
+    td { padding: .65rem .6rem; border-bottom: 1px solid rgba(188,85,109,0.09); vertical-align: top; }
+    td select { padding: .35rem; border: 1.5px solid var(--borde-input); border-radius: 8px; font-family: inherit; }
+    .btn-borrar { background: transparent; border: none; color: var(--peligro); cursor: pointer; font-size: .85rem; font-family: inherit; }
+    .btn-borrar:hover { text-decoration: underline; }
+    .btn-cancelar {
+      background: var(--card);
+      color: var(--gris);
+      border: 1.5px solid var(--borde-input);
+    }
+    .btn-cancelar:hover {
+      background: var(--primario-claro);
+      color: var(--primario);
+      border-color: var(--primario);
+      box-shadow: none;
+    }
+    .vacio { color: var(--gris); font-size: .9rem; padding: 1rem 0; text-align: center; }
+    input[type="checkbox"] { accent-color: var(--primario); width: 16px; height: 16px; cursor: pointer; }
+    .nota-card { border: 1px solid var(--borde); border-radius: var(--radio-sm); padding: 1rem; margin-bottom: .7rem; transition: box-shadow .25s; }
+    .nota-card:hover { box-shadow: 0 6px 20px rgba(188,85,109,0.12); }
+    .nota-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
+    .nota-card p { font-size: .88rem; color: var(--texto); white-space: pre-wrap; }
+    .nota-card .meta { font-size: .75rem; color: var(--gris); margin-top: .5rem; display: flex; justify-content: space-between; }
+    .campo-inline { display: flex; align-items: center; gap: .4rem; font-size: .88rem; flex: 0 0 auto; padding: .3rem .2rem; }
+    .campo-inline input[type="color"] { width: 38px; height: 30px; border: 1px solid var(--borde); border-radius: 6px; padding: 0; cursor: pointer; }
+    .swatch { display: inline-block; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--borde); vertical-align: middle; margin-right: .45rem; }
+    .stock-bajo td { background: #fef2f2; }
+    .stock-input { width: 75px; padding: .35rem; border: 1.5px solid var(--borde-input); border-radius: 8px; font-family: inherit; }
+    .pista { font-size: .75rem; color: var(--gris); font-weight: 400; }
+    .campo-archivo {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .6rem .8rem;
+      border: 1.5px dashed var(--borde-input);
+      border-radius: var(--radio-sm);
+      font-size: .88rem; color: var(--gris);
+      cursor: pointer; flex: 1 1 200px;
+      transition: border-color .25s;
+    }
+    .campo-archivo:hover { border-color: var(--primario); color: var(--primario); }
+    .campo-archivo input[type="file"] { font-size: .8rem; font-family: inherit; max-width: 100%; }
+    .mini {
+      width: 48px; height: 48px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--borde);
+      display: block;
+    }
+    .mini-vacia {
+      width: 48px; height: 48px;
+      border-radius: 10px;
+      border: 1.5px dashed var(--borde-input);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--borde-input); font-size: 1.1rem;
+    }
+    .btn-mini {
+      background: transparent; border: none;
+      color: var(--primario); cursor: pointer;
+      font-size: .8rem; font-family: inherit; font-weight: 600;
+      padding: 0; display: block;
+    }
+    .btn-mini:hover { text-decoration: underline; }
+    /* ---------- RESUMEN (KPIs) ---------- */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.1rem;
+      padding-top: .4rem;
+    }
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      box-shadow: 0 6px 24px rgba(188,85,109,0.07);
+      padding: 1.7rem 1.6rem;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .kpi:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(188,85,109,0.18); }
+    .kpi-icono {
+      width: 56px; height: 56px;
+      margin: 0 auto .9rem;
+      border-radius: 50%;
+      background: var(--primario-claro);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .kpi-valor {
+      font-size: 2.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--primario);
+    }
+    .kpi-titulo {
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--texto);
+      margin-top: .35rem;
+    }
+    .kpi-detalle { font-size: .82rem; color: var(--gris); margin-top: .45rem; }
+    .kpi-detalle .alerta-texto { color: var(--peligro); font-weight: 600; }
+
+    /* ---------- TOOLBAR DE BÚSQUEDA ---------- */
+    .toolbar { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; }
+    .toolbar input, .toolbar select {
+      padding: .55rem .9rem;
+      border: 1.5px solid var(--borde-input);
+      border-radius: 50px;
+      font-size: .88rem;
+      font-family: inherit;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .toolbar input { flex: 1 1 200px; }
+    .toolbar input:focus, .toolbar select:focus {
+      outline: none;
+      border-color: var(--primario);
+      box-shadow: 0 0 0 4px rgba(188,85,109,0.12);
+    }
+
+    /* ---------- MÓVIL: TABLAS COMO TARJETAS ---------- */
+    @media (max-width: 640px) {
+      .panel table, .panel tbody, .panel tr, .panel td { display: block; width: 100%; }
+      .panel thead { display: none; }
+      .panel tr {
+        border: 1px solid var(--borde);
+        border-radius: var(--radio-sm);
+        padding: .5rem .9rem;
+        margin-bottom: .8rem;
+        background: var(--card);
+      }
+      .panel tr.stock-bajo { background: #fef2f2; }
+      .panel td {
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: .4rem 0;
+      }
+      .panel td::before {
+        content: attr(data-label);
+        font-size: .7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--gris);
+        flex-shrink: 0;
+      }
+      .panel td[data-label=""]::before { display: none; }
+      .panel td .mini, .panel td .mini-vacia { margin-left: auto; }
+      .barra-container { padding: 0 16px; }
+      .logo-barra { height: 40px; }
+      header.barra .usuario { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       CONFIGURACIÓN — LO ÚNICO QUE TIENES QUE EDITAR
+       Pega aquí los dos datos de tu proyecto de Supabase
+       (los encuentras en: Project Settings → API)
+       ============================================================ -->
+  <script>
+    const SUPABASE_URL = 'https://yyezkumbjqnushwgqkzf.supabase.co';      // ej: https://abcdefgh.supabase.co (SIN /rest/v1/)
+    const SUPABASE_ANON_KEY = 'sb_publishable_S-YCLKYozH7T9DFE1gMtUw_1jWLZnIf';    // la clave larga que empieza por "eyJ..." o "sb_publishable_..."
+  </script>
+
+  <!-- ---------- PANTALLA DE LOGIN ---------- -->
+  <div id="pantalla-login">
+    <div class="caja-login">
+      <img src="../img/SILAB-LOGO-lateral-negro-compressed.png" alt="SILAB 3D" class="logo-login">
+      <h1>Panel de <span class="accent">gestión</span></h1>
+      <div class="acceso-badge"><span class="badge-dot"></span> Acceso privado</div>
+      <div id="aviso-config" class="aviso-config oculto">
+        ⚠️ Falta configurar este archivo: abre <strong>admin/index.html</strong> y pega tu
+        <strong>Project URL</strong> y tu <strong>anon key</strong> de Supabase en la sección
+        CONFIGURACIÓN (parte superior del archivo).
+      </div>
+      <div id="login-error" class="error-msg oculto"></div>
+      <form id="form-login">
+        <label for="email">Email</label>
+        <input type="email" id="email" required autocomplete="username">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" required autocomplete="current-password">
+        <button type="submit" class="btn" id="btn-entrar">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ---------- DASHBOARD ---------- -->
+  <div id="pantalla-dashboard" class="oculto">
+    <header class="barra">
+      <div class="barra-container">
+        <a href="../index.html"><img src="../img/SILAB-LOGO-lateral-negro-compressed.png" alt="SILAB 3D" class="logo-barra"></a>
+        <div class="barra-derecha">
+          <span class="usuario" id="usuario-email"></span>
+          <button class="btn-salir" id="btn-salir">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="pestanas">
+      <button data-tab="resumen" class="activa">Resumen</button>
+      <button data-tab="filamentos">Filamentos</button>
+      <button data-tab="productos">Productos</button>
+      <button data-tab="trabajos">Trabajos</button>
+      <button data-tab="notas">Notas</button>
+    </nav>
+
+    <main>
+      <!-- RESUMEN -->
+      <section id="tab-resumen">
+        <div class="kpis" id="kpis"></div>
+      </section>
+
+      <!-- NOTAS -->
+      <section id="tab-notas" class="oculto">
+        <div class="panel">
+          <h2>➕ Nueva nota</h2>
+          <form class="fila" id="form-nota">
+            <input type="text" id="nota-titulo" placeholder="Título" required>
+            <textarea id="nota-contenido" placeholder="Contenido de la nota..." required></textarea>
+            <button type="submit" class="btn">Guardar nota</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h2>🗒️ Notas</h2>
+          <div class="toolbar">
+            <input type="search" id="buscar-notas" placeholder="🔍 Buscar en las notas...">
+          </div>
+          <div id="lista-notas"></div>
+        </div>
+      </section>
+
+      <!-- FILAMENTOS (STOCK) -->
+      <section id="tab-filamentos" class="oculto">
+        <div class="panel">
+          <h2 id="titulo-form-filamento">➕ Nuevo filamento</h2>
+          <form class="fila" id="form-filamento">
+            <select id="filamento-material" required title="Material principal">
+              <option value="" disabled selected>Material principal...</option>
+              <option value="PLA">PLA</option>
+              <option value="PLA Premium">PLA Premium</option>
+              <option value="PETG">PETG</option>
+              <option value="PETG-CF">PETG-CF</option>
+              <option value="TPU">TPU</option>
+              <option value="ASA">ASA</option>
+            </select>
+            <select id="filamento-secundario" title="Material secundario (tipos SUNLU)">
+              <option value="">Material secundario...</option>
+            </select>
+            <input type="text" id="filamento-nombre" placeholder="Nombre del material (ej: Matte Red)" required>
+            <label class="campo-inline">Color
+              <input type="color" id="filamento-color-picker" value="#BC556D">
+            </label>
+            <input type="text" id="filamento-hex" placeholder="#BC556D" maxlength="7" pattern="^#?[0-9a-fA-F]{6}$" style="flex:0 1 130px">
+            <input type="text" id="filamento-proveedor" placeholder="Proveedor (SUNLU, Bambu Lab...)">
+            <select id="filamento-abundancia" title="Abundancia">
+              <option value="elevada">Elevada (&gt;500g)</option>
+              <option value="reducida">Reducida (&lt;500g)</option>
+            </select>
+            <button type="submit" class="btn" id="btn-filamento">Añadir</button>
+            <button type="button" class="btn btn-cancelar oculto" id="btn-cancelar-filamento">Cancelar</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h2>🧵 Stock de filamentos <span class="pista">(los de abundancia reducida se marcan en rojo)</span></h2>
+          <div class="toolbar">
+            <input type="search" id="buscar-filamentos" placeholder="🔍 Buscar nombre, tipo o proveedor...">
+            <select id="filtro-material">
+              <option value="todos">Todos los materiales</option>
+              <option value="PLA">PLA</option>
+              <option value="PLA Premium">PLA Premium</option>
+              <option value="PETG">PETG</option>
+              <option value="PETG-CF">PETG-CF</option>
+              <option value="TPU">TPU</option>
+              <option value="ASA">ASA</option>
+            </select>
+          </div>
+          <div id="lista-filamentos"></div>
+        </div>
+      </section>
+
+      <!-- PRODUCTOS -->
+      <section id="tab-productos" class="oculto">
+        <div class="panel">
+          <h2 id="titulo-form-producto">➕ Nuevo producto</h2>
+          <form class="fila" id="form-producto">
+            <input type="text" id="producto-nombre" placeholder="Nombre" required>
+            <select id="producto-categoria" title="Categoría"></select>
+            <button type="button" class="btn btn-cancelar" id="btn-nueva-categoria" title="Crear una categoría nueva">➕ Categoría</button>
+            <input type="text" id="producto-descripcion" placeholder="Descripción corta (la que se ve en la tarjeta)">
+            <input type="number" id="producto-precio" placeholder="Precio interno (€, opcional)" step="0.01" min="0">
+            <label class="campo-archivo">📷 Imagen
+              <input type="file" id="producto-imagen" accept="image/*">
+            </label>
+            <span class="pista" style="flex-basis:100%">La imagen se comprime automáticamente (máx. 800 px, WebP) antes de subirse, para ocupar el mínimo espacio.</span>
+            <button type="submit" class="btn" id="btn-producto">Añadir</button>
+            <button type="button" class="btn btn-cancelar oculto" id="btn-cancelar-producto">Cancelar</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h2>🛍️ Productos de la web</h2>
+          <div class="toolbar">
+            <input type="search" id="buscar-productos" placeholder="🔍 Buscar producto...">
+            <select id="filtro-categoria">
+              <option value="todas">Todas las categorías</option>
+            </select>
+          </div>
+          <div id="lista-productos"></div>
+          <input type="file" id="input-cambiar-imagen" accept="image/*" class="oculto">
+        </div>
+      </section>
+
+      <!-- TRABAJOS REALIZADOS -->
+      <section id="tab-trabajos" class="oculto">
+        <div class="panel">
+          <h2>➕ Nuevo trabajo realizado</h2>
+          <form class="fila" id="form-trabajo">
+            <input type="text" id="trabajo-titulo" placeholder="Título del trabajo" required>
+            <input type="text" id="trabajo-cliente" placeholder="Cliente (opcional)">
+            <input type="date" id="trabajo-fecha">
+            <input type="number" id="trabajo-precio" placeholder="Precio cobrado (€)" step="0.01" min="0">
+            <textarea id="trabajo-descripcion" placeholder="Descripción, materiales usados, tiempo de impresión..."></textarea>
+            <button type="submit" class="btn">Guardar</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h2>🏆 Historial de trabajos</h2>
+          <div class="toolbar">
+            <input type="search" id="buscar-trabajos" placeholder="🔍 Buscar título o cliente...">
+          </div>
+          <div id="lista-trabajos"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ================= INICIALIZACIÓN =================
+    const configurado = !SUPABASE_URL.includes('PEGA_AQUI') && !SUPABASE_ANON_KEY.includes('PEGA_AQUI');
+    if (!configurado) document.getElementById('aviso-config').classList.remove('oculto');
+
+    const sb = configurado ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    const $ = (id) => document.getElementById(id);
+    const pantallaLogin = $('pantalla-login');
+    const pantallaDash = $('pantalla-dashboard');
+
+    // ================= SESIÓN =================
+    async function comprobarSesion() {
+      if (!sb) return;
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) mostrarDashboard(session.user);
+    }
+
+    function mostrarDashboard(user) {
+      pantallaLogin.classList.add('oculto');
+      pantallaDash.classList.remove('oculto');
+      $('usuario-email').textContent = user.email;
+      cargarCategorias().then(cargarProductos);
+      cargarNotas();
+      cargarFilamentos();
+      cargarTrabajos();
+    }
+
+    $('form-login').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!sb) return;
+      const btn = $('btn-entrar');
+      btn.disabled = true;
+      $('login-error').classList.add('oculto');
+      const { data, error } = await sb.auth.signInWithPassword({
+        email: $('email').value.trim(),
+        password: $('password').value,
+      });
+      btn.disabled = false;
+      if (error) {
+        $('login-error').textContent = traducirErrorLogin(error);
+        $('login-error').classList.remove('oculto');
+        return;
+      }
+      mostrarDashboard(data.user);
+    });
+
+    $('btn-salir').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      location.reload();
+    });
+
+    // ================= PESTAÑAS =================
+    document.querySelectorAll('nav.pestanas button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('nav.pestanas button').forEach((b) => b.classList.remove('activa'));
+        btn.classList.add('activa');
+        ['resumen', 'notas', 'productos', 'filamentos', 'trabajos'].forEach((t) => $('tab-' + t).classList.add('oculto'));
+        $('tab-' + btn.dataset.tab).classList.remove('oculto');
+      });
+    });
+
+    window.irATab = (tab) => {
+      const btn = document.querySelector(`nav.pestanas button[data-tab="${tab}"]`);
+      if (btn) btn.click();
+    };
+
+    // Buscadores y filtros: re-renderizan la lista al escribir o cambiar
+    [['buscar-filamentos', () => renderFilamentos()], ['filtro-material', () => renderFilamentos()],
+     ['buscar-productos', () => renderProductos()], ['filtro-categoria', () => renderProductos()],
+     ['buscar-trabajos', () => renderTrabajos()],
+     ['buscar-notas', () => renderNotas()]].forEach(([id, fn]) => {
+      $(id).addEventListener('input', fn);
+      $(id).addEventListener('change', fn);
+    });
+
+    // ================= CATEGORÍAS =================
+    let categoriasCache = [];
+
+    async function cargarCategorias() {
+      const { data, error } = await sb.from('categorias').select('*').order('nombre', { ascending: true });
+      if (error) { alert('Error al cargar categorías: ' + error.message); return; }
+      categoriasCache = data;
+      renderSelectsCategorias();
+    }
+
+    function renderSelectsCategorias() {
+      const opciones = categoriasCache.map((c) => `<option value="${esc(c.nombre)}">${esc(c.nombre)}</option>`).join('');
+      const filtroActual = $('filtro-categoria').value;
+      $('producto-categoria').innerHTML = '<option value="">Categoría...</option>' + opciones;
+      $('filtro-categoria').innerHTML = '<option value="todas">Todas las categorías</option>' + opciones;
+      if ([...$('filtro-categoria').options].some((o) => o.value === filtroActual)) {
+        $('filtro-categoria').value = filtroActual;
+      }
+    }
+
+    $('btn-nueva-categoria').addEventListener('click', async () => {
+      const nombre = (prompt('Nombre de la nueva categoría (minúsculas, sin espacios; ej: "mascotas"):') || '')
+        .toLowerCase().trim().replace(/\s+/g, '-');
+      if (!nombre) return;
+      const { error } = await sb.from('categorias').insert({ nombre });
+      if (error) { alert('Error al crear la categoría: ' + error.message); return; }
+      await cargarCategorias();
+      $('producto-categoria').value = nombre;
+    });
+
+    // ================= NOTAS =================
+    let notasCache = [];
+
+    async function cargarNotas() {
+      const { data, error } = await sb.from('notas').select('*').order('creado_en', { ascending: false });
+      if (error) { $('lista-notas').innerHTML = `<p class="vacio">Error: ${error.message}</p>`; return; }
+      notasCache = data;
+      renderNotas();
+    }
+
+    function renderNotas() {
+      const cont = $('lista-notas');
+      if (!notasCache.length) { cont.innerHTML = '<p class="vacio">No hay notas todavía.</p>'; return; }
+      const q = $('buscar-notas').value.toLowerCase().trim();
+      const data = notasCache.filter((n) => !q || (n.titulo + ' ' + n.contenido).toLowerCase().includes(q));
+      if (!data.length) { cont.innerHTML = '<p class="vacio">Sin resultados para esta búsqueda.</p>'; return; }
+      cont.innerHTML = data.map((n) => `
+        <div class="nota-card">
+          <h3>${esc(n.titulo)}</h3>
+          <p>${esc(n.contenido)}</p>
+          <div class="meta">
+            <span>${new Date(n.creado_en).toLocaleString('es-ES')}</span>
+            <button class="btn-borrar" onclick="borrarNota('${n.id}')">Borrar</button>
+          </div>
+        </div>`).join('');
+    }
+
+    $('form-nota').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const { error } = await sb.from('notas').insert({
+        titulo: $('nota-titulo').value.trim(),
+        contenido: $('nota-contenido').value.trim(),
+      });
+      if (error) { alert('Error al guardar: ' + error.message); return; }
+      e.target.reset();
+      cargarNotas();
+    });
+
+    window.borrarNota = async (id) => {
+      if (!confirm('¿Borrar esta nota?')) return;
+      const { error } = await sb.from('notas').delete().eq('id', id);
+      if (error) alert('Error: ' + error.message);
+      cargarNotas();
+    };
+
+    // ================= PRODUCTOS =================
+    let productosCache = [];
+
+    // Devuelve la URL mostrable de la imagen: subida a Supabase (http...)
+    // o archivo antiguo de la carpeta /img de la web
+    function urlImagenProducto(imagen) {
+      if (!imagen) return null;
+      return imagen.startsWith('http') ? imagen : '../img/' + imagen;
+    }
+
+    async function cargarProductos() {
+      const { data, error } = await sb.from('productos').select('*').order('creado_en', { ascending: false });
+      if (error) { $('lista-productos').innerHTML = `<p class="vacio">Error: ${error.message}</p>`; return; }
+      productosCache = data;
+      renderProductos();
+      renderResumen();
+    }
+
+    function renderProductos() {
+      const cont = $('lista-productos');
+      if (!productosCache.length) { cont.innerHTML = '<p class="vacio">No hay productos todavía.</p>'; return; }
+      const q = $('buscar-productos').value.toLowerCase().trim();
+      const fCat = $('filtro-categoria').value;
+      const data = productosCache.filter((p) =>
+        (fCat === 'todas' || p.categoria === fCat) &&
+        (!q || (p.nombre + ' ' + (p.descripcion || '')).toLowerCase().includes(q)));
+      if (!data.length) { cont.innerHTML = '<p class="vacio">Sin resultados para esta búsqueda.</p>'; return; }
+      cont.innerHTML = `<table>
+        <thead><tr><th>Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Visible en web</th><th></th></tr></thead>
+        <tbody>${data.map((p) => {
+          const url = urlImagenProducto(p.imagen);
+          return `
+          <tr>
+            <td data-label="Imagen">${url ? `<img class="mini" src="${esc(url)}" alt="" loading="lazy">` : '<span class="mini-vacia">📷</span>'}
+                <button class="btn-mini" onclick="cambiarImagenProducto('${p.id}')">${url ? 'Cambiar' : 'Subir'}</button></td>
+            <td data-label="Nombre"><strong>${esc(p.nombre)}</strong><br><span class="pista">${esc(p.descripcion || '')}</span></td>
+            <td data-label="Categoría">
+              <select onchange="cambiarCategoria('${p.id}', this.value)">
+                <option value="">—</option>
+                ${categoriasCache.map((c) => `<option value="${esc(c.nombre)}" ${c.nombre === p.categoria ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')}
+              </select>
+            </td>
+            <td data-label="Precio">${p.precio != null ? Number(p.precio).toFixed(2) + ' €' : '—'}</td>
+            <td data-label="Visible en web"><input type="checkbox" ${p.visible ? 'checked' : ''} onchange="cambiarVisible('${p.id}', this.checked)"></td>
+            <td data-label="">
+              <button class="btn-mini" onclick="editarProducto('${p.id}')">Editar</button>
+              <button class="btn-borrar" onclick="borrarProducto('${p.id}')">Borrar</button>
+            </td>
+          </tr>`;
+        }).join('')}
+        </tbody></table>`;
+    }
+
+    window.cambiarCategoria = async (id, categoria) => {
+      const { error } = await sb.from('productos').update({ categoria: categoria || null }).eq('id', id);
+      if (error) alert('Error: ' + error.message);
+      cargarProductos();
+    };
+
+    // ---- Modo edición de productos ----
+    let productoEditando = null;
+
+    window.editarProducto = (id) => {
+      const p = productosCache.find((x) => x.id === id);
+      if (!p) return;
+      productoEditando = p;
+      $('producto-nombre').value = p.nombre;
+      $('producto-categoria').value = p.categoria || '';
+      $('producto-descripcion').value = p.descripcion || '';
+      $('producto-precio').value = p.precio != null ? p.precio : '';
+      $('titulo-form-producto').textContent = '✏️ Editando: ' + p.nombre;
+      $('btn-producto').textContent = 'Guardar cambios';
+      $('btn-cancelar-producto').classList.remove('oculto');
+      $('titulo-form-producto').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    function salirEdicionProducto() {
+      productoEditando = null;
+      $('form-producto').reset();
+      $('titulo-form-producto').textContent = '➕ Nuevo producto';
+      $('btn-producto').textContent = 'Añadir';
+      $('btn-cancelar-producto').classList.add('oculto');
+    }
+
+    $('btn-cancelar-producto').addEventListener('click', salirEdicionProducto);
+
+    // ---- Compresión en el navegador: máx 800px lado largo, WebP 80% ----
+    async function comprimirImagen(file, maxDim = 800, calidad = 0.8) {
+      const img = await new Promise((res, rej) => {
+        const i = new Image();
+        i.onload = () => res(i);
+        i.onerror = () => rej(new Error('No se pudo leer la imagen'));
+        i.src = URL.createObjectURL(file);
+      });
+      const escala = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const w = Math.round(img.width * escala);
+      const h = Math.round(img.height * escala);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(img.src);
+      const blob = await new Promise((res) => canvas.toBlob(res, 'image/webp', calidad));
+      if (!blob) throw new Error('No se pudo comprimir la imagen');
+      return blob;
+    }
+
+    async function subirImagenProducto(file, nombreProducto) {
+      const blob = await comprimirImagen(file);
+      // normalize('NFD') separa las tildes y el filtro [^a-z0-9] las elimina
+      const ruta = (nombreProducto || 'producto')
+        .toLowerCase().normalize('NFD')
+        .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        + '-' + Date.now() + '.webp';
+      const { error } = await sb.storage.from('productos').upload(ruta, blob, { contentType: 'image/webp' });
+      if (error) throw error;
+      return sb.storage.from('productos').getPublicUrl(ruta).data.publicUrl;
+    }
+
+    // Si la imagen estaba en el Storage de Supabase, la borra para liberar espacio
+    async function borrarImagenDeStorage(imagen) {
+      const marca = '/storage/v1/object/public/productos/';
+      const i = (imagen || '').indexOf(marca);
+      if (i === -1) return;
+      try {
+        await sb.storage.from('productos').remove([decodeURIComponent(imagen.slice(i + marca.length))]);
+      } catch (e) { /* no bloquea la operación principal */ }
+    }
+
+    $('form-producto').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('btn-producto');
+      const editando = productoEditando;
+      btn.disabled = true;
+      btn.textContent = 'Guardando...';
+      try {
+        const nombre = $('producto-nombre').value.trim();
+        const precioProd = $('producto-precio').value;
+        const campos = {
+          nombre,
+          categoria: $('producto-categoria').value || null,
+          descripcion: $('producto-descripcion').value.trim(),
+          precio: precioProd === '' ? null : Number(precioProd),
+        };
+        const archivo = $('producto-imagen').files[0];
+        if (archivo) {
+          btn.textContent = 'Subiendo imagen...';
+          campos.imagen = await subirImagenProducto(archivo, nombre);
+        }
+        const { error } = editando
+          ? await sb.from('productos').update(campos).eq('id', editando.id)
+          : await sb.from('productos').insert(campos);
+        if (error) throw error;
+        if (editando && archivo) await borrarImagenDeStorage(editando.imagen);
+        salirEdicionProducto();
+        cargarProductos();
+      } catch (err) {
+        alert('Error al guardar: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = productoEditando ? 'Guardar cambios' : 'Añadir';
+      }
+    });
+
+    // ---- Cambiar/subir imagen de un producto existente ----
+    let productoPendienteImagen = null;
+
+    window.cambiarImagenProducto = (id) => {
+      productoPendienteImagen = productosCache.find((p) => p.id === id) || null;
+      if (productoPendienteImagen) $('input-cambiar-imagen').click();
+    };
+
+    $('input-cambiar-imagen').addEventListener('change', async (e) => {
+      const archivo = e.target.files[0];
+      const producto = productoPendienteImagen;
+      e.target.value = '';
+      productoPendienteImagen = null;
+      if (!archivo || !producto) return;
+      try {
+        const nuevaUrl = await subirImagenProducto(archivo, producto.nombre);
+        const { error } = await sb.from('productos').update({ imagen: nuevaUrl }).eq('id', producto.id);
+        if (error) throw error;
+        await borrarImagenDeStorage(producto.imagen);
+        cargarProductos();
+      } catch (err) {
+        alert('Error al subir la imagen: ' + err.message);
+      }
+    });
+
+    window.cambiarVisible = async (id, visible) => {
+      const { error } = await sb.from('productos').update({ visible }).eq('id', id);
+      if (error) alert('Error: ' + error.message);
+    };
+
+    window.borrarProducto = async (id) => {
+      if (!confirm('¿Borrar este producto?')) return;
+      const producto = productosCache.find((p) => p.id === id);
+      const { error } = await sb.from('productos').delete().eq('id', id);
+      if (error) { alert('Error: ' + error.message); return; }
+      if (producto) await borrarImagenDeStorage(producto.imagen);
+      cargarProductos();
+    };
+
+    // ================= FILAMENTOS (STOCK) =================
+    let filamentosCache = [];
+
+    // Tipos de filamento del catálogo de SUNLU, sin repetidos,
+    // agrupados por material principal
+    const SECUNDARIOS = {
+      'PLA': ['PLA Básico', 'PLA+', 'PLA Matte', 'PLA Meta', 'PLA Macaron', 'High Speed PLA', 'PLA Carbon Fiber'],
+      'PLA Premium': ['Silk PLA', 'PLA Marble', 'PLA Wood', 'PLA Glow in the Dark', 'PLA Twinkling', 'PLA Rainbow'],
+      'PETG': ['PETG Básico', 'PETG Matte'],
+      'PETG-CF': ['PETG Carbon Fiber'],
+      'TPU': ['TPU Básico', 'TPU Silk'],
+      'ASA': ['ASA Básico'],
+    };
+
+    // El desplegable secundario depende del material principal elegido
+    $('filamento-material').addEventListener('change', () => {
+      const tipos = SECUNDARIOS[$('filamento-material').value] || [];
+      $('filamento-secundario').innerHTML =
+        '<option value="">Material secundario...</option>' +
+        tipos.map((t) => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+    });
+
+    // Hex y cuadro de tonos sincronizados en ambos sentidos
+    $('filamento-color-picker').addEventListener('input', () => {
+      $('filamento-hex').value = $('filamento-color-picker').value.toUpperCase();
+    });
+    $('filamento-hex').addEventListener('input', () => {
+      let v = $('filamento-hex').value.trim();
+      if (v && !v.startsWith('#')) v = '#' + v;
+      if (/^#[0-9a-fA-F]{6}$/.test(v)) $('filamento-color-picker').value = v;
+    });
+
+    async function cargarFilamentos() {
+      const { data, error } = await sb.from('filamentos').select('*')
+        .order('material', { ascending: true }).order('nombre', { ascending: true });
+      if (error) { $('lista-filamentos').innerHTML = `<p class="vacio">Error: ${error.message}</p>`; return; }
+      filamentosCache = data;
+      renderFilamentos();
+      renderResumen();
+    }
+
+    function renderFilamentos() {
+      const cont = $('lista-filamentos');
+      if (!filamentosCache.length) { cont.innerHTML = '<p class="vacio">No hay filamentos todavía.</p>'; return; }
+      const q = $('buscar-filamentos').value.toLowerCase().trim();
+      const fMat = $('filtro-material').value;
+      const data = filamentosCache.filter((f) =>
+        (fMat === 'todos' || f.material === fMat) &&
+        (!q || (f.nombre + ' ' + (f.secundario || '') + ' ' + (f.proveedor || '')).toLowerCase().includes(q)));
+      if (!data.length) { cont.innerHTML = '<p class="vacio">Sin resultados para esta búsqueda.</p>'; return; }
+      cont.innerHTML = `<table>
+        <thead><tr><th>Material</th><th>Nombre</th><th>Color</th><th>Proveedor</th><th>Abundancia</th><th>Visible en web</th><th></th></tr></thead>
+        <tbody>${data.map((f) => `
+          <tr class="${f.abundancia === 'reducida' ? 'stock-bajo' : ''}">
+            <td data-label="Material"><strong>${esc(f.material)}</strong>${f.secundario ? `<br><span class="pista">${esc(f.secundario)}</span>` : ''}</td>
+            <td data-label="Nombre">${esc(f.nombre)}</td>
+            <td data-label="Color"><span class="swatch" style="background:${swatchCss(f.hex)}"></span><span class="pista">${esc(f.hex || '—')}</span></td>
+            <td data-label="Proveedor">${esc(f.proveedor || '—')}</td>
+            <td data-label="Abundancia">
+              <select onchange="cambiarAbundancia('${f.id}', this.value)">
+                <option value="elevada" ${f.abundancia === 'elevada' ? 'selected' : ''}>Elevada (&gt;500g)</option>
+                <option value="reducida" ${f.abundancia === 'reducida' ? 'selected' : ''}>Reducida (&lt;500g)</option>
+              </select>
+            </td>
+            <td data-label="Visible en web"><input type="checkbox" ${f.visible ? 'checked' : ''} onchange="cambiarVisibleFilamento('${f.id}', this.checked)"></td>
+            <td data-label="">
+              <button class="btn-mini" onclick="editarFilamento('${f.id}')">Editar</button>
+              <button class="btn-borrar" onclick="borrarFilamento('${f.id}')">Borrar</button>
+            </td>
+          </tr>`).join('')}
+        </tbody></table>`;
+    }
+
+    window.cambiarVisibleFilamento = async (id, visible) => {
+      const { error } = await sb.from('filamentos').update({ visible }).eq('id', id);
+      if (error) alert('Error: ' + error.message);
+    };
+
+    // ---- Modo edición de filamentos ----
+    let filamentoEditando = null;
+
+    window.editarFilamento = (id) => {
+      const f = filamentosCache.find((x) => x.id === id);
+      if (!f) return;
+      filamentoEditando = f;
+      $('filamento-material').value = f.material;
+      $('filamento-material').dispatchEvent(new Event('change'));
+      $('filamento-secundario').value = f.secundario || '';
+      $('filamento-nombre').value = f.nombre;
+      $('filamento-hex').value = f.hex || '';
+      if (/^#[0-9a-fA-F]{6}$/.test(f.hex || '')) $('filamento-color-picker').value = f.hex;
+      $('filamento-proveedor').value = f.proveedor || '';
+      $('filamento-abundancia').value = f.abundancia;
+      $('titulo-form-filamento').textContent = '✏️ Editando: ' + f.nombre;
+      $('btn-filamento').textContent = 'Guardar cambios';
+      $('btn-cancelar-filamento').classList.remove('oculto');
+      $('titulo-form-filamento').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    function salirEdicionFilamento() {
+      filamentoEditando = null;
+      $('form-filamento').reset();
+      $('filamento-secundario').innerHTML = '<option value="">Material secundario...</option>';
+      $('titulo-form-filamento').textContent = '➕ Nuevo filamento';
+      $('btn-filamento').textContent = 'Añadir';
+      $('btn-cancelar-filamento').classList.add('oculto');
+    }
+
+    $('btn-cancelar-filamento').addEventListener('click', salirEdicionFilamento);
+
+    // Admite también varios hex separados por coma (degradados antiguos)
+    function swatchCss(hex) {
+      const partes = String(hex || '#888').split(',').map((h) => {
+        const t = h.trim();
+        return t.startsWith('#') ? t : '#' + t;
+      });
+      return partes.length > 1
+        ? `linear-gradient(135deg, ${esc(partes.join(', '))})`
+        : esc(partes[0]);
+    }
+
+    $('form-filamento').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let hex = $('filamento-hex').value.trim();
+      if (hex && !hex.startsWith('#')) hex = '#' + hex;
+      const campos = {
+        material: $('filamento-material').value,
+        secundario: $('filamento-secundario').value || null,
+        nombre: $('filamento-nombre').value.trim(),
+        hex: hex || $('filamento-color-picker').value.toUpperCase(),
+        proveedor: $('filamento-proveedor').value.trim() || null,
+        abundancia: $('filamento-abundancia').value,
+      };
+      const { error } = filamentoEditando
+        ? await sb.from('filamentos').update(campos).eq('id', filamentoEditando.id)
+        : await sb.from('filamentos').insert(campos);
+      if (error) { alert('Error al guardar: ' + error.message); return; }
+      salirEdicionFilamento();
+      cargarFilamentos();
+    });
+
+    window.cambiarAbundancia = async (id, abundancia) => {
+      const { error } = await sb.from('filamentos').update({ abundancia }).eq('id', id);
+      if (error) alert('Error: ' + error.message);
+      cargarFilamentos();
+    };
+
+    window.borrarFilamento = async (id) => {
+      if (!confirm('¿Borrar este filamento?')) return;
+      const { error } = await sb.from('filamentos').delete().eq('id', id);
+      if (error) alert('Error: ' + error.message);
+      cargarFilamentos();
+    };
+
+    // ================= TRABAJOS REALIZADOS =================
+    let trabajosCache = [];
+
+    async function cargarTrabajos() {
+      const { data, error } = await sb.from('trabajos').select('*').order('fecha', { ascending: false });
+      if (error) { $('lista-trabajos').innerHTML = `<p class="vacio">Error: ${error.message}</p>`; return; }
+      trabajosCache = data;
+      renderTrabajos();
+      renderResumen();
+    }
+
+    function renderTrabajos() {
+      const cont = $('lista-trabajos');
+      if (!trabajosCache.length) { cont.innerHTML = '<p class="vacio">No hay trabajos registrados todavía.</p>'; return; }
+      const q = $('buscar-trabajos').value.toLowerCase().trim();
+      const data = trabajosCache.filter((t) =>
+        !q || (t.titulo + ' ' + (t.cliente || '') + ' ' + (t.descripcion || '')).toLowerCase().includes(q));
+      if (!data.length) { cont.innerHTML = '<p class="vacio">Sin resultados para esta búsqueda.</p>'; return; }
+      const total = data.reduce((s, t) => s + (Number(t.precio) || 0), 0);
+      cont.innerHTML = `<p class="pista" style="margin-bottom:.7rem">
+          ${data.length} trabajos · ${total.toFixed(2)} € en total</p>
+        <table>
+        <thead><tr><th>Título</th><th>Cliente</th><th>Fecha</th><th>Precio</th><th></th></tr></thead>
+        <tbody>${data.map((t) => `
+          <tr>
+            <td data-label="Título"><strong>${esc(t.titulo)}</strong><br><span class="pista">${esc(t.descripcion || '')}</span></td>
+            <td data-label="Cliente">${esc(t.cliente || '—')}</td>
+            <td data-label="Fecha">${t.fecha ? new Date(t.fecha).toLocaleDateString('es-ES') : '—'}</td>
+            <td data-label="Precio">${t.precio != null ? Number(t.precio).toFixed(2) + ' €' : '—'}</td>
+            <td data-label=""><button class="btn-borrar" onclick="borrarTrabajo('${t.id}')">Borrar</button></td>
+          </tr>`).join('')}
+        </tbody></table>`;
+    }
+
+    $('form-trabajo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const precio = $('trabajo-precio').value;
+      const { error } = await sb.from('trabajos').insert({
+        titulo: $('trabajo-titulo').value.trim(),
+        cliente: $('trabajo-cliente').value.trim() || null,
+        fecha: $('trabajo-fecha').value || null,
+        precio: precio === '' ? null : Number(precio),
+        descripcion: $('trabajo-descripcion').value.trim() || null,
+      });
+      if (error) { alert('Error al guardar: ' + error.message); return; }
+      e.target.reset();
+      cargarTrabajos();
+    });
+
+    window.borrarTrabajo = async (id) => {
+      if (!confirm('¿Borrar este trabajo?')) return;
+      const { error } = await sb.from('trabajos').delete().eq('id', id);
+      if (error) alert('Error: ' + error.message);
+      cargarTrabajos();
+    };
+
+    // ================= RESUMEN (KPIs) =================
+    function renderResumen() {
+      const materiales = [...new Set(filamentosCache.map((f) => f.material))].length;
+      const bajos = filamentosCache.filter((f) => f.abundancia === 'reducida').length;
+      const visibles = productosCache.filter((p) => p.visible).length;
+      const totalIngresos = trabajosCache.reduce((s, t) => s + (Number(t.precio) || 0), 0);
+
+      const detalleFilamentos = filamentosCache.length
+        ? `${materiales} ${materiales === 1 ? 'material' : 'materiales'}` +
+          (bajos ? ` · <span class="alerta-texto">${bajos} con abundancia reducida</span>` : ' · stock al día')
+        : 'Añade tu primer filamento';
+      const detalleProductos = productosCache.length
+        ? `${visibles} visibles en la web`
+        : 'Añade tu primer producto';
+      const detalleTrabajos = trabajosCache.length
+        ? `${totalIngresos.toFixed(2)} € acumulados`
+        : 'Registra tu primer trabajo';
+
+      $('kpis').innerHTML =
+        kpiHtml('🧵', 'Filamentos', filamentosCache.length, detalleFilamentos, 'filamentos') +
+        kpiHtml('🛍️', 'Productos', productosCache.length, detalleProductos, 'productos') +
+        kpiHtml('🏆', 'Trabajos realizados', trabajosCache.length, detalleTrabajos, 'trabajos');
+    }
+
+    function kpiHtml(icono, titulo, valor, detalle, tab) {
+      return `<div class="kpi" onclick="irATab('${tab}')" title="Ir a ${titulo.toLowerCase()}">
+        <div class="kpi-icono">${icono}</div>
+        <div class="kpi-valor">${valor}</div>
+        <div class="kpi-titulo">${titulo}</div>
+        <div class="kpi-detalle">${detalle}</div>
+      </div>`;
+    }
+
+    // Mensajes de error de login claros según la causa real
+    function traducirErrorLogin(error) {
+      const msg = (error.message || '').toLowerCase();
+      const code = error.code || '';
+      if (code === 'invalid_credentials' || msg.includes('invalid login credentials'))
+        return 'Email o contraseña incorrectos.';
+      if (code === 'email_not_confirmed' || msg.includes('email not confirmed'))
+        return 'El usuario existe pero no está confirmado. En Supabase: Authentication → Users → confirma el usuario (o recréalo marcando "Auto Confirm User").';
+      if (msg.includes('email logins are disabled') || msg.includes('email provider'))
+        return 'El inicio de sesión por email está desactivado. En Supabase: Authentication → Sign In / Up → activa el proveedor Email.';
+      if (msg.includes('failed to fetch') || msg.includes('network'))
+        return 'No se pudo conectar con Supabase. Revisa la SUPABASE_URL (debe ser https://xxxx.supabase.co, sin nada detrás), tu conexión, o si el proyecto está pausado (supabase.com → Restore project).';
+      if (msg.includes('invalid api key') || msg.includes('apikey'))
+        return 'La clave (SUPABASE_ANON_KEY) no es válida. Copia la "anon / publishable key" desde Project Settings → API.';
+      return 'Error: ' + (error.message || 'desconocido') + (code ? ' (código: ' + code + ')' : '');
+    }
+
+    // ================= UTILIDADES =================
+    function esc(texto) {
+      const div = document.createElement('div');
+      div.textContent = texto ?? '';
+      return div.innerHTML;
+    }
+
+    comprobarSesion();
+  </script>
+</body>
+</html>

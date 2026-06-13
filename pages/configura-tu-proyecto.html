@@ -605,6 +605,72 @@
     .contact-option-card p { font-size: 0.82rem; color: var(--gray-text); }
 
     /* ============================================================
+       REFERENCE FILES BLOCK (paso 2 · parte B)
+    ============================================================ */
+    .reference-block {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1.5px dashed var(--border);
+    }
+    .reference-block-title {
+      font-size: 1rem; font-weight: 800; color: var(--dark);
+      letter-spacing: -0.01em; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .reference-upload { margin-top: 18px; animation: fadeInUp 0.3s ease; }
+    .reference-dropzone {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; text-align: center;
+      padding: 32px 20px;
+      border: 2px dashed var(--primary-light);
+      border-radius: var(--radius);
+      background: var(--gray-bg);
+      cursor: pointer; transition: all 0.25s;
+    }
+    .reference-dropzone:hover,
+    .reference-dropzone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+    .dropzone-icon { font-size: 1.8rem; }
+    .dropzone-text { font-size: 0.95rem; color: var(--dark); }
+    .dropzone-text strong { color: var(--primary); font-weight: 700; }
+    .dropzone-hint { font-size: 0.78rem; color: var(--gray-text); }
+
+    .reference-files-list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+    .reference-file {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--white);
+      animation: fadeInUp 0.2s ease;
+    }
+    .reference-file-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .reference-file-info { flex: 1; min-width: 0; }
+    .reference-file-name {
+      font-size: 0.85rem; font-weight: 600; color: var(--dark);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .reference-file-sub { display: flex; align-items: center; gap: 8px; }
+    .reference-file-meta { font-size: 0.72rem; color: var(--gray-text); }
+    .reference-file-status { font-size: 0.72rem; font-weight: 700; }
+    .reference-file-status.uploading { color: var(--gray-text); }
+    .reference-file-status.done { color: #0a9077; }
+    .reference-file-status.error { color: #ef4444; }
+    .reference-file-remove {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: #E5E7EB; color: #888; border: none; cursor: pointer;
+      font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.2s;
+    }
+    .reference-file-remove:hover { background: #fecdd3; color: var(--primary); }
+    .reference-files-meta {
+      font-size: 0.78rem; color: var(--gray-text); margin-top: 12px;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    }
+
+    /* ============================================================
        FOOTER
     ============================================================ */
     .footer {
@@ -788,17 +854,18 @@
             <span class="step-num">2</span>
             Detalles del proyecto
           </h3>
-          <div class="quote-form-grid quote-form-grid-2">
-            <div class="form-group form-group-span-2">
+          <!-- Parte A · datos del proyecto (compacto) -->
+          <div class="quote-form-grid">
+            <div class="form-group">
               <label for="projectName">Nombre del proyecto *</label>
               <input type="text" id="projectName" name="projectName"
                      required placeholder="Ej: Prototipo de pieza mecánica">
               <span class="field-error" id="errProjectName">Por favor, indica el nombre del proyecto.</span>
             </div>
-            <div class="form-group form-group-span-2">
+            <div class="form-group">
               <label for="projectDescription">Descripción del proyecto *</label>
               <textarea id="projectDescription" name="projectDescription"
-                        required rows="6"
+                        required rows="5"
                         placeholder="Cuéntanos toda la información que consideres importante para llevar a cabo tu proyecto"></textarea>
               <span class="field-error" id="errDescription">Por favor, describe tu proyecto.</span>
             </div>
@@ -807,14 +874,35 @@
               <input type="text" id="projectMeasures" name="projectMeasures"
                      placeholder="Algún valor aproximado...">
             </div>
+          </div>
+
+          <!-- Parte B · proyecto o imágenes de referencia -->
+          <div class="reference-block">
+            <h4 class="reference-block-title">📎 Proyecto o imágenes de referencia</h4>
             <div class="form-group">
-              <label for="projectReferenceFiles">Proyecto o imágenes de referencia *</label>
+              <label for="projectReferenceFiles">¿Dispones de archivos para compartir? *</label>
               <select id="projectReferenceFiles" name="projectReferenceFiles" required>
-                <option value="" selected disabled>¿Puedes compartirnos alguna referencia?</option>
-                <option value="si">Sí (incluye los archivos en el siguiente paso)</option>
-                <option value="no">No</option>
+                <option value="" selected disabled>Selecciona una opción</option>
+                <option value="si">Sí, quiero adjuntar archivos</option>
+                <option value="no">No, de momento no</option>
               </select>
               <span class="field-error" id="errReference">Por favor, selecciona una opción.</span>
+            </div>
+
+            <div class="reference-upload" id="referenceUpload" hidden>
+              <label class="reference-dropzone" id="referenceDropzone" for="projectFiles">
+                <input type="file" id="projectFiles" name="projectFiles" multiple
+                       accept="image/*,.stl,.step,.stp,.obj,.3mf,.ply,.gltf,.glb,.fbx,.amf,.igs,.iges,.scad,.zip,.rar,.7z"
+                       hidden>
+                <span class="dropzone-icon">⬆️</span>
+                <span class="dropzone-text"><strong>Haz clic o arrastra tus archivos aquí</strong></span>
+                <span class="dropzone-hint">Imágenes y modelos 3D (STL, STEP, OBJ, 3MF…) · se suben sin comprimir</span>
+              </label>
+              <div class="reference-files-list" id="referenceFilesList"></div>
+              <div class="reference-files-meta">
+                <span id="referenceFilesTotal">Ningún archivo seleccionado</span>
+              </div>
+              <span class="field-error" id="errFiles">Adjunta al menos un archivo o selecciona “No”.</span>
             </div>
           </div>
           <div class="quote-step-actions">
@@ -1064,9 +1152,28 @@
     showStep(1);
   </script>
 
+  <!-- Supabase (subida de archivos de referencia a Storage) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Reutiliza el mismo proyecto de Supabase que el panel de administración.
+    // La "anon / publishable key" es pública por diseño (igual que en admin/index.html).
+    window.SILAB_SUPABASE = {
+      url: 'https://yyezkumbjqnushwgqkzf.supabase.co',
+      anonKey: 'sb_publishable_S-YCLKYozH7T9DFE1gMtUw_1jWLZnIf',
+      bucket: 'solicitudes',
+      // Email automático (Resend) DESACTIVADO: los archivos van a Supabase y sus
+      // enlaces viajan en el mensaje de WhatsApp/Email que envía el cliente.
+      // Para reactivarlo, pega aquí la URL de la Edge Function:
+      // 'https://yyezkumbjqnushwgqkzf.supabase.co/functions/v1/enviar-solicitud'
+      edgeFunction: '',
+      // Límite por archivo (Supabase Storage permite 50 MB por defecto en el plan free)
+      maxFileMB: 50
+    };
+  </script>
+
   <!-- Existing project logic (color catalog, WhatsApp/email generation, etc.) -->
   <script defer src="../js/script.js"></script>
-  <script defer src="../js/configura-tu-proyecto.js?v=20260423k"></script>
+  <script defer src="../js/configura-tu-proyecto.js?v=20260613b"></script>
 
 </body>
 </html>
