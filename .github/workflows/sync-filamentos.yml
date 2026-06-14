@@ -1,0 +1,31 @@
+name: Sync filamentos.json desde Supabase
+
+# Mantiene data/filamentos.json siempre al día con la tabla 'filamentos' de Supabase.
+on:
+  schedule:
+    - cron: '0 * * * *'      # cada hora
+  workflow_dispatch:          # y a mano (Actions → Run workflow) tras editar en el admin
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generar data/filamentos.json
+        run: node scripts/sync-filamentos.js
+      - name: Commit si hay cambios
+        run: |
+          if [[ -n "$(git status --porcelain data/filamentos.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/filamentos.json
+            git commit -m "chore: sync filamentos.json desde Supabase"
+            git push
+          else
+            echo "Sin cambios."
+          fi

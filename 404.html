@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página no encontrada - SILAB 3D</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{ --primary:#BC556D; --primary-dark:#B7516B; --primary-light:#F2D6DC; --dark:#2F2F2F; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'Outfit',sans-serif;color:var(--dark);min-height:100vh;
+      display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;
+      background:
+        radial-gradient(circle at 18% 22%,rgba(188,85,109,.16) 0%,transparent 50%),
+        radial-gradient(circle at 82% 78%,rgba(242,214,220,.4) 0%,transparent 50%),
+        #faf2f4;
+    }
+    .wrap{max-width:520px;animation:up .6s ease both;}
+    @keyframes up{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+    .code{font-size:clamp(5rem,18vw,8rem);font-weight:900;line-height:1;color:var(--primary);letter-spacing:-.05em;}
+    h1{font-size:clamp(1.4rem,4vw,1.9rem);font-weight:800;margin:8px 0 12px;letter-spacing:-.02em;}
+    p{color:#6B7280;font-size:1.02rem;line-height:1.7;margin-bottom:28px;}
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;padding:14px 30px;border-radius:50px;font-weight:700;text-decoration:none;
+      box-shadow:0 8px 30px rgba(188,85,109,.38);transition:transform .25s,box-shadow .25s;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:0 12px 38px rgba(188,85,109,.5);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="code">404</div>
+    <h1>Esta página no existe</h1>
+    <p>Puede que el enlace esté roto o que la página se haya movido. Volvamos a un lugar seguro.</p>
+    <a class="btn" href="/">← Volver al inicio</a>
+  </div>
+</body>
+</html>

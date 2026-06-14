@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reseñas - SILAB 3D</title>
-  <link rel="canonical" href="https://silab3d.com/pages/resenas.html">
+    <title>Reseñas (experimental) - SILAB 3D</title>
+    <meta name="robots" content="noindex">
   <link rel="apple-touch-icon" href="https://silab3d.com/img/favicon.png">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SILAB 3D">
@@ -548,6 +548,26 @@
             .quote-modal-content { padding: 30px 22px; }
             .terms-popup-content { flex-direction: column; gap: 16px; }
         }
+
+        /* ── Reseñas de Google (self-hosted) ── */
+        .gr-wrap{max-width:1000px;margin:0 auto;}
+        .gr-status{text-align:center;color:var(--gray-text);font-size:1rem;padding:24px;}
+        .gr-summary{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:34px;}
+        .gr-score{font-size:3rem;font-weight:900;color:var(--primary);line-height:1;}
+        .gr-summary-info{text-align:left;}
+        .gr-stars{color:#f5b301;letter-spacing:2px;font-size:1.15rem;}
+        .gr-stars.sm{font-size:0.95rem;margin-bottom:8px;}
+        .gr-star.off{color:#e2d5d9;}
+        .gr-count{font-size:0.9rem;color:var(--gray-text);margin-top:4px;}
+        .gr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+        .gr-card{background:var(--white);border:1.5px solid rgba(188,85,109,0.15);border-radius:18px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,.05);transition:transform .25s,box-shadow .25s;}
+        .gr-card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(188,85,109,.16);}
+        .gr-card-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+        .gr-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+        .gr-avatar-ph{display:flex;align-items:center;justify-content:center;background:var(--primary-light);color:var(--primary-dark);font-weight:800;font-size:1.1rem;}
+        .gr-author{font-weight:700;color:var(--dark);font-size:0.95rem;}
+        .gr-when{font-size:0.78rem;color:var(--gray-text);}
+        .gr-text{font-size:0.92rem;color:#555;line-height:1.65;margin-top:6px;}
     
     /* --- chrome (restaurado tras revertir base.css) --- */
 /* --- Navbar --- */
@@ -870,7 +890,7 @@
             </div>
 
             <div class="widget-shell reveal">
-                <div class="elfsight-app-edc44958-1c18-4f03-a2bc-7e5eb0ad4aed" data-elfsight-app-lazy></div>
+                <div id="googleReviews" class="gr-wrap"><p class="gr-status">Cargando reseñas de Google…</p></div>
             </div>
 
             <div class="cta-row reveal">
@@ -963,6 +983,15 @@
     </script>
 
     <script defer src="../js/script.js"></script>
+    <script>
+      window.SILAB_GOOGLE_REVIEWS = {
+        apiKey: 'PEGA_AQUI_TU_API_KEY',            // Google Cloud → Maps JavaScript API + Places API (New)
+        placeQuery: 'SILAB 3D Impresión 3D, Salamanca',
+        placeId: '',                                // opcional: más preciso si lo conoces
+        writeUrl: 'https://g.page/r/CeOgqq_pEuu5EBM/review'
+      };
+    </script>
+    <script defer src="../js/google-reviews.js"></script>
   <script>
     const navbar=document.getElementById('navbar');
     if(navbar)window.addEventListener('scroll',()=>{navbar.classList.toggle('scrolled',window.scrollY>20)},{passive:true});
