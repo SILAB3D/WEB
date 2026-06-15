@@ -93,13 +93,13 @@
           "hex": "#CDAE81"
         },
         {
-          "nombre": "Dorado (Silk Yellow)",
-          "hex": "#F1C402",
+          "nombre": "Mármol (Chesnut Marble)",
+          "hex": "#D7D4CC",
           "premium": true
         },
         {
-          "nombre": "Mármol (Chesnut Marble)",
-          "hex": "#D7D4CC",
+          "nombre": "Silk Yellow (Amarillo)",
+          "hex": "#F1C402",
           "premium": true
         }
       ]
