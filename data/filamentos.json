@@ -77,10 +77,6 @@
           "hex": "#BBBEC3"
         },
         {
-          "nombre": "Sky Blue",
-          "hex": "#63C9F0"
-        },
-        {
           "nombre": "Sunny Orange",
           "hex": "#FF7A29"
         },
@@ -95,6 +91,11 @@
         {
           "nombre": "Mármol (Chesnut Marble)",
           "hex": "#D7D4CC",
+          "premium": true
+        },
+        {
+          "nombre": "Silk Light Gold (Dorado)",
+          "hex": "#f1be48",
           "premium": true
         },
         {
