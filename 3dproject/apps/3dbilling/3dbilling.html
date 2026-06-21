@@ -137,6 +137,9 @@ table.lines td.u textarea{text-align:center}
   .sheet{width:100%;max-width:100%;box-shadow:none;border-radius:0;padding:0}
 }
 </style>
+<style>
+@media(max-width:760px){.side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:80vw;max-width:300px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 12px}.sheet{padding:24px 18px}}
+</style>
 </head>
 <body>
 <div id="dp-shell">
@@ -218,9 +221,9 @@ function newReceipt(){
   S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var num='SL-'+y+'-'+String(S.seq).padStart(3,'0');
   var r={id:uid(),number:num,date:todayISO(),presetId:(S.presets[0]&&S.presets[0].id)||'silab',client:{name:'',email:''},
     lines:[{name:'',desc:'',materials:'',units:1,amount:0}],created:Date.now()};
-  S.receipts.unshift(r); S.cur=r.id; save(); renderSidebar(); renderSheet();
+  S.receipts.unshift(r); S.cur=r.id; save(); renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off');
 }
-function selectReceipt(id){ S.cur=id; renderSidebar(); renderSheet(); }
+function selectReceipt(id){ S.cur=id; renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off'); }
 function deleteReceipt(id,ev){ if(ev)ev.stopPropagation(); if(!confirm('¿Eliminar este recibo?'))return; S.receipts=S.receipts.filter(function(r){return r.id!==id;}); if(S.cur===id)S.cur=(S.receipts[0]&&S.receipts[0].id)||null; save(); renderSidebar(); renderSheet(); }
 function duplicateReceipt(){ var r=cur(); if(!r)return; S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var c=JSON.parse(JSON.stringify(r)); c.id=uid(); c.number='SL-'+y+'-'+String(S.seq).padStart(3,'0'); c.date=todayISO(); c.created=Date.now(); S.receipts.unshift(c); S.cur=c.id; save(); renderSidebar(); renderSheet(); }
 function renderSidebar(){
@@ -310,5 +313,6 @@ renderSidebar(); renderSheet();
   }
 })();
 </script>
+<script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
 </body>
 </html>

@@ -780,6 +780,28 @@ html, body {
   .ch-today { display: none; }
 }
 
+@media (max-width: 680px){
+  /* Vista SEMANA: scroll horizontal con columnas de ancho usable en vez de 7 columnas aplastadas */
+  .wv-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .wv-head, .wv-body{min-width:640px}
+  /* Vista MES: más compacta para que respire */
+  .mv-wrap{padding:0 8px 10px}
+  .mv-grid{gap:2px}
+  .mv-cell{padding:4px;border-radius:6px}
+  .mv-day-num{font-size:10.5px}
+  .mv-dow{font-size:8.5px;padding:8px 0 5px}
+  .mv-chip{font-size:9px;padding:1px 4px}
+}
+@media (max-width: 420px){
+  .wv-head, .wv-body{min-width:560px}
+}
+
+.tb-btn.accent-rose{color:#FF6B8A;border-color:rgba(255,107,138,.22);background:rgba(255,107,138,.06)}
+.tb-btn.accent-rose:hover{background:rgba(255,107,138,.13)}
+.cal-gap{position:absolute;left:5px;right:5px;z-index:1;border-radius:7px;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;background:repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 7px,rgba(255,255,255,.015) 7px 14px);border:1px dashed var(--border2)}
+.cal-gap-label{font-size:9.5px;font-weight:600;letter-spacing:.2px;color:var(--t2);background:var(--surface);padding:1px 8px;border-radius:20px;border:1px solid var(--border);white-space:nowrap}
+[data-theme=light] .cal-gap{background:repeating-linear-gradient(135deg,rgba(0,0,0,.045) 0 7px,rgba(0,0,0,.012) 7px 14px)}
+
 /* ===== 3DProject shell bar (inyectado) ===== */
 #dp-shell{position:fixed;top:0;left:0;right:0;height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;z-index:9500;font-family:'Outfit',system-ui,sans-serif;box-sizing:border-box;background:rgba(10,11,18,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
 #dp-shell *{box-sizing:border-box}
@@ -858,6 +880,10 @@ html, body {
       <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 5.5c0-1 .7-1.5 1.5-1.5s1.5.7 1.5 1.5c0 .7-.4 1.3-1 1.6L7 8v.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="10.5" r=".6" fill="currentColor"/></svg>
       <span class="btn-label">Organización inteligente</span>
       <span class="overlap-dot" id="overlap-dot"></span>
+    </button>
+    <button class="tb-btn accent-rose" onclick="clearDay()" title="Vaciar el día que estás viendo (eliminar todas sus impresiones)">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M5.2 3.5V2.6a1 1 0 011-1h1.6a1 1 0 011 1v.9M3.2 3.5l.55 8a1.2 1.2 0 001.2 1.1h4.1a1.2 1.2 0 001.2-1.1l.55-8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="btn-label">Vaciar día</span>
     </button>
     <button class="tb-btn primary" onclick="openAddModal()">
       <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1385,8 +1411,9 @@ function renderDay(root){
   body.appendChild(gutter);
   body.appendChild(col);
 
-  // Events
+  // Events (con bandas de hueco libre entre impresiones)
   const evs=S.events.filter(e=>e.date===dk);
+  placeGaps(evs,col);
   evs.forEach(ev=>placeEvent(ev,col));
 
   // Now line
@@ -1458,8 +1485,10 @@ function renderWeek(root){
       col.appendChild(zone);
     }
 
-    // Events
-    S.events.filter(e=>e.date===dk).forEach(ev=>placeEvent(ev,col));
+    // Events (con bandas de hueco libre)
+    const wEvs=S.events.filter(e=>e.date===dk);
+    placeGaps(wEvs,col);
+    wEvs.forEach(ev=>placeEvent(ev,col));
 
     // Now
     if(sameDay(d,S.today)) drawNow(col);
@@ -1513,6 +1542,47 @@ function renderMonth(root){
 // ─────────────────────────────────────────────────────────────────
 // PLACE EVENT in column
 // ─────────────────────────────────────────────────────────────────
+function clearDay(){
+  const dk=dateKey(S.cur);
+  const evs=S.events.filter(e=>e.date===dk);
+  if(!evs.length){ toast('No hay impresiones en este día','var(--t3)'); return; }
+  const n=evs.length;
+  if(!confirm(`¿Vaciar el día ${S.cur.getDate()} de ${MONTHS[S.cur.getMonth()]}?\nSe eliminarán ${n} impresión${n===1?'':'es'}. Puedes deshacerlo con Ctrl+Z.`)) return;
+  pushHistory();
+  S.events=S.events.filter(e=>e.date!==dk);
+  save(); render();
+  toast(`🗑 Día vaciado · ${n} impresión${n===1?'':'es'} eliminada${n===1?'':'s'}`,'#FF6B8A');
+}
+
+// Banda del tiempo post-impresión: su duración es el parámetro "tiempo entre
+// impresiones" (params.gap), anclada al final de cada impresión y sin invadir
+// la siguiente.
+function placeGaps(evs, col){
+  if(!evs || evs.length<2) return;
+  const gp=Math.max(0, Number(S.params && S.params.gap)||0);
+  if(!gp) return;
+  const sorted=evs.slice().sort((a,b)=>a.startMins-b.startMins);
+  let prevEnd=sorted[0].startMins+sorted[0].durationMins;
+  for(let i=1;i<sorted.length;i++){
+    const s=sorted[i].startMins;
+    const gap=s-prevEnd;            // hueco real hasta la siguiente impresión
+    const bandMins=Math.min(gap, gp); // = tiempo entre impresiones (sin solaparse)
+    if(bandMins>0){
+      const band=make('div','cal-gap');
+      band.title='Tiempo entre impresiones';
+      band.style.top=`${prevEnd/60*HOUR_PX}px`;
+      band.style.height=`${bandMins/60*HOUR_PX}px`;
+      if(bandMins/60*HOUR_PX>=15){
+        const lbl=make('div','cal-gap-label');
+        lbl.textContent=fmtDur(bandMins);
+        band.appendChild(lbl);
+      }
+      col.appendChild(band);
+    }
+    prevEnd=Math.max(prevEnd, sorted[i].startMins+sorted[i].durationMins);
+  }
+}
+
 function placeEvent(ev, col){
   const top   = ev.startMins / 60 * HOUR_PX;
   const height= Math.max(ev.durationMins / 60 * HOUR_PX, 22);

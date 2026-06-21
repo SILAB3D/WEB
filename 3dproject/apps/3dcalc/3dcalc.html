@@ -153,6 +153,9 @@ table.t .sw{display:inline-block;width:14px;height:14px;border-radius:4px;border
 .modal h3{font-family:'DM Serif Display',serif;font-style:italic;font-size:21px;margin-bottom:16px}
 textarea.inp{resize:vertical;min-height:60px}
 </style>
+<style>
+@media(max-width:760px){.side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 14px}}
+</style>
 </head>
 <body>
 <div id="dp-shell">
@@ -317,7 +320,7 @@ function setShared(v){ S.calc_state.is_shared=v; save(); renderCalc(); }
 function setShare(v){ v=Math.max(0,Math.min(100,num(v))); S.calc_state.shared_percent_3dcc=v; S.calc_state.shared_percent_silab3d=100-v; save(); renderCalc(); }
 
 /* ===== navegación ===== */
-function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',inv:'Inventario',stat:'Estadísticas',cli:'Clientes',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); render(); }
+function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',inv:'Inventario',stat:'Estadísticas',cli:'Clientes',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
 function render(){ if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='inv')renderInv(); else if(view==='stat')renderStats(); else renderCfg(); }
 function updateResult(){ var el=document.getElementById('resultBox'); if(el)el.innerHTML=resultHTML(); }
 
@@ -632,5 +635,6 @@ var hadLocal=false; try{hadLocal=!!localStorage.getItem(SK);}catch(e){}
 load(); go('dash');
 (function(){ if(window.DPCloud){ try{ window.DPCloud.ready.then(function(){ if(window.DPCloud.currentUser()){ window.DPCloud.loadState('3dcalc').then(function(data){ if(data&&typeof data==='object'&&!hadLocal){ localStorage.setItem(SK,JSON.stringify(data)); load(); render(); } }).catch(function(){}); } }); }catch(e){} } })();
 </script>
+<script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
 </body>
 </html>

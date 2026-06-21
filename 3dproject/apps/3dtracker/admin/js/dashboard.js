@@ -94,12 +94,12 @@ function renderTable(orders) {
 
     return `
       <tr data-id="${order.id}" data-code="${order.order_code}">
-        <td><span class="code-cell">${escapeHtml(order.order_code)}</span></td>
-        <td>${escapeHtml(order.customer_name || '—')}</td>
-        <td style="color:var(--text-secondary);">${escapeHtml(order.customer_email)}</td>
-        <td style="color:var(--text-secondary);">${count}</td>
-        <td><span class="badge ${status.css}">${status.label}</span></td>
-        <td style="color:var(--text-muted);">${formatDate(order.created_at)}</td>
+        <td data-label="Código"><span class="code-cell">${escapeHtml(order.order_code)}</span></td>
+        <td data-label="Cliente">${escapeHtml(order.customer_name || '—')}</td>
+        <td data-label="Email" style="color:var(--text-secondary);">${escapeHtml(order.customer_email)}</td>
+        <td data-label="Pasos" style="color:var(--text-secondary);">${count}</td>
+        <td data-label="Estado"><span class="badge ${status.css}">${status.label}</span></td>
+        <td data-label="Fecha" style="color:var(--text-muted);">${formatDate(order.created_at)}</td>
       </tr>`;
   }).join('');
 

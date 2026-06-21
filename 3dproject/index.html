@@ -597,6 +597,9 @@ body.dp-authed #authGate{display:none}
 #authGate .ag-note{font-size:11.5px;color:var(--t3);margin-top:18px;line-height:1.5;border-top:1px solid var(--border);padding-top:14px}
 
 </style>
+<style>
+@media(max-width:640px){.shell{padding:32px 16px;gap:26px}.grid{gap:10px;max-width:100%}.card{width:100%}.logo-text{font-size:34px}}
+</style>
 </head>
 <body>
 <div id="authGate">
@@ -1095,6 +1098,7 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
 (function(){
   var DP_DEV_NO_LOGIN = false; /* Seguridad ACTIVA: la suite exige iniciar sesión con tu usuario y contraseña de Firebase. */
   if(DP_DEV_NO_LOGIN){ try{document.body.classList.add('dp-authed');}catch(e){} }
+  var authedOnce=false, loggingOut=false;
   var msg=function(txt,cls){var m=document.getElementById('agMsg');if(m){m.textContent=txt;m.className='ag-msg '+(cls||'info');}};
   var note=function(html){var n=document.getElementById('agNote');if(n)n.innerHTML=html||'';};
   function devBypass(){ try{document.body.classList.add('dp-authed');}catch(e){} 
@@ -1111,11 +1115,16 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
     window.DPCloud.ready.then(function(){
       window.DPCloud.onAuth(function(user){
         if(user){
+          authedOnce=true; loggingOut=false;
           document.body.classList.add('dp-authed');
           var lo=document.getElementById('dpLogout'); if(lo)lo.title='Cerrar sesión'+(user.email?(' ('+user.email+')'):' (invitado)');
-        } else {
+        } else if(!authedOnce || loggingOut){
+          loggingOut=false;
           document.body.classList.remove('dp-authed');
         }
+        /* si ya estaba autenticado y llega un null transitorio (p. ej. al abrir
+           una subapp que inicializa su propia instancia de Firebase), se ignora
+           para que no parpadee la pantalla de login. */
       });
     });
     var form=document.getElementById('agForm');
@@ -1145,7 +1154,7 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
       });
     });
   }
-  window.dpLogout=function(){ if(window.DPCloud){window.DPCloud.logout();} };
+  window.dpLogout=function(){ if(window.DPCloud){ loggingOut=true; window.DPCloud.logout(); } };
   // Esperar a que cargue el módulo Firebase (si se abre con file:// no cargará)
   var waited=0;
   (function check(){

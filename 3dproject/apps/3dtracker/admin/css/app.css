@@ -674,3 +674,32 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
 .app-layout.side-collapsed .sidebar{display:none}
 .sidebar-cta{display:flex;align-items:center;justify-content:center;gap:0.45rem;margin:0 1rem 1rem;padding:0.7rem;border:none;border-radius:11px;background:var(--accent-gradient);color:#06281D;font-weight:700;font-size:0.88rem;cursor:pointer}
 .sidebar-cta:hover{filter:brightness(1.07)}
+
+/* ── Responsive (móvil / ventanas estrechas) ── */
+@media(max-width:860px){ .stats-grid{grid-template-columns:repeat(3,1fr)} }
+@media(max-width:760px){
+  /* Barra lateral como panel superpuesto */
+  .sidebar{position:fixed;top:44px;bottom:0;left:0;z-index:300;width:74vw;max-width:280px;transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.45)}
+  .app-layout.side-collapsed .sidebar{display:flex;transform:translateX(-101%)}
+  /* Cabecera en dos filas: búsqueda + botón en su propia fila */
+  .topbar{height:auto;min-height:var(--topbar-height);flex-wrap:wrap;gap:.55rem .7rem;padding:.6rem 1rem}
+  .topbar-subtitle{display:none}
+  .topbar > div:last-child{width:100%;gap:.5rem}
+  #search-input{flex:1;width:auto!important;min-width:0}
+  .topbar .btn{white-space:nowrap;flex-shrink:0}
+  .page-body{padding:1rem}
+  .detail-grid{grid-template-columns:1fr}
+  /* Estadísticas compactas en una fila */
+  .stats-grid{grid-template-columns:repeat(3,1fr);gap:.55rem;margin-bottom:1.1rem}
+  .stat-card{padding:.8rem .7rem}
+  .stat-label{font-size:.62rem}
+  .stat-value{font-size:1.35rem}
+  /* Pedidos: la tabla pasa a tarjetas apiladas con etiquetas */
+  .orders-table-wrap{background:transparent;border:none;overflow:visible}
+  .orders-table-wrap table,.orders-table-wrap thead,.orders-table-wrap tbody,.orders-table-wrap tr,.orders-table-wrap td{display:block}
+  .orders-table-wrap thead{display:none}
+  .orders-table-wrap tbody tr{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.5rem .95rem;margin-bottom:.7rem}
+  .orders-table-wrap tbody tr:hover{background:var(--bg-card)}
+  .orders-table-wrap td{border:none!important;padding:.42rem 0;display:flex;justify-content:space-between;align-items:center;gap:1rem;text-align:right}
+  .orders-table-wrap td::before{content:attr(data-label);color:var(--text-muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;flex-shrink:0;text-align:left}
+}
