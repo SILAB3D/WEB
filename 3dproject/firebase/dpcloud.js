@@ -1,0 +1,139 @@
+// ============================================================
+//  DPCloud  —  Capa de nube compartida de 3DProject (Firebase)
+// ------------------------------------------------------------
+//  Inicializa Firebase (Authentication + Firestore) y expone
+//  una API sencilla en  window.DPCloud  para que TODAS las apps
+//  del ecosistema la usen sin saber nada de Firebase.
+//
+//  No necesitas editar este archivo. Solo rellena
+//  firebase-config.js siguiendo la guía.
+// ============================================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, setPersistence, browserLocalPersistence,
+  signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, collection, doc,
+  getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc,
+  query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig, FIREBASE_LISTO } from "./firebase-config.js";
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// "ready" se resuelve cuando Firebase ha restaurado la sesión
+// (así currentUser() ya es fiable antes de pedir datos).
+const ready = new Promise((resolve) => {
+  setPersistence(auth, browserLocalPersistence).catch(() => {}).then(() => {
+    const unsub = onAuthStateChanged(auth, () => { unsub(); resolve(); });
+  });
+});
+
+// ── utilidades ──
+function genCode() {
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 12; i++) s += A[Math.floor(Math.random() * A.length)];
+  return "3DP-" + s;
+}
+function ts(v) {
+  try { return v && v.toDate ? v.toDate().toISOString() : (v || null); }
+  catch (e) { return null; }
+}
+async function _steps(code) {
+  const snap = await getDocs(query(collection(db, "orders", code, "steps"), orderBy("order_index", "asc")));
+  return snap.docs.map(d => ({ id: d.id, order_id: code, ...d.data(), updated_at: ts(d.data().updated_at) }));
+}
+
+// ── PEDIDOS (colección "orders"; el ID del documento ES el código) ──
+async function listOrders() {
+  const snap = await getDocs(query(collection(db, "orders"), orderBy("created_at", "desc")));
+  const orders = snap.docs.map(d => ({ id: d.id, ...d.data(), created_at: ts(d.data().created_at) }));
+  // Adjuntar etapas para que el panel muestre el estado real.
+  await Promise.all(orders.map(async o => { try { o.order_steps = await _steps(o.id); } catch (e) { o.order_steps = []; } }));
+  return orders;
+}
+async function createOrder({ customer_email, customer_name, description }) {
+  const order_code = genCode();
+  await setDoc(doc(db, "orders", order_code), {
+    order_code,
+    customer_email: customer_email || "",
+    customer_name:  customer_name  || "",
+    description:    description     || "",
+    created_at: serverTimestamp()
+  });
+  return { id: order_code, order_code, customer_email, customer_name, description };
+}
+async function getOrderById(code) { return getOrderByCode(code); }
+async function getOrderByCode(code) {
+  const d = await getDoc(doc(db, "orders", code));
+  if (!d.exists()) return null;
+  return { id: d.id, ...d.data(), created_at: ts(d.data().created_at), order_steps: await _steps(code) };
+}
+async function addStep(code, { step_name, order_index }) {
+  await addDoc(collection(db, "orders", code, "steps"), {
+    step_name, order_index: Number.isFinite(order_index) ? order_index : 0,
+    status: "pending", created_at: serverTimestamp(), updated_at: serverTimestamp()
+  });
+}
+async function setStepStatus(code, stepId, status) {
+  await updateDoc(doc(db, "orders", code, "steps", stepId), { status, updated_at: serverTimestamp() });
+}
+async function deleteStep(code, stepId) {
+  await deleteDoc(doc(db, "orders", code, "steps", stepId));
+}
+
+// ── FEEDBACK ──
+async function listFeedback() {
+  const snap = await getDocs(query(collection(db, "feedback"), orderBy("created", "desc")));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+async function addFeedback(d) {
+  const ref = await addDoc(collection(db, "feedback"), {
+    app: d.app, type: d.type, title: d.title, detail: d.detail || "",
+    status: "active", created: Date.now()
+  });
+  return ref.id;
+}
+async function updateFeedback(id, d) { await updateDoc(doc(db, "feedback", id), d); }
+async function deleteFeedback(id)    { await deleteDoc(doc(db, "feedback", id)); }
+
+// ── ESTADO DE APPS (PrintFlow, 3DPlanner…) por usuario ──
+async function loadState(appKey) {
+  const u = auth.currentUser; if (!u) return null;
+  const d = await getDoc(doc(db, "users", u.uid, "appState", appKey));
+  return d.exists() ? d.data().data : null;
+}
+async function saveState(appKey, data) {
+  const u = auth.currentUser; if (!u) return;
+  await setDoc(doc(db, "users", u.uid, "appState", appKey), { data, updated: Date.now() });
+}
+
+// ── PLANTILLAS de etapas (colección "presets") ──
+async function listPresets() {
+  const snap = await getDocs(query(collection(db, "presets"), orderBy("created", "asc")));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+async function createPreset({ name, steps }) {
+  const ref = await addDoc(collection(db, "presets"), { name: name, steps: steps || [], created: Date.now() });
+  return ref.id;
+}
+async function deletePreset(id) { await deleteDoc(doc(db, "presets", id)); }
+
+window.DPCloud = {
+  ready, configured: FIREBASE_LISTO,
+  login:  (email, pwd) => signInWithEmailAndPassword(auth, email, pwd),
+  loginGuest: () => signInAnonymously(auth),
+  logout: () => signOut(auth),
+  onAuth: (cb) => onAuthStateChanged(auth, cb),
+  currentUser: () => auth.currentUser,
+  listOrders, createOrder, getOrderById, getOrderByCode,
+  addStep, setStepStatus, deleteStep,
+  listFeedback, addFeedback, updateFeedback, deleteFeedback,
+  loadState, saveState,
+  listPresets, createPreset, deletePreset
+};
+window.dispatchEvent(new Event("dpcloud-ready"));

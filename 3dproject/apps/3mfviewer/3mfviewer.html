@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3MFVIEWER - BambuStudio Configuration Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Outfit:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bambu-green: #4D9FFF;
+            --bambu-green-dark: #3A86E8;
+            --bambu-green-light: rgba(77,159,255,0.12);
+            --bambu-black: #E8EBF4;
+            --bambu-gray: #7A8099;
+            --bambu-gray-light: var(--s-card);
+            --bambu-border: var(--s-line);
+            --bambu-orange: #FF7A45;
+            --s-bg1:#07080F;--s-bg2:#0C0E18;--s-card:#11131F;--s-panel:#0E1019;
+            --s-line:rgba(255,255,255,0.08);--s-line2:rgba(255,255,255,0.14);
+            --s-tint-o:rgba(255,122,69,0.08);--s-tint-r:rgba(229,72,77,0.10);--s-tint-r2:rgba(229,72,77,0.35);--s-tint-g:rgba(52,211,153,0.12);--s-tint-ob:rgba(255,122,69,0.35);
+        }
+        
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(160deg, var(--s-bg1) 0%, var(--s-bg2) 100%);
+            color: var(--bambu-black);
+            line-height: 1.5;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Enhanced Upload Zone */
+        .upload-wrapper {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .upload-card {
+            background: var(--s-card);
+            border-radius: 32px;
+            padding: 60px 80px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--bambu-green) 0%, #6BB6FF 100%);
+        }
+        
+        .upload-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .upload-logo {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .upload-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--bambu-black);
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        
+        .upload-subtitle {
+            font-size: 16px;
+            color: var(--bambu-gray);
+            font-weight: 500;
+        }
+        
+        .upload-zone {
+            background: linear-gradient(135deg, var(--s-panel) 0%, var(--s-panel) 100%);
+            border: 3px dashed var(--bambu-border);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--bambu-green-light) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .upload-zone:hover::before {
+            opacity: 1;
+        }
+        
+        .upload-zone:hover {
+            border-color: var(--bambu-green);
+            background: var(--s-card);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 174, 66, 0.15);
+        }
+        
+        .upload-zone.dragover {
+            border-color: var(--bambu-green);
+            background: var(--bambu-green-light);
+            border-style: solid;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+        
+        .upload-icon {
+            font-size: 56px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .upload-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(0, 174, 66, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+        
+        .upload-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--bambu-black);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        
+        .upload-hint {
+            font-size: 14px;
+            color: var(--bambu-gray);
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .upload-formats {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bambu-green-light);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--bambu-green-dark);
+        }
+        
+        .upload-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 30px;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 16px;
+            background: var(--bambu-gray-light);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: var(--bambu-green-light);
+            transform: translateY(-2px);
+        }
+        
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .feature-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--bambu-black);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .results {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .results.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Modern header with stats */
+        header {
+            background: linear-gradient(135deg, var(--s-card) 0%, var(--s-panel) 100%);
+            padding: 0;
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+            border: 1px solid var(--bambu-border);
+            overflow: hidden;
+        }
+        
+        .header-top {
+            background: linear-gradient(135deg, var(--bambu-green) 0%, var(--bambu-green-dark) 100%);
+            padding: 32px 36px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-top::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .header-top::after {
+            content: '📄';
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 80px;
+            opacity: 0.15;
+        }
+        
+        .header-title-group {
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 8px;
+            letter-spacing: -0.03em;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1px;
+            background: var(--bambu-border);
+        }
+        
+        .stat-item {
+            background: var(--s-card);
+            padding: 18px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            background: var(--bambu-green-light);
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--bambu-gray);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--bambu-black);
+            letter-spacing: -0.02em;
+        }
+        
+        .stat-unit {
+            font-size: 13px;
+            color: var(--bambu-gray);
+            font-weight: 600;
+            margin-left: 4px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--bambu-green) 0%, var(--bambu-green-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 174, 66, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 174, 66, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--s-card);
+            color: var(--bambu-gray);
+            border: 2px solid var(--bambu-border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--bambu-green);
+            color: var(--bambu-green);
+            transform: translateY(-2px);
+        }
+        
+        .btn-toggle {
+            background: var(--bambu-gray-light);
+            color: var(--bambu-black);
+            border: 2px solid var(--bambu-border);
+        }
+        
+        .btn-toggle.active {
+            background: var(--bambu-green);
+            color: white;
+            border-color: var(--bambu-green);
+        }
+        
+        .section {
+            background: var(--s-card);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid var(--bambu-border);
+        }
+        
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--bambu-black);
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--bambu-green-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .preview-container {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        .preview-image {
+            max-width: calc(33.333% - 12px);
+            height: auto;
+            border-radius: 12px;
+            border: 2px solid var(--bambu-border);
+            max-height: 300px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .preview-image:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Ultra compact filament grid */
+        .filament-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        
+        .filament-card {
+            background: var(--bambu-gray-light);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .filament-card:hover {
+            border-color: var(--bambu-border);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .filament-card.in-use {
+            border-color: var(--bambu-green);
+            background: var(--bambu-green-light);
+            box-shadow: 0 4px 16px rgba(0, 174, 66, 0.2);
+        }
+        
+        .filament-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        
+        .filament-color-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid white;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        
+        .filament-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .filament-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--bambu-gray);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        
+        .filament-type {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--bambu-black);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .filament-detail {
+            font-size: 9px;
+            color: var(--bambu-gray);
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .in-use-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--bambu-green) 0%, var(--bambu-green-dark) 100%);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-top: 4px;
+        }
+        
+        .collapsible-section {
+            border: 2px solid var(--bambu-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .collapsible-section:hover {
+            border-color: var(--bambu-green);
+        }
+        
+        .collapsible-header {
+            background: var(--bambu-gray-light);
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .collapsible-header:hover {
+            background: var(--s-line);
+        }
+        
+        .collapsible-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--bambu-black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .collapsible-arrow {
+            transition: transform 0.3s ease;
+            color: var(--bambu-green);
+            font-weight: 700;
+        }
+        
+        .collapsible-arrow.expanded {
+            transform: rotate(90deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .collapsible-content.expanded {
+            max-height: 5000px;
+        }
+        
+        .objects-list {
+            padding: 16px;
+            display: grid;
+            gap: 16px;
+        }
+        
+        .plate-group {
+            border: 2px solid var(--bambu-border);
+            border-radius: 12px;
+            padding: 16px;
+            background: var(--s-panel);
+        }
+        
+        .plate-group-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--bambu-green);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--bambu-green-light);
+        }
+        
+        .plate-objects {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .object-item {
+            background: var(--s-card);
+            border-radius: 8px;
+            padding: 14px 18px;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .object-item:hover {
+            background: var(--s-panel);
+            transform: translateX(4px);
+        }
+        
+        .object-item.has-custom-settings {
+            border-left-color: var(--bambu-orange);
+            background: var(--s-tint-o);
+        }
+        
+        .object-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            border: 2px solid var(--bambu-border);
+            object-fit: cover;
+            flex-shrink: 0;
+            background: var(--s-card);
+        }
+        
+        .object-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .object-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+        
+        .object-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--bambu-black);
+            flex: 1;
+        }
+        
+        .object-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .object-extruder {
+            font-size: 11px;
+            color: var(--bambu-gray);
+            padding: 3px 8px;
+            background: var(--bambu-gray-light);
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .object-filament {
+            font-size: 11px;
+            padding: 3px 8px;
+            background: var(--bambu-green-light);
+            color: var(--bambu-green-dark);
+            border-radius: 5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .filament-color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .custom-badge {
+            font-size: 11px;
+            background: linear-gradient(135deg, var(--bambu-orange) 0%, #FF9466 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .object-custom-settings {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--s-line);
+        }
+        
+        .custom-settings-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--bambu-orange);
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .custom-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        
+        .custom-setting-item {
+            background: var(--s-card);
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--s-tint-ob);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .custom-setting-name {
+            font-size: 11px;
+            color: var(--bambu-gray);
+            font-weight: 600;
+        }
+        
+        .custom-setting-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--bambu-orange);
+        }
+        
+        .view-toggle-container {
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .tabs-container {
+            background: var(--s-card);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            border: 1px solid var(--bambu-border);
+        }
+        
+        .tabs-header {
+            display: flex;
+            background: var(--bambu-gray-light);
+            border-bottom: 2px solid var(--bambu-border);
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            padding: 16px 28px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--bambu-gray);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .tab-btn:hover {
+            color: var(--bambu-black);
+            background: rgba(0,174,66,0.05);
+        }
+        
+        .tab-btn.active {
+            color: var(--bambu-green);
+            border-bottom-color: var(--bambu-green);
+            background: var(--s-card);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 28px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Extended view mode */
+        .tabs-container.extended-view .tabs-header {
+            display: none;
+        }
+        
+        .tabs-container.extended-view .tab-content {
+            display: block;
+            border-bottom: 2px solid var(--bambu-green-light);
+            margin-bottom: 20px;
+        }
+        
+        .tabs-container.extended-view .tab-content:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .extended-category-title {
+            display: none;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--bambu-green);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--bambu-green);
+        }
+        
+        .tabs-container.extended-view .extended-category-title {
+            display: block;
+        }
+        
+        .subsection {
+            margin-bottom: 28px;
+        }
+        
+        .subsection-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--bambu-black);
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--bambu-green-light);
+        }
+        
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+        }
+        
+        .param-item {
+            background: var(--bambu-gray-light);
+            border-radius: 8px;
+            padding: 10px 14px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .param-item:hover {
+            background: var(--s-line);
+            border-color: var(--bambu-border);
+        }
+        
+        .param-item.editing {
+            background: var(--s-tint-o);
+            border-color: var(--bambu-orange);
+        }
+        
+        .param-name {
+            font-size: 12px;
+            color: var(--bambu-gray);
+            font-weight: 600;
+            flex: 0 0 auto;
+            max-width: 45%;
+            padding-top: 2px;
+        }
+        
+        .param-value-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            min-width: 0;
+        }
+        
+        .param-value-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+        
+        .param-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--bambu-black);
+            text-align: right;
+            word-break: break-word;
+        }
+        
+        .param-value.original-striked {
+            text-decoration: line-through;
+            color: var(--bambu-gray);
+            font-weight: 500;
+            font-size: 12px;
+        }
+        
+        .param-value.modified {
+            color: var(--bambu-orange);
+        }
+        
+        .param-edit-input {
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border: 2px solid var(--bambu-orange);
+            border-radius: 4px;
+            text-align: right;
+            max-width: 120px;
+            font-family: 'Outfit', monospace;
+        }
+        
+        .param-edit-input:focus {
+            outline: none;
+            border-color: var(--bambu-green);
+        }
+        
+        .param-edit-input.error {
+            border-color: #F87171;
+            background: var(--s-tint-r);
+        }
+        
+        .param-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        
+        .param-btn-edit {
+            background: transparent;
+            color: var(--bambu-gray);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .param-item:hover .param-btn-edit {
+            opacity: 1;
+        }
+        
+        .param-btn-edit:hover {
+            background: var(--bambu-green-light);
+            color: var(--bambu-green);
+        }
+        
+        .param-btn-confirm {
+            background: var(--bambu-green);
+            color: white;
+            font-size: 10px;
+            padding: 3px 6px;
+        }
+        
+        .param-btn-confirm:hover {
+            background: var(--bambu-green-dark);
+        }
+        
+        .param-btn-cancel {
+            background: var(--bambu-gray-light);
+            color: var(--bambu-gray);
+            font-size: 10px;
+            padding: 3px 6px;
+        }
+        
+        .param-btn-cancel:hover {
+            background: var(--s-line);
+        }
+        
+        .param-error-msg {
+            font-size: 10px;
+            color: #F87171;
+            text-align: right;
+            margin-top: 2px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+        }
+        
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--bambu-green-light);
+            border-top-color: var(--bambu-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--bambu-gray);
+        }
+        
+        .error {
+            background: var(--s-tint-r);
+            border: 2px solid var(--s-tint-r2);
+            border-radius: 12px;
+            padding: 20px;
+            color: #F87171;
+            margin: 20px 0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    
+/* ===== 3DProject shell bar (inyectado) ===== */
+#dp-shell{position:fixed;top:0;left:0;right:0;height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;z-index:9500;font-family:'Outfit',system-ui,sans-serif;box-sizing:border-box;background:rgba(10,11,18,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+#dp-shell *{box-sizing:border-box}
+[data-theme=light] #dp-shell{background:rgba(255,255,255,.80);border-bottom:1px solid rgba(0,0,0,.08)}
+#dp-shell .dp-back{display:flex;align-items:center;gap:6px;height:30px;padding:0 13px 0 9px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;font:500 13px 'Outfit',system-ui,sans-serif;cursor:pointer;transition:background .15s,border-color .15s}
+#dp-shell .dp-back:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.28)}
+[data-theme=light] #dp-shell .dp-back{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+[data-theme=light] #dp-shell .dp-back:hover{background:rgba(0,0,0,.05)}
+#dp-shell .dp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+#dp-shell .dp-appicon{width:27px;height:27px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#dp-shell .dp-appicon svg{width:17px;height:17px;display:block}
+#dp-shell .dp-title{font-size:13px;font-weight:600;letter-spacing:-.2px;color:#E8EBF4}
+[data-theme=light] #dp-shell .dp-title{color:#1A1C24}
+#dp-shell .dp-sp{flex:1}
+#dp-shell .dp-toggle{width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+#dp-shell .dp-toggle:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.28)}
+[data-theme=light] #dp-shell .dp-toggle{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+[data-theme=light] #dp-shell .dp-toggle:hover{background:rgba(0,0,0,.05)}
+
+[data-theme=light]{
+  --bambu-green:#2F7DD1;--bambu-green-dark:#2569B5;--bambu-green-light:rgba(77,159,255,0.12);
+  --bambu-black:#1A1C24;--bambu-gray:#5A6172;--bambu-gray-light:#FFFFFF;--bambu-border:rgba(0,0,0,0.10);--bambu-orange:#E0602F;
+  --s-bg1:#EAEEF4;--s-bg2:#F7F9FC;--s-card:#FFFFFF;--s-panel:#F1F3F8;
+  --s-line:rgba(0,0,0,0.10);--s-line2:rgba(0,0,0,0.16);
+  --s-tint-o:rgba(224,96,47,0.08);--s-tint-r:rgba(220,38,38,0.08);--s-tint-r2:rgba(220,38,38,0.30);--s-tint-g:rgba(34,160,110,0.12);--s-tint-ob:rgba(224,96,47,0.30);
+}
+
+body{padding-top:44px!important}
+
+
+/* ===== Paneles estándar: barra superior + panel lateral ===== */
+body{padding-top:96px!important}
+.mf-topbar{position:fixed;top:44px;left:0;right:0;height:52px;z-index:30;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--s-panel);border-bottom:1px solid var(--bambu-border);font-family:'Outfit',sans-serif}
+.mf-burger{width:34px;height:34px;border-radius:9px;border:1px solid var(--bambu-border);background:transparent;color:var(--bambu-black);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.mf-burger:hover{background:var(--bambu-green-light)}
+.mf-chip{width:30px;height:30px;border-radius:9px;background:rgba(77,159,255,.14);border:1px solid rgba(77,159,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mf-name{font-weight:700;font-size:16px;color:var(--bambu-black);letter-spacing:-.2px}
+.mf-sp{flex:1}
+.mf-file{font-size:12.5px;color:var(--bambu-gray);max-width:38vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mf-topbtn{height:34px;padding:0 14px;border-radius:9px;border:none;background:var(--bambu-green);color:#06243f;font:600 13px 'Outfit',sans-serif;cursor:pointer;flex-shrink:0}
+.mf-topbtn:hover{filter:brightness(1.07)}
+.mf-side{position:fixed;top:96px;left:0;bottom:0;width:240px;z-index:25;background:var(--s-panel);border-right:1px solid var(--bambu-border);display:flex;flex-direction:column;padding:16px 12px;gap:4px;font-family:'Outfit',sans-serif;transition:transform .25s ease;overflow-y:auto}
+.mf-primary{width:100%;padding:11px;border-radius:11px;border:none;background:var(--bambu-green);color:#06243f;font:700 13.5px 'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px}
+.mf-primary:hover{filter:brightness(1.07)}
+.mf-nav-title{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--bambu-gray);margin:12px 4px 4px}
+.mf-nav{display:flex;flex-direction:column;gap:2px}
+.mf-nav a{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;color:var(--bambu-black);font-size:13.5px;font-weight:500;cursor:pointer;text-decoration:none;transition:background .15s}
+.mf-nav a:hover{background:var(--bambu-green-light)}
+.mf-side-bottom{margin-top:auto;display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--bambu-border)}
+.mf-side-bottom button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--bambu-border);background:transparent;color:var(--bambu-gray);font:600 12px 'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.mf-side-bottom button:hover{color:var(--bambu-black);background:var(--bambu-green-light)}
+.container{margin-left:240px!important}
+body.mf-collapsed .mf-side{transform:translateX(-100%)}
+body.mf-collapsed .container{margin-left:0!important}
+</style>
+</head>
+<body>
+<div id="dp-shell">
+  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    3DProject
+  </button>
+  <span class="dp-appicon" style="background:rgba(77,159,255,.14);border:1px solid rgba(77,159,255,.30)"><svg viewBox="0 0 22 22" fill="none"><polygon points="11,1.5 20,6.5 20,15.5 11,20.5 2,15.5 2,6.5" stroke="#4D9FFF" stroke-width="1.4" fill="none"/><polygon points="11,6 16,8.8 16,13.2 11,16 6,13.2 6,8.8" stroke="#4D9FFF" stroke-width=".8" fill="none" opacity=".5"/><circle cx="11" cy="11" r="2.2" fill="#4D9FFF"/></svg></span>
+  <span class="dp-title">3MFVIEWER</span>
+  <span class="dp-sp"></span>
+  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"></button>
+</div>
+
+  <div class="mf-topbar">
+    <button class="mf-burger" onclick="mfToggleSide()" title="Mostrar u ocultar el panel" aria-label="Panel">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <span class="mf-chip"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><polygon points="11,1.5 20,6.5 20,15.5 11,20.5 2,15.5 2,6.5" stroke="#4D9FFF" stroke-width="1.4" fill="none"/><polygon points="11,6 16,8.8 16,13.2 11,16 6,13.2 6,8.8" stroke="#4D9FFF" stroke-width=".8" fill="none" opacity=".5"/><circle cx="11" cy="11" r="2.2" fill="#4D9FFF"/></svg></span>
+    <span class="mf-name">3MF Viewer</span>
+    <span class="mf-sp"></span>
+    <span class="mf-file" id="mfFileName">Ning&#250;n archivo cargado</span>
+    <button class="mf-topbtn" onclick="document.getElementById('fileInput').click()">Cargar .3mf</button>
+  </div>
+  <aside class="mf-side" id="mfSide">
+    <button class="mf-primary" onclick="document.getElementById('fileInput').click()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Cargar archivo .3mf
+    </button>
+    <div class="mf-nav-title">Secciones</div>
+    <nav class="mf-nav">
+      <a onclick="mfGo('previewSection')">🖼️ Vista previa</a>
+      <a onclick="mfGo('filamentGrid')">🎨 Filamentos</a>
+      <a onclick="mfGo('objectsList')">📦 Objetos</a>
+      <a onclick="mfGo('tabsContainer')">⚙️ Par&#225;metros</a>
+    </nav>
+    <div class="mf-side-bottom">
+      <button onclick="document.getElementById('exportCsvBtn').click()">⬇ CSV</button>
+      <button onclick="document.getElementById('exportPdfBtn').click()">📄 PDF</button>
+    </div>
+  </aside>
+    <div class="container">
+        <div class="upload-wrapper" id="uploadWrapper">
+            <div class="upload-card">
+                <div class="upload-header">
+                    <div class="upload-logo">📄</div>
+                    <h2 class="upload-title">3MFVIEWER</h2>
+                    <p class="upload-subtitle">Extract and analyze 3MF configuration files</p>
+                </div>
+                
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon-container">
+                        <div class="upload-glow"></div>
+                        <div class="upload-icon">📦</div>
+                    </div>
+                    <div class="upload-text">Drop your 3MF file here</div>
+                    <div class="upload-hint">or click to browse</div>
+                    <div class="upload-formats">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 0L10 6H16L11 10L13 16L8 12L3 16L5 10L0 6H6L8 0Z" fill="currentColor"/>
+                        </svg>
+                        Supports .3MF files
+                    </div>
+                    <input type="file" id="fileInput" class="file-input" accept=".3mf">
+                </div>
+                
+                <div class="upload-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">⚙️</div>
+                        <div class="feature-text">Complete Parameters</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-text">Filament Details</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📦</div>
+                        <div class="feature-text">Object Settings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <header id="header" style="display: none;">
+            <div class="header-top">
+                <div class="header-title-group">
+                    <h1>3MFVIEWER</h1>
+                    <p class="subtitle">Complete parameter extraction and analysis</p>
+                </div>
+            </div>
+            <div class="header-stats" id="headerStats"></div>
+        </header>
+        
+        <div id="results" class="results">
+            <div class="controls">
+                <button class="btn btn-primary" id="exportCsvBtn">📥 Export CSV</button>
+                <button class="btn btn-primary" id="exportPdfBtn">📄 Export PDF</button>
+                <button class="btn btn-secondary" id="resetBtn">🔄 Load Another File</button>
+            </div>
+            
+            <div class="section" id="previewSection" style="display: none;">
+                <div class="section-title">🖼️ Project Preview</div>
+                <div class="preview-container" id="previewContainer"></div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">🎨 Project Filaments</div>
+                <div class="filament-grid" id="filamentGrid"></div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">📦 Objects</div>
+                <div class="collapsible-section">
+                    <div class="collapsible-header" id="objectsHeader">
+                        <div class="collapsible-title">
+                            <span class="collapsible-arrow">▶</span>
+                            <span id="objectsCount">0 objects</span>
+                        </div>
+                    </div>
+                    <div class="collapsible-content" id="objectsContent">
+                        <div class="objects-list" id="objectsList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="view-toggle-container">
+                <button class="btn btn-toggle" id="viewToggle">📋 Extended View</button>
+            </div>
+            
+            <div class="tabs-container" id="tabsContainer">
+                <div class="tabs-header" id="tabsHeader"></div>
+                <div id="tabsContent"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let allParameters = {};
+        let filamentParameters = {};
+        let modelData = null;
+        let plateData = [];
+        let objectThumbnails = {};
+        let thumbnails = [];
+        let numberOfPlates = 0;
+        let isExtendedView = false;
+        
+        const uploadWrapper = document.getElementById('uploadWrapper');
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const results = document.getElementById('results');
+        const header = document.getElementById('header');
+        const headerStats = document.getElementById('headerStats');
+        const tabsHeader = document.getElementById('tabsHeader');
+        const tabsContent = document.getElementById('tabsContent');
+        const tabsContainer = document.getElementById('tabsContainer');
+        const filamentGrid = document.getElementById('filamentGrid');
+        const objectsList = document.getElementById('objectsList');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const viewToggle = document.getElementById('viewToggle');
+        const previewSection = document.getElementById('previewSection');
+        const previewContainer = document.getElementById('previewContainer');
+        const objectsHeader = document.getElementById('objectsHeader');
+        const objectsContent = document.getElementById('objectsContent');
+        const objectsCount = document.getElementById('objectsCount');
+        
+        function formatParamName(name) {
+            return name
+                .split('_')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+        
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            if (hours > 0) {
+                return `${hours}h ${minutes}m`;
+            }
+            return `${minutes}m`;
+        }
+        
+        // Get all parameter keys from configuration structures
+        function getAllConfigParams() {
+            const allParams = new Set();
+            
+            // Basic config params
+            for (const category of Object.values(basicConfigStructure)) {
+                for (const params of Object.values(category)) {
+                    params.forEach(p => allParams.add(p));
+                }
+            }
+            
+            // Filament config params
+            for (const category of Object.values(filamentConfigStructure)) {
+                for (const params of Object.values(category)) {
+                    params.forEach(p => allParams.add(p));
+                }
+            }
+            
+            return allParams;
+        }
+        
+        const basicConfigStructure = {
+            'Quality': {
+                'Layer Height': ['layer_height', 'initial_layer_height'],
+                'Line Width': [
+                    'line_width', 'initial_layer_line_width', 'outer_wall_line_width',
+                    'inner_wall_line_width', 'top_surface_line_width', 'sparse_infill_line_width',
+                    'internal_solid_infill_line_width', 'support_line_width'
+                ],
+                'Seam': [
+                    'seam_position', 'seam_slope_conditional', 'seam_gap',
+                    'apply_scarf_seam_on_circles', 'scarf_angle_threshold',
+                    'scarf_around_all_perimeters', 'scarf_joint_flow_ratio',
+                    'scarf_joint_speed', 'scarf_joint_for_inner_walls',
+                    'scarf_seam_override', 'wipe_speed', 'role_based_wipe_speed'
+                ],
+                'Precision': [
+                    'slice_closing_radius', 'resolution', 'enable_arc_fitting',
+                    'xy_hole_compensation', 'xy_contour_compensation',
+                    'circle_compensation_manual_offset', 'elephant_foot_compensation',
+                    'precise_outer_wall', 'precise_z_height'
+                ],
+                'Ironing': ['ironing_type', 'ironing_pattern', 'ironing_speed', 'ironing_flow', 'ironing_spacing'],
+                'Wall Generator': ['wall_generator'],
+                'Advanced': [
+                    'wall_sequence', 'wall_infill_order', 'bridge_flow', 'thick_bridges',
+                    'top_solid_infill_flow_ratio', 'initial_layer_flow_ratio',
+                    'top_one_wall_type', 'top_area_threshold', 'only_one_wall_first_layer',
+                    'detect_overhang_wall', 'slowdown_for_curled_perimeters',
+                    'outer_wall_acceleration_auto_adjusting_ratio',
+                    'enable_overhang_bridge_fan', 'z_direction_outwall_speed_continuous'
+                ]
+            },
+            'Strength': {
+                'Walls': ['wall_loops', 'wall_distribution_count', 'detect_thin_wall'],
+                'Top/Bottom Shells': [
+                    'interface_shells', 'top_surface_pattern', 'top_surface_density',
+                    'top_shell_layers', 'top_shell_thickness', 'top_color_penetration_layers',
+                    'bottom_surface_pattern', 'bottom_surface_density', 'bottom_shell_layers',
+                    'bottom_shell_thickness', 'bottom_color_penetration_layers',
+                    'internal_solid_infill_pattern'
+                ],
+                'Sparse Infill': [
+                    'sparse_infill_density', 'sparse_infill_multiline', 'sparse_infill_pattern',
+                    'infill_anchor', 'infill_anchor_max', 'filter_out_gap_fill'
+                ],
+                'Advanced': [
+                    'infill_wall_overlap', 'infill_direction', 'bridge_angle',
+                    'minimum_sparse_infill_area', 'infill_combination',
+                    'detect_narrow_internal_solid_infill', 'ensure_vertical_shell_thickness',
+                    'detect_floating_vertical_shell'
+                ]
+            },
+            'Speed': {
+                'Other Layers Speed': [
+                    'outer_wall_speed', 'inner_wall_speed', 'small_perimeter_speed',
+                    'small_perimeter_threshold', 'sparse_infill_speed',
+                    'internal_solid_infill_speed', 'vertical_shell_speed', 'top_surface_speed',
+                    'enable_overhang_speed', 'overhang_1_4_speed', 'overhang_2_4_speed',
+                    'overhang_3_4_speed', 'overhang_4_4_speed', 'slow_down_layer_time',
+                    'bridge_speed', 'gap_infill_speed', 'support_speed', 'support_interface_speed'
+                ],
+                'Travel Speed': ['travel_speed', 'travel_speed_z'],
+                'Acceleration': [
+                    'default_acceleration', 'travel_acceleration',
+                    'travel_short_distance_acceleration', 'initial_layer_travel_acceleration',
+                    'initial_layer_acceleration', 'outer_wall_acceleration',
+                    'inner_wall_acceleration', 'top_surface_acceleration',
+                    'sparse_infill_acceleration'
+                ]
+            },
+            'Support': {
+                'Support': [
+                    'enable_support', 'support_type', 'support_style',
+                    'support_threshold_angle', 'support_on_build_plate_only',
+                    'support_remove_small_overhang'
+                ],
+                'Raft': ['raft_layers', 'raft_contact_distance', 'raft_expansion'],
+                'Filament for Supports': ['support_filament', 'support_interface_filament'],
+                'Support Ironing': ['support_interface_loop_pattern'],
+                'Advanced': [
+                    'support_base_pattern_spacing', 'support_expansion', 'support_wall_count',
+                    'support_top_z_distance', 'support_bottom_z_distance', 'support_base_pattern',
+                    'support_angle', 'support_interface_top_layers', 'support_interface_bottom_layers',
+                    'support_interface_pattern', 'support_interface_spacing',
+                    'support_bottom_interface_spacing', 'support_object_xy_distance',
+                    'top_z_overrides_xy_distance', 'support_object_first_layer_gap',
+                    'bridge_no_support', 'independent_support_layer_height',
+                    'tree_support_branch_angle', 'tree_support_branch_diameter',
+                    'tree_support_branch_diameter_angle', 'tree_support_branch_distance',
+                    'tree_support_wall_count'
+                ]
+            },
+            'Others': {
+                'Bed Adhesion': [
+                    'skirt_loops', 'skirt_height', 'skirt_distance',
+                    'brim_type', 'brim_width', 'brim_object_gap'
+                ],
+                'Prime Tower': [
+                    'enable_prime_tower', 'prime_tower_brim_width',
+                    'prime_tower_width', 'wipe_tower_no_sparse_layers'
+                ],
+                'Purge Options': ['flush_into_infill', 'flush_into_support'],
+                'Special Mode': [
+                    'slicing_mode', 'print_sequence', 'spiral_mode',
+                    'timelapse_type', 'fuzzy_skin', 'fuzzy_skin_point_distance',
+                    'fuzzy_skin_thickness'
+                ],
+                'Advanced': ['seam_slope_type', 'seam_slope_inner_walls', 'seam_slope_start_height'],
+                'G-code Output': ['reduce_infill_retraction', 'filename_format']
+            }
+        };
+        
+        const filamentConfigStructure = {
+            'Filament': {
+                'Basic Information': [
+                    'filament_type', 'filament_vendor', 'filament_soluble',
+                    'filament_is_support', 'filament_flow_ratio', 'filament_density',
+                    'filament_shrinkage', 'filament_cost', 'filament_spool_weight',
+                    'temperature_vitrification', 'filament_wipe_tower_cooling',
+                    'filament_diameter', 'filament_colour'
+                ],
+                'Advanced (Basic Info)': [
+                    'filament_loading_speed', 'filament_loading_speed_start',
+                    'filament_unloading_speed', 'filament_unloading_speed_start',
+                    'filament_toolchange_delay', 'filament_cooling_moves',
+                    'filament_cooling_initial_speed', 'filament_minimal_purge_on_wipe_tower',
+                    'filament_cooling_final_speed'
+                ],
+                'Filament/Hotend Change': [
+                    'filament_minimal_purge_on_wipe_tower', 'filament_ramming_parameters',
+                    'filament_toolchange_delay', 'filament_cooling_initial_speed'
+                ],
+                'Recommended Nozzle Temperature': [
+                    'nozzle_temperature_range_low', 'nozzle_temperature_range_high'
+                ],
+                'Print Temperature': [
+                    'cool_plate_temp', 'cool_plate_temp_initial_layer',
+                    'eng_plate_temp', 'eng_plate_temp_initial_layer',
+                    'hot_plate_temp', 'hot_plate_temp_initial_layer',
+                    'textured_plate_temp', 'textured_plate_temp_initial_layer',
+                    'nozzle_temperature', 'nozzle_temperature_initial_layer'
+                ],
+                'Volumetric Speed Limitation': [
+                    'enable_pressure_advance', 'max_volumetric_speed',
+                    'filament_max_volumetric_speed'
+                ],
+                'Filament Scarf Seam Settings': [
+                    'scarf_seam_type', 'scarf_seam_start_height',
+                    'scarf_slope_gap', 'scarf_slope_min_length'
+                ]
+            },
+            'Cooling': {
+                'Cooling for Specific Layer': [
+                    'close_fan_the_first_x_layers', 'fan_min_speed', 'fan_max_speed'
+                ],
+                'Part Cooling Fan': [
+                    'fan_min_speed', 'fan_max_speed', 'fan_cooling_layer_time',
+                    'slow_down_min_speed', 'slow_down_layer_time',
+                    'enable_overhang_bridge_fan', 'overhang_fan_threshold',
+                    'overhang_fan_speed', 'close_fan_the_first_x_layers',
+                    'cooling_perimeter_transition_distance', 'cooling_slowdown_logic',
+                    'slow_down_for_layer_cooling'
+                ],
+                'Auxiliary Part Cooling Fan': ['additional_cooling_fan_speed']
+            },
+            'Setting Overrides': {
+                'Retraction': [
+                    'retraction_length', 'z_hop', 'z_hop_types',
+                    'retraction_speed', 'deretraction_speed',
+                    'retraction_minimum_travel', 'retract_before_wipe',
+                    'retract_when_changing_layer', 'wipe', 'wipe_distance',
+                    'retract_length_toolchange', 'long_retractions_when_cut',
+                    'retraction_distances_when_cut'
+                ],
+                'Speed': ['enable_overhang_speed']
+            }
+        };
+        
+        uploadZone.addEventListener('click', () => fileInput.click());
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.3mf')) {
+                processFile(file);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) processFile(file);
+        });
+        
+        objectsHeader.addEventListener('click', () => {
+            const arrow = objectsHeader.querySelector('.collapsible-arrow');
+            arrow.classList.toggle('expanded');
+            objectsContent.classList.toggle('expanded');
+        });
+        
+        viewToggle.addEventListener('click', () => {
+            isExtendedView = !isExtendedView;
+            tabsContainer.classList.toggle('extended-view', isExtendedView);
+            viewToggle.textContent = isExtendedView ? '📑 Compact View' : '📋 Extended View';
+            viewToggle.classList.toggle('active', isExtendedView);
+        });
+        
+        async function processFile(file) {
+            uploadZone.innerHTML = '<div class="loading"><div class="spinner"></div><div class="loading-text">Processing your file...</div></div>';
+            
+            try {
+                const zip = await JSZip.loadAsync(file);
+                
+                // Count plates
+                numberOfPlates = 0;
+                plateData = [];
+                for (let i = 1; i <= 10; i++) {
+                    if (zip.files[`Metadata/plate_${i}.json`]) {
+                        numberOfPlates++;
+                        const plateFile = zip.files[`Metadata/plate_${i}.json`];
+                        const plateContent = await plateFile.async('string');
+                        plateData.push({
+                            plateNumber: i,
+                            data: JSON.parse(plateContent)
+                        });
+                    }
+                }
+                
+                // Load project settings
+                let configFile = zip.files['Metadata/project_settings.config'];
+                if (!configFile) {
+                    throw new Error('Project settings not found');
+                }
+                
+                const configContent = await configFile.async('string');
+                allParameters = JSON.parse(configContent);
+                
+                // Load plate thumbnails (plate_X.png)
+                thumbnails = [];
+                for (let i = 1; i <= numberOfPlates; i++) {
+                    const thumbFile = zip.files[`Metadata/plate_${i}.png`];
+                    if (thumbFile) {
+                        const blob = await thumbFile.async('blob');
+                        thumbnails.push(URL.createObjectURL(blob));
+                    }
+                }
+                
+                // Load object thumbnails (pick_X.png)
+                objectThumbnails = {};
+                for (let i = 1; i <= 20; i++) {
+                    const pickFile = zip.files[`Metadata/pick_${i}.png`];
+                    if (pickFile) {
+                        const blob = await pickFile.async('blob');
+                        objectThumbnails[i] = URL.createObjectURL(blob);
+                    }
+                }
+                
+                // Load model settings with custom parameters
+                let modelFile = zip.files['Metadata/model_settings.config'];
+                if (modelFile) {
+                    const modelContent = await modelFile.async('string');
+                    modelData = parseModelXML(modelContent);
+                }
+                
+                // Load filament settings
+                let filamentFile = zip.files['Metadata/filament_settings_1.config'];
+                if (filamentFile) {
+                    const filamentContent = await filamentFile.async('string');
+                    filamentParameters = JSON.parse(filamentContent);
+                }
+                
+                displayResults(allParameters, filamentParameters, modelData, plateData);
+                
+                uploadWrapper.style.display = 'none';
+                header.style.display = 'block';
+                results.classList.add('active');
+                
+            } catch (error) {
+                console.error(error);
+                uploadZone.innerHTML = `
+                    <div class="error">
+                        <strong>Error processing file:</strong><br>
+                        ${error.message}
+                    </div>
+                    <div class="upload-icon-container">
+                        <div class="upload-glow"></div>
+                        <div class="upload-icon">📦</div>
+                    </div>
+                    <div class="upload-text">Drop your 3MF file here</div>
+                    <div class="upload-hint">or click to browse</div>
+                    <div class="upload-formats">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 0L10 6H16L11 10L13 16L8 12L3 16L5 10L0 6H6L8 0Z" fill="currentColor"/>
+                        </svg>
+                        Supports .3MF files
+                    </div>
+                `;
+            }
+        }
+        
+        function parseModelXML(xmlString) {
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(xmlString, 'text/xml');
+            const objects = [];
+            const allConfigParams = getAllConfigParams();
+            
+            xml.querySelectorAll('object').forEach(obj => {
+                const id = obj.getAttribute('id');
+                const nameEl = obj.querySelector('metadata[key="name"]');
+                const name = nameEl?.getAttribute('value');
+                const extruderEl = obj.querySelector('metadata[key="extruder"]');
+                const extruder = extruderEl?.getAttribute('value');
+                
+                if (name && extruder) {
+                    // Extract custom settings - only those that are recognized config parameters
+                    const customSettings = {};
+                    obj.querySelectorAll('metadata').forEach(meta => {
+                        const key = meta.getAttribute('key');
+                        const value = meta.getAttribute('value');
+                        
+                        // Skip standard metadata that isn't config
+                        if (key && value && key !== 'name' && key !== 'extruder' && key !== 'face_count') {
+                            // Only include if it's a recognized config parameter
+                            if (allConfigParams.has(key)) {
+                                // Check if value is different from global
+                                const globalValue = allParameters[key];
+                                if (globalValue !== undefined) {
+                                    const globalStr = Array.isArray(globalValue) ? globalValue[0] : String(globalValue);
+                                    if (value !== globalStr && value !== String(globalValue)) {
+                                        customSettings[key] = value;
+                                    }
+                                } else {
+                                    // If not in global, include it
+                                    customSettings[key] = value;
+                                }
+                            }
+                        }
+                    });
+                    
+                    objects.push({ 
+                        id, 
+                        name, 
+                        extruder: parseInt(extruder),
+                        customSettings: Object.keys(customSettings).length > 0 ? customSettings : null
+                    });
+                }
+            });
+            
+            return objects;
+        }
+        
+        function formatValue(value) {
+            if (typeof value === 'string') {
+                return value.length > 100 ? value.substring(0, 100) + '...' : value;
+            } else if (Array.isArray(value)) {
+                if (value.length === 1) return value[0];
+                return value.join(', ');
+            } else if (typeof value === 'boolean') {
+                return value ? '1' : '0';
+            }
+            return String(value);
+        }
+        
+        function displayResults(parameters, filamentParams, objects, plates) {
+            displayHeaderStats(parameters, objects);
+            displayPreview();
+            displayFilaments(parameters, objects);
+            displayObjects(objects, plates, parameters);
+            displayConfiguration(parameters, filamentParams);
+        }
+        
+        function displayHeaderStats(parameters, objects) {
+            const nozzle = parameters['nozzle_diameter'] || ['0.4'];
+            const printer = parameters['printer_model'] || 'Unknown';
+            
+            let customObjectsCount = 0;
+            if (objects) {
+                customObjectsCount = objects.filter(obj => obj.customSettings).length;
+            }
+            
+            const stats = [
+                { label: 'Printer', value: printer.split(' ')[0], unit: '' },
+                { label: 'Nozzle', value: nozzle[0], unit: 'mm' },
+                { label: 'Plates', value: numberOfPlates > 0 ? numberOfPlates : 'N/A', unit: '' },
+                { label: 'Objects', value: objects ? objects.length : '0', unit: '' }
+            ];
+            
+            if (customObjectsCount > 0) {
+                stats.push({ 
+                    label: 'Custom', 
+                    value: customObjectsCount,
+                    unit: 'obj'
+                });
+            }
+            
+            headerStats.innerHTML = stats.map(stat => `
+                <div class="stat-item">
+                    <div class="stat-label">${stat.label}</div>
+                    <div class="stat-value">${stat.value}<span class="stat-unit">${stat.unit}</span></div>
+                </div>
+            `).join('');
+        }
+        
+        function displayPreview() {
+            if (thumbnails.length > 0) {
+                previewSection.style.display = 'block';
+                previewContainer.innerHTML = thumbnails.map(url => 
+                    `<img src="${url}" class="preview-image" alt="Project preview">`
+                ).join('');
+            }
+        }
+        
+        function displayFilaments(parameters, objects) {
+            const colors = parameters['filament_colour'] || [];
+            const types = parameters['filament_type'] || [];
+            const ids = parameters['filament_ids'] || [];
+            
+            const usedExtruders = new Set();
+            if (objects) {
+                objects.forEach(obj => {
+                    usedExtruders.add(obj.extruder - 1);
+                });
+            }
+            
+            if (colors.length === 0) {
+                filamentGrid.innerHTML = '<div style="color: #7A8099;">No filament information available</div>';
+                return;
+            }
+            
+            filamentGrid.innerHTML = colors.map((color, index) => {
+                const inUse = usedExtruders.has(index);
+                const type = types[index] || 'Unknown';
+                const shortType = type.length > 10 ? type.substring(0, 10) + '...' : type;
+                
+                return `
+                    <div class="filament-card ${inUse ? 'in-use' : ''}" title="${type}">
+                        <div class="filament-header">
+                            <div class="filament-color-box" style="background-color: ${color};"></div>
+                            <div class="filament-info">
+                                <div class="filament-label">F${index + 1}</div>
+                                <div class="filament-type" title="${type}">${shortType}</div>
+                            </div>
+                        </div>
+                        <div class="filament-detail" title="${ids[index] || 'N/A'}">ID: ${ids[index] || 'N/A'}</div>
+                        ${inUse ? '<div class="in-use-badge">✓ Used</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function displayObjects(objects, plates, parameters) {
+            if (!objects || objects.length === 0) {
+                objectsList.innerHTML = '<div style="color: #7A8099; padding: 12px;">No objects found</div>';
+                objectsCount.textContent = '0 objects';
+                return;
+            }
+            
+            const customCount = objects.filter(obj => obj.customSettings).length;
+            objectsCount.textContent = `${objects.length} objects${customCount > 0 ? ` (${customCount} with custom settings)` : ''}`;
+            
+            const colors = parameters['filament_colour'] || [];
+            const types = parameters['filament_type'] || [];
+            
+            // Group objects by plate
+            if (plates && plates.length > 0) {
+                let html = '';
+                
+                plates.forEach((plate, plateIndex) => {
+                    const plateObjects = plate.data.bbox_objects || [];
+                    const realObjects = plateObjects.filter(po => po.name !== 'wipe_tower');
+                    
+                    if (realObjects.length === 0) return;
+                    
+                    html += `
+                        <div class="plate-group">
+                            <div class="plate-group-header">Plate ${plate.plateNumber} (${realObjects.length} objects)</div>
+                            <div class="plate-objects">
+                    `;
+                    
+                    realObjects.forEach((plateObj, objIndex) => {
+                        const modelObj = objects.find(o => o.id == plateObj.id);
+                        if (!modelObj) return;
+                        
+                        const hasCustom = modelObj.customSettings !== null;
+                        const extruder = modelObj.extruder;
+                        const filamentColor = colors[extruder - 1] || 'var(--s-line2)';
+                        const filamentType = types[extruder - 1] || 'Unknown';
+                        
+                        const thumbnailIndex = plateIndex * 10 + objIndex + 1;
+                        const thumbnail = objectThumbnails[thumbnailIndex];
+                        
+                        html += `
+                            <div class="object-item ${hasCustom ? 'has-custom-settings' : ''}">
+                                ${thumbnail ? `<img src="${thumbnail}" class="object-thumbnail" alt="${modelObj.name}">` : ''}
+                                <div class="object-content">
+                                    <div class="object-header">
+                                        <span class="object-name">${modelObj.name}</span>
+                                        <div class="object-badges">
+                                            ${hasCustom ? '<span class="custom-badge">Custom</span>' : ''}
+                                            <span class="object-filament">
+                                                <span class="filament-color-dot" style="background-color: ${filamentColor};"></span>
+                                                ${filamentType}
+                                            </span>
+                                            <span class="object-extruder">Ext ${extruder}</span>
+                                        </div>
+                                    </div>
+                        `;
+                        
+                        if (hasCustom) {
+                            html += `
+                                <div class="object-custom-settings">
+                                    <div class="custom-settings-title">Custom Settings (different from global)</div>
+                                    <div class="custom-settings-grid">
+                                        ${Object.entries(modelObj.customSettings).map(([key, value]) => `
+                                            <div class="custom-setting-item">
+                                                <span class="custom-setting-name">${formatParamName(key)}</span>
+                                                <span class="custom-setting-value">${value}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        html += `
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                objectsList.innerHTML = html;
+            } else {
+                // Fallback: no plate grouping
+                objectsList.innerHTML = objects.map((obj, index) => {
+                    const hasCustom = obj.customSettings !== null;
+                    const extruder = obj.extruder;
+                    const filamentColor = colors[extruder - 1] || 'var(--s-line2)';
+                    const filamentType = types[extruder - 1] || 'Unknown';
+                    const thumbnail = objectThumbnails[index + 1];
+                    
+                    let html = `
+                        <div class="object-item ${hasCustom ? 'has-custom-settings' : ''}">
+                            ${thumbnail ? `<img src="${thumbnail}" class="object-thumbnail" alt="${obj.name}">` : ''}
+                            <div class="object-content">
+                                <div class="object-header">
+                                    <span class="object-name">${obj.name}</span>
+                                    <div class="object-badges">
+                                        ${hasCustom ? '<span class="custom-badge">Custom</span>' : ''}
+                                        <span class="object-filament">
+                                            <span class="filament-color-dot" style="background-color: ${filamentColor};"></span>
+                                            ${filamentType}
+                                        </span>
+                                        <span class="object-extruder">Ext ${extruder}</span>
+                                    </div>
+                                </div>
+                    `;
+                    
+                    if (hasCustom) {
+                        html += `
+                            <div class="object-custom-settings">
+                                <div class="custom-settings-title">Custom Settings (different from global)</div>
+                                <div class="custom-settings-grid">
+                                    ${Object.entries(obj.customSettings).map(([key, value]) => `
+                                        <div class="custom-setting-item">
+                                            <span class="custom-setting-name">${formatParamName(key)}</span>
+                                            <span class="custom-setting-value">${value}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                    return html;
+                }).join('');
+            }
+        }
+        
+        function displayConfiguration(parameters, filamentParams) {
+            tabsHeader.innerHTML = '';
+            tabsContent.innerHTML = '';
+            
+            createConfigTabs(basicConfigStructure, parameters, 'Basic');
+            const mergedFilamentParams = {...parameters, ...filamentParams};
+            createConfigTabs(filamentConfigStructure, mergedFilamentParams, 'Filament');
+        }
+        
+        function createConfigTabs(structure, parameters, prefix) {
+            const categories = Object.keys(structure);
+            
+            categories.forEach((category, index) => {
+                const tabId = `${prefix}-${category}`.replace(/\s+/g, '-');
+                const isFirst = index === 0 && tabsHeader.children.length === 0;
+                
+                const btn = document.createElement('button');
+                btn.className = 'tab-btn' + (isFirst ? ' active' : '');
+                btn.textContent = `${prefix === 'Filament' ? '🎨 ' : ''}${category}`;
+                btn.onclick = () => switchTab(tabId);
+                tabsHeader.appendChild(btn);
+                
+                const content = document.createElement('div');
+                content.className = 'tab-content' + (isFirst ? ' active' : '');
+                content.id = `tab-${tabId}`;
+                
+                const categoryTitle = document.createElement('div');
+                categoryTitle.className = 'extended-category-title';
+                categoryTitle.textContent = category;
+                content.appendChild(categoryTitle);
+                
+                const subsections = structure[category];
+                
+                for (const [subsectionName, paramKeys] of Object.entries(subsections)) {
+                    const subsection = document.createElement('div');
+                    subsection.className = 'subsection';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'subsection-title';
+                    title.textContent = subsectionName;
+                    subsection.appendChild(title);
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'param-grid';
+                    
+                    let hasParams = false;
+                    
+                    paramKeys.forEach(key => {
+                        if (parameters[key] !== undefined) {
+                            hasParams = true;
+                            const value = formatValue(parameters[key]);
+                            
+                            const item = document.createElement('div');
+                            item.className = 'param-item';
+                            item.dataset.key = key;
+                            item.dataset.originalValue = value;
+                            
+                            item.innerHTML = `
+                                <div class="param-name">${formatParamName(key)}</div>
+                                <div class="param-value-container">
+                                    <div class="param-value-row">
+                                        <div class="param-value">${value}</div>
+                                        <button class="param-btn param-btn-edit" onclick="editParameter(this)">✏️</button>
+                                    </div>
+                                </div>
+                            `;
+                            grid.appendChild(item);
+                        }
+                    });
+                    
+                    if (hasParams) {
+                        subsection.appendChild(grid);
+                        content.appendChild(subsection);
+                    }
+                }
+                
+                tabsContent.appendChild(content);
+            });
+        }
+        
+        // Parameter editing functionality
+        function editParameter(btn) {
+            const item = btn.closest('.param-item');
+            const valueContainer = item.querySelector('.param-value-container');
+            const valueElement = item.querySelector('.param-value');
+            const originalValue = valueElement.textContent;
+            
+            // Don't edit if already editing
+            if (item.classList.contains('editing')) return;
+            
+            item.classList.add('editing');
+            
+            // Detect value format
+            const format = detectValueFormat(originalValue);
+            
+            valueContainer.innerHTML = `
+                <div class="param-value-row">
+                    <div class="param-value original-striked">${originalValue}</div>
+                </div>
+                <div class="param-value-row">
+                    <input type="text" class="param-edit-input" value="${originalValue}" 
+                           placeholder="${format.placeholder}" data-format="${format.type}">
+                    <button class="param-btn param-btn-confirm" onclick="confirmEdit(this)">✓</button>
+                    <button class="param-btn param-btn-cancel" onclick="cancelEdit(this)">✕</button>
+                </div>
+                <div class="param-error-msg" style="display: none;"></div>
+            `;
+            
+            const input = valueContainer.querySelector('.param-edit-input');
+            input.focus();
+            input.select();
+            
+            // Handle Enter key
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    confirmEdit(valueContainer.querySelector('.param-btn-confirm'));
+                } else if (e.key === 'Escape') {
+                    cancelEdit(valueContainer.querySelector('.param-btn-cancel'));
+                }
+            });
+        }
+        
+        function detectValueFormat(value) {
+            // Detect different value formats
+            if (/^\d+\.\d{2}$/.test(value)) {
+                return { type: 'decimal2', placeholder: 'e.g., 0.20' };
+            } else if (/^\d+\.\d{1}$/.test(value)) {
+                return { type: 'decimal1', placeholder: 'e.g., 1.5' };
+            } else if (/^\d+\.\d+$/.test(value)) {
+                return { type: 'decimal', placeholder: 'e.g., 0.23' };
+            } else if (/^\d+$/.test(value)) {
+                return { type: 'integer', placeholder: 'e.g., 100' };
+            } else if (/^(0|1|true|false)$/i.test(value)) {
+                return { type: 'boolean', placeholder: '0, 1, true, false' };
+            } else if (value.includes(',')) {
+                return { type: 'list', placeholder: 'comma-separated values' };
+            } else {
+                return { type: 'string', placeholder: 'any text' };
+            }
+        }
+        
+        function validateValueFormat(newValue, format, originalValue) {
+            switch (format) {
+                case 'decimal2':
+                    return /^\d+\.\d{2}$/.test(newValue);
+                case 'decimal1':
+                    return /^\d+\.\d{1}$/.test(newValue);
+                case 'decimal':
+                    return /^\d+\.\d+$/.test(newValue);
+                case 'integer':
+                    return /^\d+$/.test(newValue);
+                case 'boolean':
+                    return /^(0|1|true|false)$/i.test(newValue);
+                case 'list':
+                    return newValue.includes(',');
+                case 'string':
+                    return newValue.length > 0;
+                default:
+                    return true;
+            }
+        }
+        
+        function confirmEdit(btn) {
+            const item = btn.closest('.param-item');
+            const valueContainer = item.querySelector('.param-value-container');
+            const input = valueContainer.querySelector('.param-edit-input');
+            const errorMsg = valueContainer.querySelector('.param-error-msg');
+            const originalValue = item.dataset.originalValue;
+            const newValue = input.value.trim();
+            const format = input.dataset.format;
+            
+            // Validate format
+            if (!validateValueFormat(newValue, format, originalValue)) {
+                input.classList.add('error');
+                errorMsg.textContent = `Invalid format. Expected: ${detectValueFormat(originalValue).placeholder}`;
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            // Save the modification
+            item.classList.remove('editing');
+            item.dataset.modifiedValue = newValue;
+            
+            valueContainer.innerHTML = `
+                <div class="param-value-row">
+                    <div class="param-value original-striked">${originalValue}</div>
+                    <button class="param-btn param-btn-edit" onclick="editParameter(this)">✏️</button>
+                </div>
+                <div class="param-value-row">
+                    <div class="param-value modified">${newValue}</div>
+                </div>
+            `;
+        }
+        
+        function cancelEdit(btn) {
+            const item = btn.closest('.param-item');
+            const valueContainer = item.querySelector('.param-value-container');
+            const originalValue = item.dataset.originalValue;
+            const modifiedValue = item.dataset.modifiedValue;
+            
+            item.classList.remove('editing');
+            
+            if (modifiedValue) {
+                // Restore modified state
+                valueContainer.innerHTML = `
+                    <div class="param-value-row">
+                        <div class="param-value original-striked">${originalValue}</div>
+                        <button class="param-btn param-btn-edit" onclick="editParameter(this)">✏️</button>
+                    </div>
+                    <div class="param-value-row">
+                        <div class="param-value modified">${modifiedValue}</div>
+                    </div>
+                `;
+            } else {
+                // Restore original state
+                valueContainer.innerHTML = `
+                    <div class="param-value-row">
+                        <div class="param-value">${originalValue}</div>
+                        <button class="param-btn param-btn-edit" onclick="editParameter(this)">✏️</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function switchTab(tabId) {
+            if (isExtendedView) return;
+            
+            document.querySelectorAll('.tab-btn').forEach((btn) => {
+                const btnText = btn.textContent.replace(/[🎨]/g, '').trim();
+                const searchId = btnText.replace(/\s+/g, '-');
+                btn.classList.toggle('active', 
+                    `tab-Basic-${searchId}` === `tab-${tabId}` ||
+                    `tab-Filament-${searchId}` === `tab-${tabId}`
+                );
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === `tab-${tabId}`);
+            });
+        }
+        
+        exportBtn.addEventListener('click', () => {
+            const rows = [['Type', 'Category', 'Subsection', 'Parameter', 'Value']];
+            
+            for (const [category, subsections] of Object.entries(basicConfigStructure)) {
+                for (const [subsection, params] of Object.entries(subsections)) {
+                    params.forEach(param => {
+                        if (allParameters[param] !== undefined) {
+                            rows.push([
+                                'Basic Config',
+                                category,
+                                subsection,
+                                formatParamName(param),
+                                formatValue(allParameters[param])
+                            ]);
+                        }
+                    });
+                }
+            }
+            
+            const mergedFilamentParams = {...allParameters, ...filamentParameters};
+            for (const [category, subsections] of Object.entries(filamentConfigStructure)) {
+                for (const [subsection, params] of Object.entries(subsections)) {
+                    params.forEach(param => {
+                        if (mergedFilamentParams[param] !== undefined) {
+                            rows.push([
+                                'Filament Config',
+                                category,
+                                subsection,
+                                formatParamName(param),
+                                formatValue(mergedFilamentParams[param])
+                            ]);
+                        }
+                    });
+                }
+            }
+            
+            // Add object custom settings
+            if (modelData) {
+                modelData.forEach(obj => {
+                    if (obj.customSettings) {
+                        Object.entries(obj.customSettings).forEach(([key, value]) => {
+                            rows.push([
+                                'Object Settings',
+                                obj.name,
+                                'Custom',
+                                formatParamName(key),
+                                value
+                            ]);
+                        });
+                    }
+                });
+            }
+            
+            const csv = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '3mfviewer_export.csv';
+            link.click();
+        });
+        
+        exportCsvBtn.addEventListener('click', () => {
+            const rows = [['Type', 'Category', 'Subsection', 'Parameter', 'Original Value', 'Modified Value']];
+            
+            // Get all param items and check for modifications
+            document.querySelectorAll('.param-item').forEach(item => {
+                const key = item.dataset.key;
+                const originalValue = item.dataset.originalValue;
+                const modifiedValue = item.dataset.modifiedValue || '';
+                
+                // Find which category/subsection this belongs to
+                const subsection = item.closest('.subsection');
+                const subsectionTitle = subsection?.querySelector('.subsection-title')?.textContent || '';
+                const tabContent = item.closest('.tab-content');
+                const categoryTitle = tabContent?.querySelector('.extended-category-title')?.textContent || 
+                                    tabContent?.id.replace('tab-', '').replace(/-/g, ' ') || '';
+                
+                const isFilament = categoryTitle.includes('Filament') || tabContent?.id.includes('Filament');
+                const type = isFilament ? 'Filament Config' : 'Basic Config';
+                
+                rows.push([
+                    type,
+                    categoryTitle,
+                    subsectionTitle,
+                    formatParamName(key),
+                    originalValue,
+                    modifiedValue
+                ]);
+            });
+            
+            // Add object custom settings
+            if (modelData) {
+                modelData.forEach(obj => {
+                    if (obj.customSettings) {
+                        Object.entries(obj.customSettings).forEach(([key, value]) => {
+                            rows.push([
+                                'Object Settings',
+                                obj.name,
+                                'Custom',
+                                formatParamName(key),
+                                value,
+                                ''
+                            ]);
+                        });
+                    }
+                });
+            }
+            
+            const csv = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '3mfviewer_export.csv';
+            link.click();
+        });
+        
+        exportPdfBtn.addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            let yPos = 20;
+            const pageHeight = doc.internal.pageSize.height;
+            const margin = 20;
+            const lineHeight = 7;
+            
+            // Title
+            doc.setFontSize(18);
+            doc.setFont(undefined, 'bold');
+            doc.text('3MFVIEWER - Configuration Export', margin, yPos);
+            yPos += 10;
+            
+            // Project info
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const printer = allParameters['printer_model'] || 'Unknown';
+            const nozzle = allParameters['nozzle_diameter'] ? allParameters['nozzle_diameter'][0] : '0.4';
+            doc.text(`Printer: ${printer}  |  Nozzle: ${nozzle}mm  |  Plates: ${numberOfPlates}  |  Objects: ${modelData ? modelData.length : 0}`, margin, yPos);
+            yPos += 10;
+            
+            // Collect all parameters
+            const allParams = [];
+            document.querySelectorAll('.param-item').forEach(item => {
+                const key = item.dataset.key;
+                const originalValue = item.dataset.originalValue;
+                const modifiedValue = item.dataset.modifiedValue;
+                
+                const subsection = item.closest('.subsection');
+                const subsectionTitle = subsection?.querySelector('.subsection-title')?.textContent || '';
+                const tabContent = item.closest('.tab-content');
+                const categoryTitle = tabContent?.querySelector('.extended-category-title')?.textContent || 
+                                    tabContent?.id.replace('tab-', '').replace(/-/g, ' ') || '';
+                
+                allParams.push({
+                    category: categoryTitle,
+                    subsection: subsectionTitle,
+                    name: formatParamName(key),
+                    original: originalValue,
+                    modified: modifiedValue
+                });
+            });
+            
+            // Group by category
+            const grouped = {};
+            allParams.forEach(param => {
+                if (!grouped[param.category]) grouped[param.category] = {};
+                if (!grouped[param.category][param.subsection]) grouped[param.category][param.subsection] = [];
+                grouped[param.category][param.subsection].push(param);
+            });
+            
+            // Write to PDF
+            Object.entries(grouped).forEach(([category, subsections]) => {
+                // Check if we need a new page
+                if (yPos > pageHeight - 40) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                
+                // Category header
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(0, 174, 66);
+                doc.text(category, margin, yPos);
+                yPos += 8;
+                
+                Object.entries(subsections).forEach(([subsection, params]) => {
+                    if (yPos > pageHeight - 30) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    
+                    // Subsection header
+                    doc.setFontSize(11);
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(subsection, margin + 5, yPos);
+                    yPos += 6;
+                    
+                    // Parameters
+                    doc.setFontSize(9);
+                    doc.setFont(undefined, 'normal');
+                    params.forEach(param => {
+                        if (yPos > pageHeight - 20) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        
+                        const text = `${param.name}: ${param.original}`;
+                        doc.text(text, margin + 10, yPos);
+                        
+                        if (param.modified) {
+                            doc.setTextColor(255, 107, 53);
+                            doc.text(` → ${param.modified}`, margin + 10 + doc.getTextWidth(text) + 2, yPos);
+                            doc.setTextColor(0, 0, 0);
+                        }
+                        
+                        yPos += lineHeight;
+                    });
+                    
+                    yPos += 3;
+                });
+                
+                yPos += 5;
+            });
+            
+            // Save PDF
+            doc.save('3mfviewer_export.pdf');
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            header.style.display = 'none';
+            uploadWrapper.style.display = 'flex';
+            uploadZone.innerHTML = `
+                <div class="upload-icon-container">
+                    <div class="upload-glow"></div>
+                    <div class="upload-icon">📦</div>
+                </div>
+                <div class="upload-text">Drop your 3MF file here</div>
+                <div class="upload-hint">or click to browse</div>
+                <div class="upload-formats">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 0L10 6H16L11 10L13 16L8 12L3 16L5 10L0 6H6L8 0Z" fill="currentColor"/>
+                    </svg>
+                    Supports .3MF files
+                </div>
+            `;
+            results.classList.remove('active');
+            fileInput.value = '';
+            thumbnails.forEach(url => URL.revokeObjectURL(url));
+            thumbnails = [];
+            isExtendedView = false;
+            tabsContainer.classList.remove('extended-view');
+            viewToggle.textContent = '📋 Extended View';
+            viewToggle.classList.remove('active');
+        });
+    </script>
+<script>
+(function(){
+  var KEY='dp3-theme';
+  window.DP_LAUNCHER='../../index.html';
+  function inFrame(){return window.self!==window.top;}
+  function param(){try{return new URLSearchParams(location.search).get('dptheme');}catch(e){return null;}}
+  function store(t){try{localStorage.setItem(KEY,t);}catch(e){}}
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function ic(t){return t==='dark'
+    ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+    :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+  window.dpApplyTheme=function(t,bc){t=(t==='light')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);store(t);
+    var b=document.getElementById('dpThemeBtn');if(b)b.innerHTML=ic(t);
+    if(typeof window.dpOnTheme==='function'){try{window.dpOnTheme(t);}catch(e){}}
+    if(bc&&inFrame()){try{window.parent.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}};
+  window.dpToggleTheme=function(){var c=document.documentElement.getAttribute('data-theme')||'dark';window.dpApplyTheme(c==='dark'?'light':'dark',true);};
+  window.dpHome=function(){if(inFrame()){try{window.parent.postMessage({__dp3:true,type:'home'},'*');}catch(e){}}else{window.location.href=window.DP_LAUNCHER;}};
+  window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='theme'&&d.theme){window.dpApplyTheme(d.theme,false);}});
+  window.dpApplyTheme(param()||stored()||document.documentElement.getAttribute('data-theme')||'dark',false);
+})();
+</script>
+
+<script>
+function mfToggleSide(){ document.body.classList.toggle('mf-collapsed'); }
+function mfGo(id){ var el=document.getElementById(id); if(el){ el.scrollIntoView({behavior:'smooth',block:'start'}); } }
+(function(){
+  var fi=document.getElementById('fileInput');
+  if(fi) fi.addEventListener('change', function(e){ var f=e.target.files&&e.target.files[0]; var n=document.getElementById('mfFileName'); if(n&&f) n.textContent=f.name; });
+  document.addEventListener('click', function(e){ var t=e.target; if(t&&(t.id==='resetBtn'||(t.closest&&t.closest('#resetBtn')))){ var n=document.getElementById('mfFileName'); if(n) n.textContent='Ningún archivo cargado'; } });
+})();
+</script>
+</body>
+</html>

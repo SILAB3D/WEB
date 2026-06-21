@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3DCalc — SILAB3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="../../firebase/dpcloud.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080F; --glass:rgba(255,255,255,.04); --panel:#0E1118; --border:rgba(255,255,255,.08);
+  --t1:#E8EBF4; --t2:#7A8099; --t3:#3A3D52; --ac:#00DDB8; --ac2:#0AB89B; --sel:#14161F;
+}
+[data-theme=light]{ --bg:#F5F6FA; --glass:rgba(0,0,0,.03); --panel:#FFFFFF; --border:rgba(0,0,0,.10); --t1:#1A1C24; --t2:#5A6172; --t3:#AEB4C2; --sel:#FFFFFF; }
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--t1)}
+body{height:100vh;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+#dp-shell{position:fixed;top:0;left:0;right:0;height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;z-index:9500;background:rgba(10,11,18,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+[data-theme=light] #dp-shell{background:rgba(255,255,255,.80);border-bottom:1px solid rgba(0,0,0,.08)}
+#dp-shell .dp-back{display:flex;align-items:center;gap:6px;height:30px;padding:0 13px 0 9px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;font:500 13px 'Outfit',sans-serif}
+#dp-shell .dp-back:hover{background:rgba(255,255,255,.07)}
+[data-theme=light] #dp-shell .dp-back{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+#dp-shell .dp-appicon{width:27px;height:27px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(0,221,184,.16);border:1px solid rgba(0,221,184,.32)}
+#dp-shell .dp-title{font-size:13px;font-weight:600;color:#E8EBF4}
+[data-theme=light] #dp-shell .dp-title{color:#1A1C24}
+#dp-shell .dp-sp{flex:1}
+#dp-shell .dp-toggle{width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;display:flex;align-items:center;justify-content:center}
+[data-theme=light] #dp-shell .dp-toggle{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+.top{position:fixed;top:44px;left:0;right:0;height:54px;z-index:40;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.burger{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.burger:hover{background:var(--glass)}
+.chip{width:30px;height:30px;border-radius:9px;background:rgba(0,221,184,.16);border:1px solid rgba(0,221,184,.32);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tname{font-weight:700;font-size:16px;letter-spacing:-.2px}
+.sp{flex:1}
+.vtitle{font-size:14px;font-weight:600;color:var(--t2)}
+.layout{position:fixed;top:98px;left:0;right:0;bottom:0;display:flex}
+.side{width:230px;flex-shrink:0;border-right:1px solid var(--border);background:var(--glass);display:flex;flex-direction:column;padding:14px 12px;overflow-y:auto;transition:margin-left .25s ease}
+body.side-off .side{margin-left:-231px}
+.nav-h{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t2);margin:6px 4px 8px}
+.nav{display:flex;flex-direction:column;gap:3px;flex:1}
+.nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--t2);font-size:13.5px;font-weight:500;cursor:pointer;transition:background .15s,color .15s}
+.nav a:hover{background:var(--glass);color:var(--t1)}
+.nav a.on{background:rgba(0,221,184,.1);color:var(--ac);border:1px solid rgba(0,221,184,.22)}
+.nav a svg{flex-shrink:0}
+.side-note{margin-top:auto;font-size:11px;color:var(--t3);line-height:1.5;padding:12px 4px 0;border-top:1px solid var(--border)}
+.main{flex:1;overflow-y:auto;padding:24px;display:flex;justify-content:center}
+.wrap{width:100%;max-width:960px}
+.h1{font-family:'DM Serif Display',serif;font-style:italic;font-size:26px;margin-bottom:4px}
+.h-sub{font-size:13.5px;color:var(--t2);margin-bottom:22px}
+/* form */
+.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:start}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px}
+.card+.card{margin-top:16px}
+.card-h{font-size:13px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--t2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.fg{margin-bottom:13px}
+.fg.row{display:flex;gap:10px}
+.fg.row>div{flex:1}
+.lbl{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.inp,.selx{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--t1);font:500 14px 'Outfit',sans-serif;padding:10px 12px;outline:none;transition:border-color .15s}
+.inp:focus,.selx:focus{border-color:var(--ac)}
+.selx{appearance:none;-webkit-appearance:none;cursor:pointer;background-color:var(--sel);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' stroke='%237A8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+.selx option{background-color:var(--sel);color:var(--t1)}
+.suffix{position:relative}
+.suffix .u{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--t3);pointer-events:none}
+.suffix .inp{padding-right:38px}
+.chk{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13.5px;padding:9px 0}
+.chk input{width:18px;height:18px;accent-color:var(--ac)}
+/* result */
+.res{position:sticky;top:0}
+.res .total-lbl{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--t2)}
+.res .total{font-size:42px;font-weight:800;letter-spacing:-1px;color:var(--ac);margin:4px 0 2px}
+.res .total-u{font-size:13px;color:var(--t2);margin-bottom:16px}
+.brk{display:flex;flex-direction:column;gap:9px;margin-top:6px}
+.brk .r{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.brk .r span:first-child{color:var(--t2)}
+.brk .r b{font-weight:600}
+.brk .bar{height:5px;border-radius:3px;background:var(--border);overflow:hidden;margin-top:4px}
+.brk .bar i{display:block;height:100%;border-radius:3px;background:var(--ac)}
+.brk .sep{border-top:1px solid var(--border);margin:6px 0}
+.brk .r.big{font-size:15px}
+.brk .r.big b{color:var(--t1);font-weight:800}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--t2);background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:4px 10px;margin-top:14px}
+/* inventario / config */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 15px;border-radius:11px;border:none;font:700 13.5px 'Outfit',sans-serif;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#003a30}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--t2);font-weight:600}
+.btn.ghost:hover{color:var(--t1)}
+table.t{width:100%;border-collapse:collapse}
+table.t th{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);text-align:left;padding:8px;border-bottom:1px solid var(--border)}
+table.t td{padding:7px 8px;border-bottom:1px solid var(--border);font-size:13.5px}
+table.t input,table.t select{width:100%;background:transparent;border:none;color:var(--t1);font:500 13.5px 'Outfit',sans-serif;outline:none}
+table.t .sw{display:inline-block;width:14px;height:14px;border-radius:4px;border:1px solid var(--border);vertical-align:middle;margin-right:7px}
+.del{border:none;background:transparent;color:var(--t3);font-size:15px;padding:2px 6px;border-radius:6px}
+.del:hover{color:#FF7A7A;background:rgba(255,77,77,.1)}
+.empty{text-align:center;color:var(--t2);font-size:13.5px;padding:30px}
+.cfg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:700px){.cfg-grid{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--t3);line-height:1.6;margin-top:8px}
+
+.ord-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.ord-search{max-width:300px}
+.badge-amber{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#F4B740;color:#3a2400;font-size:10.5px;font-weight:800;margin-left:6px;vertical-align:middle}
+.est-sel{padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--sel);color:var(--t1);font:600 12px 'Outfit',sans-serif;cursor:pointer}
+.est-sel option{background:var(--sel);color:var(--t1)}
+.pend{color:#F4B740;font-weight:700}
+.paid{color:var(--ac);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px}
+.kpi .k-l{font-size:11.5px;color:var(--t2);font-weight:600}
+.kpi .k-v{font-size:26px;font-weight:800;margin-top:5px}
+.chartbox{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px}
+.chartbox+.chartbox{margin-top:16px}
+.cbar{display:flex;align-items:flex-end;gap:10px;height:172px;margin-top:14px}
+.cbar .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px}
+.cbar .col .bar2{width:70%;max-width:48px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--ac),var(--ac2));min-height:2px}
+.cbar .col .cl{font-size:10.5px;color:var(--t2)}
+.cbar .col .cv{font-size:10px;color:var(--t3);height:12px}
+.hbars{display:flex;flex-direction:column;gap:9px;margin-top:8px}
+.hbars .hb{display:flex;align-items:center;gap:10px;font-size:12.5px}
+.hbars .hb .name{width:120px;color:var(--t2);flex-shrink:0}
+.hbars .hb .track{flex:1;height:9px;border-radius:5px;background:var(--border);overflow:hidden}
+.hbars .hb .track i{display:block;height:100%;border-radius:5px}
+.hbars .hb .val{width:40px;text-align:right;font-weight:700}
+
+.low{color:#FF7A7A}
+.mix{margin-top:10px;border:1px solid var(--border);border-radius:10px;padding:10px}
+.brk .grp{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin-top:10px}
+.brk .r.sub b{color:var(--t1);font-weight:700}
+.brk .r.sub span{color:var(--t1)}
+
+.k-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.k-ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.grow{font-size:11px;font-weight:700}
+.k-foot{font-size:10.5px;color:var(--t3);margin-top:8px}
+.dash-recent .ri{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--border)}
+.dash-recent .ri:last-child{border-bottom:none}
+.dash-recent .ic{width:38px;height:38px;border-radius:11px;background:var(--glass);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2)}
+.dash-recent .who{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-recent .desc{font-size:12px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stbadge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:5px;border:1px solid currentColor;margin-top:4px}
+.donut{width:168px;height:168px;border-radius:50%;margin:6px auto 2px;position:relative}
+.donut::after{content:'';position:absolute;inset:26px;border-radius:50%;background:var(--panel)}
+.legend{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.legend .lg{display:flex;align-items:center;gap:8px;font-size:12px}
+.legend .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.modal-bg{position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow:auto}
+.modal h3{font-family:'DM Serif Display',serif;font-style:italic;font-size:21px;margin-bottom:16px}
+textarea.inp{resize:vertical;min-height:60px}
+</style>
+</head>
+<body>
+<div id="dp-shell">
+  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    3DProject
+  </button>
+  <span class="dp-appicon"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="2.5" stroke="#00DDB8" stroke-width="1.5"/><line x1="2" y1="8" x2="20" y2="8" stroke="#00DDB8" stroke-width="1"/><rect x="4.5" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8"/><rect x="13" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".4"/><rect x="4.5" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".4"/><rect x="13" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8"/></svg></span>
+  <span class="dp-title">3DCalc</span>
+  <span class="dp-sp"></span>
+  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
+</div>
+<div class="top">
+  <button class="burger" onclick="document.body.classList.toggle('side-off')" title="Mostrar u ocultar el panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <span class="chip"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="2.5" stroke="#00DDB8" stroke-width="1.5"/><line x1="2" y1="8" x2="20" y2="8" stroke="#00DDB8" stroke-width="1"/><rect x="4.5" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8"/><rect x="13" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".4"/><rect x="4.5" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".4"/><rect x="13" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8"/></svg></span>
+  <span class="tname">3DCalc</span>
+  <span class="sp"></span>
+  <span class="vtitle" id="vtitle">Calculadora</span>
+</div>
+<div class="layout">
+  <aside class="side" id="side">
+    <div class="nav-h">Herramientas</div>
+    <nav class="nav" id="nav">
+      <a data-v="dash" onclick="go('dash')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="3" width="7" height="4" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="9" width="7" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg> Dashboard</a>
+      <a data-v="calc" onclick="go('calc')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="2" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="7.5" x2="19" y2="7.5" stroke="currentColor" stroke-width="1"/><circle cx="7" cy="11.5" r="1" fill="currentColor"/><circle cx="11" cy="11.5" r="1" fill="currentColor"/><circle cx="15" cy="11.5" r="1" fill="currentColor"/><circle cx="7" cy="15.5" r="1" fill="currentColor"/><circle cx="11" cy="15.5" r="1" fill="currentColor"/><circle cx="15" cy="15.5" r="1" fill="currentColor"/></svg> Calculadora</a>
+      <a data-v="ord" onclick="go('ord')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7h6M8 11h6M8 15h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Pedidos <span id="ordBadge"></span></a>
+      <a data-v="inv" onclick="go('inv')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M3 7l8-4 8 4v8l-8 4-8-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 7l8 4 8-4M11 11v8" stroke="currentColor" stroke-width="1.2"/></svg> Inventario</a>
+      <a data-v="stat" onclick="go('stat')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M3 19V3M3 19h16M7 15v-4M11 15V7M15 15v-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Estadísticas</a>
+      <a data-v="cli" onclick="go('cli')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 18a5.5 5.5 0 0 1 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15 5.2a3 3 0 0 1 0 5.6M16.5 18a5.5 5.5 0 0 0-3-4.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Clientes</a>
+      <a data-v="cfg" onclick="go('cfg')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 2v2.5M11 17.5V20M2 11h2.5M17.5 11H20M4.6 4.6l1.8 1.8M15.6 15.6l1.8 1.8M17.4 4.6l-1.8 1.8M6.4 15.6l-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Configuración</a>
+    </nav>
+    <div class="side-note">Réplica de la calculadora de referencia. Ajusta impresoras, materiales y tarifas en <b>Configuración</b> y el stock en <b>Inventario</b>.</div>
+  </aside>
+  <main class="main"><div class="wrap" id="view"></div></main>
+</div>
+<script>
+/* ===== tema + shell ===== */
+function tic(t){return t==='dark'
+  ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+  :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('dp3-theme',t);}catch(e){}var b=document.getElementById('dpThemeBtn');if(b)b.innerHTML=tic(t);if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}}
+window.dpToggleTheme=function(){applyTheme((document.documentElement.getAttribute('data-theme')||'dark')==='dark'?'light':'dark');};
+window.dpHome=function(){if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'home'},'*');}catch(e){}}else{window.location.href='../../index.html';}};
+window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='theme'&&d.theme){applyTheme(d.theme);}});
+(function(){var p=null;try{p=new URLSearchParams(location.search).get('dptheme');}catch(e){}var s=null;try{s=localStorage.getItem('dp3-theme');}catch(e){}applyTheme(p||s||'dark');})();
+
+/* ===== estado (modelo del repositorio de referencia) ===== */
+var SK='dp3_3dcalc';
+var DISENO_MODELADO={'No necesario':0,'Chorrada - En Slicer':0.15,"Fácil - Fusión 30'":1/3,"Medio - Fusión 60'":2/3,'Avanzado - AI + Remesh':1};
+var BUSQUEDA_MODELOS={'No':0,'Sí':0.25};
+var ELIMINACION_SOPORTES={'No':0,'Pocos / Baja dificultad':15,'Muchos / Elevada dificultad':45};
+var POSTPROCESADO={'No':0,'Sencillo (Lijado ligero)':15,'Medio (Lijado + Ensamblado)':40,'Complejo (Lijado + Pintura)':75};
+var PROBABILIDAD_ERROR={'Exenta (0%)':0,'Mínima (10%)':0.1,'Baja (25%)':0.25,'Media (50%)':0.5,'Alta (100%)':1,'Muy Alta (150%)':1.5,'Crítica (200%)':2};
+var MARKUP={'Normal (230%)':2.3};
+var URGENCIA={'Normal':0,'Urgente':0.5};
+var ORDER_LIFECYCLE=['Presupuesto enviado','Aceptado','En producción','Post-procesado','Listo para entregar','Entregado'];
+function defData(){return {
+  printers:[{name:'Creality K1SE Combo',material_diameter_mm:1.75,price_eur:738,depreciation_time_h:3000,service_costs_life_eur:100,energy_consumption_kwh:0.15}],
+  filament_types:[{name:'PLA',price_per_kg:20},{name:'PETG',price_per_kg:18},{name:'PLA SILK/MARBLE',price_per_kg:23},{name:'ASA',price_per_kg:24},{name:'TPU',price_per_kg:21}],
+  filament_stock:[{material:'PLA',color:'Negro',remaining_g:1000,buy_threshold_g:150},{material:'PLA',color:'Blanco',remaining_g:1000,buy_threshold_g:150},{material:'PETG',color:'Transparente',remaining_g:1000,buy_threshold_g:150}],
+  global_config:{energy_cost_kwh:0.24,labor_cost_h:15,money_unit:'€',precio_minimo:3,brand_color:'#3b82f6'},
+  calc_state:{empresa:'3DCC',cliente:'',cliente_email:'',fecha:new Date().toISOString().slice(0,10),descripcion:'',impresora:'Creality K1SE Combo',filamento_tipo:'PLA',filamento_color:'Negro',is_multimaterial:false,material_breakdown:[],peso_g:'50',tiempo_h:'1',diseno_modelado:'No necesario',busqueda_modelos:'No',eliminacion_soportes:'No',postprocesado:'No',probabilidad_error:'Baja (25%)',markup:'Normal (230%)',urgencia_nivel:'Normal',gasto_misc:0,cantidad:1,is_shared:false,shared_percent_3dcc:50,shared_percent_silab3d:50},
+  orders:[], oseq:0, clients:[]
+};}
+var S=defData();
+var view='dash';
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function num(v){ v=Number(String(v).replace(',','.')); return isFinite(v)?v:0; }
+function round4(v){return Math.round(num(v)*10000)/10000;}
+function roundMoney(v){return Math.round(Math.max(0,num(v))*100)/100;}
+function roundUpToNickel(v){var a=Math.max(0,num(v));return Math.ceil((a+Number.EPSILON)/0.05)*0.05;}
+function eur(n){ return (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
+function optList(keys,cur){return keys.map(function(k){return '<option value="'+esc(k)+'"'+(cur===k?' selected':'')+'>'+esc(k)+'</option>';}).join('');}
+function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d==='object'){
+  if(Array.isArray(d.printers)&&d.printers.length)S.printers=d.printers;
+  if(Array.isArray(d.filament_types)&&d.filament_types.length)S.filament_types=d.filament_types;
+  if(Array.isArray(d.filament_stock))S.filament_stock=d.filament_stock;
+  S.global_config=Object.assign({},defData().global_config,d.global_config||{});
+  S.calc_state=Object.assign({},defData().calc_state,d.calc_state||{});
+  if(!Array.isArray(S.calc_state.material_breakdown))S.calc_state.material_breakdown=[];
+  if(Array.isArray(d.orders))S.orders=d.orders;
+  if(Array.isArray(d.clients))S.clients=d.clients;
+  S.oseq=Number(d.oseq)||0;
+} }catch(e){} }
+var saveT=null;
+function save(){ try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ window.DPCloud.saveState('3dcalc',S); } }catch(e){} }
+
+/* ===== motor de cálculo (idéntico a shared/backend.js) ===== */
+function depPerHour(p){var h=num(p.depreciation_time_h); if(h<=0)return 0; return (num(p.price_eur)+num(p.service_costs_life_eur))/h;}
+function compute(){
+  var c=S.calc_state, g=S.global_config;
+  var printer=S.printers.filter(function(p){return p.name===c.impresora;})[0]||S.printers[0]||{};
+  var horas=num(c.tiempo_h), peso=num(c.peso_g);
+  var pricekg=0, filOverride=null, filName=c.filamento_tipo, filColor=c.filamento_color||'Negro';
+  if(c.is_multimaterial){
+    var tw=0,tc=0,mats=[];
+    (c.material_breakdown||[]).forEach(function(it){var m=String(it.material||'').trim();var gr=num(it.grams); if(m&&gr>0){var ft=S.filament_types.filter(function(f){return f.name===m;})[0]; var ppk=ft?num(ft.price_per_kg):0; tw+=gr; tc+=gr*ppk/1000; if(mats.indexOf(m)<0)mats.push(m);}});
+    if(tw>0){peso=Math.round(tw*100)/100; filOverride=round4(tc); pricekg=tc*1000/tw; filName=mats.join(' + '); filColor='Multicolor';}
+  } else {
+    var ft0=S.filament_types.filter(function(f){return f.name===c.filamento_tipo;})[0];
+    pricekg=ft0?num(ft0.price_per_kg):0;
+  }
+  var markup=MARKUP[c.markup]!=null?MARKUP[c.markup]:2.3;
+  var errorRate=PROBABILIDAD_ERROR.hasOwnProperty(c.probabilidad_error)?PROBABILIDAD_ERROR[c.probabilidad_error]:0.25;
+  var urg=URGENCIA[c.urgencia_nivel]!=null?URGENCIA[c.urgencia_nivel]:0;
+  var labor=num(g.labor_cost_h);
+  var filamento=round4(peso*pricekg/1000); if(filOverride!=null)filamento=filOverride;
+  var electricidad=round4(horas*num(printer.energy_consumption_kwh)*num(g.energy_cost_kwh));
+  var diseno=round4((DISENO_MODELADO[c.diseno_modelado]||0)*labor);
+  var busqueda=round4((BUSQUEDA_MODELOS[c.busqueda_modelos]||0)*labor);
+  var soportes=round4(((ELIMINACION_SOPORTES[c.eliminacion_soportes]||0)/60)*labor);
+  var deterioro=round4(horas*depPerHour(printer));
+  var postproc=round4(((POSTPROCESADO[c.postprocesado]||0)/60)*labor);
+  var gastoMisc=round4(Math.max(0,num(c.gasto_misc)));
+  var bruto=filamento+electricidad+deterioro;
+  var resto=diseno+busqueda+soportes+postproc;
+  var subtotalTM=bruto*markup+bruto*errorRate+resto;
+  var precioCalcUrg=subtotalTM*(1+urg);
+  var precioMin=num(g.precio_minimo);
+  var precioSinMisc=roundUpToNickel(Math.max(precioCalcUrg,precioMin));
+  var precio=roundUpToNickel(precioSinMisc+gastoMisc);
+  var recargo=subtotalTM*urg;
+  var minAplicado=precioSinMisc>precioCalcUrg;
+  var cant=Math.max(1,Math.floor(num(c.cantidad)||1));
+  var markupVal=Math.max(0,bruto*(markup-1));
+  var errorVal=Math.max(0,bruto*errorRate);
+  var beneficioNeto=markupVal+errorVal+recargo;
+  return {printer:printer,pricekg:pricekg,peso:peso,horas:horas,filName:filName,filColor:filColor,
+    filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,
+    bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,
+    markupVal:markupVal,errorVal:errorVal,beneficioNeto:beneficioNeto,
+    precio:precio,precioUnit:roundMoney(precio/cant),cant:cant,precioMin:precioMin,minAplicado:minAplicado};
+}
+
+/* ===== extras de la calculadora (colores, compartido, asistente de error) ===== */
+var COLOR_MAP={Negro:'#111827',Blanco:'#F9FAFB',Gris:'#6B7280',Rojo:'#EF4444',Azul:'#3B82F6',Verde:'#10B981',Amarillo:'#FACC15',Naranja:'#F97316',Morado:'#8B5CF6',Rosa:'#EC4899',Transparente:'#D1D5DB'};
+function colorHex(n){return COLOR_MAP[n]||'#9CA3AF';}
+var EST_OPTS=[['Alta — Base ancha y sólida',0],['Media — Esbelto / Contacto medio',0.5],['Baja — Inestable / Mínimo contacto',1.5]];
+var MATDIF_OPTS=[['Fácil — PLA, PETG, TPU',0],['Medio — ASA, ABS, Madera',0.5],['Difícil — Nylon, PC, Glow',1.5]];
+var MULTI_OPTS=[['No — Monocolor / Un solo material',0],['Sí — Cambio de color / AMS / MMU',1.5]];
+var PUESTA_OPTS=[['Probado — Modelo ya impreso',0],['Nuevo — Primer intento / Ajuste',0.5],['Complejo — Requiere I+D / Fallos probables',1.5]];
+function scoreToError(score){ if(score<=0.2)return 'Exenta (0%)'; if(score<=0.6)return 'Mínima (10%)'; if(score<=1.2)return 'Baja (25%)'; if(score<=2.2)return 'Media (50%)'; if(score<=3.5)return 'Alta (100%)'; if(score<=5.0)return 'Muy Alta (150%)'; return 'Crítica (200%)'; }
+var riskIE={est:0,mat:0,multi:0,puesta:0};
+function openRisk(){ riskIE.multi=S.calc_state.is_multimaterial?1.5:0; renderRisk(); }
+function setRisk(f,v){ riskIE[f]=num(v); renderRisk(); }
+function riskScore(){ return riskIE.est+riskIE.mat+riskIE.multi+riskIE.puesta; }
+function applyRisk(){ S.calc_state.probabilidad_error=scoreToError(riskScore()); save(); closeModal(); renderCalc(); }
+function selPairs(pairs,cur,field){ return '<select class="selx" onchange="setRisk(\''+field+'\',this.value)">'+pairs.map(function(p){return '<option value="'+p[1]+'"'+(Number(cur)===p[1]?' selected':'')+'>'+esc(p[0])+'</option>';}).join('')+'</select>'; }
+function renderRisk(){
+  var sc=riskScore(), sug=scoreToError(sc);
+  openModal('<h3>Asistente de probabilidad de error</h3><div class="h-sub" style="margin-top:-8px">Estima el riesgo de fallo para sugerir el fondo de error adecuado.</div>'
+   +'<div class="fg"><label class="lbl">Estabilidad de la pieza</label>'+selPairs(EST_OPTS,riskIE.est,'est')+'</div>'
+   +'<div class="fg"><label class="lbl">Dificultad del material</label>'+selPairs(MATDIF_OPTS,riskIE.mat,'mat')+'</div>'
+   +'<div class="fg"><label class="lbl">Multicolor / cambios de material</label>'+selPairs(MULTI_OPTS,riskIE.multi,'multi')+'</div>'
+   +'<div class="fg"><label class="lbl">Puesta a punto</label>'+selPairs(PUESTA_OPTS,riskIE.puesta,'puesta')+'</div>'
+   +'<div class="card" style="margin:6px 0 14px;padding:14px;text-align:center"><div style="font-size:10.5px;color:var(--t2);text-transform:uppercase;letter-spacing:.6px">Riesgo estimado</div><div style="font-size:22px;font-weight:800;color:var(--ac);margin-top:4px">'+esc(sug)+'</div><div style="font-size:11px;color:var(--t3)">índice '+sc.toFixed(1)+'</div></div>'
+   +'<div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="applyRisk()">Aplicar sugerencia</button></div>');
+}
+function setShared(v){ S.calc_state.is_shared=v; save(); renderCalc(); }
+function setShare(v){ v=Math.max(0,Math.min(100,num(v))); S.calc_state.shared_percent_3dcc=v; S.calc_state.shared_percent_silab3d=100-v; save(); renderCalc(); }
+
+/* ===== navegación ===== */
+function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',inv:'Inventario',stat:'Estadísticas',cli:'Clientes',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); render(); }
+function render(){ if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='inv')renderInv(); else if(view==='stat')renderStats(); else renderCfg(); }
+function updateResult(){ var el=document.getElementById('resultBox'); if(el)el.innerHTML=resultHTML(); }
+
+/* ===== calculadora ===== */
+function setCalc(f,v){ S.calc_state[f]=v; save(); updateResult(); }
+function setCalcRe(f,v){ S.calc_state[f]=v; save(); renderCalc(); }
+function addMix(){ if(!Array.isArray(S.calc_state.material_breakdown))S.calc_state.material_breakdown=[]; S.calc_state.material_breakdown.push({material:(S.filament_types[0]||{}).name||'',color:'Negro',grams:0}); save(); renderCalc(); }
+function setMix(i,f,v){ var a=S.calc_state.material_breakdown; if(a&&a[i]){a[i][f]=v; save(); updateResult();} }
+function delMix(i){ var a=S.calc_state.material_breakdown; if(a){a.splice(i,1); save(); renderCalc();} }
+function renderCalc(){
+  var c=S.calc_state, g=S.global_config, u=g.money_unit||'€';
+  var colorNames=Object.keys(COLOR_MAP); if(c.filamento_color&&colorNames.indexOf(c.filamento_color)<0)colorNames=[c.filamento_color].concat(colorNames);
+  var colorOpts=colorNames.map(function(n){return '<option'+(c.filamento_color===n?' selected':'')+'>'+esc(n)+'</option>';}).join('');
+  var printerOpts=S.printers.map(function(p){return '<option'+(c.impresora===p.name?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');
+  var ftypeOpts=S.filament_types.map(function(f){return '<option'+(c.filamento_tipo===f.name?' selected':'')+'>'+esc(f.name)+'</option>';}).join('');
+  var empresaOpts=['3DCC','SILAB3D'].map(function(e){return '<option'+(c.empresa===e?' selected':'')+'>'+e+'</option>';}).join('');
+  var mix='';
+  if(c.is_multimaterial){
+    var lines=(c.material_breakdown||[]).map(function(it,i){
+      var mo=S.filament_types.map(function(f){return '<option'+(it.material===f.name?' selected':'')+'>'+esc(f.name)+'</option>';}).join('');
+      return '<tr><td><select onchange="setMix('+i+',\'material\',this.value)">'+mo+'</select></td>'
+        +'<td><input value="'+esc(it.color||'')+'" placeholder="Color" onchange="setMix('+i+',\'color\',this.value)"></td>'
+        +'<td><input type="number" step="1" value="'+esc(it.grams)+'" onchange="setMix('+i+',\'grams\',this.value)"></td>'
+        +'<td style="text-align:right"><button class="del" onclick="delMix('+i+')">✕</button></td></tr>';
+    }).join('');
+    mix='<div class="mix"><table class="t"><thead><tr><th>Material</th><th>Color</th><th>Gramos</th><th></th></tr></thead><tbody>'+lines+'</tbody></table>'
+      +'<div style="margin-top:8px"><button class="btn ghost" onclick="addMix()">＋ Añadir línea de mezcla</button></div></div>';
+  }
+  document.getElementById('view').innerHTML=
+   '<div class="h1">Calculadora de presupuesto</div><div class="h-sub">Réplica fiel de la calculadora de referencia: mismos factores y misma fórmula de precio.</div>'
+   +'<div class="grid2"><div>'
+   +'<div class="card"><div class="card-h">Datos del presupuesto</div>'
+     +'<div class="fg row"><div><label class="lbl">Empresa</label><select class="selx" onchange="setCalc(\'empresa\',this.value)">'+empresaOpts+'</select></div>'
+       +'<div><label class="lbl">Cliente</label><input class="inp" value="'+esc(c.cliente)+'" oninput="setCalc(\'cliente\',this.value)"></div></div>'
+     +'<div class="fg row"><div><label class="lbl">Email del cliente</label><input class="inp" value="'+esc(c.cliente_email)+'" oninput="setCalc(\'cliente_email\',this.value)"></div><div><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(c.fecha)+'" onchange="setCalc(\'fecha\',this.value)"></div></div>'
+     +'<div class="fg"><label class="lbl">Descripción / proyecto</label><input class="inp" value="'+esc(c.descripcion)+'" oninput="setCalc(\'descripcion\',this.value)"></div>'
+   +'</div>'
+   +'<div class="card"><div class="card-h">Impresión</div>'
+     +'<div class="fg"><label class="lbl">Impresora</label><select class="selx" onchange="setCalc(\'impresora\',this.value)">'+printerOpts+'</select></div>'
+     +'<label class="chk"><input type="checkbox" '+(c.is_multimaterial?'checked':'')+' onchange="setCalcRe(\'is_multimaterial\',this.checked)"> Multicolor / multimaterial</label>'
+     +(c.is_multimaterial?mix
+       :'<div class="fg row"><div><label class="lbl">Tipo de filamento</label><select class="selx" onchange="setCalc(\'filamento_tipo\',this.value)">'+ftypeOpts+'</select></div>'
+         +'<div><label class="lbl">Color</label><div style="display:flex;gap:8px;align-items:center"><span class="sw" style="width:20px;height:20px;background:'+colorHex(c.filamento_color)+'"></span><select class="selx" onchange="setCalc(\'filamento_color\',this.value)">'+colorOpts+'</select></div></div></div>')
+     +'<div class="fg row"><div><label class="lbl">Peso estimado</label><div class="suffix"><input class="inp" type="number" step="1" value="'+esc(c.peso_g)+'" '+(c.is_multimaterial?'disabled':'')+' oninput="setCalc(\'peso_g\',this.value)"><span class="u">g</span></div></div>'
+       +'<div><label class="lbl">Tiempo</label><div class="suffix"><input class="inp" type="number" step="0.1" value="'+esc(c.tiempo_h)+'" oninput="setCalc(\'tiempo_h\',this.value)"><span class="u">h</span></div></div></div>'
+   +'</div>'
+   +'<div class="card"><div class="card-h">Mano de obra</div>'
+     +'<div class="fg"><label class="lbl">Diseño / modelado</label><select class="selx" onchange="setCalc(\'diseno_modelado\',this.value)">'+optList(Object.keys(DISENO_MODELADO),c.diseno_modelado)+'</select></div>'
+     +'<div class="fg"><label class="lbl">Búsqueda de modelos</label><select class="selx" onchange="setCalc(\'busqueda_modelos\',this.value)">'+optList(Object.keys(BUSQUEDA_MODELOS),c.busqueda_modelos)+'</select></div>'
+     +'<div class="fg"><label class="lbl">Eliminación de soportes</label><select class="selx" onchange="setCalc(\'eliminacion_soportes\',this.value)">'+optList(Object.keys(ELIMINACION_SOPORTES),c.eliminacion_soportes)+'</select></div>'
+     +'<div class="fg"><label class="lbl">Post-procesado</label><select class="selx" onchange="setCalc(\'postprocesado\',this.value)">'+optList(Object.keys(POSTPROCESADO),c.postprocesado)+'</select></div>'
+   +'</div>'
+   +'<div class="card"><div class="card-h">Tarifa</div>'
+     +'<div class="fg row"><div><label class="lbl">Probabilidad de error</label><select class="selx" onchange="setCalc(\'probabilidad_error\',this.value)">'+optList(Object.keys(PROBABILIDAD_ERROR),c.probabilidad_error)+'</select><button class="btn ghost" style="padding:6px 10px;margin-top:6px;font-size:12px;width:100%" onclick="openRisk()">⚙ Asistente de riesgo</button></div>'
+       +'<div><label class="lbl">Markup</label><select class="selx" onchange="setCalc(\'markup\',this.value)">'+optList(Object.keys(MARKUP),c.markup)+'</select></div></div>'
+     +'<div class="fg row"><div><label class="lbl">Urgencia</label><select class="selx" onchange="setCalc(\'urgencia_nivel\',this.value)">'+optList(Object.keys(URGENCIA),c.urgencia_nivel)+'</select></div>'
+       +'<div><label class="lbl">Cantidad</label><input class="inp" type="number" step="1" min="1" value="'+esc(c.cantidad)+'" oninput="setCalc(\'cantidad\',this.value)"></div></div>'
+     +'<div class="fg"><label class="lbl">Gastos extra / misc.</label><div class="suffix"><input class="inp" type="number" step="0.01" value="'+esc(c.gasto_misc)+'" oninput="setCalc(\'gasto_misc\',this.value)"><span class="u">'+esc(u)+'</span></div></div>'
+   +'</div>'
+   +'<div class="card"><div class="card-h">Reparto del pedido</div>'
+     +'<label class="chk"><input type="checkbox" '+(c.is_shared?'checked':'')+' onchange="setShared(this.checked)"> Pedido compartido (3DCC / SILAB3D)</label>'
+     +(c.is_shared?'<div class="fg" style="margin-top:8px"><label class="lbl">Reparto — <span id="shlbl">3DCC '+c.shared_percent_3dcc+'% \u00b7 SILAB3D '+(100-c.shared_percent_3dcc)+'%</span></label><input type="range" min="0" max="100" value="'+c.shared_percent_3dcc+'" style="width:100%;accent-color:var(--ac)" oninput="document.getElementById(\'shlbl\').textContent=\'3DCC \'+this.value+\'% \u00b7 SILAB3D \'+(100-this.value)+\'%\'" onchange="setShare(this.value)"></div>':'')
+   +'</div>'
+   +'</div><div><div class="card res" id="resultBox">'+resultHTML()+'</div></div></div>';
+}
+function resultHTML(){
+  var r=compute(), u=S.global_config.money_unit||'€';
+  function fmt(n){return (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+u;}
+  function row(l,v){return '<div class="r"><span>'+l+'</span><b>'+fmt(v)+'</b></div>';}
+  var html='<div class="total-lbl">Total a abonar'+(r.cant>1?' ('+r.cant+' uds)':'')+'</div>'
+    +'<div class="total">'+fmt(r.precio)+'</div>'
+    +'<div class="total-u">'+fmt(r.precioUnit)+' / unidad</div>'
+    +'<div class="brk">'
+    +'<div class="grp">Coste bruto (materia prima + máquina)</div>'
+    +row('Filamento',r.filamento)+row('Electricidad',r.electricidad)+row('Deterioro impresora',r.deterioro)
+    +'<div class="r sub"><span>Subtotal bruto</span><b>'+fmt(r.bruto)+'</b></div>';
+  if(r.resto>0){
+    html+='<div class="grp">Complementos (mano de obra)</div>'
+      +row('Diseño &amp; modelado',r.diseno)+row('Búsqueda modelos',r.busqueda)+row('Elim. soportes',r.soportes)+row('Postprocesado',r.postproc)
+      +'<div class="r sub"><span>Subtotal complementos</span><b>'+fmt(r.resto)+'</b></div>';
+  }
+  html+='<div class="grp">Márgenes y beneficio</div>'
+    +'<div class="r"><span>Markup (×'+r.markup.toFixed(1)+')</span><b>+'+fmt(r.markupVal)+'</b></div>';
+  if(r.errorVal>0)html+='<div class="r"><span>Fondo error ('+esc(S.calc_state.probabilidad_error)+')</span><b>+'+fmt(r.errorVal)+'</b></div>';
+  if(r.recargo>0)html+='<div class="r"><span>Plus urgencia</span><b>+'+fmt(r.recargo)+'</b></div>';
+  if(r.gastoMisc>0)html+='<div class="r"><span>Extras / misc.</span><b>+'+fmt(r.gastoMisc)+'</b></div>';
+  html+='<div class="r sub"><span>Beneficio neto</span><b>'+fmt(r.beneficioNeto)+'</b></div>'
+    +'<div class="sep"></div>'
+    +'<div class="r big"><span>PVP final</span><b>'+fmt(r.precio)+'</b></div>'
+    +'</div>';
+  if(r.minAplicado)html+='<span class="pill">Tarifa mínima aplicada ('+fmt(r.precioMin)+')</span>';
+  html+='<button class="btn" style="width:100%;margin-top:16px" onclick="saveAsOrder()">Guardar como pedido</button>';
+  return html;
+}
+
+/* ===== pedidos ===== */
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function estColor(e){return {'Presupuesto enviado':'#7A8099','Aceptado':'#4D9FFF','En producción':'#F4B740','Post-procesado':'#B87CFF','Listo para entregar':'#00DDB8','Entregado':'#34D399'}[e]||'#7A8099';}
+function saveAsOrder(){ var r=compute(),c=S.calc_state; S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Presupuesto enviado',is_shared:!!c.is_shared,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); save(); go('ord'); }
+function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Presupuesto enviado'}); save(); renderOrders(); }
+function setOrd(id,f,v){ var o=S.orders.filter(function(x){return x.id===id;})[0]; if(!o)return; if(f==='precio_final'||f==='importe_pagado')v=num(v); o[f]=v; save(); updateOrdBadge(); var pe=document.getElementById('pend-'+id); if(pe){var p=num(o.precio_final)-num(o.importe_pagado); pe.innerHTML=p>0.005?'<span class="pend">'+eur(p)+'</span>':'<span class="paid">Pagado</span>';} }
+function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
+var ordQ='';
+function ordSearch(v){ ordQ=(v||'').toLowerCase(); renderOrders(); }
+function activeOrders(){ return S.orders.filter(function(o){return o.estado!=='Entregado';}); }
+function updateOrdBadge(){ var b=document.getElementById('ordBadge'); if(b){var n=activeOrders().length; b.innerHTML=n?'<span class="badge-amber">'+n+'</span>':'';} }
+function renderOrders(){
+  var list=S.orders.filter(function(o){ if(!ordQ)return true; return (((o.number||'')+' '+(o.cliente||'')+' '+(o.descripcion||'')).toLowerCase().indexOf(ordQ)>=0); });
+  var rows=list.map(function(o){
+    var pend=num(o.precio_final)-num(o.importe_pagado);
+    var estOpts=ORDER_LIFECYCLE.map(function(e){return '<option'+(o.estado===e?' selected':'')+'>'+e+'</option>';}).join('');
+    return '<tr><td style="white-space:nowrap"><b>'+esc(o.number)+'</b></td>'
+      +'<td><input value="'+esc(o.cliente)+'" placeholder="Cliente" onchange="setOrd(\''+o.id+'\',\'cliente\',this.value)"></td>'
+      +'<td><input value="'+esc(o.descripcion)+'" placeholder="Descripción" onchange="setOrd(\''+o.id+'\',\'descripcion\',this.value)"></td>'
+      +'<td><select class="est-sel" style="border-left:3px solid '+estColor(o.estado)+'" onchange="setOrd(\''+o.id+'\',\'estado\',this.value);renderOrders()">'+estOpts+'</select></td>'
+      +'<td style="text-align:right"><input type="number" step="0.01" style="text-align:right" value="'+esc(o.precio_final)+'" onchange="setOrd(\''+o.id+'\',\'precio_final\',this.value)"></td>'
+      +'<td style="text-align:right"><input type="number" step="0.01" style="text-align:right" value="'+esc(o.importe_pagado)+'" onchange="setOrd(\''+o.id+'\',\'importe_pagado\',this.value)"></td>'
+      +'<td style="text-align:right;white-space:nowrap" id="pend-'+o.id+'">'+(pend>0.005?'<span class="pend">'+eur(pend)+'</span>':'<span class="paid">Pagado</span>')+'</td>'
+      +'<td style="text-align:right"><button class="del" onclick="delOrder(\''+o.id+'\')">✕</button></td></tr>';
+  }).join('');
+  document.getElementById('view').innerHTML=
+    '<div class="h1">Pedidos</div><div class="h-sub">Presupuestos y pedidos. El ciclo de estados es el de la app de referencia.</div>'
+    +'<div class="ord-toolbar"><input class="inp ord-search" placeholder="Buscar nº, cliente o descripción…" value="'+esc(ordQ)+'" oninput="ordSearch(this.value)"><span class="sp"></span><button class="btn" onclick="newOrder()">＋ Nuevo pedido</button></div>'
+    +'<div class="card">'
+    +(list.length?'<table class="t"><thead><tr><th>Nº</th><th>Cliente</th><th>Descripción</th><th>Estado</th><th style="text-align:right">Precio</th><th style="text-align:right">Pagado</th><th style="text-align:right">Pendiente</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>':'<div class="empty">No hay pedidos. Crea uno o guarda un cálculo desde la Calculadora.</div>')
+    +'</div>';
+  updateOrdBadge();
+}
+
+/* ===== estadísticas ===== */
+function renderStats(){
+  var os=S.orders;
+  var facturado=os.filter(function(o){return o.estado==='Entregado';}).reduce(function(a,o){return a+num(o.precio_final);},0);
+  var pendiente=activeOrders().reduce(function(a,o){return a+Math.max(0,num(o.precio_final)-num(o.importe_pagado));},0);
+  var nped=os.length,nact=activeOrders().length;
+  var ticket=os.length?os.reduce(function(a,o){return a+num(o.precio_final);},0)/os.length:0;
+  var byEst=ORDER_LIFECYCLE.map(function(e){return {e:e,n:os.filter(function(o){return o.estado===e;}).length};}).filter(function(x){return x.n>0;});
+  var maxE=byEst.reduce(function(m,x){return Math.max(m,x.n);},1);
+  var estBars=byEst.length?byEst.map(function(x){var pct=Math.round(x.n/maxE*100);return '<div class="hb"><span class="name">'+esc(x.e)+'</span><span class="track"><i style="width:'+pct+'%;background:'+estColor(x.e)+'"></i></span><span class="val">'+x.n+'</span></div>';}).join(''):'<div class="empty">Sin pedidos todavía.</div>';
+  var months=[];var now=new Date();
+  for(var i=5;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('es-ES',{month:'short'}),v:0});}
+  os.filter(function(o){return o.estado==='Entregado'&&o.fecha;}).forEach(function(o){var k=String(o.fecha).slice(0,7);var m=months.filter(function(x){return x.key===k;})[0];if(m)m.v+=num(o.precio_final);});
+  var maxM=months.reduce(function(m,x){return Math.max(m,x.v);},1);
+  var monthCols=months.map(function(m){var h=Math.round(m.v/maxM*130);return '<div class="col"><span class="cv">'+(m.v?eur(m.v):'')+'</span><span class="bar2" style="height:'+h+'px"></span><span class="cl">'+m.label+'</span></div>';}).join('');
+  document.getElementById('view').innerHTML=
+    '<div class="h1">Estadísticas</div><div class="h-sub">Resumen de tus pedidos y facturación.</div>'
+    +'<div class="kpis">'
+    +'<div class="kpi"><div class="k-l">Facturado (entregados)</div><div class="k-v" style="color:var(--ac)">'+eur(facturado)+'</div></div>'
+    +'<div class="kpi"><div class="k-l">Pendiente de cobro</div><div class="k-v" style="color:#F4B740">'+eur(pendiente)+'</div></div>'
+    +'<div class="kpi"><div class="k-l">Pedidos / activos</div><div class="k-v">'+nped+' <span style="font-size:14px;color:var(--t2)">/ '+nact+'</span></div></div>'
+    +'<div class="kpi"><div class="k-l">Ticket medio</div><div class="k-v">'+eur(ticket)+'</div></div>'
+    +'</div>'
+    +'<div class="chartbox"><div class="card-h">Ingresos (entregados) — últimos 6 meses</div><div class="cbar">'+monthCols+'</div></div>'
+    +'<div class="chartbox"><div class="card-h">Pedidos por estado</div><div class="hbars">'+estBars+'</div></div>';
+}
+
+/* ===== inventario (stock de filamento) ===== */
+function addStock(){ S.filament_stock.push({material:(S.filament_types[0]||{}).name||'PLA',color:'Negro',remaining_g:1000,buy_threshold_g:150}); save(); renderInv(); }
+function setStock(i,f,v){ if(f==='remaining_g'||f==='buy_threshold_g')v=num(v); S.filament_stock[i][f]=v; save(); renderInv(); }
+function delStock(i){ S.filament_stock.splice(i,1); save(); renderInv(); }
+function renderInv(){
+  var rows=S.filament_stock.map(function(s,i){
+    var low=num(s.remaining_g)<=num(s.buy_threshold_g);
+    var mo=S.filament_types.map(function(f){return '<option'+(s.material===f.name?' selected':'')+'>'+esc(f.name)+'</option>';}).join('');
+    return '<tr><td><select onchange="setStock('+i+',\'material\',this.value)">'+mo+'</select></td>'
+      +'<td><input value="'+esc(s.color)+'" onchange="setStock('+i+',\'color\',this.value)"></td>'
+      +'<td class="'+(low?'low':'')+'"><input type="number" step="1" value="'+esc(s.remaining_g)+'" onchange="setStock('+i+',\'remaining_g\',this.value)"></td>'
+      +'<td><input type="number" step="1" value="'+esc(s.buy_threshold_g)+'" onchange="setStock('+i+',\'buy_threshold_g\',this.value)"></td>'
+      +'<td style="text-align:right">'+(low?'<span class="low" style="font-size:11px;margin-right:6px">Reponer</span>':'')+'<button class="del" onclick="delStock('+i+')">✕</button></td></tr>';
+  }).join('');
+  document.getElementById('view').innerHTML=
+    '<div class="h1">Inventario de filamento</div><div class="h-sub">Stock de bobinas. Se avisa cuando el restante baja del umbral de compra.</div>'
+    +'<div class="card">'
+    +(S.filament_stock.length?'<table class="t"><thead><tr><th>Material</th><th>Color</th><th>Restante (g)</th><th>Umbral compra (g)</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>':'<div class="empty">Sin bobinas registradas.</div>')
+    +'<div style="margin-top:16px"><button class="btn" onclick="addStock()">＋ Añadir bobina</button></div></div>';
+}
+
+/* ===== configuración (global + impresoras + materiales) ===== */
+function setGC(f,v){ if(f!=='money_unit'&&f!=='brand_color')v=num(v); S.global_config[f]=v; save(); }
+function setPr(i,f,v){ if(f!=='name')v=num(v); S.printers[i][f]=v; save(); }
+function addPr(){ S.printers.push({name:'Impresora '+(S.printers.length+1),material_diameter_mm:1.75,price_eur:0,depreciation_time_h:3000,service_costs_life_eur:0,energy_consumption_kwh:0.1}); save(); renderCfg(); }
+function delPr(i){ S.printers.splice(i,1); save(); renderCfg(); }
+function setFt(i,f,v){ if(f!=='name')v=num(v); S.filament_types[i][f]=v; save(); }
+function addFt(){ S.filament_types.push({name:'Material '+(S.filament_types.length+1),price_per_kg:20}); save(); renderCfg(); }
+function delFt(i){ S.filament_types.splice(i,1); save(); renderCfg(); }
+function resetCfg(){ if(!confirm('¿Restablecer la configuración a los valores del repositorio de referencia?'))return; var d=defData(); S.printers=d.printers; S.filament_types=d.filament_types; S.global_config=d.global_config; save(); renderCfg(); }
+function gcField(label,f,suf){ return '<div class="fg"><label class="lbl">'+label+'</label><div class="suffix"><input class="inp" type="number" step="0.01" value="'+esc(S.global_config[f])+'" oninput="setGC(\''+f+'\',this.value)"><span class="u">'+(suf||'')+'</span></div></div>'; }
+function renderCfg(){
+  var prRows=S.printers.map(function(p,i){
+    return '<tr><td><input value="'+esc(p.name)+'" onchange="setPr('+i+',\'name\',this.value)"></td>'
+     +'<td><input type="number" step="0.01" value="'+esc(p.price_eur)+'" onchange="setPr('+i+',\'price_eur\',this.value)"></td>'
+     +'<td><input type="number" step="1" value="'+esc(p.depreciation_time_h)+'" onchange="setPr('+i+',\'depreciation_time_h\',this.value)"></td>'
+     +'<td><input type="number" step="1" value="'+esc(p.service_costs_life_eur)+'" onchange="setPr('+i+',\'service_costs_life_eur\',this.value)"></td>'
+     +'<td><input type="number" step="0.01" value="'+esc(p.energy_consumption_kwh)+'" onchange="setPr('+i+',\'energy_consumption_kwh\',this.value)"></td>'
+     +'<td style="text-align:right"><button class="del" onclick="delPr('+i+')">✕</button></td></tr>';
+  }).join('');
+  var ftRows=S.filament_types.map(function(f,i){
+    return '<tr><td><input value="'+esc(f.name)+'" onchange="setFt('+i+',\'name\',this.value)"></td>'
+     +'<td><input type="number" step="0.01" value="'+esc(f.price_per_kg)+'" onchange="setFt('+i+',\'price_per_kg\',this.value)"></td>'
+     +'<td style="text-align:right"><button class="del" onclick="delFt('+i+')">✕</button></td></tr>';
+  }).join('');
+  document.getElementById('view').innerHTML=
+   '<div class="h1">Configuración</div><div class="h-sub">Parámetros de cálculo, impresoras y materiales — equivalentes a la configuración de la app de referencia.</div>'
+   +'<div class="card"><div class="card-h">Configuración global</div><div class="cfg-grid">'
+     +gcField('Coste de la energía','energy_cost_kwh','€/kWh')
+     +gcField('Coste de mano de obra','labor_cost_h','€/h')
+     +gcField('Precio mínimo','precio_minimo','€')
+     +'<div class="fg"><label class="lbl">Unidad monetaria</label><input class="inp" value="'+esc(S.global_config.money_unit)+'" oninput="setGC(\'money_unit\',this.value)"></div>'
+   +'</div></div>'
+   +'<div class="card"><div class="card-h">Impresoras</div>'
+     +'<table class="t"><thead><tr><th>Nombre</th><th>Precio (€)</th><th>Amortización (h)</th><th>Mant. vida (€)</th><th>Consumo (kWh)</th><th></th></tr></thead><tbody>'+prRows+'</tbody></table>'
+     +'<div style="margin-top:12px"><button class="btn ghost" onclick="addPr()">＋ Añadir impresora</button></div></div>'
+   +'<div class="card"><div class="card-h">Tipos de material</div>'
+     +'<table class="t"><thead><tr><th>Material</th><th>Precio (€/kg)</th><th></th></tr></thead><tbody>'+ftRows+'</tbody></table>'
+     +'<div style="margin-top:12px"><button class="btn ghost" onclick="addFt()">＋ Añadir material</button></div></div>'
+   +'<div class="card"><div class="card-h">Fórmula de cálculo</div><div class="note">Filamento = peso × €/kg ÷ 1000. Electricidad = horas × consumo × €/kWh. Deterioro = horas × (precio + mantenimiento) ÷ amortización. Diseño, búsqueda, soportes y post-procesado se valoran en horas × €/h. <b>Coste bruto</b> = filamento + electricidad + deterioro. Precio = bruto × markup + bruto × prob. error + complementos, con recargo de urgencia y redondeo a múltiplos de 0,05 €; nunca por debajo del precio mínimo.</div></div>'
+   +'<div style="margin:16px 0"><button class="btn ghost" onclick="resetCfg()">Restablecer valores de referencia</button></div>';
+}
+
+/* ===== modal ===== */
+function openModal(html){ var m=document.getElementById('modal'); if(!m){m=document.createElement('div');m.id='modal';document.body.appendChild(m);} m.className='modal-bg'; m.innerHTML='<div class="modal">'+html+'</div>'; m.onclick=function(e){if(e.target===m)closeModal();}; }
+function closeModal(){ var m=document.getElementById('modal'); if(m){m.className='';m.innerHTML='';} }
+
+/* ===== dashboard ===== */
+function acceptedOrders(){return S.orders.filter(function(o){return ['Aceptado','En producción','Post-procesado','Listo para entregar','Entregado'].indexOf(o.estado)>=0;});}
+function pendingOrders(){return acceptedOrders().filter(function(o){return !o.archived && num(o.importe_pagado)<num(o.precio_final);});}
+function parseFecha(s){ if(!s)return null; if(/^\d{4}-\d{2}-\d{2}$/.test(s)){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);} var d=new Date(s); return isNaN(d.getTime())?null:d; }
+function monthRevenue(off){ var now=new Date(); var t=new Date(now.getFullYear(),now.getMonth()-off,1); return acceptedOrders().filter(function(o){var d=parseFecha(o.fecha);return d&&d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth();}).reduce(function(s,o){return s+num(o.precio_final);},0); }
+function renderDash(){
+  var os=S.orders;
+  var tm=monthRevenue(0), lm=monthRevenue(1);
+  var growth=lm===0?0:((tm-lm)/lm*100);
+  var pend=pendingOrders();
+  var pendAmt=pend.reduce(function(s,o){return s+(num(o.precio_final)-num(o.importe_pagado));},0);
+  var acc=acceptedOrders();
+  var totalRev=acc.reduce(function(s,o){return s+num(o.precio_final);},0);
+  var totalProfit=acc.reduce(function(s,o){return s+num(o.beneficio_neto);},0);
+  var margin=totalRev>0?totalProfit/totalRev*100:0;
+  var low=S.filament_stock.filter(function(s){return num(s.remaining_g)<=num(s.buy_threshold_g);}).length;
+  var recent=os.slice().sort(function(a,b){return String(b.created_at||b.fecha||'').localeCompare(String(a.created_at||a.fecha||''));}).slice(0,5);
+  var counts={}; os.forEach(function(o){var s=o.estado||'Desconocido';counts[s]=(counts[s]||0)+1;});
+  var sorted=Object.keys(counts).map(function(k){return [k,counts[k]];}).sort(function(a,b){return b[1]-a[1];});
+  var total=os.length||1, accDeg=0, segs=[], legend='';
+  sorted.forEach(function(e){var col=estColor(e[0]);var pct=e[1]/total*100;segs.push(col+' '+accDeg.toFixed(2)+'% '+(accDeg+pct).toFixed(2)+'%');accDeg+=pct;legend+='<div class="lg"><span class="dot" style="background:'+col+'"></span>'+esc(e[0])+' <span style="margin-left:auto;color:var(--t2)">'+e[1]+'</span></div>';});
+  var donut=os.length?'<div class="donut" style="background:conic-gradient('+segs.join(',')+')"></div>':'<div class="empty">Sin pedidos</div>';
+  var recentHTML=recent.length?recent.map(function(o){var col=estColor(o.estado);return '<div class="ri"><div class="ic"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div style="flex:1;min-width:0"><div class="who">'+esc(o.cliente||'—')+'</div><div class="desc">'+esc(o.descripcion||'')+'</div></div><div style="text-align:right"><div style="font-weight:700;font-size:13px">'+eur(o.precio_final)+'</div><span class="stbadge" style="color:'+col+'">'+esc(o.estado)+'</span></div></div>';}).join(''):'<div class="empty">No hay pedidos registrados.</div>';
+  document.getElementById('view').innerHTML=
+   '<div class="h1">Resumen de negocio</div><div class="h-sub">'+esc(new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'}))+'</div>'
+   +'<div class="kpis">'
+   +'<div class="kpi"><div class="k-top"><span class="k-ic" style="background:rgba(0,221,184,.12);color:var(--ac)">€</span><span class="grow" style="color:'+(growth>=0?'#34D399':'#FF6B6B')+'">'+(growth>=0?'▲':'▼')+' '+Math.abs(growth).toFixed(1)+'%</span></div><div class="k-l">Ingresos este mes</div><div class="k-v">'+eur(tm)+'</div><div class="k-foot">vs '+eur(lm)+' mes anterior</div></div>'
+   +'<div class="kpi"><div class="k-top"><span class="k-ic" style="background:rgba(244,183,64,.14);color:#F4B740">◷</span><span class="grow" style="color:#F4B740">'+pend.length+' pedidos</span></div><div class="k-l">Pendiente de cobro</div><div class="k-v" style="color:#F4B740">'+eur(pendAmt)+'</div><div class="k-foot">Envíos no facturados o parciales</div></div>'
+   +'<div class="kpi"><div class="k-top"><span class="k-ic" style="background:rgba(52,211,153,.14);color:#34D399">%</span></div><div class="k-l">Margen de beneficio medio</div><div class="k-v" style="color:#34D399">'+margin.toFixed(1)+'%</div><div class="k-foot">Sobre histórico de aceptados</div></div>'
+   +'<div class="kpi"'+(low>0?' style="box-shadow:0 0 0 1px rgba(255,107,107,.4)"':'')+'><div class="k-top"><span class="k-ic" style="background:rgba(255,107,107,.14);color:#FF6B6B">▦</span>'+(low>0?'<span class="grow" style="color:#FF6B6B">¡ATENCIÓN!</span>':'')+'</div><div class="k-l">Stock bajo mínimos</div><div class="k-v" style="color:#FF6B6B">'+low+' <span style="font-size:13px;color:var(--t2);font-weight:400">materiales</span></div><div class="k-foot">'+(low>0?'Necesitas reponer material':'Inventario al día')+'</div></div>'
+   +'</div>'
+   +'<div class="grid2" style="grid-template-columns:1.6fr 1fr">'
+   +'<div><div class="card-h" style="margin-bottom:10px">Actividad reciente</div><div class="card dash-recent">'+recentHTML+'</div></div>'
+   +'<div><div class="card-h" style="margin-bottom:10px">Estado general</div><div class="card">'+donut+'<div class="legend">'+legend+'</div><div style="border-top:1px solid var(--border);margin-top:14px;padding-top:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span style="color:var(--t2)">Pedidos totales</span><b>'+os.length+'</b></div><div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:var(--t2)">Tasa de aceptación</span><b style="color:var(--ac)">'+(os.length?Math.round(acc.length/os.length*100):0)+'%</b></div></div></div></div>'
+   +'</div>';
+}
+
+/* ===== clientes ===== */
+function clientStats(name){ var co=S.orders.filter(function(o){return o.cliente===name;}); return {count:co.length,total:co.reduce(function(s,o){return s+num(o.precio_final);},0),orders:co}; }
+var cliQ='';
+function cliSearch(v){cliQ=(v||'').toLowerCase();renderClients();}
+function newClient(){ editClientForm({id:'',name:'',email:'',phone:'',tax_id:'',address:'',default_discount:0,notes:''}); }
+function editClientById(id){ var c=S.clients.filter(function(x){return x.id===id;})[0]; if(c)editClientForm(c); }
+function editClientForm(c){
+  openModal('<h3>'+(c.id?'Editar cliente':'Nuevo cliente')+'</h3>'
+   +'<div class="fg"><label class="lbl">Nombre completo</label><input class="inp" id="cf_name" value="'+esc(c.name)+'"></div>'
+   +'<div class="fg row"><div><label class="lbl">DNI / CIF</label><input class="inp" id="cf_tax" value="'+esc(c.tax_id)+'"></div><div><label class="lbl">Teléfono</label><input class="inp" id="cf_phone" value="'+esc(c.phone)+'"></div></div>'
+   +'<div class="fg"><label class="lbl">Email</label><input class="inp" id="cf_email" value="'+esc(c.email)+'"></div>'
+   +'<div class="fg"><label class="lbl">Dirección</label><input class="inp" id="cf_addr" value="'+esc(c.address)+'"></div>'
+   +'<div class="fg"><label class="lbl">Descuento predeterminado (%)</label><input class="inp" id="cf_disc" type="number" value="'+esc(c.default_discount||0)+'"></div>'
+   +'<div class="fg"><label class="lbl">Notas</label><textarea class="inp" id="cf_notes" rows="3">'+esc(c.notes)+'</textarea></div>'
+   +'<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveClient(\''+c.id+'\')">Guardar</button></div>');
+}
+function saveClient(id){
+  var name=document.getElementById('cf_name').value.trim(); if(!name){alert('El nombre es obligatorio');return;}
+  var obj={id:id||uid(),name:name,email:document.getElementById('cf_email').value.trim(),phone:document.getElementById('cf_phone').value.trim(),tax_id:document.getElementById('cf_tax').value.trim(),address:document.getElementById('cf_addr').value.trim(),default_discount:num(document.getElementById('cf_disc').value),notes:document.getElementById('cf_notes').value};
+  if(id){ S.clients=S.clients.map(function(c){return c.id===id?obj:c;}); } else { S.clients.push(obj); }
+  save(); closeModal(); renderClients();
+}
+function delClient(id){ var c=S.clients.filter(function(x){return x.id===id;})[0]; if(!c)return; if(!confirm('¿Eliminar a '+c.name+'? Sus pedidos no se borran.'))return; S.clients=S.clients.filter(function(x){return x.id!==id;}); save(); renderClients(); }
+function clientHistory(id){
+  var c=S.clients.filter(function(x){return x.id===id;})[0]; if(!c)return; var st=clientStats(c.name);
+  var rows=st.orders.map(function(o){return '<tr><td>'+esc(o.fecha||'-')+'</td><td>'+esc(o.descripcion||'')+'</td><td style="text-align:right">'+eur(o.precio_final)+'</td><td>'+esc(o.estado)+'</td></tr>';}).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--t2);padding:14px">Sin pedidos</td></tr>';
+  openModal('<h3>Historial: '+esc(c.name)+'</h3>'
+   +'<div class="kpis" style="grid-template-columns:1fr 1fr;margin-bottom:14px"><div class="kpi"><div class="k-l">Total pedidos</div><div class="k-v">'+st.count+'</div></div><div class="kpi"><div class="k-l">Total invertido</div><div class="k-v" style="color:var(--ac)">'+eur(st.total)+'</div></div></div>'
+   +'<table class="t"><thead><tr><th>Fecha</th><th>Descripción</th><th style="text-align:right">Total</th><th>Estado</th></tr></thead><tbody>'+rows+'</tbody></table>'
+   +'<div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Cerrar</button></div>');
+}
+function renderClients(){
+  var list=S.clients.map(function(c){var st=clientStats(c.name);return Object.assign({},c,{_c:st.count,_t:st.total});}).filter(function(c){if(!cliQ)return true;return ((c.name+' '+(c.email||'')+' '+(c.tax_id||'')+' '+(c.phone||'')).toLowerCase().indexOf(cliQ)>=0);});
+  var rows=list.map(function(c){
+    return '<tr><td><div style="font-weight:700">'+esc(c.name)+'</div><div style="font-size:11.5px;color:var(--t2)">'+esc(c.email||'Sin email')+'</div></td>'
+     +'<td>'+esc(c.tax_id||'')+'</td><td>'+esc(c.phone||'')+'</td>'
+     +'<td style="text-align:center"><button class="btn ghost" style="padding:4px 11px" onclick="clientHistory(\''+c.id+'\')">'+c._c+'</button></td>'
+     +'<td style="text-align:right;font-weight:600">'+eur(c._t)+'</td>'
+     +'<td style="text-align:right;white-space:nowrap"><button class="del" title="Editar" onclick="editClientById(\''+c.id+'\')">✎</button> <button class="del" title="Historial" onclick="clientHistory(\''+c.id+'\')">↺</button> <button class="del" title="Eliminar" onclick="delClient(\''+c.id+'\')">✕</button></td></tr>';
+  }).join('');
+  document.getElementById('view').innerHTML=
+   '<div class="h1">Gestión de clientes</div><div class="h-sub">Tus clientes con su nº de pedidos y total invertido (calculado desde Pedidos).</div>'
+   +'<div class="ord-toolbar"><input class="inp ord-search" placeholder="Buscar cliente…" value="'+esc(cliQ)+'" oninput="cliSearch(this.value)"><span class="sp"></span><button class="btn" onclick="newClient()">＋ Nuevo cliente</button></div>'
+   +'<div class="card">'
+   +(list.length?'<table class="t"><thead><tr><th>Nombre</th><th>DNI/CIF</th><th>Teléfono</th><th style="text-align:center">Pedidos</th><th style="text-align:right">Total invertido</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>':'<div class="empty">No hay clientes registrados.</div>')
+   +'</div>';
+}
+
+
+/* ===== init ===== */
+var hadLocal=false; try{hadLocal=!!localStorage.getItem(SK);}catch(e){}
+load(); go('dash');
+(function(){ if(window.DPCloud){ try{ window.DPCloud.ready.then(function(){ if(window.DPCloud.currentUser()){ window.DPCloud.loadState('3dcalc').then(function(data){ if(data&&typeof data==='object'&&!hadLocal){ localStorage.setItem(SK,JSON.stringify(data)); load(); render(); } }).catch(function(){}); } }); }catch(e){} } })();
+</script>
+</body>
+</html>

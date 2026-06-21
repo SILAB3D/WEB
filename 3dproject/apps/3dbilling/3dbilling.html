@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3DBilling — SILAB3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="../../firebase/dpcloud.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080F; --glass:rgba(255,255,255,.04); --border:rgba(255,255,255,.08);
+  --t1:#E8EBF4; --t2:#7A8099; --t3:#3A3D52; --ac:#F4B740; --ac2:#E89A2B;
+}
+[data-theme=light]{ --bg:#F5F6FA; --glass:rgba(0,0,0,.03); --border:rgba(0,0,0,.10); --t1:#1A1C24; --t2:#5A6172; --t3:#AEB4C2; }
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--t1)}
+body{height:100vh;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+#dp-shell{position:fixed;top:0;left:0;right:0;height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;z-index:9500;background:rgba(10,11,18,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+[data-theme=light] #dp-shell{background:rgba(255,255,255,.80);border-bottom:1px solid rgba(0,0,0,.08)}
+#dp-shell .dp-back{display:flex;align-items:center;gap:6px;height:30px;padding:0 13px 0 9px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;font:500 13px 'Outfit',sans-serif;cursor:pointer}
+#dp-shell .dp-back:hover{background:rgba(255,255,255,.07)}
+[data-theme=light] #dp-shell .dp-back{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+#dp-shell .dp-appicon{width:27px;height:27px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(244,183,64,.16);border:1px solid rgba(244,183,64,.32)}
+#dp-shell .dp-title{font-size:13px;font-weight:600;color:#E8EBF4}
+[data-theme=light] #dp-shell .dp-title{color:#1A1C24}
+#dp-shell .dp-sp{flex:1}
+#dp-shell .dp-toggle{width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;display:flex;align-items:center;justify-content:center;cursor:pointer}
+[data-theme=light] #dp-shell .dp-toggle{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+.top{position:fixed;top:44px;left:0;right:0;height:54px;z-index:40;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.burger{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.burger:hover{background:var(--glass)}
+.chip{width:30px;height:30px;border-radius:9px;background:rgba(244,183,64,.16);border:1px solid rgba(244,183,64,.32);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tname{font-weight:700;font-size:16px;letter-spacing:-.2px}
+.sp{flex:1}
+.tbtn{height:36px;padding:0 15px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t1);font:600 13px 'Outfit',sans-serif;display:flex;align-items:center;gap:7px}
+.tbtn:hover{background:var(--glass)}
+.tbtn.primary{border:none;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#3a2400}
+.layout{position:fixed;top:98px;left:0;right:0;bottom:0;display:flex}
+.side{width:248px;flex-shrink:0;border-right:1px solid var(--border);background:var(--glass);display:flex;flex-direction:column;padding:14px 12px;overflow-y:auto;transition:margin-left .25s ease}
+body.side-off .side{margin-left:-249px}
+.cta{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;border:none;border-radius:12px;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#3a2400;font:700 13.5px 'Outfit',sans-serif;margin-bottom:14px}
+.cta:hover{filter:brightness(1.05)}
+.side-h{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t2);margin:6px 4px 8px}
+.rlist{display:flex;flex-direction:column;gap:5px;flex:1}
+.ritem{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:background .15s}
+.ritem:hover{background:var(--glass)}
+.ritem.on{background:rgba(244,183,64,.1);border-color:rgba(244,183,64,.25)}
+.ritem .ri-main{flex:1;min-width:0}
+.ritem .ri-num{font-size:12.5px;font-weight:700}
+.ritem .ri-sub{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ritem .ri-tot{font-size:12px;font-weight:700;color:var(--ac)}
+.ritem .ri-del{opacity:0;border:none;background:transparent;color:var(--t2);font-size:14px;padding:2px 4px;border-radius:6px}
+.ritem:hover .ri-del{opacity:1}
+.ritem .ri-del:hover{color:#FF7A7A;background:rgba(255,77,77,.1)}
+.side-bottom{margin-top:auto;padding-top:12px;border-top:1px solid var(--border)}
+.side-bottom button{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t2);font:600 12.5px 'Outfit',sans-serif}
+.side-bottom button:hover{color:var(--t1);background:var(--glass)}
+.main{flex:1;overflow-y:auto;padding:28px 24px 60px;display:flex;justify-content:center}
+.empty{margin:auto;text-align:center;color:var(--t2);max-width:340px}
+.empty .e-ic{font-size:42px;margin-bottom:12px}
+.empty h3{font-size:18px;color:var(--t1);margin-bottom:8px;font-weight:600}
+.empty p{font-size:13.5px;line-height:1.6;margin-bottom:18px}
+.sheet{width:760px;max-width:100%;background:#fff;color:#1a1a1a;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:42px 46px;font-size:14px}
+.sheet .gr{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:hidden;resize:none;display:block}
+.doc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:22px;border-bottom:2px solid #ECECEC}
+.dh-brand{display:flex;gap:14px;align-items:center}
+.dh-logo{width:74px;height:74px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dh-logo img{max-width:100%;max-height:100%;object-fit:contain}
+.dh-company{font-family:'DM Serif Display',serif;font-size:24px;color:#111;letter-spacing:.5px}
+.dh-slogan{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-top:3px}
+.dh-meta{text-align:right;flex-shrink:0;min-width:170px}
+.dh-title{font-size:22px;font-weight:800;letter-spacing:1px;color:#111}
+.dh-num textarea{border:none;text-align:right;font-family:ui-monospace,monospace;font-size:12px;color:#666;background:transparent;width:100%;margin-top:4px}
+.dh-date input{border:none;text-align:right;font-size:12px;color:#666;background:transparent;font-family:inherit;width:100%;margin-top:2px}
+.doc-client{display:flex;gap:24px;margin:18px 0 6px}
+.dc-field{flex:1}
+.dc-field label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#999;margin-bottom:3px}
+.dc-field textarea{width:100%;border:none;border-bottom:1px solid #E2E2E2;padding:4px 0;font-size:14px;color:#1a1a1a;background:transparent;line-height:1.4}
+.dc-field textarea:focus{outline:none;border-bottom-color:var(--ac)}
+table.lines{width:100%;border-collapse:collapse;margin-top:18px;table-layout:fixed}
+table.lines th{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#999;text-align:left;padding:8px 8px;border-bottom:1.5px solid #E8E8E8}
+table.lines th.num,table.lines td.num{text-align:right;width:96px}
+table.lines th.u,table.lines td.u{text-align:center;width:62px}
+table.lines th.x,table.lines td.x{width:30px}
+table.lines td{padding:6px 8px;border-bottom:1px solid #F0F0F0;vertical-align:top}
+table.lines textarea{width:100%;border:none;background:transparent;font-size:13.5px;color:#1a1a1a;font-family:inherit;line-height:1.45}
+table.lines textarea:focus{outline:none}
+table.lines td.num textarea{text-align:right;font-weight:600}
+table.lines td.u textarea{text-align:center}
+.cell-name textarea{font-weight:600}
+.cell-sub textarea{color:#666;font-size:12.5px}
+.row-del{border:none;background:transparent;color:#CFCFCF;font-size:15px;padding:2px}
+.row-del:hover{color:#E5484D}
+.add-line{margin-top:12px;display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:1px dashed #D5D5D5;border-radius:9px;background:transparent;color:#666;font:600 12.5px 'Outfit',sans-serif}
+.add-line:hover{border-color:var(--ac);color:var(--ac2)}
+.doc-total{display:flex;justify-content:flex-end;align-items:baseline;gap:16px;margin-top:26px;padding-top:18px;border-top:2px solid #ECECEC}
+.dt-label{font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#888}
+.dt-value{font-size:34px;font-weight:800;color:#111;letter-spacing:-.5px}
+.doc-note{margin-top:24px;font-size:10.5px;color:#9A9A9A;line-height:1.6;border-top:1px solid #F0F0F0;padding-top:14px}
+.doc-note a{color:var(--ac2);text-decoration:none}
+.veil{position:fixed;inset:0;background:rgba(7,8,15,.7);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.veil.open{display:flex}
+.modal{width:540px;max-width:100%;max-height:88vh;overflow:auto;background:#0F111C;border:1px solid var(--border);border-radius:20px;padding:26px}
+[data-theme=light] .modal{background:#fff}
+.modal h2{font-size:18px;font-weight:600;margin-bottom:4px}
+.modal .m-sub{font-size:13px;color:var(--t2);margin-bottom:18px}
+.preset-row{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid var(--border);border-radius:12px;margin-bottom:9px;cursor:pointer}
+.preset-row.on{border-color:var(--ac);background:rgba(244,183,64,.08)}
+.preset-row .pr-logo{width:42px;height:42px;border-radius:8px;background:var(--glass);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.preset-row .pr-logo img{max-width:100%;max-height:100%;object-fit:contain}
+.preset-row .pr-info{flex:1;min-width:0}
+.preset-row .pr-name{font-weight:600;font-size:14px}
+.preset-row .pr-meta{font-size:11.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preset-row .pr-del{border:none;background:transparent;color:var(--t2);font-size:14px;padding:4px}
+.preset-row .pr-del:hover{color:#FF7A7A}
+.mfield{margin-bottom:12px}
+.mfield label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.mfield input{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--t1);font-size:14px;padding:10px 12px;outline:none}
+.mfield input:focus{border-color:var(--ac)}
+.m-actions{display:flex;gap:10px;margin-top:8px}
+.btn{padding:11px 16px;border-radius:11px;border:none;font:600 13.5px 'Outfit',sans-serif}
+.btn.primary{background:linear-gradient(120deg,var(--ac),var(--ac2));color:#3a2400;flex:1}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--t2)}
+.btn.ghost:hover{color:var(--t1)}
+.logo-up{display:flex;align-items:center;gap:12px}
+.logo-up .prev{width:50px;height:50px;border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--glass)}
+.logo-up .prev img{max-width:100%;max-height:100%;object-fit:contain}
+@media print{
+  @page{margin:14mm}
+  #dp-shell,.top,.side,.add-line,.row-del,.veil,.side-bottom{display:none!important}
+  body{height:auto;overflow:visible;background:#fff}
+  .layout{position:static;display:block}
+  .main{display:block;padding:0;overflow:visible}
+  .sheet{width:100%;max-width:100%;box-shadow:none;border-radius:0;padding:0}
+}
+</style>
+</head>
+<body>
+<div id="dp-shell">
+  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    3DProject
+  </button>
+  <span class="dp-appicon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+  <span class="dp-title">3DBilling</span>
+  <span class="dp-sp"></span>
+  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
+</div>
+<div class="top">
+  <button class="burger" onclick="document.body.classList.toggle('side-off')" title="Mostrar u ocultar el panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <span class="chip"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+  <span class="tname">3DBilling</span>
+  <span class="sp"></span>
+  <button class="tbtn" onclick="duplicateReceipt()" id="btn-dup" title="Duplicar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> Duplicar</button>
+  <button class="tbtn primary" onclick="printPDF()" id="btn-print"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg> Imprimir / PDF</button>
+</div>
+<div class="layout">
+  <aside class="side" id="side">
+    <button class="cta" onclick="newReceipt()"><svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg> Nuevo recibo</button>
+    <div class="side-h">Recibos</div>
+    <div class="rlist" id="rlist"></div>
+    <div class="side-bottom">
+      <button onclick="openPresets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg> Cabecera (presets)</button>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<div class="veil" id="presetVeil" onclick="if(event.target===this)closePresets()">
+  <div class="modal">
+    <h2>Presets de cabecera</h2>
+    <p class="m-sub">Elige la cabecera del recibo o crea una nueva (logo, empresa y lema).</p>
+    <div id="presetList"></div>
+    <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px">
+      <div class="mfield"><label>Nombre del preset</label><input id="pf-name" placeholder="Ej: SILAB3D"></div>
+      <div class="mfield"><label>Empresa</label><input id="pf-company" placeholder="SILAB3D"></div>
+      <div class="mfield"><label>Lema</label><input id="pf-slogan" placeholder="INNOVACIÓN CAPA A CAPA"></div>
+      <div class="mfield"><label>Logo</label>
+        <div class="logo-up"><span class="prev" id="pf-prev">—</span>
+          <button class="btn ghost" onclick="document.getElementById('pf-logo').click()">Cargar logo…</button>
+          <input type="file" id="pf-logo" accept="image/*" style="display:none">
+        </div>
+      </div>
+      <div class="m-actions">
+        <button class="btn ghost" onclick="closePresets()">Cerrar</button>
+        <button class="btn primary" onclick="savePreset()">Guardar preset</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function ic(t){return t==='dark'
+  ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+  :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('dp3-theme',t);}catch(e){}var b=document.getElementById('dpThemeBtn');if(b)b.innerHTML=ic(t);if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}}
+window.dpToggleTheme=function(){applyTheme((document.documentElement.getAttribute('data-theme')||'dark')==='dark'?'light':'dark');};
+window.dpHome=function(){if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'home'},'*');}catch(e){}}else{window.location.href='../../index.html';}};
+window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='theme'&&d.theme){applyTheme(d.theme);}});
+(function(){var p=null;try{p=new URLSearchParams(location.search).get('dptheme');}catch(e){}var s=null;try{s=localStorage.getItem('dp3-theme');}catch(e){}applyTheme(p||s||'dark');})();
+function grow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight)+'px'; }
+var SK='dp3_billing';
+var S={receipts:[],presets:[],seq:0,cur:null};
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d==='object')S=d;}catch(e){} if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0;
+  if(!S.presets.length){ S.presets.push({id:'silab', name:'SILAB3D', company:'SILAB3D', slogan:'INNOVACIÓN CAPA A CAPA', logo:''}); } }
+var saveT=null;
+function save(){ try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ window.DPCloud.saveState('billing',S); } }catch(e){} }
+function eur(n){ n=Number(n)||0; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
+function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0]; }
+function cur(){ return S.receipts.filter(function(r){return r.id===S.cur;})[0] || null; }
+function total(r){ var t=0; (r.lines||[]).forEach(function(l){ t+=Number(l.amount)||0; }); return t; }
+function todayISO(){ var d=new Date(); return d.toISOString().slice(0,10); }
+function newReceipt(){
+  S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var num='SL-'+y+'-'+String(S.seq).padStart(3,'0');
+  var r={id:uid(),number:num,date:todayISO(),presetId:(S.presets[0]&&S.presets[0].id)||'silab',client:{name:'',email:''},
+    lines:[{name:'',desc:'',materials:'',units:1,amount:0}],created:Date.now()};
+  S.receipts.unshift(r); S.cur=r.id; save(); renderSidebar(); renderSheet();
+}
+function selectReceipt(id){ S.cur=id; renderSidebar(); renderSheet(); }
+function deleteReceipt(id,ev){ if(ev)ev.stopPropagation(); if(!confirm('¿Eliminar este recibo?'))return; S.receipts=S.receipts.filter(function(r){return r.id!==id;}); if(S.cur===id)S.cur=(S.receipts[0]&&S.receipts[0].id)||null; save(); renderSidebar(); renderSheet(); }
+function duplicateReceipt(){ var r=cur(); if(!r)return; S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var c=JSON.parse(JSON.stringify(r)); c.id=uid(); c.number='SL-'+y+'-'+String(S.seq).padStart(3,'0'); c.date=todayISO(); c.created=Date.now(); S.receipts.unshift(c); S.cur=c.id; save(); renderSidebar(); renderSheet(); }
+function renderSidebar(){
+  var el=document.getElementById('rlist');
+  if(!S.receipts.length){ el.innerHTML='<div style="color:var(--t2);font-size:12.5px;padding:10px 4px;line-height:1.5">No hay recibos. Crea uno con “Nuevo recibo”.</div>'; return; }
+  el.innerHTML=S.receipts.map(function(r){
+    return '<div class="ritem'+(r.id===S.cur?' on':'')+'" onclick="selectReceipt(\''+r.id+'\')">'
+      +'<div class="ri-main"><div class="ri-num">'+esc(r.number)+'</div><div class="ri-sub">'+esc(r.client&&r.client.name?r.client.name:'Sin cliente')+'</div></div>'
+      +'<span class="ri-tot">'+eur(total(r))+'</span>'
+      +'<button class="ri-del" onclick="deleteReceipt(\''+r.id+'\',event)" title="Eliminar">✕</button></div>';
+  }).join('');
+}
+function upd(field,val){ var r=cur(); if(!r)return; if(field==='client.name')r.client.name=val; else if(field==='client.email')r.client.email=val; else if(field==='date')r.date=val; else if(field==='number')r.number=val; save(); renderSidebar(); }
+function updLine(i,field,val){ var r=cur(); if(!r||!r.lines[i])return; r.lines[i][field]=val; if(field==='amount'){ var tv=document.getElementById('docTotal'); if(tv)tv.textContent=eur(total(r)); renderSidebar(); } save(); }
+function addLine(){ var r=cur(); if(!r)return; r.lines.push({name:'',desc:'',materials:'',units:1,amount:0}); save(); renderSheet(); }
+function removeLine(i){ var r=cur(); if(!r)return; r.lines.splice(i,1); if(!r.lines.length)r.lines.push({name:'',desc:'',materials:'',units:1,amount:0}); save(); renderSheet(); renderSidebar(); }
+function logoHTML(p){
+  if(p&&p.logo){ return '<img src="'+p.logo+'" alt="logo">'; }
+  return '<img src="logo.png" alt="logo" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
+    +'<span style="display:none;align-items:center;justify-content:center;width:100%;height:100%;color:#bbb">'
+    +'<svg width="58" height="58" viewBox="0 0 64 64" fill="none" stroke="#1a1a1a" stroke-width="2"><path d="M8 16H24M40 16h16M8 16v32M56 16v32M20 28h12M36 28h8M22 22h20v12l-6 6h-8l-6-6zM30 12h4v10h-4zM28 44h8M30 44l2 4 2-4M8 48h22l-6-6M56 48H40l-6 6"/></svg></span>';
+}
+function renderSheet(){
+  var main=document.getElementById('main'); var r=cur();
+  if(!r){ main.innerHTML='<div class="empty"><div class="e-ic">🧾</div><h3>Crea tu primer recibo</h3><p>Pulsa “Nuevo recibo” para empezar. Podrás añadir varios pedidos, elegir la cabecera y exportar a PDF.</p><button class="cta" style="max-width:200px;margin:0 auto" onclick="newReceipt()">＋ Nuevo recibo</button></div>'; return; }
+  var p=preset(r.presetId);
+  var rows=r.lines.map(function(l,i){
+    return '<tr>'
+      +'<td class="cell-name"><textarea rows="1" class="gr" placeholder="Nombre del pedido" oninput="grow(this);updLine('+i+',\'name\',this.value)">'+esc(l.name)+'</textarea></td>'
+      +'<td class="cell-sub"><textarea rows="1" class="gr" placeholder="Descripción" oninput="grow(this);updLine('+i+',\'desc\',this.value)">'+esc(l.desc)+'</textarea></td>'
+      +'<td class="cell-sub"><textarea rows="1" class="gr" placeholder="Material / color" oninput="grow(this);updLine('+i+',\'materials\',this.value)">'+esc(l.materials)+'</textarea></td>'
+      +'<td class="u"><textarea rows="1" class="gr" oninput="grow(this);updLine('+i+',\'units\',this.value)">'+esc(l.units)+'</textarea></td>'
+      +'<td class="num"><textarea rows="1" class="gr" inputmode="decimal" placeholder="0,00" oninput="grow(this);updLine('+i+',\'amount\',this.value.replace(\',\',\'.\'))">'+esc(l.amount)+'</textarea></td>'
+      +'<td class="x"><button class="row-del" onclick="removeLine('+i+')" title="Quitar">✕</button></td></tr>';
+  }).join('');
+  main.innerHTML='<div class="sheet">'
+    +'<div class="doc-head"><div class="dh-brand"><div class="dh-logo">'+logoHTML(p)+'</div>'
+      +'<div><div class="dh-company">'+esc(p.company||'SILAB3D')+'</div><div class="dh-slogan">'+esc(p.slogan||'')+'</div></div></div>'
+      +'<div class="dh-meta"><div class="dh-title">RECIBO</div>'
+      +'<div class="dh-num"><textarea rows="1" class="gr" oninput="grow(this);upd(\'number\',this.value)">'+esc(r.number)+'</textarea></div>'
+      +'<div class="dh-date"><input type="date" value="'+esc(r.date)+'" oninput="upd(\'date\',this.value)"></div></div></div>'
+    +'<div class="doc-client"><div class="dc-field"><label>Cliente</label><textarea rows="1" class="gr" placeholder="Nombre del cliente" oninput="grow(this);upd(\'client.name\',this.value)">'+esc(r.client.name)+'</textarea></div>'
+      +'<div class="dc-field"><label>Email / referencia</label><textarea rows="1" class="gr" placeholder="(opcional)" oninput="grow(this);upd(\'client.email\',this.value)">'+esc(r.client.email)+'</textarea></div></div>'
+    +'<table class="lines"><thead><tr><th>Pedido</th><th>Descripción</th><th>Material / color</th><th class="u">Uds.</th><th class="num">Importe</th><th class="x"></th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +'<button class="add-line" onclick="addLine()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir pedido</button>'
+    +'<div class="doc-total"><span class="dt-label">Total</span><span class="dt-value" id="docTotal">'+eur(total(r))+'</span></div>'
+    +'<div class="doc-note">Nuestros términos y condiciones generales están disponibles en nuestra web (<a href="https://silab3d.com" target="_blank">silab3d.com</a>) y se aplican a este presupuesto.</div>'
+    +'</div>';
+  setTimeout(function(){ document.querySelectorAll('.sheet .gr').forEach(function(t){ grow(t); }); },0);
+}
+function printPDF(){ if(!cur()){alert('Crea o selecciona un recibo primero.');return;} window.print(); }
+var pfLogo='';
+function openPresets(){ pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList(); document.getElementById('presetVeil').classList.add('open'); }
+function closePresets(){ document.getElementById('presetVeil').classList.remove('open'); }
+function renderPresetList(){
+  var r=cur(); var curId=r?r.presetId:null;
+  document.getElementById('presetList').innerHTML=S.presets.map(function(p){
+    var lg=p.logo?'<img src="'+p.logo+'">':'<span style="color:var(--t3);font-size:18px">🏷️</span>';
+    return '<div class="preset-row'+(p.id===curId?' on':'')+'" onclick="applyPreset(\''+p.id+'\')">'
+      +'<div class="pr-logo">'+lg+'</div>'
+      +'<div class="pr-info"><div class="pr-name">'+esc(p.name)+'</div><div class="pr-meta">'+esc(p.company)+' · '+esc(p.slogan||'')+'</div></div>'
+      +(p.id==='silab'?'':'<button class="pr-del" onclick="delPreset(\''+p.id+'\',event)" title="Eliminar">✕</button>')
+      +'</div>';
+  }).join('');
+}
+function applyPreset(id){ var r=cur(); if(r){ r.presetId=id; save(); renderSheet(); } renderPresetList(); }
+function delPreset(id,ev){ if(ev)ev.stopPropagation(); if(id==='silab')return; if(!confirm('¿Eliminar este preset?'))return; S.presets=S.presets.filter(function(p){return p.id!==id;}); S.receipts.forEach(function(r){ if(r.presetId===id)r.presetId=S.presets[0].id; }); save(); renderPresetList(); renderSheet(); }
+function savePreset(){
+  var name=document.getElementById('pf-name').value.trim(); var company=document.getElementById('pf-company').value.trim(); var slogan=document.getElementById('pf-slogan').value.trim();
+  if(!name||!company){ alert('Pon al menos nombre del preset y empresa.'); return; }
+  S.presets.push({id:uid(),name:name,company:company,slogan:slogan,logo:pfLogo||''});
+  save(); pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList();
+}
+document.getElementById('pf-logo').addEventListener('change',function(e){ var f=e.target.files&&e.target.files[0]; if(!f)return; var rd=new FileReader(); rd.onload=function(){ pfLogo=rd.result; document.getElementById('pf-prev').innerHTML='<img src="'+pfLogo+'">'; }; rd.readAsDataURL(f); });
+load();
+if(S.receipts.length) S.cur=S.receipts[0].id;
+renderSidebar(); renderSheet();
+(function(){
+  if(window.DPCloud){
+    try{ window.DPCloud.ready.then(function(){
+      if(window.DPCloud.currentUser()){
+        window.DPCloud.loadState('billing').then(function(data){
+          if(data && (!S.receipts.length)){ S=data; if(!Array.isArray(S.presets)||!S.presets.length)S.presets=[{id:'silab',name:'SILAB3D',company:'SILAB3D',slogan:'INNOVACIÓN CAPA A CAPA',logo:''}]; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; renderSidebar(); renderSheet(); }
+        }).catch(function(){});
+      }
+    }); }catch(e){}
+  }
+})();
+</script>
+</body>
+</html>

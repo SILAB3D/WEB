@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.gstatic.com; connect-src *;" />
+  <title>Dashboard — 3DProject Admin</title>
+  <link rel="stylesheet" href="css/app.css" />
+  <script type="module" src="../../../firebase/dpcloud.js"></script>
+</head>
+<body>
+<div id="dp-shell">
+  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    3DProject
+  </button>
+  <span class="dp-appicon" style="background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.30)"><svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.4" fill="none"/><path d="M11 5.5V11L14.5 13.5" stroke="#34D399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="1.4" fill="#34D399"/></svg></span>
+  <span class="dp-title">3DTracker</span>
+  <span class="dp-sp"></span>
+  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"></button>
+</div>
+
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <button class="sidebar-cta" onclick="openNewOrderModal()">＋ Nuevo pedido</button>
+
+      <button class="nav-item active" id="nav-orders">
+        <span class="nav-icon">📦</span> Pedidos
+      </button>
+      <button class="nav-item" id="nav-web" onclick="window.open('../frontend/index.html','_blank')">
+        <span class="nav-icon">🌍</span> Portal cliente
+      </button>
+
+      <div class="sidebar-bottom">
+        <button class="logout-btn" id="logout-btn">
+          <span>🚪</span> Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content">
+      <div class="topbar">
+        <div class="tb-left">
+          <button class="tb-burger" onclick="toggleSidebar()" title="Mostrar u ocultar el panel" aria-label="Panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          <span class="tb-chip"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.5" fill="none"/><path d="M11 5.7V11l3.4 2.4" stroke="#34D399" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div>
+            <div class="topbar-title">3DTracker</div>
+            <div class="topbar-subtitle" id="topbar-subtitle">Cargando...</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Buscar pedido o email..."
+            style="width:220px;"
+          />
+          <button class="btn btn-primary btn-sm" onclick="openNewOrderModal()">
+            + Nuevo pedido
+          </button>
+        </div>
+      </div>
+
+      <div class="page-body">
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total pedidos</div>
+            <div class="stat-value accent" id="stat-total">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Completados</div>
+            <div class="stat-value green" id="stat-done">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">En progreso</div>
+            <div class="stat-value yellow" id="stat-progress">—</div>
+          </div>
+        </div>
+
+        <!-- Tabla de pedidos -->
+        <div class="section-header">
+          <span class="section-title">Todos los pedidos</span>
+          <button class="btn btn-ghost btn-sm" id="refresh-btn" onclick="loadOrders()">↻ Actualizar</button>
+        </div>
+
+        <div class="orders-table-wrap">
+          <div id="table-loading" class="empty-state" style="padding:2rem;">
+            <div class="spinner" style="margin:0 auto 0.75rem;"></div>
+            <p>Cargando pedidos...</p>
+          </div>
+          <div id="table-empty" class="empty-state" style="display:none;">
+            <div class="icon">📭</div>
+            <p>Aún no hay pedidos.</p>
+            <button class="btn btn-primary btn-sm" onclick="openNewOrderModal()">Crear el primero</button>
+          </div>
+          <table id="orders-table" style="display:none;">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Cliente</th>
+                <th>Email</th>
+                <th>Pasos</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+
+      </div><!-- /page-body -->
+    </div><!-- /main-content -->
+
+  </div><!-- /app-layout -->
+
+  <!-- ── Modal: Nuevo pedido ───────────────────── -->
+  <div class="modal-overlay" id="new-order-modal" style="display:none;">
+    <div class="modal">
+      <h2 class="modal-title">➕ Nuevo pedido</h2>
+
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label" for="new-email">Email del cliente *</label>
+          <input type="email" id="new-email" placeholder="cliente@ejemplo.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-name">Nombre del cliente</label>
+          <input type="text" id="new-name" placeholder="Juan García" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-description">Descripción del proyecto</label>
+          <input type="text" id="new-description" placeholder="Carcasa robótica, PLA negro..." />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeNewOrderModal()">Cancelar</button>
+        <button class="btn btn-primary" id="create-order-btn" onclick="createOrder()">
+          Crear pedido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/web-bridge.js"></script>
+  <script src="js/dashboard.js"></script>
+
+<script>
+(function(){
+  var KEY='dp3-theme';
+  window.DP_LAUNCHER='../../../index.html';
+  function inFrame(){return window.self!==window.top;}
+  function param(){try{return new URLSearchParams(location.search).get('dptheme');}catch(e){return null;}}
+  function store(t){try{localStorage.setItem(KEY,t);}catch(e){}}
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function ic(t){return t==='dark'
+    ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+    :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+  window.dpApplyTheme=function(t,bc){t=(t==='light')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);store(t);
+    var b=document.getElementById('dpThemeBtn');if(b)b.innerHTML=ic(t);
+    if(typeof window.dpOnTheme==='function'){try{window.dpOnTheme(t);}catch(e){}}
+    if(bc&&inFrame()){try{window.parent.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}};
+  window.dpToggleTheme=function(){var c=document.documentElement.getAttribute('data-theme')||'dark';window.dpApplyTheme(c==='dark'?'light':'dark',true);};
+  window.dpHome=function(){if(inFrame()){try{window.parent.postMessage({__dp3:true,type:'home'},'*');}catch(e){}}else{window.location.href=window.DP_LAUNCHER;}};
+  window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='theme'&&d.theme){window.dpApplyTheme(d.theme,false);}});
+  window.dpApplyTheme(param()||stored()||document.documentElement.getAttribute('data-theme')||'dark',false);
+})();
+</script>
+
+</body>
+</html>

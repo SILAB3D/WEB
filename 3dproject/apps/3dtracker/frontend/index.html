@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3DProject — Seguimiento de pedidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧊</text></svg>">
+<script type="module" src="../../../firebase/dpcloud.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080F; --glass:rgba(255,255,255,.04); --border:rgba(255,255,255,.08);
+  --t1:#E8EBF4; --t2:#7A8099; --t3:#3A3D52; --green:#34D399; --green2:#2AB87D;
+}
+[data-theme=light]{
+  --bg:#F5F6FA; --glass:rgba(0,0,0,.03); --border:rgba(0,0,0,.10);
+  --t1:#1A1C24; --t2:#5A6172; --t3:#AEB4C2;
+}
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--t1)}
+body{min-height:100vh;display:flex;flex-direction:column}
+.orbs{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.13}
+.orb1{width:480px;height:480px;background:var(--green);top:-140px;left:-90px}
+.orb2{width:360px;height:360px;background:#4D9FFF;bottom:-120px;right:-80px;opacity:.08}
+body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+[data-theme=light] body::after{background-image:radial-gradient(circle,rgba(0,0,0,.05) 1px,transparent 1px)}
+.bar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;height:56px;padding:0 18px;background:rgba(8,9,16,.6);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+[data-theme=light] .bar{background:rgba(255,255,255,.7)}
+.bar .logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.bar .chip{width:30px;height:30px;border-radius:9px;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.3);display:flex;align-items:center;justify-content:center}
+.bar .brand{font-family:'DM Serif Display',serif;font-style:italic;font-size:19px;color:var(--t1)}
+.bar .sp{flex:1}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
+.icon-btn:hover{background:var(--glass);border-color:rgba(255,255,255,.2)}
+[data-theme=light] .icon-btn:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.16)}
+.wrap{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--green);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:30px;padding:6px 14px;margin-bottom:24px}
+h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-1px;line-height:1.08}
+h1 .grad{background:linear-gradient(120deg,var(--green),var(--green2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:15px;font-weight:300;color:var(--t2);margin-top:14px;max-width:440px;line-height:1.6}
+.card{margin-top:34px;width:100%;max-width:480px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+[data-theme=light] .card{box-shadow:0 20px 50px rgba(20,30,50,.1)}
+.card label{display:block;text-align:left;font-size:12.5px;font-weight:600;color:var(--t2);margin-bottom:9px}
+.rowf{display:flex;gap:10px}
+.rowf input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--t1);font:500 16px 'Outfit',sans-serif;letter-spacing:.5px;padding:13px 15px;outline:none;text-transform:uppercase;transition:border-color .15s}
+.rowf input::placeholder{color:var(--t3);letter-spacing:0;text-transform:none;font-weight:400}
+.rowf input:focus{border-color:var(--green)}
+.rowf input.err{border-color:#FF6B6B;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.go{flex-shrink:0;border:none;border-radius:12px;background:linear-gradient(120deg,var(--green),var(--green2));color:#06281D;font:700 15px 'Outfit',sans-serif;padding:0 22px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .15s,transform .1s}
+.go:hover{opacity:.92}.go:active{transform:scale(.97)}
+.hint{text-align:left;font-size:12px;color:var(--t3);margin-top:12px}
+.hint code{font-family:ui-monospace,'SF Mono',monospace;color:var(--green);background:rgba(52,211,153,.08);padding:2px 6px;border-radius:6px}
+.feats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px;max-width:560px}
+.feat{flex:1;min-width:150px;background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px 14px}
+.feat .fi{font-size:20px;margin-bottom:7px}
+.feat h3{font-size:13.5px;font-weight:600;margin-bottom:3px}
+.feat p{font-size:11.5px;font-weight:300;color:var(--t2);line-height:1.5}
+.foot{position:relative;z-index:1;text-align:center;font-size:11.5px;color:var(--t3);padding:20px}
+</style>
+</head>
+<body>
+<div class="orbs"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+<header class="bar">
+  <button class="icon-btn" title="Volver a 3DProject" aria-label="Volver" onclick="if(window.self!==window.top){try{parent.postMessage({__dp3:true,type:'home'},'*')}catch(e){}}else{location.href='../../../index.html'}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+  <a class="logo" href="index.html">
+    <span class="chip"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.5" fill="none"/><path d="M11 5.7V11l3.4 2.4" stroke="#34D399" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="brand">3DProject</span>
+  </a>
+  <div class="sp"></div>
+  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema"></button>
+</header>
+<main class="wrap">
+  <div class="badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    Seguimiento en tiempo real
+  </div>
+  <h1>Sigue tu pedido<br><span class="grad">paso a paso</span></h1>
+  <p class="sub">Introduce el código de seguimiento que te hemos facilitado y consulta el estado de tu proyecto en directo.</p>
+  <div class="card">
+    <label for="code">Código de seguimiento</label>
+    <div class="rowf">
+      <input id="code" type="text" placeholder="3DP-XXXXXXXXXXXX" autocomplete="off" spellcheck="false">
+      <button class="go" onclick="buscar()">Buscar
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <p class="hint">Tiene el formato <code>3DP-XXXXXXXXXXXX</code>. Lo encuentras en el correo o enlace que te enviamos.</p>
+  </div>
+  <div class="feats">
+    <div class="feat"><div class="fi">⚡</div><h3>En directo</h3><p>El estado se actualiza solo, sin recargar.</p></div>
+    <div class="feat"><div class="fi">🔒</div><h3>Privado</h3><p>Solo accede quien tiene tu código.</p></div>
+    <div class="feat"><div class="fi">📋</div><h3>Detallado</h3><p>Cada etapa de tu proyecto, una a una.</p></div>
+  </div>
+</main>
+<footer class="foot">© 3DProject · Seguimiento de pedidos</footer>
+<script>
+function ic(t){return t==='dark'
+  ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+  :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('dp3-theme',t);}catch(e){}var b=document.getElementById('themeBtn');if(b)b.innerHTML=ic(t);}
+function toggleTheme(){applyTheme((document.documentElement.getAttribute('data-theme')||'dark')==='dark'?'light':'dark');}
+(function(){var t='dark';try{t=localStorage.getItem('dp3-theme')||'dark';}catch(e){}applyTheme(t);})();
+var input=document.getElementById('code');
+input.addEventListener('input',function(){var p=input.selectionStart;input.value=input.value.toUpperCase();try{input.setSelectionRange(p,p);}catch(e){}});
+input.addEventListener('keydown',function(e){if(e.key==='Enter')buscar();});
+function buscar(){
+  var code=(input.value||'').trim().toUpperCase();
+  if(!/^3DP-[A-Z0-9]{6,}$/.test(code)){input.classList.add('err');setTimeout(function(){input.classList.remove('err');},400);input.focus();return;}
+  window.location.href='track.html?code='+encodeURIComponent(code);
+}
+input.focus();
+</script>
+</body>
+</html>

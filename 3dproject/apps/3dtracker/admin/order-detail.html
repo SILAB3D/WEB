@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.gstatic.com; connect-src *;" />
+  <title>Detalle de Pedido — 3DProject Admin</title>
+  <link rel="stylesheet" href="css/app.css" />
+  <script type="module" src="../../../firebase/dpcloud.js"></script>
+</head>
+<body>
+<div id="dp-shell">
+  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    3DProject
+  </button>
+  <span class="dp-appicon" style="background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.30)"><svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.4" fill="none"/><path d="M11 5.5V11L14.5 13.5" stroke="#34D399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="1.4" fill="#34D399"/></svg></span>
+  <span class="dp-title">3DTracker</span>
+  <span class="dp-sp"></span>
+  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"></button>
+</div>
+
+
+  <div id="toast-container"></div>
+
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <button class="sidebar-cta" onclick="openAddStepModal()">＋ Añadir etapa</button>
+
+      <button class="nav-item" onclick="goBack()">
+        <span class="nav-icon">←</span> Volver
+      </button>
+      <button class="nav-item active">
+        <span class="nav-icon">📋</span> Detalle
+      </button>
+
+      <div class="sidebar-bottom">
+        <button class="logout-btn" id="logout-btn">
+          <span>🚪</span> Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content">
+      <div class="topbar">
+        <div class="tb-left">
+          <button class="tb-burger" onclick="toggleSidebar()" title="Mostrar u ocultar el panel" aria-label="Panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          <span class="tb-chip"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.5" fill="none"/><path d="M11 5.7V11l3.4 2.4" stroke="#34D399" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div>
+            <div class="topbar-title" id="topbar-title">Cargando pedido...</div>
+            <div class="topbar-subtitle" id="topbar-code" style="font-family:var(--font-mono);font-size:0.8rem;"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.75rem;">
+          <button class="btn btn-ghost btn-sm" id="refresh-detail-btn" onclick="loadOrderDetail()">↻ Actualizar</button>
+        </div>
+      </div>
+
+      <div class="page-body">
+
+        <!-- Estado: cargando -->
+        <div id="loading-state" style="text-align:center;padding:4rem;">
+          <div class="spinner" style="margin:0 auto 0.75rem;"></div>
+          <p style="color:var(--text-muted);">Cargando detalles...</p>
+        </div>
+
+        <!-- Estado: datos -->
+        <div id="detail-content" style="display:none;">
+          <div class="detail-grid">
+
+            <!-- Columna izquierda: pasos -->
+            <div>
+              <!-- Progress bar -->
+              <div class="card" style="margin-bottom:1rem;">
+                <div class="card-body" style="padding:1rem 1.25rem;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;font-size:0.83rem;">
+                    <span style="color:var(--text-muted);">Progreso</span>
+                    <span style="font-weight:700;" id="progress-pct">0%</span>
+                  </div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                    <div id="progress-bar" style="height:100%;background:var(--accent-gradient);border-radius:99px;transition:width .6s ease;width:0%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lista de pasos -->
+              <div class="card">
+                <div class="card-header">
+                  <span>Etapas del pedido</span>
+                  <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-ghost btn-sm" onclick="openPresetsModal()">🗂️ Plantillas</button>
+                    <button class="btn btn-primary btn-sm" onclick="openAddStepModal()">+ Añadir etapa</button>
+                  </div>
+                </div>
+                <div class="card-body" id="steps-list">
+                  <div class="empty-state">
+                    <div class="icon">📝</div>
+                    <p>No hay etapas todavía.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna derecha: info del pedido -->
+            <div>
+              <div class="card">
+                <div class="card-header">
+                  <span>Información del pedido</span>
+                </div>
+                <div class="card-body">
+                  <div class="info-row">
+                    <span class="info-label">Código</span>
+                    <span class="info-value mono" id="info-code">—</span>
+                    <button class="copy-btn" id="copy-code-btn" title="Copiar código">📋</button>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Cliente</span>
+                    <span class="info-value" id="info-name">—</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="info-email">—</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Descripción</span>
+                    <span class="info-value" id="info-description" style="color:var(--text-secondary);">—</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Creado</span>
+                    <span class="info-value" id="info-date">—</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Estado</span>
+                    <span id="info-status">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Link de tracking para el cliente -->
+              <div class="card" style="margin-top:1rem;">
+                <div class="card-header"><span>🔗 Link para el cliente</span></div>
+                <div class="card-body">
+                  <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
+                    Comparte este enlace con tu cliente para que siga su pedido:
+                  </p>
+                  <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.8rem;font-family:var(--font-mono);font-size:0.72rem;color:#a78bfa;word-break:break-all;margin-bottom:0.75rem;" id="tracking-url">
+                    —
+                  </div>
+                  <button class="btn btn-ghost btn-sm btn-full" id="copy-link-btn">📋 Copiar enlace</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div><!-- /detail-content -->
+
+      </div><!-- /page-body -->
+    </div>
+
+  </div>
+
+  <!-- Modal: Añadir paso -->
+  <div class="modal-overlay" id="add-step-modal" style="display:none;">
+    <div class="modal">
+      <h2 class="modal-title">➕ Añadir etapa</h2>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label" for="step-name-input">Nombre de la etapa *</label>
+          <input type="text" id="step-name-input" placeholder="Impresión en progreso..." required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="step-index-input">Orden (posición)</label>
+          <input type="number" id="step-index-input" placeholder="0" min="0" value="0" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeAddStepModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="addStep()">Añadir etapa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Plantillas de etapas -->
+  <div class="modal-overlay" id="presets-modal" style="display:none;">
+    <div class="modal" style="max-width:520px;">
+      <h2 class="modal-title">🗂️ Plantillas de etapas</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">Crea conjuntos de etapas y aplícalos a este pedido con un clic.</p>
+      <div id="presets-list" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.2rem;max-height:240px;overflow:auto;"></div>
+      <div style="border-top:1px solid var(--border);padding-top:1rem;">
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label class="form-label" for="preset-name">Nueva plantilla — nombre</label>
+          <input type="text" id="preset-name" placeholder="Ej: Flujo estándar" />
+        </div>
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label class="form-label" for="preset-steps">Etapas (una por línea)</label>
+          <textarea id="preset-steps" rows="5" style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-family:inherit;font-size:0.9rem;padding:0.6rem 0.75rem;resize:vertical;" placeholder="Dise&#241;o y preparaci&#243;n&#10;Impresi&#243;n&#10;Post-procesado&#10;Control de calidad&#10;Listo para env&#237;o"></textarea>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="savePreset()">Guardar plantilla</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closePresetsModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/web-bridge.js"></script>
+  <script src="js/order-detail.js"></script>
+
+<script>
+(function(){
+  var KEY='dp3-theme';
+  window.DP_LAUNCHER='../../../index.html';
+  function inFrame(){return window.self!==window.top;}
+  function param(){try{return new URLSearchParams(location.search).get('dptheme');}catch(e){return null;}}
+  function store(t){try{localStorage.setItem(KEY,t);}catch(e){}}
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function ic(t){return t==='dark'
+    ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+    :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+  window.dpApplyTheme=function(t,bc){t=(t==='light')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);store(t);
+    var b=document.getElementById('dpThemeBtn');if(b)b.innerHTML=ic(t);
+    if(typeof window.dpOnTheme==='function'){try{window.dpOnTheme(t);}catch(e){}}
+    if(bc&&inFrame()){try{window.parent.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}};
+  window.dpToggleTheme=function(){var c=document.documentElement.getAttribute('data-theme')||'dark';window.dpApplyTheme(c==='dark'?'light':'dark',true);};
+  window.dpHome=function(){if(inFrame()){try{window.parent.postMessage({__dp3:true,type:'home'},'*');}catch(e){}}else{window.location.href=window.DP_LAUNCHER;}};
+  window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='theme'&&d.theme){window.dpApplyTheme(d.theme,false);}});
+  window.dpApplyTheme(param()||stored()||document.documentElement.getAttribute('data-theme')||'dark',false);
+})();
+</script>
+
+</body>
+</html>

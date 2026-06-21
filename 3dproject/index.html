@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3DProject</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script type="module" src="firebase/dpcloud.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #07080F;
+  --glass:  rgba(255,255,255,0.035);
+  --border: rgba(255,255,255,0.08);
+  --t1: #E8EBF4;
+  --t2: #7A8099;
+  --t3: #3A3D52;
+
+  --teal:   #00DDB8;
+  --orange: #FF7A45;
+  --blue:   #4D9FFF;
+  --violet: #B87CFF;
+  --green:  #34D399;
+  --amber:  #F4B740;
+
+  --ease: cubic-bezier(.22,.68,0,1.2);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--t1);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.shell { justify-content: flex-start; }
+
+/* ── Ambient background ── */
+.bg-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: .12;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.orb-1 { width: 500px; height: 500px; background: var(--teal);   top: -120px;  left: -80px;  animation-duration: 20s; }
+.orb-2 { width: 400px; height: 400px; background: var(--blue);   bottom: -100px; right: -60px; animation-duration: 16s; animation-direction: alternate-reverse; }
+.orb-3 { width: 300px; height: 300px; background: var(--violet); top: 40%;     left: 45%;   animation-duration: 24s; opacity: .07; }
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.08); }
+}
+
+/* dot grid */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Layout ── */
+.shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  gap: 40px;
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+  animation: up .7s var(--ease) both;
+}
+
+.logo-text {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 42px;
+  letter-spacing: -1px;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,.5));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--t2);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+/* ── Grid ── */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 584px;
+}
+
+/* ── Card ── */
+.card {
+  position: relative;
+  width: 280px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 26px 24px;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition:
+    transform .3s var(--ease),
+    border-color .3s ease,
+    background .3s ease;
+  animation: up .7s var(--ease) both;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 4px 24px rgba(0,0,0,.35);
+}
+.card:nth-child(1) { animation-delay: .08s; }
+.card:nth-child(2) { animation-delay: .16s; }
+.card:nth-child(3) { animation-delay: .24s; }
+.card:nth-child(4) { animation-delay: .32s; }
+.card:nth-child(5) { animation-delay: .40s; }
+.card:nth-child(6) { animation-delay: .48s; }
+
+/* per-card color glow in corner */
+.card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(40px);
+  transition: opacity .4s ease, transform .4s var(--ease);
+  transform: scale(.8);
+  pointer-events: none;
+}
+.card.a::before { background: var(--teal); }
+.card.b::before { background: var(--orange); }
+.card.c::before { background: var(--blue); }
+.card.d::before { background: var(--violet); }
+.card.e::before { background: var(--green); }
+.card.f::before { background: var(--amber); }
+
+.card:hover {
+  transform: translateY(-6px);
+  background: rgba(255,255,255,.06);
+}
+.card.a:hover { border-color: rgba(0,221,184,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(0,221,184,.1); }
+.card.b:hover { border-color: rgba(255,122,69,.35);  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(255,122,69,.1); }
+.card.c:hover { border-color: rgba(77,159,255,.35);  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(77,159,255,.1); }
+.card.d:hover { border-color: rgba(184,124,255,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(184,124,255,.1); }
+.card.e:hover { border-color: rgba(52,211,153,.35);  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(52,211,153,.1); }
+.card.f:hover { border-color: rgba(244,183,64,.35);  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(244,183,64,.1); }
+
+.card:hover::before { opacity: .2; transform: scale(1); }
+.card:active { transform: translateY(-3px) scale(.99); }
+
+/* "Próximamente" disabled card */
+.card.soon { cursor: default; opacity: .58; }
+.card.soon:hover { transform: none; background: var(--glass); border-color: var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 4px 24px rgba(0,0,0,.35); }
+.card.soon:hover::before { opacity: 0; }
+.card.soon:hover .icon { transform: none; }
+.card.soon:hover .card-line { width: 28px; }
+.badge-soon {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--teal);
+  border: 1px solid rgba(0,221,184,.25);
+  background: rgba(0,221,184,.08);
+  border-radius: 20px;
+  padding: 3px 9px;
+}
+
+/* ── Card top row ── */
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: transform .3s var(--ease);
+}
+.card:hover .icon { transform: scale(1.1) rotate(-4deg); }
+
+.icon.ia { background: rgba(0,221,184,.12);   border: 1px solid rgba(0,221,184,.2); }
+.icon.ib { background: rgba(255,122,69,.12);  border: 1px solid rgba(255,122,69,.2); }
+.icon.ic { background: rgba(77,159,255,.12);  border: 1px solid rgba(77,159,255,.2); }
+.icon.id { background: rgba(184,124,255,.12); border: 1px solid rgba(184,124,255,.2); }
+.icon.ie { background: rgba(52,211,153,.12);  border: 1px solid rgba(52,211,153,.2); }
+.icon.if { background: rgba(244,183,64,.12);  border: 1px solid rgba(244,183,64,.2); }
+
+.arrow {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--t3);
+  position: relative; z-index: 1;
+  transition: border-color .25s, color .25s, transform .3s var(--ease);
+  flex-shrink: 0;
+}
+.card:hover .arrow { border-color: rgba(255,255,255,.2); color: var(--t1); transform: translate(3px,-3px); }
+
+/* ── Card body ── */
+.card-body { position: relative; z-index: 1; }
+
+.app-name {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--t1);
+  margin-bottom: 6px;
+}
+
+.app-desc {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--t2);
+}
+
+/* ── Bottom accent line ── */
+.card-line {
+  height: 2px;
+  border-radius: 2px;
+  width: 28px;
+  transition: width .35s var(--ease);
+  position: relative; z-index: 1;
+}
+.card.a .card-line { background: var(--teal); }
+.card.b .card-line { background: var(--orange); }
+.card.c .card-line { background: var(--blue); }
+.card.d .card-line { background: var(--violet); }
+.card.e .card-line { background: var(--green); }
+.card.f .card-line { background: var(--amber); }
+.card:hover .card-line { width: 100%; }
+
+/* ── Footer ── */
+.footer {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--t3);
+  animation: up .7s .4s var(--ease) both;
+}
+
+/* ── Modal ── */
+.veil {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,8,15,.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.veil.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: #0F111C;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 24px;
+  padding: 36px;
+  width: 360px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 32px 80px rgba(0,0,0,.6);
+  transform: translateY(12px) scale(.97);
+  transition: transform .3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.veil.open .modal { transform: translateY(0) scale(1); }
+
+.modal::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: .15;
+  pointer-events: none;
+}
+.modal.ma::before { background: var(--teal); }
+.modal.mb::before { background: var(--orange); }
+.modal.mc::before { background: var(--blue); }
+.modal.md::before { background: var(--violet); }
+.modal.me::before { background: var(--green); }
+
+.m-icon {
+  width: 56px; height: 56px;
+  border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 22px;
+  position: relative; z-index: 1;
+}
+
+.m-name {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+
+.m-desc {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--t2);
+  margin-bottom: 28px;
+  position: relative; z-index: 1;
+}
+
+.m-actions {
+  display: flex;
+  gap: 10px;
+  position: relative; z-index: 1;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--t2);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.btn-cancel:hover { background: rgba(255,255,255,.05); color: var(--t1); }
+
+.btn-open {
+  flex: 2;
+  padding: 11px;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #07080F;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 7px;
+  letter-spacing: .2px;
+  transition: opacity .15s, transform .1s;
+}
+.btn-open:hover { opacity: .9; }
+.btn-open:active { transform: scale(.97); }
+.btn-open:disabled { cursor: default; opacity: .4; }
+.btn-open:disabled:hover { opacity: .4; }
+
+/* ── App viewer (iframe overlay) ── */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s var(--ease);
+}
+.viewer.open { opacity: 1; pointer-events: all; }
+
+.vbar {
+  flex-shrink: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 16px;
+  background: #0B0D17;
+  border-bottom: 1px solid var(--border);
+}
+
+.vback {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: transparent;
+  color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.vback:hover { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.2); }
+
+.vdot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.vtitle {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.vspacer { flex: 1; }
+
+.vext {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: transparent;
+  color: var(--t2);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.vext:hover { background: rgba(255,255,255,.05); color: var(--t1); border-color: rgba(255,255,255,.2); }
+
+.vframe-wrap { flex: 1; position: relative; }
+.vframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--bg);
+}
+
+/* ── Animations ── */
+@keyframes up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Tema claro + conmutador del lanzador ===== */
+[data-theme=light]{
+  --bg:#F5F6FA;--glass:rgba(0,0,0,.035);--border:rgba(0,0,0,.10);
+  --t1:#1A1C24;--t2:#5A6172;--t3:#AEB4C2;
+}
+[data-theme=light] body::after{background-image:radial-gradient(circle, rgba(0,0,0,.05) 1px, transparent 1px);}
+[data-theme=light] .logo-text{background:linear-gradient(135deg,#15171F 30%, #5A6172);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+[data-theme=light] .orb{opacity:.18;}
+[data-theme=light] .modal{background:#FFFFFF;}
+[data-theme=light] .card{box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 20px rgba(20,30,50,.08);}
+[data-theme=light] .badge-soon{color:#0E9C84;border-color:rgba(0,180,150,.3);background:rgba(0,180,150,.08);}
+[data-theme=light] .btn-cancel{border-color:rgba(0,0,0,.14);}
+.vbar{display:none!important;}
+.dp-launch-toggle{position:fixed;top:18px;right:18px;z-index:120;width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--glass);color:var(--t1);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .15s,border-color .15s,transform .12s}
+.dp-launch-toggle:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
+.dp-launch-toggle:active{transform:scale(.94)}
+[data-theme=light] .dp-launch-toggle:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.16)}
+
+
+/* ===== Feedback ===== */
+.fb-toggle{position:fixed;top:18px;left:18px;z-index:120;width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--glass);color:var(--t1);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .15s,border-color .15s,transform .12s}
+.fb-toggle:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
+.fb-toggle:active{transform:scale(.94)}
+[data-theme=light] .fb-toggle:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.16)}
+.fb-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#FF4D4D;color:#fff;font-size:11px;font-weight:700;line-height:1;display:none;align-items:center;justify-content:center;border:2px solid var(--bg);box-shadow:0 0 0 3px rgba(255,77,77,.18)}
+.fb-toggle.has-alert .fb-badge{display:flex}
+.fb-toggle.has-alert{border-color:rgba(255,77,77,.5);color:#FF6B6B}
+.fb-veil{position:fixed;inset:0;background:rgba(7,8,15,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);z-index:400;display:flex;align-items:flex-start;justify-content:center;padding:64px 20px 20px;opacity:0;pointer-events:none;transition:opacity .2s}
+[data-theme=light] .fb-veil{background:rgba(120,130,150,.34)}
+.fb-veil.open{opacity:1;pointer-events:all}
+.fb-panel{width:480px;max-width:100%;max-height:calc(100vh - 96px);display:flex;flex-direction:column;background:#0F111C;border:1px solid var(--border);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 32px 80px rgba(0,0,0,.6);transform:translateY(10px) scale(.98);transition:transform .25s var(--ease);overflow:hidden}
+[data-theme=light] .fb-panel{background:#FFFFFF;box-shadow:0 32px 80px rgba(20,30,50,.25)}
+.fb-veil.open .fb-panel{transform:none}
+.fb-head{display:flex;align-items:center;gap:9px;padding:17px 20px;border-bottom:1px solid var(--border)}
+.fb-head svg.fb-h-ic{color:var(--blue)}
+.fb-head h3{font-size:16px;font-weight:600;letter-spacing:-.2px}
+.fb-x{margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.fb-x:hover{color:var(--t1);background:var(--glass)}
+.fb-tabs{display:flex;gap:6px;padding:14px 20px 0}
+.fb-tab{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t2);font:600 13px 'Outfit',sans-serif;cursor:pointer;transition:.15s}
+.fb-tab:hover{color:var(--t1)}
+.fb-tab.on{background:var(--glass);color:var(--t1);border-color:rgba(255,255,255,.18)}
+[data-theme=light] .fb-tab.on{border-color:rgba(0,0,0,.16)}
+.fb-body{padding:16px 20px 20px;overflow-y:auto}
+.fb-field{margin-bottom:13px}
+.fb-label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.fb-input,.fb-select,.fb-textarea{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--t1);font:400 14px 'Outfit',sans-serif;padding:10px 12px;outline:none;transition:border-color .15s}
+.fb-input:focus,.fb-select:focus,.fb-textarea:focus{border-color:var(--blue)}
+.fb-textarea{resize:vertical;min-height:88px}
+.fb-select{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' stroke='%237A8099' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.fb-select{background-color:#14161F;color:var(--t1)}
+.fb-select option{background-color:#14161F;color:#E8EBF4}
+[data-theme=light] .fb-select{background-color:#FFFFFF}
+[data-theme=light] .fb-select option{background-color:#FFFFFF;color:#1A1C24}
+.fb-row{display:flex;gap:10px}
+.fb-row>.fb-field{flex:1}
+.fb-actions{display:flex;gap:10px;margin-top:4px}
+.fb-btn{padding:11px;border-radius:11px;border:none;font:600 13.5px 'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s,background .15s,color .15s}
+.fb-btn.primary{flex:2;background:var(--blue);color:#fff}
+.fb-btn.primary:hover{opacity:.92}
+.fb-btn.ghost{flex:1;background:transparent;border:1px solid var(--border);color:var(--t2)}
+.fb-btn.ghost:hover{color:var(--t1);background:var(--glass)}
+.fb-empty{text-align:center;color:var(--t2);font-size:13.5px;line-height:1.6;padding:28px 10px}
+.fb-item{border:1px solid var(--border);border-radius:14px;padding:13px 14px;margin-bottom:10px;background:var(--glass)}
+.fb-item.done{opacity:.62}
+.fb-item-top{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.fb-chip{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.3px;white-space:nowrap}
+.fb-chip.app{background:var(--glass);border:1px solid var(--border);color:var(--t1)}
+.fb-chip.bug{background:rgba(255,77,77,.12);border:1px solid rgba(255,77,77,.3);color:#FF7A7A}
+.fb-chip.improvement{background:rgba(77,159,255,.12);border:1px solid rgba(77,159,255,.3);color:var(--blue)}
+.fb-chip.status-done{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:var(--green)}
+.fb-date{font-size:10.5px;color:var(--t3);margin-left:auto}
+.fb-item h4{font-size:14px;font-weight:600;margin-bottom:4px;word-break:break-word}
+.fb-item.done h4{text-decoration:line-through}
+.fb-item p{font-size:12.5px;color:var(--t2);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.fb-item-actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+.fb-mini{padding:6px 11px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t2);font:600 12px 'Outfit',sans-serif;cursor:pointer;transition:.15s}
+.fb-mini:hover{color:var(--t1);background:var(--glass)}
+.fb-mini.danger:hover{color:#FF7A7A;border-color:rgba(255,77,77,.4)}
+.fb-mini.ok:hover{color:var(--green);border-color:rgba(52,211,153,.4)}
+
+
+/* ===== Login / sesión ===== */
+body:not(.dp-authed) .fb-toggle,
+body:not(.dp-authed) .dp-launch-toggle,
+body:not(.dp-authed) #dpLogout { display:none !important; }
+#dpLogout{position:fixed;top:18px;right:66px;z-index:120;display:flex;align-items:center;gap:7px;height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--border);background:var(--glass);color:var(--t1);font:600 12.5px 'Outfit',sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .15s,border-color .15s}
+#dpLogout:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
+[data-theme=light] #dpLogout:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.16)}
+#authGate{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
+body.dp-authed #authGate{display:none}
+#authGate .ag-card{width:380px;max-width:100%;background:var(--glass);border:1px solid var(--border);border-radius:22px;padding:34px 30px;box-shadow:0 32px 80px rgba(0,0,0,.5);position:relative;z-index:1}
+[data-theme=light] #authGate .ag-card{background:#fff;box-shadow:0 32px 80px rgba(20,30,50,.18)}
+#authGate .ag-logo{font-family:'DM Serif Display',serif;font-style:italic;font-size:30px;letter-spacing:-1px;margin-bottom:6px;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#authGate .ag-sub{font-size:13px;color:var(--t2);margin-bottom:22px}
+#authGate label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin:0 0 6px}
+#authGate input{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:11px;color:var(--t1);font:400 14px 'Outfit',sans-serif;padding:11px 13px;outline:none;margin-bottom:13px;transition:border-color .15s}
+[data-theme=light] #authGate input{background:#f3f5fa}
+#authGate input:focus{border-color:var(--blue)}
+#authGate .ag-btn{width:100%;padding:12px;border-radius:12px;border:none;background:var(--blue);color:#fff;font:600 14px 'Outfit',sans-serif;cursor:pointer;transition:opacity .15s}
+#authGate .ag-btn:hover{opacity:.92}
+#authGate .ag-btn:disabled{opacity:.5;cursor:default}
+#authGate .ag-msg{font-size:12.5px;margin-top:12px;line-height:1.5;min-height:1px}
+#authGate .ag-msg.err{color:#FF7A7A}
+#authGate .ag-msg.info{color:var(--t2)}
+#authGate .ag-note{font-size:11.5px;color:var(--t3);margin-top:18px;line-height:1.5;border-top:1px solid var(--border);padding-top:14px}
+
+</style>
+</head>
+<body>
+<div id="authGate">
+  <div class="ag-card">
+    <div class="ag-logo">3DProject</div>
+    <div class="ag-sub">Inicia sesión para acceder a la suite.</div>
+    <form id="agForm" autocomplete="on">
+      <label for="agEmail">Correo</label>
+      <input type="email" id="agEmail" placeholder="tucorreo@ejemplo.com" autocomplete="username" required>
+      <label for="agPass">Contraseña</label>
+      <input type="password" id="agPass" placeholder="••••••••" autocomplete="current-password" required>
+      <button type="submit" class="ag-btn" id="agBtn">Iniciar sesión</button>
+      <div class="ag-msg info" id="agMsg">Conectando con Firebase…</div>
+    </form>
+    <div class="ag-note" id="agNote"></div>
+  </div>
+</div>
+<button id="dpLogout" onclick="dpLogout()" title="Cerrar sesión">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  Cerrar sesión
+</button>
+
+<button id="dpThemeBtn" class="dp-launch-toggle" onclick="dpToggleTheme()" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"></button>
+<button id="fbToggle" class="fb-toggle" onclick="fbOpen()" title="Feedback de 3DProject" aria-label="Feedback">
+  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-4.3A8.38 8.38 0 0 1 4 12.5 8.5 8.5 0 0 1 12.5 4 8.38 8.38 0 0 1 21 11.5z"/></svg>
+  <span class="fb-badge" id="fbBadge">!</span>
+</button>
+
+<div class="fb-veil" id="fbVeil" onclick="if(event.target===this)fbClose()">
+  <div class="fb-panel" role="dialog" aria-label="Feedback de 3DProject">
+    <div class="fb-head">
+      <svg class="fb-h-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-4.3A8.38 8.38 0 0 1 4 12.5 8.5 8.5 0 0 1 12.5 4 8.38 8.38 0 0 1 21 11.5z"/></svg>
+      <h3>Feedback</h3>
+      <button class="fb-x" onclick="fbClose()" aria-label="Cerrar">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="fb-tabs">
+      <button class="fb-tab" id="fbTabList" onclick="fbShowTab('list')">Sugerencias <span id="fbCount"></span></button>
+      <button class="fb-tab" id="fbTabForm" onclick="fbShowTab('form')">+ Nueva</button>
+    </div>
+    <div class="fb-body">
+      <div id="fbList"></div>
+      <form id="fbForm" onsubmit="return fbSubmit(event)" style="display:none">
+        <input type="hidden" id="fbEditId" value="">
+        <div class="fb-row">
+          <div class="fb-field">
+            <label class="fb-label" for="fbApp">Aplicación</label>
+            <select class="fb-select" id="fbApp">
+              <option value="Interfaz principal">Interfaz principal</option>
+              <option value="PrintFlow">PrintFlow</option>
+              <option value="3MF Viewer">3MF Viewer</option>
+              <option value="3DPlanner">3DPlanner</option>
+              <option value="3DTracker">3DTracker</option>
+              <option value="3DBilling">3DBilling</option>
+              <option value="3DCalc">3DCalc</option>
+            </select>
+          </div>
+          <div class="fb-field">
+            <label class="fb-label" for="fbType">Tipo</label>
+            <select class="fb-select" id="fbType">
+              <option value="bug">Bug</option>
+              <option value="improvement">Mejora</option>
+            </select>
+          </div>
+        </div>
+        <div class="fb-field">
+          <label class="fb-label" for="fbTitle">Título</label>
+          <input class="fb-input" id="fbTitle" maxlength="90" placeholder="Resumen breve" required>
+        </div>
+        <div class="fb-field">
+          <label class="fb-label" for="fbDetail">Descripción</label>
+          <textarea class="fb-textarea" id="fbDetail" placeholder="Describe el bug o la mejora con detalle…"></textarea>
+        </div>
+        <div class="fb-actions">
+          <button type="button" class="fb-btn ghost" onclick="fbShowTab('list')">Cancelar</button>
+          <button type="submit" class="fb-btn primary" id="fbSubmitBtn">Enviar sugerencia</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="shell">
+
+  <header class="header">
+    <div class="logo-text">3DProject</div>
+    <p class="tagline">Suite de herramientas · Impresión 3D</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- PrintFlow -->
+    <div class="card b" onclick="launchApp('flow')">
+      <div class="card-top">
+        <div class="icon ib">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <circle cx="4"  cy="16" r="2.2" stroke="#FF7A45" stroke-width="1.3"/>
+            <circle cx="11" cy="9"  r="2.2" stroke="#FF7A45" stroke-width="1.3"/>
+            <circle cx="18" cy="4"  r="2.2" stroke="#FF7A45" stroke-width="1.3"/>
+            <line x1="6.1"  y1="14.4" x2="8.9"  y2="10.6" stroke="#FF7A45" stroke-width="1.1" stroke-linecap="round"/>
+            <line x1="13.1" y1="7.4"  x2="15.9" y2="5.6"  stroke="#FF7A45" stroke-width="1.1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">PrintFlow</div>
+        <p class="app-desc">Organiza tus proyectos en etapas y ramas, sigue el estado de cada muestra o trabajo y exporta los datos a CSV/JSON.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
+    <!-- 3MF Viewer -->
+    <div class="card c" onclick="launchApp('mf')">
+      <div class="card-top">
+        <div class="icon ic">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <polygon points="11,1.5 20,6.5 20,15.5 11,20.5 2,15.5 2,6.5"
+              stroke="#4D9FFF" stroke-width="1.3" fill="none"/>
+            <polygon points="11,6 16,8.8 16,13.2 11,16 6,13.2 6,8.8"
+              stroke="#4D9FFF" stroke-width=".7" fill="none" opacity=".45"/>
+            <circle cx="11" cy="11" r="2.2" fill="#4D9FFF"/>
+          </svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">3MF Viewer</div>
+        <p class="app-desc">Carga archivos .3mf de BambuStudio e inspecciona parámetros de laminado, materiales y metadatos; exporta informes en PDF.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
+    <!-- 3DPlanner -->
+    <div class="card d" onclick="launchApp('plan')">
+      <div class="card-top">
+        <div class="icon id">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect x="2" y="4.5" width="18" height="15.5" rx="2" stroke="#B87CFF" stroke-width="1.3" fill="none"/>
+            <line x1="2" y1="9.5" x2="20" y2="9.5" stroke="#B87CFF" stroke-width=".9"/>
+            <rect x="7.5" y="2" width="1.8" height="4" rx=".9" fill="#B87CFF"/>
+            <rect x="12.7" y="2" width="1.8" height="4" rx=".9" fill="#B87CFF"/>
+            <rect x="4.5" y="12" width="3" height="2.5" rx=".4" fill="#B87CFF"/>
+            <rect x="9.5" y="12" width="3" height="2.5" rx=".4" fill="#B87CFF" opacity=".4"/>
+            <rect x="14.5" y="12" width="3" height="2.5" rx=".4" fill="#B87CFF" opacity=".2"/>
+            <rect x="4.5" y="16" width="3" height="2.5" rx=".4" fill="#B87CFF" opacity=".25"/>
+            <rect x="9.5" y="16" width="3" height="2.5" rx=".4" fill="#B87CFF"/>
+          </svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">3DPlanner</div>
+        <p class="app-desc">Planifica la producción en un calendario por día y semana: arrastra y reorganiza los trabajos de impresión.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
+    <!-- 3DTracker -->
+    <div class="card e" onclick="launchApp('tracker')">
+      <div class="card-top">
+        <div class="icon ie">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.3" fill="none"/>
+            <path d="M11 5.5V11L14.5 13.5" stroke="#34D399" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11" cy="11" r="1.4" fill="#34D399"/>
+          </svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">3DTracker</div>
+        <p class="app-desc">Panel de administración: crea pedidos, genera códigos 3DP-XXXX y gestiona sus etapas. Incluye el portal de cliente.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
+    <!-- 3DBilling -->
+    <div class="card f" onclick="launchApp('billing')">
+      <div class="card-top">
+        <div class="icon if">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">3DBilling</div>
+        <p class="app-desc">Crea recibos con varios pedidos y cabecera con tu logo; suma el total y exporta a PDF.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
+    <!-- 3DCalc -->
+    <div class="card a" onclick="launchApp('calc')">
+      <div class="card-top">
+        <div class="icon ia">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect x="2" y="2" width="18" height="18" rx="2.5" stroke="#00DDB8" stroke-width="1.4"/>
+            <line x1="2" y1="8" x2="20" y2="8" stroke="#00DDB8" stroke-width=".9"/>
+            <rect x="4.5" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8"/>
+            <rect x="13" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".3"/>
+            <rect x="4.5" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".3"/>
+            <rect x="13" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8"/>
+          </svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">3DCalc</div>
+        <p class="app-desc">Calcula el precio de cada impresión con desglose (filamento, tiempo, energía, mano de obra); inventario y lógica editable.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
+  </div>
+
+  <p class="footer">3DProject Suite &nbsp;·&nbsp; v 3.0</p>
+
+</div>
+
+<!-- App viewer (iframe) -->
+<div class="viewer" id="viewer">
+  <div class="vbar">
+    <button class="vback" onclick="closeViewer()">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Volver
+    </button>
+    <div class="vdot" id="v-dot"></div>
+    <div class="vtitle" id="v-title"></div>
+    <div class="vspacer"></div>
+    <a class="vext" id="v-ext" href="#" target="_blank" rel="noopener">
+      Abrir en pestaña
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M2 10L10 2M10 2H5.5M10 2V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </a>
+  </div>
+  <div class="vframe-wrap">
+    <iframe class="vframe" id="v-frame" title="Aplicación" src="about:blank"></iframe>
+  </div>
+</div>
+
+<script>
+const APPS = {
+  flow: {
+    name: 'PrintFlow',
+    desc: 'Seguimiento de muestras y proyectos organizados por etapas. Búsqueda global, ramas de trabajo y exportación/importación de datos en local.',
+    url: 'apps/printflow/printflow.html',
+    color: '#FF7A45', bg: 'rgba(255,122,69,.1)', border: 'rgba(255,122,69,.2)',
+    cls: 'mb',
+    svg: `<svg width="28" height="28" viewBox="0 0 22 22" fill="none">
+      <circle cx="4"  cy="16" r="2.2" stroke="#FF7A45" stroke-width="1.3"/>
+      <circle cx="11" cy="9"  r="2.2" stroke="#FF7A45" stroke-width="1.3"/>
+      <circle cx="18" cy="4"  r="2.2" stroke="#FF7A45" stroke-width="1.3"/>
+      <line x1="6.1" y1="14.4" x2="8.9" y2="10.6" stroke="#FF7A45" stroke-width="1.1" stroke-linecap="round"/>
+      <line x1="13.1" y1="7.4" x2="15.9" y2="5.6" stroke="#FF7A45" stroke-width="1.1" stroke-linecap="round"/></svg>`
+  },
+  mf: {
+    name: '3MF Viewer',
+    desc: 'Inspecciona cualquier archivo .3mf sin abrir el slicer: parámetros de laminado, perfiles de material, geometría de soportes y metadatos completos.',
+    url: 'apps/3mfviewer/3mfviewer.html',
+    color: '#4D9FFF', bg: 'rgba(77,159,255,.1)', border: 'rgba(77,159,255,.2)',
+    cls: 'mc',
+    svg: `<svg width="28" height="28" viewBox="0 0 22 22" fill="none">
+      <polygon points="11,1.5 20,6.5 20,15.5 11,20.5 2,15.5 2,6.5" stroke="#4D9FFF" stroke-width="1.3" fill="none"/>
+      <polygon points="11,6 16,8.8 16,13.2 11,16 6,13.2 6,8.8" stroke="#4D9FFF" stroke-width=".7" fill="none" opacity=".45"/>
+      <circle cx="11" cy="11" r="2.2" fill="#4D9FFF"/></svg>`
+  },
+  plan: {
+    name: '3DPlanner',
+    desc: 'Vista de calendario de toda tu producción. Arrastra y reorganiza trabajos, detecta cuellos de botella y optimiza la carga de tus impresoras.',
+    url: 'apps/3dplanner/3DPlanner.html',
+    color: '#B87CFF', bg: 'rgba(184,124,255,.1)', border: 'rgba(184,124,255,.2)',
+    cls: 'md',
+    svg: `<svg width="28" height="28" viewBox="0 0 22 22" fill="none">
+      <rect x="2" y="4.5" width="18" height="15.5" rx="2" stroke="#B87CFF" stroke-width="1.3" fill="none"/>
+      <line x1="2" y1="9.5" x2="20" y2="9.5" stroke="#B87CFF" stroke-width=".9"/>
+      <rect x="7.5" y="2" width="1.8" height="4" rx=".9" fill="#B87CFF"/>
+      <rect x="12.7" y="2" width="1.8" height="4" rx=".9" fill="#B87CFF"/>
+      <rect x="4.5" y="12" width="3" height="2.5" rx=".4" fill="#B87CFF"/>
+      <rect x="9.5" y="16" width="3" height="2.5" rx=".4" fill="#B87CFF"/></svg>`
+  },
+  tracker: {
+    name: '3DTracker',
+    desc: 'Panel de administración de 3DTracker: crea pedidos, genera códigos 3DP-XXXX y gestiona etapas. El portal de cliente queda como opción secundaria.',
+    url: 'apps/3dtracker/admin/dashboard.html',
+    color: '#34D399', bg: 'rgba(52,211,153,.1)', border: 'rgba(52,211,153,.2)',
+    cls: 'me',
+    svg: `<svg width="28" height="28" viewBox="0 0 22 22" fill="none">
+      <circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.3" fill="none"/>
+      <path d="M11 5.5V11L14.5 13.5" stroke="#34D399" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="11" cy="11" r="1.4" fill="#34D399"/></svg>`
+  },
+  billing: {
+    name: '3DBilling',
+    desc: 'Crea recibos personalizados con varios pedidos, materiales e importes; cabecera con tu logo y exportación a PDF.',
+    url: 'apps/3dbilling/3dbilling.html',
+    color: '#F4B740', bg: 'rgba(244,183,64,.1)', border: 'rgba(244,183,64,.2)',
+    cls: 'mf',
+    svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>`
+  },
+  calc: {
+    name: '3DCalc',
+    desc: 'Calcula el precio de cada impresión (filamento, tiempo, energía, mano de obra) con desglose. Incluye inventario de filamentos y lógica de cálculo editable.',
+    url: 'apps/3dcalc/3dcalc.html',
+    color: '#00DDB8', bg: 'rgba(0,221,184,.1)', border: 'rgba(0,221,184,.2)',
+    cls: 'ma',
+    svg: `<svg width="28" height="28" viewBox="0 0 22 22" fill="none">
+      <rect x="2" y="2" width="18" height="18" rx="2.5" stroke="#00DDB8" stroke-width="1.4"/>
+      <line x1="2" y1="8" x2="20" y2="8" stroke="#00DDB8" stroke-width=".9"/>
+      <rect x="4.5" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8"/>
+      <rect x="13" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".3"/>
+      <rect x="4.5" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".3"/>
+      <rect x="13" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8"/></svg>`
+  }
+};
+
+let currentApp = null;
+
+function launchApp(id) {
+  const a = APPS[id];
+  if (!a || !a.url) return;
+  document.getElementById('v-title').textContent = a.name;
+  document.getElementById('v-dot').style.background = a.color;
+  const ext = document.getElementById('v-ext');
+  ext.href = a.url;
+  const frame = document.getElementById('v-frame');
+  var _t = document.documentElement.getAttribute('data-theme') || 'dark';
+  frame.src = a.url + (a.url.indexOf('?')>=0?'&':'?') + 'dptheme=' + _t;
+  document.getElementById('viewer').classList.add('open');
+}
+
+function closeViewer() {
+  document.getElementById('viewer').classList.remove('open');
+  // libera el iframe para detener cualquier proceso de la subapp
+  setTimeout(() => { document.getElementById('v-frame').src = 'about:blank'; }, 260);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const viewer = document.getElementById('viewer');
+  if (viewer.classList.contains('open')) { closeViewer(); }
+});
+</script>
+<script>
+window.dpOnTheme=function(t){var f=document.getElementById('v-frame');if(f&&f.contentWindow){try{f.contentWindow.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}};
+window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='home'){closeViewer();}});
+</script>
+<script>
+(function(){
+  var KEY='dp3-theme';
+  function ic(t){return t==='dark'
+    ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+    :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+  function store(t){try{localStorage.setItem(KEY,t);}catch(e){}}
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  window.dpApplyTheme=function(t,bc){t=(t==='light')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);store(t);
+    var b=document.getElementById('dpThemeBtn');if(b)b.innerHTML=ic(t);
+    if(typeof window.dpOnTheme==='function'){try{window.dpOnTheme(t);}catch(e){}}};
+  window.dpToggleTheme=function(){var c=document.documentElement.getAttribute('data-theme')||'dark';window.dpApplyTheme(c==='dark'?'light':'dark',true);};
+  window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='theme'&&d.theme){window.dpApplyTheme(d.theme,false);}});
+  window.dpApplyTheme(stored()||'dark',false);
+})();
+</script>
+
+<script>
+(function(){
+  var KEY='dp3-feedback';
+  var items=[];
+  function localLoad(){try{items=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){items=[];} if(!Array.isArray(items))items=[];}
+  function cloudOn(){return !!(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser());}
+  async function load(){ if(cloudOn()){ try{ items=await window.DPCloud.listFeedback(); return; }catch(e){} } localLoad(); }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(items));}catch(e){}}
+  function activeCount(){return items.filter(function(i){return i.status!=='done';}).length;}
+  function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function fmt(ts){try{return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return '';}}
+  function tlabel(t){return t==='bug'?'Bug':'Mejora';}
+  function updateBadge(){
+    var n=activeCount();
+    var tg=document.getElementById('fbToggle'), b=document.getElementById('fbBadge'), c=document.getElementById('fbCount');
+    if(n>0){tg.classList.add('has-alert'); b.textContent=(n>9?'!':String(n));}
+    else{tg.classList.remove('has-alert');}
+    if(c)c.textContent='('+items.length+')';
+  }
+  function renderList(){
+    var el=document.getElementById('fbList');
+    if(!items.length){el.innerHTML='<div class="fb-empty">No hay sugerencias todavía.<br>Pulsa <b>“+ Nueva”</b> para registrar un bug o una mejora.</div>';return;}
+    var sorted=items.slice().sort(function(a,b){return ((a.status==='done')-(b.status==='done'))||(b.created-a.created);});
+    var h='';
+    sorted.forEach(function(i){
+      var done=i.status==='done';
+      h+='<div class="fb-item'+(done?' done':'')+'">';
+      h+='<div class="fb-item-top"><span class="fb-chip app">'+esc(i.app)+'</span>';
+      h+='<span class="fb-chip '+i.type+'">'+tlabel(i.type)+'</span>';
+      if(done)h+='<span class="fb-chip status-done">Completada</span>';
+      h+='<span class="fb-date">'+fmt(i.created)+'</span></div>';
+      h+='<h4>'+esc(i.title)+'</h4>';
+      if(i.detail)h+='<p>'+esc(i.detail)+'</p>';
+      h+='<div class="fb-item-actions">';
+      if(done){h+='<button class="fb-mini ok" onclick="fbReopen(\''+i.id+'\')">Reabrir</button>';}
+      else{h+='<button class="fb-mini" onclick="fbEdit(\''+i.id+'\')">Editar</button>';
+           h+='<button class="fb-mini ok" onclick="fbComplete(\''+i.id+'\')">Completar</button>';}
+      h+='<button class="fb-mini danger" onclick="fbDelete(\''+i.id+'\')">Eliminar</button>';
+      h+='</div></div>';
+    });
+    el.innerHTML=h;
+  }
+  function resetForm(){
+    document.getElementById('fbEditId').value='';
+    document.getElementById('fbApp').selectedIndex=0;
+    document.getElementById('fbType').selectedIndex=0;
+    document.getElementById('fbTitle').value='';
+    document.getElementById('fbDetail').value='';
+    document.getElementById('fbSubmitBtn').textContent='Enviar sugerencia';
+  }
+  window.fbShowTab=function(which){
+    document.getElementById('fbList').style.display=(which==='list')?'block':'none';
+    document.getElementById('fbForm').style.display=(which==='form')?'block':'none';
+    document.getElementById('fbTabList').classList.toggle('on',which==='list');
+    document.getElementById('fbTabForm').classList.toggle('on',which==='form');
+    if(which==='list')renderList();
+    if(which==='form')setTimeout(function(){document.getElementById('fbTitle').focus();},60);
+  };
+  window.fbOpen=async function(){
+    await load();updateBadge();
+    document.getElementById('fbVeil').classList.add('open');
+    if(items.length){fbShowTab('list');}else{resetForm();fbShowTab('form');}
+  };
+  window.fbClose=function(){document.getElementById('fbVeil').classList.remove('open');};
+  window.fbEdit=function(id){
+    var i=items.filter(function(x){return x.id===id;})[0]; if(!i)return;
+    document.getElementById('fbEditId').value=i.id;
+    document.getElementById('fbApp').value=i.app;
+    document.getElementById('fbType').value=i.type;
+    document.getElementById('fbTitle').value=i.title;
+    document.getElementById('fbDetail').value=i.detail||'';
+    document.getElementById('fbSubmitBtn').textContent='Guardar cambios';
+    fbShowTab('form');
+  };
+  window.fbSubmit=function(e){
+    e.preventDefault();
+    var id=document.getElementById('fbEditId').value;
+    var app=document.getElementById('fbApp').value;
+    var type=document.getElementById('fbType').value;
+    var title=document.getElementById('fbTitle').value.trim();
+    var detail=document.getElementById('fbDetail').value.trim();
+    if(!title)return false;
+    (async function(){
+      if(cloudOn()){ try{ if(id){await window.DPCloud.updateFeedback(id,{app:app,type:type,title:title,detail:detail});} else {await window.DPCloud.addFeedback({app:app,type:type,title:title,detail:detail});} await load(); updateBadge(); resetForm(); fbShowTab('list'); return; }catch(e){} }
+      if(id){var i=items.filter(function(x){return x.id===id;})[0]; if(i){i.app=app;i.type=type;i.title=title;i.detail=detail;}} else {items.push({id:uid(),app:app,type:type,title:title,detail:detail,status:'active',created:Date.now()});}
+      save();updateBadge();resetForm();fbShowTab('list');
+    })();
+    return false;
+  };
+  window.fbComplete=function(id){ if(cloudOn()){window.DPCloud.updateFeedback(id,{status:'done'}).then(load).then(function(){updateBadge();renderList();}).catch(function(){}); return;} var i=items.filter(function(x){return x.id===id;})[0]; if(i){i.status='done';save();updateBadge();renderList();}};
+  window.fbReopen=function(id){ if(cloudOn()){window.DPCloud.updateFeedback(id,{status:'active'}).then(load).then(function(){updateBadge();renderList();}).catch(function(){}); return;} var i=items.filter(function(x){return x.id===id;})[0]; if(i){i.status='active';save();updateBadge();renderList();}};
+  window.fbDelete=function(id){ if(cloudOn()){window.DPCloud.deleteFeedback(id).then(load).then(function(){updateBadge();renderList();}).catch(function(){}); return;} items=items.filter(function(x){return x.id!==id;});save();updateBadge();renderList();};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){var v=document.getElementById('fbVeil');if(v&&v.classList.contains('open'))fbClose();}});
+  load();updateBadge();
+})();
+</script>
+
+<script>
+(function(){
+  var DP_DEV_NO_LOGIN = false; /* Seguridad ACTIVA: la suite exige iniciar sesión con tu usuario y contraseña de Firebase. */
+  if(DP_DEV_NO_LOGIN){ try{document.body.classList.add('dp-authed');}catch(e){} }
+  var msg=function(txt,cls){var m=document.getElementById('agMsg');if(m){m.textContent=txt;m.className='ag-msg '+(cls||'info');}};
+  var note=function(html){var n=document.getElementById('agNote');if(n)n.innerHTML=html||'';};
+  function devBypass(){ try{document.body.classList.add('dp-authed');}catch(e){} 
+    try{ if(window.DPCloud&&window.DPCloud.configured){ window.DPCloud.ready.then(function(){ if(!window.DPCloud.currentUser()&&window.DPCloud.loginGuest){ window.DPCloud.loginGuest().catch(function(){}); } }); } }catch(e){} }
+  function setup(){
+    if(!window.DPCloud.configured){
+      msg('Firebase aún no está configurado.','err');
+      note('Abre <b>firebase/firebase-config.js</b> y pega los datos de tu proyecto. Tienes la GUÍA_FIREBASE paso a paso en la carpeta del proyecto.');
+      document.getElementById('agBtn').disabled=true;
+      var g0=document.getElementById('agGuest'); if(g0)g0.disabled=true;
+      return;
+    }
+    msg('Introduce tus credenciales.','info'); note('');
+    window.DPCloud.ready.then(function(){
+      window.DPCloud.onAuth(function(user){
+        if(user){
+          document.body.classList.add('dp-authed');
+          var lo=document.getElementById('dpLogout'); if(lo)lo.title='Cerrar sesión'+(user.email?(' ('+user.email+')'):' (invitado)');
+        } else {
+          document.body.classList.remove('dp-authed');
+        }
+      });
+    });
+    var form=document.getElementById('agForm');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var btn=document.getElementById('agBtn');
+      btn.disabled=true; msg('Verificando…','info');
+      window.DPCloud.login(document.getElementById('agEmail').value.trim(), document.getElementById('agPass').value)
+        .then(function(){ msg('','info'); })
+        .catch(function(err){
+          btn.disabled=false;
+          var c=err&&err.code||'';
+          msg(c.indexOf('invalid')>=0||c.indexOf('wrong')>=0||c.indexOf('credential')>=0
+              ? 'Correo o contraseña incorrectos.' : ('No se pudo iniciar sesión: '+(err&&err.message||c)),'err');
+        });
+    });
+    var guest=document.getElementById('agGuest');
+    if(guest) guest.addEventListener('click', function(){
+      guest.disabled=true; var ab=document.getElementById('agBtn'); if(ab)ab.disabled=true; msg('Entrando…','info');
+      window.DPCloud.loginGuest().then(function(){ msg('','info'); }).catch(function(err){
+        guest.disabled=false; if(ab)ab.disabled=false;
+        var c=err&&err.code||'';
+        if(c.indexOf('operation-not-allowed')>=0){
+          msg('El acceso sin credenciales no está habilitado en Firebase.','err');
+          note('Actívalo en la consola de Firebase → Authentication → Sign-in method → <b>Anónimo</b> → Habilitar.');
+        } else { msg('No se pudo entrar: '+(err&&err.message||c),'err'); }
+      });
+    });
+  }
+  window.dpLogout=function(){ if(window.DPCloud){window.DPCloud.logout();} };
+  // Esperar a que cargue el módulo Firebase (si se abre con file:// no cargará)
+  var waited=0;
+  (function check(){
+    if(window.DPCloud){ if(DP_DEV_NO_LOGIN){ devBypass(); } else { setup(); } }
+    else if(waited<8000){ waited+=200; setTimeout(check,200); }
+    else {
+      msg('No se pudo cargar Firebase.','err');
+      note('Parece que has abierto la app haciendo doble clic en el archivo. Debes <b>servirla con un servidor local</b> (la GUÍA_FIREBASE lo explica en 2 minutos). Resumen: abre una terminal en la carpeta 3DPROJECT y ejecuta <code>npx serve</code>, luego entra en la dirección que te muestre.');
+      var b=document.getElementById('agBtn'); if(b)b.disabled=true;
+      var g1=document.getElementById('agGuest'); if(g1)g1.disabled=true;
+    }
+  })();
+})();
+</script>
+
+</body>
+</html>
