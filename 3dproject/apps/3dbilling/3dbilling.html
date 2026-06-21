@@ -213,7 +213,7 @@ function esc(s){var d=document.createElement('div');d.appendChild(document.creat
 function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0]; }
 function cur(){ return S.receipts.filter(function(r){return r.id===S.cur;})[0] || null; }
 function total(r){ var t=0; (r.lines||[]).forEach(function(l){ t+=Number(l.amount)||0; }); return t; }
-function todayISO(){ var d=new Date(); return d.toISOString().slice(0,10); }
+function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function newReceipt(){
   S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var num='SL-'+y+'-'+String(S.seq).padStart(3,'0');
   var r={id:uid(),number:num,date:todayISO(),presetId:(S.presets[0]&&S.presets[0].id)||'silab',client:{name:'',email:''},
