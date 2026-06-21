@@ -94,6 +94,11 @@
           "premium": true
         },
         {
+          "nombre": "Silk Light Gold (Dorado)",
+          "hex": "#f1be48",
+          "premium": true
+        },
+        {
           "nombre": "Silk Yellow (Amarillo)",
           "hex": "#F1C402",
           "premium": true
