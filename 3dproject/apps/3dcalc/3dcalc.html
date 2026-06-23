@@ -156,6 +156,34 @@ textarea.inp{resize:vertical;min-height:60px}
 <style>
 @media(max-width:760px){.side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 14px}}
 </style>
+<style>
+.od-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.od-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.od-sec{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin:16px 0 8px;border-top:1px solid var(--border);padding-top:12px}
+.od-pend{display:flex;align-items:center;height:38px;font-weight:700}
+.od-flag{font-size:12px;color:#34D399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:8px;padding:6px 10px;margin-top:4px}
+.od-payform{display:flex;gap:8px;flex-wrap:wrap}
+.od-payform .inp{flex:1;min-width:110px}
+.od-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.od-actions .btn{padding:8px 11px;font-size:12.5px}
+.od-err{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--t2);margin-left:auto}
+.od-step{width:24px;height:24px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--t1);font-size:14px;cursor:pointer}
+.od-img{max-width:100%;border-radius:10px;margin-top:12px;border:1px solid var(--border)}
+#toast3{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:9700;background:var(--panel);border:1px solid var(--ac);color:var(--ac);font:600 13px 'Outfit',sans-serif;padding:10px 18px;border-radius:30px;box-shadow:0 12px 40px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center}
+#toast3.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.pm-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pm-add{display:inline-flex;gap:6px;align-items:center;margin-left:4px}
+.pm-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:30px;border:1.5px solid var(--border);background:transparent;color:var(--t2);font:600 12px 'Outfit',sans-serif;cursor:pointer}
+.pm-dot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.15);flex-shrink:0}
+.pm-table{border-collapse:separate;border-spacing:4px}
+.pm-table th{font-size:10.5px;color:var(--t2);text-align:center;padding:4px;min-width:64px}
+.pm-table th .pm-dot{margin:0 auto 3px}
+.pm-rh{font-size:11.5px;font-weight:600;white-space:nowrap;color:var(--t1)}
+.pm-cell input{width:62px;background:var(--glass);border:1px solid var(--border);border-radius:7px;color:var(--t1);font:600 12.5px 'Outfit',sans-serif;text-align:center;padding:6px 4px;outline:none}
+.pm-cell input:focus{border-color:var(--ac)}
+.pm-diag{text-align:center;color:var(--t3)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <div id="dp-shell">
@@ -183,6 +211,7 @@ textarea.inp{resize:vertical;min-height:60px}
       <a data-v="calc" onclick="go('calc')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="2" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="7.5" x2="19" y2="7.5" stroke="currentColor" stroke-width="1"/><circle cx="7" cy="11.5" r="1" fill="currentColor"/><circle cx="11" cy="11.5" r="1" fill="currentColor"/><circle cx="15" cy="11.5" r="1" fill="currentColor"/><circle cx="7" cy="15.5" r="1" fill="currentColor"/><circle cx="11" cy="15.5" r="1" fill="currentColor"/><circle cx="15" cy="15.5" r="1" fill="currentColor"/></svg> Calculadora</a>
       <a data-v="ord" onclick="go('ord')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7h6M8 11h6M8 15h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Pedidos <span id="ordBadge"></span></a>
       <a data-v="inv" onclick="go('inv')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M3 7l8-4 8 4v8l-8 4-8-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 7l8 4 8-4M11 11v8" stroke="currentColor" stroke-width="1.2"/></svg> Inventario</a>
+      <a data-v="purge" onclick="go('purge')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="13" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="13" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg> Matriz de purga</a>
       <a data-v="stat" onclick="go('stat')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M3 19V3M3 19h16M7 15v-4M11 15V7M15 15v-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Estadísticas</a>
       <a data-v="cli" onclick="go('cli')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 18a5.5 5.5 0 0 1 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15 5.2a3 3 0 0 1 0 5.6M16.5 18a5.5 5.5 0 0 0-3-4.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Clientes</a>
       <a data-v="cfg" onclick="go('cfg')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 2v2.5M11 17.5V20M2 11h2.5M17.5 11H20M4.6 4.6l1.8 1.8M15.6 15.6l1.8 1.8M17.4 4.6l-1.8 1.8M6.4 15.6l-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Configuración</a>
@@ -218,7 +247,7 @@ function defData(){return {
   filament_stock:[{material:'PLA',color:'Negro',remaining_g:1000,buy_threshold_g:150},{material:'PLA',color:'Blanco',remaining_g:1000,buy_threshold_g:150},{material:'PETG',color:'Transparente',remaining_g:1000,buy_threshold_g:150}],
   global_config:{energy_cost_kwh:0.24,labor_cost_h:15,money_unit:'€',precio_minimo:3,brand_color:'#3b82f6'},
   calc_state:{empresa:'3DCC',cliente:'',cliente_email:'',fecha:new Date().toISOString().slice(0,10),descripcion:'',impresora:'Creality K1SE Combo',filamento_tipo:'PLA',filamento_color:'Negro',is_multimaterial:false,material_breakdown:[],peso_g:'50',tiempo_h:'1',diseno_modelado:'No necesario',busqueda_modelos:'No',eliminacion_soportes:'No',postprocesado:'No',probabilidad_error:'Baja (25%)',markup:'Normal (230%)',urgencia_nivel:'Normal',gasto_misc:0,cantidad:1,is_shared:false,shared_percent_3dcc:50,shared_percent_silab3d:50},
-  orders:[], oseq:0, clients:[]
+  orders:[], oseq:0, clients:[], purge:{values:[],active:{},colors:[]}
 };}
 var S=defData();
 var view='dash';
@@ -237,8 +266,9 @@ function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d=
   S.global_config=Object.assign({},defData().global_config,d.global_config||{});
   S.calc_state=Object.assign({},defData().calc_state,d.calc_state||{});
   if(!Array.isArray(S.calc_state.material_breakdown))S.calc_state.material_breakdown=[];
-  if(Array.isArray(d.orders))S.orders=d.orders;
+  if(Array.isArray(d.orders))S.orders=d.orders.map(normOrder);
   if(Array.isArray(d.clients))S.clients=d.clients;
+  if(d.purge&&typeof d.purge==='object')S.purge=Object.assign({values:[],active:{},colors:[]},d.purge);
   S.oseq=Number(d.oseq)||0;
 } }catch(e){} }
 var saveT=null;
@@ -320,8 +350,8 @@ function setShared(v){ S.calc_state.is_shared=v; save(); renderCalc(); }
 function setShare(v){ v=Math.max(0,Math.min(100,num(v))); S.calc_state.shared_percent_3dcc=v; S.calc_state.shared_percent_silab3d=100-v; save(); renderCalc(); }
 
 /* ===== navegación ===== */
-function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',inv:'Inventario',stat:'Estadísticas',cli:'Clientes',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
-function render(){ if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='inv')renderInv(); else if(view==='stat')renderStats(); else renderCfg(); }
+function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',inv:'Inventario',purge:'Matriz de purga',stat:'Estadísticas',cli:'Clientes',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
+function render(){ if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='inv')renderInv(); else if(view==='purge')renderPurge(); else if(view==='stat')renderStats(); else renderCfg(); }
 function updateResult(){ var el=document.getElementById('resultBox'); if(el)el.innerHTML=resultHTML(); }
 
 /* ===== calculadora ===== */
@@ -419,36 +449,41 @@ function resultHTML(){
 /* ===== pedidos ===== */
 function todayISO(){return new Date().toISOString().slice(0,10);}
 function estColor(e){return {'Presupuesto enviado':'#7A8099','Aceptado':'#4D9FFF','En producción':'#F4B740','Post-procesado':'#B87CFF','Listo para entregar':'#00DDB8','Entregado':'#34D399'}[e]||'#7A8099';}
-function saveAsOrder(){ var r=compute(),c=S.calc_state; S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Presupuesto enviado',is_shared:!!c.is_shared,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); save(); go('ord'); }
-function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Presupuesto enviado'}); save(); renderOrders(); }
+function saveAsOrder(){ var r=compute(),c=S.calc_state; S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Presupuesto enviado',diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); save(); go('ord'); }
+function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Presupuesto enviado',payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:''}); save(); renderOrders(); }
 function setOrd(id,f,v){ var o=S.orders.filter(function(x){return x.id===id;})[0]; if(!o)return; if(f==='precio_final'||f==='importe_pagado')v=num(v); o[f]=v; save(); updateOrdBadge(); var pe=document.getElementById('pend-'+id); if(pe){var p=num(o.precio_final)-num(o.importe_pagado); pe.innerHTML=p>0.005?'<span class="pend">'+eur(p)+'</span>':'<span class="paid">Pagado</span>';} }
 function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
 var ordQ='';
 function ordSearch(v){ ordQ=(v||'').toLowerCase(); renderOrders(); }
-function activeOrders(){ return S.orders.filter(function(o){return o.estado!=='Entregado';}); }
+function activeOrders(){ return S.orders.filter(function(o){return !o.archived && o.estado!=='Entregado';}); }
 function updateOrdBadge(){ var b=document.getElementById('ordBadge'); if(b){var n=activeOrders().length; b.innerHTML=n?'<span class="badge-amber">'+n+'</span>':'';} }
 function renderOrders(){
-  var list=S.orders.filter(function(o){ if(!ordQ)return true; return (((o.number||'')+' '+(o.cliente||'')+' '+(o.descripcion||'')).toLowerCase().indexOf(ordQ)>=0); });
+  var base=S.orders.filter(function(o){return showArch? o.archived : !o.archived;});
+  var list=base.filter(function(o){ if(!ordQ)return true; return (((o.number||'')+' '+(o.cliente||'')+' '+(o.descripcion||'')).toLowerCase().indexOf(ordQ)>=0); });
   var rows=list.map(function(o){
     var pend=num(o.precio_final)-num(o.importe_pagado);
     var estOpts=ORDER_LIFECYCLE.map(function(e){return '<option'+(o.estado===e?' selected':'')+'>'+e+'</option>';}).join('');
-    return '<tr><td style="white-space:nowrap"><b>'+esc(o.number)+'</b></td>'
+    return '<tr><td style="white-space:nowrap;cursor:pointer" onclick="openOrder(\''+o.id+'\')"><b style="color:var(--ac)">'+esc(o.number)+'</b></td>'
       +'<td><input value="'+esc(o.cliente)+'" placeholder="Cliente" onchange="setOrd(\''+o.id+'\',\'cliente\',this.value)"></td>'
       +'<td><input value="'+esc(o.descripcion)+'" placeholder="Descripción" onchange="setOrd(\''+o.id+'\',\'descripcion\',this.value)"></td>'
-      +'<td><select class="est-sel" style="border-left:3px solid '+estColor(o.estado)+'" onchange="setOrd(\''+o.id+'\',\'estado\',this.value);renderOrders()">'+estOpts+'</select></td>'
+      +'<td><select class="est-sel" style="border-left:3px solid '+estColor(o.estado)+'" onchange="setOrderEstado(\''+o.id+'\',this.value);renderOrders()">'+estOpts+'</select></td>'
       +'<td style="text-align:right"><input type="number" step="0.01" style="text-align:right" value="'+esc(o.precio_final)+'" onchange="setOrd(\''+o.id+'\',\'precio_final\',this.value)"></td>'
       +'<td style="text-align:right"><input type="number" step="0.01" style="text-align:right" value="'+esc(o.importe_pagado)+'" onchange="setOrd(\''+o.id+'\',\'importe_pagado\',this.value)"></td>'
-      +'<td style="text-align:right;white-space:nowrap" id="pend-'+o.id+'">'+(pend>0.005?'<span class="pend">'+eur(pend)+'</span>':'<span class="paid">Pagado</span>')+'</td>'
-      +'<td style="text-align:right"><button class="del" onclick="delOrder(\''+o.id+'\')">✕</button></td></tr>';
+      +'<td style="text-align:right;white-space:nowrap">'+(pend>0.005?'<span class="pend">'+eur(pend)+'</span>':'<span class="paid">Pagado</span>')+'</td>'
+      +'<td style="text-align:right;white-space:nowrap"><button class="btn ghost" style="padding:4px 9px" onclick="openOrder(\''+o.id+'\')">Detalle</button> <button class="del" onclick="delOrder(\''+o.id+'\')">✕</button></td></tr>';
   }).join('');
+  var nArch=S.orders.filter(function(o){return o.archived;}).length;
   document.getElementById('view').innerHTML=
-    '<div class="h1">Pedidos</div><div class="h-sub">Presupuestos y pedidos. El ciclo de estados es el de la app de referencia.</div>'
-    +'<div class="ord-toolbar"><input class="inp ord-search" placeholder="Buscar nº, cliente o descripción…" value="'+esc(ordQ)+'" oninput="ordSearch(this.value)"><span class="sp"></span><button class="btn" onclick="newOrder()">＋ Nuevo pedido</button></div>'
+    '<div class="h1">Pedidos</div><div class="h-sub">Toca el número o «Detalle» para gestionar cobros, estado, recálculo, PDF y más.</div>'
+    +'<div class="ord-toolbar"><input class="inp ord-search" placeholder="Buscar nº, cliente o descripción…" value="'+esc(ordQ)+'" oninput="ordSearch(this.value)"><span class="sp"></span>'
+    +(nArch?'<button class="btn ghost" onclick="toggleArch()">'+(showArch?'← Ver activos':'Archivados ('+nArch+')')+'</button>':'')
+    +'<button class="btn" onclick="newOrder()">＋ Nuevo pedido</button></div>'
     +'<div class="card">'
-    +(list.length?'<table class="t"><thead><tr><th>Nº</th><th>Cliente</th><th>Descripción</th><th>Estado</th><th style="text-align:right">Precio</th><th style="text-align:right">Pagado</th><th style="text-align:right">Pendiente</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>':'<div class="empty">No hay pedidos. Crea uno o guarda un cálculo desde la Calculadora.</div>')
+    +(list.length?'<table class="t"><thead><tr><th>Nº</th><th>Cliente</th><th>Descripción</th><th>Estado</th><th style="text-align:right">Precio</th><th style="text-align:right">Pagado</th><th style="text-align:right">Pendiente</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>':'<div class="empty">'+(showArch?'No hay pedidos archivados.':'No hay pedidos. Crea uno o guarda un cálculo desde la Calculadora.')+'</div>')
     +'</div>';
   updateOrdBadge();
 }
+
 
 /* ===== estadísticas ===== */
 function renderStats(){
@@ -474,7 +509,7 @@ function renderStats(){
     +'<div class="kpi"><div class="k-l">Ticket medio</div><div class="k-v">'+eur(ticket)+'</div></div>'
     +'</div>'
     +'<div class="chartbox"><div class="card-h">Ingresos (entregados) — últimos 6 meses</div><div class="cbar">'+monthCols+'</div></div>'
-    +'<div class="chartbox"><div class="card-h">Pedidos por estado</div><div class="hbars">'+estBars+'</div></div>';
+    +'<div class="chartbox"><div class="card-h">Pedidos por estado</div><div class="hbars">'+estBars+'</div></div>'+statsExtra(os);
 }
 
 /* ===== inventario (stock de filamento) ===== */
@@ -629,6 +664,154 @@ function renderClients(){
    +'</div>';
 }
 
+
+/* ===== util extra ===== */
+function toast3(msg,clr){ var t=document.getElementById('toast3'); if(!t){t=document.createElement('div');t.id='toast3';document.body.appendChild(t);} t.textContent=msg; t.style.borderColor=(clr||'var(--ac)'); t.style.color=(clr||'var(--ac)'); t.classList.add('show'); clearTimeout(toast3._t); toast3._t=setTimeout(function(){t.classList.remove('show');},2800); }
+function fmtD(iso){ if(!iso)return''; try{return new Date(iso).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return'';} }
+function pmContrast(hex){ try{var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return (r*299+g*587+b*114)/1000>145?'#1a1a1a':'#fff';}catch(e){return '#fff';} }
+function getOrder(id){ return S.orders.filter(function(o){return o.id===id;})[0]; }
+function normOrder(o){ o=o||{}; o.payment_history=Array.isArray(o.payment_history)?o.payment_history:[]; o.material_contabilizado=!!o.material_contabilizado; o.archived=!!o.archived; o.repeticiones_error=num(o.repeticiones_error); o.imagen=o.imagen||''; if(o.importe_pagado==null)o.importe_pagado=0; return o; }
+
+/* ===== gestión de pedidos (detalle) ===== */
+var showArch=false;
+function toggleArch(){ showArch=!showArch; renderOrders(); }
+function setOrdField(id,f,v){ var o=getOrder(id); if(!o)return; if(['precio_final','importe_pagado','peso_g','horas','cantidad','gasto_misc'].indexOf(f)>=0)v=num(v); o[f]=v; save(); updateOrdBadge(); }
+function consumeStock(o){
+  var lines=[];
+  if(o.is_multimaterial && Array.isArray(o.material_breakdown) && o.material_breakdown.length){
+    o.material_breakdown.forEach(function(it){ if(it.material && num(it.grams)>0) lines.push({material:it.material,color:it.color||'',grams:num(it.grams)}); });
+  } else {
+    lines.push({material:o.filamento||'', color:o.filamento_color||'', grams:num(o.peso_g)*(num(o.cantidad)||1)});
+  }
+  var low=[];
+  lines.forEach(function(ln){
+    if(!ln.material||ln.grams<=0)return;
+    var item=S.filament_stock.filter(function(s){return s.material===ln.material && String(s.color||'').toLowerCase()===String(ln.color||'').toLowerCase();})[0];
+    if(!item){ item={material:ln.material,color:ln.color||'Negro',remaining_g:0,buy_threshold_g:150}; S.filament_stock.push(item); }
+    item.remaining_g=Math.round((num(item.remaining_g)-ln.grams)*100)/100;
+    if(num(item.remaining_g)<=num(item.buy_threshold_g)) low.push(item.material+' ('+(item.color||'')+'): '+num(item.remaining_g).toFixed(0)+' g');
+  });
+  o.material_contabilizado=true;
+  if(low.length) toast3('Stock bajo → '+low.join(' · '),'#F4B740'); else toast3('Material descontado del inventario','#34D399');
+}
+function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; if(estado==='Aceptado' && !o.material_contabilizado) consumeStock(o); save(); updateOrdBadge(); }
+function openOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); }
+function reopenOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); renderOrders(); }
+function orderModalHTML(o){
+  var pend=num(o.precio_final)-num(o.importe_pagado);
+  var estOpts=ORDER_LIFECYCLE.map(function(e){return '<option'+(o.estado===e?' selected':'')+'>'+e+'</option>';}).join('');
+  var payRows=(o.payment_history||[]).length
+    ? '<table class="t" style="margin-bottom:8px"><tbody>'+o.payment_history.map(function(p){return '<tr><td style="font-size:12px;color:var(--t2)">'+fmtD(p.created_at)+'</td><td style="font-size:12px">'+esc(p.method||'')+'</td><td style="text-align:right;font-weight:600">'+eur(p.amount)+'</td><td style="text-align:right"><button class="del" onclick="removePayment(\''+o.id+'\',\''+p.id+'\')">✕</button></td></tr>';}).join('')+'</tbody></table>'
+    : '<div class="note" style="margin-bottom:8px">Sin cobros registrados.</div>';
+  var I=o.id;
+  return '<h3>Pedido '+esc(o.number||'')+(o.archived?' · <span style="color:var(--t3);font-size:13px">archivado</span>':'')+'</h3>'
+    +'<div class="od-grid"><div><label class="lbl">Estado</label><select class="selx" style="border-left:3px solid '+estColor(o.estado)+'" onchange="setOrderEstado(\''+I+'\',this.value);reopenOrder(\''+I+'\')">'+estOpts+'</select></div>'
+      +'<div><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(o.fecha)+'" onchange="setOrdField(\''+I+'\',\'fecha\',this.value)"></div></div>'
+    +'<div class="od-grid"><div><label class="lbl">Cliente</label><input class="inp" value="'+esc(o.cliente)+'" onchange="setOrdField(\''+I+'\',\'cliente\',this.value)"></div>'
+      +'<div><label class="lbl">Email</label><input class="inp" value="'+esc(o.cliente_email)+'" onchange="setOrdField(\''+I+'\',\'cliente_email\',this.value)"></div></div>'
+    +'<div class="fg"><label class="lbl">Descripción</label><input class="inp" value="'+esc(o.descripcion)+'" onchange="setOrdField(\''+I+'\',\'descripcion\',this.value)"></div>'
+    +'<div class="od-grid"><div><label class="lbl">Material</label><input class="inp" value="'+esc(o.filamento)+'" onchange="setOrdField(\''+I+'\',\'filamento\',this.value)"></div>'
+      +'<div><label class="lbl">Color</label><input class="inp" value="'+esc(o.filamento_color)+'" onchange="setOrdField(\''+I+'\',\'filamento_color\',this.value)"></div></div>'
+    +'<div class="od-grid3"><div><label class="lbl">Peso (g)</label><input class="inp" type="number" value="'+esc(o.peso_g)+'" onchange="setOrdField(\''+I+'\',\'peso_g\',this.value)"></div>'
+      +'<div><label class="lbl">Tiempo (h)</label><input class="inp" type="number" value="'+esc(o.horas)+'" onchange="setOrdField(\''+I+'\',\'horas\',this.value)"></div>'
+      +'<div><label class="lbl">Cantidad</label><input class="inp" type="number" value="'+esc(o.cantidad)+'" onchange="setOrdField(\''+I+'\',\'cantidad\',this.value)"></div></div>'
+    +'<div class="od-grid"><div><label class="lbl">Precio final (€)</label><input class="inp" type="number" step="0.01" value="'+esc(o.precio_final)+'" onchange="setOrdField(\''+I+'\',\'precio_final\',this.value)"></div>'
+      +'<div><label class="lbl">Pendiente</label><div class="od-pend">'+(pend>0.005?'<span class="pend">'+eur(pend)+'</span>':'<span class="paid">Pagado</span>')+'</div></div></div>'
+    +(o.material_contabilizado?'<div class="od-flag">✓ Material ya descontado del inventario</div>':'')
+    +'<div class="od-sec">Cobros</div>'+payRows
+    +'<div class="od-payform"><input class="inp" id="pay-amt" type="number" step="0.01" placeholder="Importe €"><input class="inp" id="pay-met" placeholder="Método (Bizum, efectivo…)"><button class="btn" onclick="addPayment(\''+I+'\')">Registrar cobro</button></div>'
+    +'<div class="od-sec">Acciones</div>'
+    +'<div class="od-actions">'
+      +'<button class="btn ghost" onclick="loadOrderToCalc(\''+I+'\')">↺ Recalcular</button>'
+      +'<button class="btn ghost" onclick="dupOrder(\''+I+'\')">⧉ Duplicar</button>'
+      +'<button class="btn ghost" onclick="toggleArchive(\''+I+'\')">'+(o.archived?'♻ Restaurar':'🗄 Archivar')+'</button>'
+      +'<button class="btn ghost" onclick="orderPDF(\''+I+'\')">⬇ PDF</button>'
+      +'<label class="btn ghost" style="cursor:pointer">📎 Imagen<input type="file" accept="image/*" style="display:none" onchange="attachImage(\''+I+'\',this)"></label>'
+      +'<span class="od-err">Errores: <button class="od-step" onclick="setErr(\''+I+'\',-1)">−</button> <b>'+num(o.repeticiones_error)+'</b> <button class="od-step" onclick="setErr(\''+I+'\',1)">+</button></span>'
+    +'</div>'
+    +(o.imagen?'<img class="od-img" src="'+o.imagen+'" alt="imagen del pedido">':'')
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">'
+      +'<button class="btn" style="background:rgba(255,107,138,.12);color:#FF6B8A;border:1px solid rgba(255,107,138,.4)" onclick="delOrderM(\''+I+'\')">Eliminar</button>'
+      +'<button class="btn ghost" onclick="closeModal()">Cerrar</button></div>';
+}
+function delOrderM(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); closeModal(); renderOrders(); }
+function addPayment(id){ var o=getOrder(id); if(!o)return; var ae=document.getElementById('pay-amt'), me=document.getElementById('pay-met'); var amt=num(ae&&ae.value); var met=((me&&me.value)||'').trim(); if(amt<=0){toast3('Indica un importe válido','#FF6B8A');return;} o.payment_history=o.payment_history||[]; o.payment_history.unshift({id:uid(),created_at:new Date().toISOString(),amount:roundMoney(amt),method:met||'Manual'}); o.importe_pagado=roundMoney(num(o.importe_pagado)+amt); o.payment_method=met||o.payment_method||''; save(); reopenOrder(id); }
+function removePayment(id,pid){ var o=getOrder(id); if(!o)return; var p=(o.payment_history||[]).filter(function(x){return x.id===pid;})[0]; if(!p)return; o.importe_pagado=roundMoney(Math.max(0,num(o.importe_pagado)-num(p.amount))); o.payment_history=o.payment_history.filter(function(x){return x.id!==pid;}); save(); reopenOrder(id); }
+function loadOrderToCalc(id){ var o=getOrder(id); if(!o)return; var c=S.calc_state;
+  c.empresa=o.empresa||'3DCC'; c.cliente=o.cliente||''; c.cliente_email=o.cliente_email||''; c.fecha=o.fecha||todayISO(); c.descripcion=o.descripcion||'';
+  c.impresora=o.impresora||c.impresora; c.filamento_tipo=o.filamento||c.filamento_tipo; c.filamento_color=o.filamento_color||'Negro';
+  c.is_multimaterial=!!o.is_multimaterial; c.material_breakdown=Array.isArray(o.material_breakdown)?JSON.parse(JSON.stringify(o.material_breakdown)):[];
+  c.peso_g=String(o.peso_g||0); c.tiempo_h=String(o.horas||0); c.cantidad=num(o.cantidad)||1;
+  c.diseno_modelado=o.diseno_modelado||'No necesario'; c.busqueda_modelos=o.busqueda_modelos||'No'; c.eliminacion_soportes=o.eliminacion_soportes||'No'; c.postprocesado=o.postprocesado||'No';
+  c.probabilidad_error=o.probabilidad_error||'Baja (25%)'; c.markup=o.markup||'Normal (230%)'; c.urgencia_nivel=o.urgencia_nivel||'Normal'; c.gasto_misc=num(o.gasto_misc);
+  c.is_shared=!!o.is_shared; if(o.shared_split){c.shared_percent_3dcc=num(o.shared_split['3DCC']);c.shared_percent_silab3d=num(o.shared_split['SILAB3D']);}
+  save(); closeModal(); go('calc'); toast3('Parámetros cargados en la calculadora','#4D9FFF'); }
+function dupOrder(id){ var o=getOrder(id); if(!o)return; S.oseq=(S.oseq||0)+1; var c=JSON.parse(JSON.stringify(o)); c.id=uid(); c.number='P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'); c.created_at=new Date().toISOString(); c.estado='Presupuesto enviado'; c.importe_pagado=0; c.payment_history=[]; c.material_contabilizado=false; c.archived=false; S.orders.unshift(c); save(); closeModal(); renderOrders(); toast3('Pedido duplicado','#34D399'); }
+function toggleArchive(id){ var o=getOrder(id); if(!o)return; o.archived=!o.archived; save(); reopenOrder(id); }
+function setErr(id,d){ var o=getOrder(id); if(!o)return; o.repeticiones_error=Math.max(0,num(o.repeticiones_error)+d); save(); reopenOrder(id); }
+function attachImage(id,input){ var o=getOrder(id); if(!o||!input.files||!input.files[0])return; var f=input.files[0]; if(f.size>1600000){toast3('Imagen demasiado grande (máx ~1,5 MB)','#FF6B8A');return;} var rd=new FileReader(); rd.onload=function(){ o.imagen=rd.result; save(); reopenOrder(id); }; rd.readAsDataURL(f); }
+function orderPDF(id){ var o=getOrder(id); if(!o)return; if(!(window.jspdf&&window.jspdf.jsPDF)){ toast3('No se pudo cargar el generador de PDF','#FF6B8A'); return; } var u=S.global_config.money_unit||'€'; var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); var x=20,y=22;
+  doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text(String(o.empresa||'SILAB3D'),x,y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(120); doc.text('Presupuesto / Recibo',x,y+6); doc.setTextColor(20);
+  y+=20; doc.setFontSize(11); doc.text('Nº: '+(o.number||''),x,y); doc.text('Fecha: '+(o.fecha||''),130,y); y+=7;
+  doc.text('Cliente: '+(o.cliente||'—'),x,y); y+=7; if(o.cliente_email){doc.text('Email: '+o.cliente_email,x,y); y+=7;}
+  y+=3; doc.setDrawColor(200); doc.line(x,y,190,y); y+=9;
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Detalle',x,y); y+=7; doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text('Descripción: '+(o.descripcion||'—'),x,y); y+=6;
+  doc.text('Material: '+(o.filamento||'—')+(o.filamento_color?(' · '+o.filamento_color):''),x,y); y+=6;
+  doc.text('Peso: '+(o.peso_g||0)+' g    Tiempo: '+(o.horas||0)+' h    Cantidad: '+(o.cantidad||1),x,y); y+=11;
+  var unit=roundMoney(num(o.precio_final)/Math.max(1,num(o.cantidad)||1));
+  doc.setFontSize(11); doc.text('Precio unitario: '+unit.toFixed(2)+' '+u,x,y); y+=8;
+  doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.text('TOTAL: '+num(o.precio_final).toFixed(2)+' '+u,x,y); y+=9;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(120);
+  var pend=num(o.precio_final)-num(o.importe_pagado);
+  doc.text('Pagado: '+num(o.importe_pagado).toFixed(2)+' '+u+'     Pendiente: '+pend.toFixed(2)+' '+u,x,y);
+  doc.setTextColor(150); doc.setFontSize(8); doc.text('Términos y condiciones en silab3d.com · Precio final cerrado, incluye todos los costes.',x,287);
+  doc.save((o.number||'pedido')+'.pdf'); }
+
+/* ===== estadísticas ampliadas ===== */
+function statsExtra(os){
+  var act=['Aceptado','En producción','Post-procesado','Listo para entregar','Entregado'];
+  var byMat={};
+  os.forEach(function(o){ if(act.indexOf(o.estado)>=0){ var m=o.filamento||'—'; byMat[m]=(byMat[m]||0)+num(o.peso_g)*(num(o.cantidad)||1); } });
+  var arr=Object.keys(byMat).map(function(k){return [k,byMat[k]];}).filter(function(x){return x[1]>0;}).sort(function(a,b){return b[1]-a[1];});
+  var maxM=arr.reduce(function(m,x){return Math.max(m,x[1]);},1);
+  var bars=arr.length?arr.map(function(x){var pct=Math.round(x[1]/maxM*100);return '<div class="hb"><span class="name">'+esc(x[0])+'</span><span class="track"><i style="width:'+pct+'%;background:var(--ac)"></i></span><span class="val">'+Math.round(x[1])+' g</span></div>';}).join(''):'<div class="empty">Sin datos.</div>';
+  var benef=os.filter(function(o){return o.estado==='Entregado';}).reduce(function(a,o){return a+num(o.beneficio_neto);},0);
+  var errs=os.reduce(function(a,o){return a+num(o.repeticiones_error);},0);
+  return '<div class="chartbox"><div class="card-h">Uso de filamento por material (aceptados+)</div><div class="hbars">'+bars+'</div></div>'
+    +'<div class="chartbox"><div class="card-h">Beneficio neto (entregados)</div><div style="font-size:26px;font-weight:800;color:#34D399">'+eur(benef)+'</div><div class="note">Repeticiones por error acumuladas: <b>'+errs+'</b></div></div>';
+}
+
+/* ===== matriz de purga multicolor ===== */
+var purgePrinter='';
+function purgeColors(){ var sc=S.filament_stock.map(function(s){return s.color;}).filter(function(c){return c&&c!=='Multicolor';}); var extra=(S.purge&&S.purge.colors)||[]; var seen={},out=[]; sc.concat(extra).forEach(function(c){if(c&&!seen[c]){seen[c]=1;out.push(c);}}); return out.sort(); }
+function purgeActive(){ if(!purgePrinter)purgePrinter=(S.printers[0]&&S.printers[0].name)||''; var a=(S.purge.active&&S.purge.active[purgePrinter])||[]; var cols=purgeColors(); return a.filter(function(c){return cols.indexOf(c)>=0;}); }
+function purgeToggle(c){ S.purge.active=S.purge.active||{}; var cur=(S.purge.active[purgePrinter]||[]).slice(); var i=cur.indexOf(c); if(i>=0)cur.splice(i,1); else cur.push(c); S.purge.active[purgePrinter]=cur; save(); renderPurge(); }
+function purgeVal(f,t){ var e=(S.purge.values||[]).filter(function(v){return v.printer===purgePrinter&&v.from===f&&v.to===t;})[0]; return e?e.grams:''; }
+function purgeSet(f,t,val){ S.purge.values=S.purge.values||[]; var arr=S.purge.values; var i=arr.findIndex(function(v){return v.printer===purgePrinter&&v.from===f&&v.to===t;}); var s=String(val).trim(); if(s===''){ if(i>=0)arr.splice(i,1);} else { var g=num(s); if(i>=0)arr[i].grams=g; else arr.push({printer:purgePrinter,from:f,to:t,grams:g}); } save(); }
+function purgeSetPrinter(v){ purgePrinter=v; renderPurge(); }
+function purgeAddColor(){ var inp=document.getElementById('pm-newc'); if(!inp)return; var name=(inp.value||'').trim(); if(!name)return; S.purge.colors=S.purge.colors||[]; if(S.purge.colors.indexOf(name)<0)S.purge.colors.push(name); S.purge.active=S.purge.active||{}; var cur=(S.purge.active[purgePrinter]||[]).slice(); if(cur.indexOf(name)<0)cur.push(name); S.purge.active[purgePrinter]=cur; save(); renderPurge(); }
+function renderPurge(){
+  if(!purgePrinter)purgePrinter=(S.printers[0]&&S.printers[0].name)||'';
+  var prOpts=S.printers.map(function(p){return '<option'+(p.name===purgePrinter?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');
+  var cols=purgeColors(), act=purgeActive();
+  var chips=cols.map(function(c){var on=act.indexOf(c)>=0;var hx=colorHex(c);return '<button class="pm-chip'+(on?' on':'')+'" style="border-color:'+hx+(on?(';background:'+hx+';color:'+pmContrast(hx)):'')+'" onclick="purgeToggle(\''+esc(c).replace(/'/g,"\\'")+'\')"><span class="pm-dot" style="background:'+hx+'"></span>'+esc(c)+'</button>';}).join('');
+  var matrix;
+  if(act.length>=2){
+    var head='<th class="pm-corner"></th>'+act.map(function(c){return '<th><span class="pm-dot" style="background:'+colorHex(c)+'"></span><div>'+esc(c)+'</div></th>';}).join('');
+    var rows=act.map(function(r){
+      var tds=act.map(function(c){ if(r===c)return '<td class="pm-diag">—</td>'; return '<td class="pm-cell"><input type="number" min="0" value="'+esc(purgeVal(r,c))+'" oninput="purgeSet(\''+esc(r).replace(/'/g,"\\'")+'\',\''+esc(c).replace(/'/g,"\\'")+'\',this.value)"></td>'; }).join('');
+      return '<tr><td class="pm-rh"><span class="pm-dot" style="background:'+colorHex(r)+'"></span> '+esc(r)+'</td>'+tds+'</tr>';
+    }).join('');
+    matrix='<div class="card" style="overflow:auto"><div class="card-h">Volúmenes de purga (mm³) · fila = origen, columna = destino</div><table class="pm-table"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } else { matrix='<div class="card"><div class="empty">Activa al menos 2 colores para ver la matriz.</div></div>'; }
+  document.getElementById('view').innerHTML=
+    '<div class="h1">Matriz de purga</div><div class="h-sub">Volumen de purga entre colores para impresión multicolor (AMS/MMU), por impresora.</div>'
+    +'<div class="ord-toolbar"><label class="lbl" style="margin:0 8px 0 0">Impresora</label><select class="selx" style="max-width:260px" onchange="purgeSetPrinter(this.value)">'+prOpts+'</select></div>'
+    +'<div class="card"><div class="card-h">Colores en uso (toca para activar)</div><div class="pm-chips">'+chips+'<span class="pm-add"><input class="inp" id="pm-newc" placeholder="Nuevo color" style="width:130px;padding:6px 9px"><button class="btn ghost" onclick="purgeAddColor()">＋</button></span></div></div>'
+    +matrix;
+}
 
 /* ===== init ===== */
 var hadLocal=false; try{hadLocal=!!localStorage.getItem(SK);}catch(e){}
