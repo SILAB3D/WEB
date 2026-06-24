@@ -76,6 +76,11 @@ body.side-off .side{margin-left:-249px}
 .dt-toggle{margin-top:7px;border:1px solid #ccc;background:#f5f5f7;color:#333;font:600 12px 'Outfit',sans-serif;padding:5px 10px;border-radius:8px;cursor:pointer;outline:none}
 .dt-toggle option{color:#111;background:#fff}
 .dt-toggle:hover{color:#111;border-color:#F4B740}
+.doc-notes{margin-top:26px;border-top:1px solid #eee;padding-top:14px;display:flex;flex-direction:column;gap:7px}
+.dn-row{display:flex;align-items:flex-start;gap:9px}
+.dn-chk{margin-top:3px;flex-shrink:0;accent-color:#F4B740;width:15px;height:15px;cursor:pointer}
+.dn-ta{flex:1;font-size:12px;color:#555;line-height:1.55;border:none;background:transparent;resize:none;outline:none;font-family:'Outfit',sans-serif;padding:0}
+.dn-off .dn-ta{color:#bbb;text-decoration:line-through}
 .dh-num textarea{border:none;text-align:right;font-family:ui-monospace,monospace;font-size:12px;color:#666;background:transparent;width:100%;margin-top:4px}
 .dh-date input{border:none;text-align:right;font-size:12px;color:#666;background:transparent;font-family:inherit;width:100%;margin-top:2px}
 .doc-client{display:flex;gap:24px;margin:18px 0 6px}
@@ -133,7 +138,7 @@ table.lines td.u textarea{text-align:center}
 .logo-up .prev img{max-width:100%;max-height:100%;object-fit:contain}
 @media print{
   @page{margin:14mm}
-  #dp-shell,.top,.side,.add-line,.row-del,.veil,.side-bottom,.dt-toggle{display:none!important}
+  #dp-shell,.top,.side,.add-line,.row-del,.veil,.side-bottom,.dt-toggle,.no-print,.dn-off{display:none!important}
   body{height:auto;overflow:visible;background:#fff}
   .layout{position:static;display:block}
   .main{display:block;padding:0;overflow:visible}
@@ -222,7 +227,7 @@ function total(r){ var t=0; (r.lines||[]).forEach(function(l){ t+=Number(l.amoun
 function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function newReceipt(){
   S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var num='SL-'+y+'-'+String(S.seq).padStart(3,'0');
-  var r={id:uid(),number:num,date:todayISO(),docType:'Recibo',presetId:(S.presets[0]&&S.presets[0].id)||'',client:{name:'',email:''},
+  var r={id:uid(),number:num,date:todayISO(),docType:'Recibo',presetId:(S.presets[0]&&S.presets[0].id)||'',notes:[{id:uid(),text:DEFAULT_TERMS,on:true}],client:{name:'',email:''},
     lines:[{name:'',desc:'',materials:'',units:1,amount:0}],created:Date.now()};
   S.receipts.unshift(r); S.cur=r.id; save(); renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off');
 }
@@ -253,6 +258,7 @@ function renderSheet(){
   var main=document.getElementById('main'); var r=cur();
   if(!r){ main.innerHTML='<div class="empty"><div class="e-ic">🧾</div><h3>Crea tu primer recibo</h3><p>Pulsa “Nuevo recibo” para empezar. Podrás añadir varios pedidos, elegir la cabecera y exportar a PDF.</p><button class="cta" style="max-width:200px;margin:0 auto" onclick="newReceipt()">＋ Nuevo recibo</button></div>'; return; }
   var p=preset(r.presetId);
+  if(!Array.isArray(r.notes)){ r.notes=[{id:uid(),text:DEFAULT_TERMS,on:true}]; save(); }
   var rows=r.lines.map(function(l,i){
     return '<tr>'
       +'<td class="cell-name"><textarea rows="1" class="gr" placeholder="Nombre del pedido" oninput="grow(this);updLine('+i+',\'name\',this.value)">'+esc(l.name)+'</textarea></td>'
@@ -273,12 +279,27 @@ function renderSheet(){
     +'<table class="lines"><thead><tr><th>Pedido</th><th>Descripción</th><th>Material / color</th><th class="u">Uds.</th><th class="num">Importe</th><th class="x"></th></tr></thead><tbody>'+rows+'</tbody></table>'
     +'<button class="add-line" onclick="addLine()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir pedido</button>'
     +'<div class="doc-total"><span class="dt-label">Total</span><span class="dt-value" id="docTotal">'+eur(total(r))+'</span></div>'
-    +'<div class="doc-note">Nuestros términos y condiciones generales están disponibles en nuestra web (<a href="https://silab3d.com" target="_blank">silab3d.com</a>) y se aplican a este presupuesto.</div>'
+    +phrasesHTML(r)
     +'</div>';
   setTimeout(function(){ document.querySelectorAll('.sheet .gr').forEach(function(t){ grow(t); }); },0);
 }
 function toggleDocType(){ var r=cur(); if(!r)return; r.docType=(r.docType==='Presupuesto')?'Recibo':'Presupuesto'; save(); renderSheet(); }
 function setDocType(v){ var r=cur(); if(!r)return; r.docType=(v==='Presupuesto')?'Presupuesto':'Recibo'; save(); renderSheet(); }
+var DEFAULT_TERMS='Nuestros términos y condiciones generales están disponibles en silab3d.com y se aplican a este documento.';
+function phrasesHTML(r){
+  var notes=Array.isArray(r.notes)?r.notes:[];
+  var rows=notes.map(function(n){
+    return '<div class="dn-row'+(n.on?'':' dn-off')+'">'
+      +'<input type="checkbox" class="dn-chk no-print" '+(n.on?'checked':'')+' onchange="togglePhrase(\''+n.id+'\')" title="Incluir esta frase en el documento">'
+      +'<textarea rows="1" class="gr dn-ta" placeholder="Escribe una frase…" oninput="grow(this);setPhraseText(\''+n.id+'\',this.value)">'+esc(n.text)+'</textarea>'
+      +'<button class="row-del no-print" onclick="delPhrase(\''+n.id+'\')" title="Quitar frase">✕</button></div>';
+  }).join('');
+  return '<div class="doc-notes">'+rows+'<button class="add-line no-print" onclick="addPhrase()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir frase</button></div>';
+}
+function addPhrase(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r.notes=[]; r.notes.push({id:uid(),text:'',on:true}); save(); renderSheet(); }
+function setPhraseText(id,v){ var r=cur(); if(!r||!Array.isArray(r.notes))return; var n=r.notes.filter(function(x){return x.id===id;})[0]; if(n){ n.text=v; save(); } }
+function togglePhrase(id){ var r=cur(); if(!r||!Array.isArray(r.notes))return; var n=r.notes.filter(function(x){return x.id===id;})[0]; if(n){ n.on=!n.on; save(); renderSheet(); } }
+function delPhrase(id){ var r=cur(); if(!r)return; r.notes=(r.notes||[]).filter(function(x){return x.id!==id;}); save(); renderSheet(); }
 function printPDF(){ var r=cur(); if(!r){alert('Crea o selecciona un recibo primero.');return;} var old=document.title; document.title=(r.number||'documento'); var restore=function(){document.title=old; window.removeEventListener('afterprint',restore);}; window.addEventListener('afterprint',restore); setTimeout(restore,2000); window.print(); }
 var pfLogo='';
 function openPresets(){ pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList(); document.getElementById('presetVeil').classList.add('open'); }
