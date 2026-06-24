@@ -73,6 +73,8 @@ body.side-off .side{margin-left:-249px}
 .dh-slogan{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-top:3px}
 .dh-meta{text-align:right;flex-shrink:0;min-width:170px}
 .dh-title{font-size:22px;font-weight:800;letter-spacing:1px;color:#111}
+.dt-toggle{margin-top:7px;border:1px solid #ddd;background:#f5f5f7;color:#555;font:600 11px 'Outfit',sans-serif;padding:4px 10px;border-radius:7px;cursor:pointer}
+.dt-toggle:hover{color:#111;border-color:#F4B740}
 .dh-num textarea{border:none;text-align:right;font-family:ui-monospace,monospace;font-size:12px;color:#666;background:transparent;width:100%;margin-top:4px}
 .dh-date input{border:none;text-align:right;font-size:12px;color:#666;background:transparent;font-family:inherit;width:100%;margin-top:2px}
 .doc-client{display:flex;gap:24px;margin:18px 0 6px}
@@ -130,7 +132,7 @@ table.lines td.u textarea{text-align:center}
 .logo-up .prev img{max-width:100%;max-height:100%;object-fit:contain}
 @media print{
   @page{margin:14mm}
-  #dp-shell,.top,.side,.add-line,.row-del,.veil,.side-bottom{display:none!important}
+  #dp-shell,.top,.side,.add-line,.row-del,.veil,.side-bottom,.dt-toggle{display:none!important}
   body{height:auto;overflow:visible;background:#fff}
   .layout{position:static;display:block}
   .main{display:block;padding:0;overflow:visible}
@@ -207,19 +209,19 @@ var SK='dp3_billing';
 var S={receipts:[],presets:[],seq:0,cur:null};
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d==='object')S=d;}catch(e){} if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0;
-  if(!S.presets.length){ S.presets.push({id:'silab', name:'SILAB3D', company:'SILAB3D', slogan:'INNOVACIÓN CAPA A CAPA', logo:''}); } }
+}
 var saveT=null;
 function save(){ try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(Date.now()));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
 function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('billing',S,ts); } }catch(e){} }
 function eur(n){ n=Number(n)||0; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
-function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0]; }
+function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0] || {company:'SILAB3D',slogan:'',logo:''}; }
 function cur(){ return S.receipts.filter(function(r){return r.id===S.cur;})[0] || null; }
 function total(r){ var t=0; (r.lines||[]).forEach(function(l){ t+=Number(l.amount)||0; }); return t; }
 function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function newReceipt(){
   S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var num='SL-'+y+'-'+String(S.seq).padStart(3,'0');
-  var r={id:uid(),number:num,date:todayISO(),presetId:(S.presets[0]&&S.presets[0].id)||'silab',client:{name:'',email:''},
+  var r={id:uid(),number:num,date:todayISO(),docType:'Recibo',presetId:(S.presets[0]&&S.presets[0].id)||'',client:{name:'',email:''},
     lines:[{name:'',desc:'',materials:'',units:1,amount:0}],created:Date.now()};
   S.receipts.unshift(r); S.cur=r.id; save(); renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off');
 }
@@ -262,7 +264,7 @@ function renderSheet(){
   main.innerHTML='<div class="sheet">'
     +'<div class="doc-head"><div class="dh-brand"><div class="dh-logo">'+logoHTML(p)+'</div>'
       +'<div><div class="dh-company">'+esc(p.company||'SILAB3D')+'</div><div class="dh-slogan">'+esc(p.slogan||'')+'</div></div></div>'
-      +'<div class="dh-meta"><div class="dh-title">RECIBO</div>'
+      +'<div class="dh-meta"><div class="dh-title">'+((r.docType||'Recibo').toUpperCase())+'</div>'+'<button class="dt-toggle" onclick="toggleDocType()" title="Alternar entre Recibo y Presupuesto">\u21c4 '+((r.docType==='Presupuesto')?'Recibo':'Presupuesto')+'</button>'
       +'<div class="dh-num"><textarea rows="1" class="gr" oninput="grow(this);upd(\'number\',this.value)">'+esc(r.number)+'</textarea></div>'
       +'<div class="dh-date"><input type="date" value="'+esc(r.date)+'" oninput="upd(\'date\',this.value)"></div></div></div>'
     +'<div class="doc-client"><div class="dc-field"><label>Cliente</label><textarea rows="1" class="gr" placeholder="Nombre del cliente" oninput="grow(this);upd(\'client.name\',this.value)">'+esc(r.client.name)+'</textarea></div>'
@@ -274,7 +276,8 @@ function renderSheet(){
     +'</div>';
   setTimeout(function(){ document.querySelectorAll('.sheet .gr').forEach(function(t){ grow(t); }); },0);
 }
-function printPDF(){ if(!cur()){alert('Crea o selecciona un recibo primero.');return;} window.print(); }
+function toggleDocType(){ var r=cur(); if(!r)return; r.docType=(r.docType==='Presupuesto')?'Recibo':'Presupuesto'; save(); renderSheet(); }
+function printPDF(){ var r=cur(); if(!r){alert('Crea o selecciona un recibo primero.');return;} var old=document.title; document.title=(r.number||'documento'); var restore=function(){document.title=old; window.removeEventListener('afterprint',restore);}; window.addEventListener('afterprint',restore); setTimeout(restore,2000); window.print(); }
 var pfLogo='';
 function openPresets(){ pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList(); document.getElementById('presetVeil').classList.add('open'); }
 function closePresets(){ document.getElementById('presetVeil').classList.remove('open'); }
@@ -285,12 +288,12 @@ function renderPresetList(){
     return '<div class="preset-row'+(p.id===curId?' on':'')+'" onclick="applyPreset(\''+p.id+'\')">'
       +'<div class="pr-logo">'+lg+'</div>'
       +'<div class="pr-info"><div class="pr-name">'+esc(p.name)+'</div><div class="pr-meta">'+esc(p.company)+' · '+esc(p.slogan||'')+'</div></div>'
-      +(p.id==='silab'?'':'<button class="pr-del" onclick="delPreset(\''+p.id+'\',event)" title="Eliminar">✕</button>')
+      +'<button class="pr-del" onclick="delPreset(\''+p.id+'\',event)" title="Eliminar">✕</button>'
       +'</div>';
   }).join('');
 }
 function applyPreset(id){ var r=cur(); if(r){ r.presetId=id; save(); renderSheet(); } renderPresetList(); }
-function delPreset(id,ev){ if(ev)ev.stopPropagation(); if(id==='silab')return; if(!confirm('¿Eliminar este preset?'))return; S.presets=S.presets.filter(function(p){return p.id!==id;}); S.receipts.forEach(function(r){ if(r.presetId===id)r.presetId=S.presets[0].id; }); save(); renderPresetList(); renderSheet(); }
+function delPreset(id,ev){ if(ev)ev.stopPropagation(); if(!confirm('¿Eliminar este preset?'))return; S.presets=S.presets.filter(function(p){return p.id!==id;}); S.receipts.forEach(function(r){ if(r.presetId===id)r.presetId=(S.presets[0]&&S.presets[0].id)||''; }); save(); renderPresetList(); renderSheet(); }
 function savePreset(){
   var name=document.getElementById('pf-name').value.trim(); var company=document.getElementById('pf-company').value.trim(); var slogan=document.getElementById('pf-slogan').value.trim();
   if(!name||!company){ alert('Pon al menos nombre del preset y empresa.'); return; }
@@ -305,9 +308,9 @@ renderSidebar(); renderSheet();
   if(!window.DPCloud)return; var lastU=0;
   try{ window.DPCloud.ready.then(function(){
     if(!window.DPCloud.currentUser())return;
-    function applyRemote(d){ if(!d){ cloudPush(); return; } var up=d.updated||0; var lts=Number(localStorage.getItem(SK+'_ts'))||0; if(up<=lts)return; var nd=d.data; if(!nd||typeof nd!=='object')return; S=nd; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets)||!S.presets.length)S.presets=[{id:'silab',name:'SILAB3D',company:'SILAB3D',slogan:'INNOVACIÓN CAPA A CAPA',logo:''}]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(up));}catch(e){} renderSidebar(); renderSheet(); }
+    function applyRemote(d){ if(!d){ cloudPush(); return; } var up=d.updated||0; var lts=Number(localStorage.getItem(SK+'_ts'))||0; if(up<=lts)return; var nd=d.data; if(!nd||typeof nd!=='object')return; S=nd; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(up));}catch(e){} renderSidebar(); renderSheet(); }
     if(window.DPCloud.watchState){ window.DPCloud.watchState('billing', applyRemote); }
-    else { window.DPCloud.loadState('billing').then(function(data){ if(data && (!S.receipts.length)){ S=data; if(!Array.isArray(S.presets)||!S.presets.length)S.presets=[{id:'silab',name:'SILAB3D',company:'SILAB3D',slogan:'INNOVACIÓN CAPA A CAPA',logo:''}]; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; renderSidebar(); renderSheet(); } }).catch(function(){}); }
+    else { window.DPCloud.loadState('billing').then(function(data){ if(data && (!S.receipts.length)){ S=data; if(!Array.isArray(S.presets))S.presets=[]; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; renderSidebar(); renderSheet(); } }).catch(function(){}); }
   }); }catch(e){}
 })();
 </script>
