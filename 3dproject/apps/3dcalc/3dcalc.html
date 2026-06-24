@@ -274,8 +274,8 @@ function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d=
   S.oseq=Number(d.oseq)||0;
 } }catch(e){} }
 var saveT=null;
-function save(){ try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
-function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ window.DPCloud.saveState('3dcalc',S); } }catch(e){} }
+function save(){ try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(Date.now()));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('3dcalc',S,ts); } }catch(e){} }
 
 /* ===== motor de cálculo (idéntico a shared/backend.js) ===== */
 function depPerHour(p){var h=num(p.depreciation_time_h); if(h<=0)return 0; return (num(p.price_eur)+num(p.service_costs_life_eur))/h;}
@@ -994,7 +994,7 @@ function renderPurge(){
 /* ===== init ===== */
 var hadLocal=false; try{hadLocal=!!localStorage.getItem(SK);}catch(e){}
 load(); applyBrand(); go('dash');
-(function(){ if(!window.DPCloud)return; var lastU=0; try{ window.DPCloud.ready.then(function(){ if(!window.DPCloud.currentUser())return; function applyRemote(d){ if(!d){ cloudPush(); return; } var up=d.updated||0; if(up<=lastU)return; lastU=up; var inc=JSON.stringify(d.data||{}); if(inc===JSON.stringify(S))return; try{localStorage.setItem(SK,inc);}catch(e){} load(); applyBrand(); render(); } if(window.DPCloud.watchState){ window.DPCloud.watchState('3dcalc', applyRemote); } else { window.DPCloud.loadState('3dcalc').then(function(data){ if(data&&typeof data==='object'&&!hadLocal){ localStorage.setItem(SK,JSON.stringify(data)); load(); applyBrand(); render(); } }).catch(function(){}); } }); }catch(e){} })();
+(function(){ if(!window.DPCloud)return; var lastU=0; try{ window.DPCloud.ready.then(function(){ if(!window.DPCloud.currentUser())return; function applyRemote(d){ if(!d){ cloudPush(); return; } var up=d.updated||0; var lts=Number(localStorage.getItem(SK+'_ts'))||0; if(up<=lts)return; try{localStorage.setItem(SK,JSON.stringify(d.data||{}));localStorage.setItem(SK+'_ts',String(up));}catch(e){} load(); applyBrand(); render(); } if(window.DPCloud.watchState){ window.DPCloud.watchState('3dcalc', applyRemote); } else { window.DPCloud.loadState('3dcalc').then(function(data){ if(data&&typeof data==='object'&&!hadLocal){ localStorage.setItem(SK,JSON.stringify(data)); load(); applyBrand(); render(); } }).catch(function(){}); } }); }catch(e){} })();
 </script>
 <script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
 </body>

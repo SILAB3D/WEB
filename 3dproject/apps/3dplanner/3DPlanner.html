@@ -2407,11 +2407,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
   var _set=localStorage.setItem.bind(localStorage), tmr=null;
   function cloudOn(){return !!(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser());}
   function snapshot(){var o={};KEYS.forEach(function(k){o[k]=localStorage.getItem(k);});return o;}
-  function push(){ if(!cloudOn())return; try{window.DPCloud.saveState(APP, snapshot());}catch(e){} }
-  localStorage.setItem=function(k,v){ _set(k,v); if(KEYS.indexOf(k)>=0){clearTimeout(tmr);tmr=setTimeout(push,1200);} };
+  function push(){ if(!cloudOn())return; try{ var ts=Number(localStorage.getItem(APP+'_ts'))||Date.now(); window.DPCloud.saveState(APP, snapshot(), ts);}catch(e){} }
+  localStorage.setItem=function(k,v){ _set(k,v); if(KEYS.indexOf(k)>=0){ _set(APP+'_ts',String(Date.now())); clearTimeout(tmr);tmr=setTimeout(push,1200);} };
   function localEmpty(){return KEYS.every(function(k){return !localStorage.getItem(k);});}
   var lastU=0;
-  function applyRemote(d){ if(!d){ if(!localEmpty())push(); return; } var up=d.updated||0; if(up<=lastU)return; lastU=up; var data=d.data||{}; var changed=false; KEYS.forEach(function(k){ var cur=localStorage.getItem(k); var nv=data[k]; if(nv!=null && nv!==cur){ _set(k,nv); changed=true; } }); if(changed) location.reload(); }
+  function applyRemote(d){ if(!d){ if(!localEmpty())push(); return; } var up=d.updated||0; var lts=Number(localStorage.getItem(APP+'_ts'))||0; if(up<=lts)return; var data=d.data||{}; var changed=false; KEYS.forEach(function(k){ var cur=localStorage.getItem(k); var nv=data[k]; if(nv!=null && nv!==cur){ _set(k,nv); changed=true; } }); try{_set(APP+'_ts',String(up));}catch(e){} if(changed) location.reload(); }
   function start(){
     if(!(window.DPCloud&&window.DPCloud.configured))return;
     window.DPCloud.ready.then(function(){

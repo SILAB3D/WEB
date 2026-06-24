@@ -209,8 +209,8 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d==='object')S=d;}catch(e){} if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0;
   if(!S.presets.length){ S.presets.push({id:'silab', name:'SILAB3D', company:'SILAB3D', slogan:'INNOVACIÓN CAPA A CAPA', logo:''}); } }
 var saveT=null;
-function save(){ try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
-function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ window.DPCloud.saveState('billing',S); } }catch(e){} }
+function save(){ try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(Date.now()));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('billing',S,ts); } }catch(e){} }
 function eur(n){ n=Number(n)||0; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
 function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0]; }
@@ -305,7 +305,7 @@ renderSidebar(); renderSheet();
   if(!window.DPCloud)return; var lastU=0;
   try{ window.DPCloud.ready.then(function(){
     if(!window.DPCloud.currentUser())return;
-    function applyRemote(d){ if(!d){ cloudPush(); return; } var up=d.updated||0; if(up<=lastU)return; lastU=up; var nd=d.data; if(!nd||typeof nd!=='object')return; if(JSON.stringify(nd)===JSON.stringify(S))return; S=nd; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets)||!S.presets.length)S.presets=[{id:'silab',name:'SILAB3D',company:'SILAB3D',slogan:'INNOVACIÓN CAPA A CAPA',logo:''}]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){} renderSidebar(); renderSheet(); }
+    function applyRemote(d){ if(!d){ cloudPush(); return; } var up=d.updated||0; var lts=Number(localStorage.getItem(SK+'_ts'))||0; if(up<=lts)return; var nd=d.data; if(!nd||typeof nd!=='object')return; S=nd; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets)||!S.presets.length)S.presets=[{id:'silab',name:'SILAB3D',company:'SILAB3D',slogan:'INNOVACIÓN CAPA A CAPA',logo:''}]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(up));}catch(e){} renderSidebar(); renderSheet(); }
     if(window.DPCloud.watchState){ window.DPCloud.watchState('billing', applyRemote); }
     else { window.DPCloud.loadState('billing').then(function(data){ if(data && (!S.receipts.length)){ S=data; if(!Array.isArray(S.presets)||!S.presets.length)S.presets=[{id:'silab',name:'SILAB3D',company:'SILAB3D',slogan:'INNOVACIÓN CAPA A CAPA',logo:''}]; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; renderSidebar(); renderSheet(); } }).catch(function(){}); }
   }); }catch(e){}
