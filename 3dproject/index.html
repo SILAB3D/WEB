@@ -1091,6 +1091,7 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
   window.fbDelete=function(id){ if(cloudOn()){window.DPCloud.deleteFeedback(id).then(load).then(function(){updateBadge();renderList();}).catch(function(){}); return;} items=items.filter(function(x){return x.id!==id;});save();updateBadge();renderList();};
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){var v=document.getElementById('fbVeil');if(v&&v.classList.contains('open'))fbClose();}});
   load();updateBadge();
+  if(window.DPCloud){ try{ window.DPCloud.ready.then(function(){ if(window.DPCloud.currentUser() && window.DPCloud.watchFeedback){ window.DPCloud.watchFeedback(function(){ load().then(function(){ updateBadge(); renderList(); }); }); } }); }catch(e){} }
 })();
 </script>
 

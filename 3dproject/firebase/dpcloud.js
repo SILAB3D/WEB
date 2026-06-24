@@ -16,7 +16,7 @@ import {
 import {
   getFirestore, collection, doc,
   getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc,
-  query, orderBy, serverTimestamp
+  query, orderBy, serverTimestamp, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig, FIREBASE_LISTO } from "./firebase-config.js";
 
@@ -111,6 +111,15 @@ async function saveState(appKey, data) {
   const u = auth.currentUser; if (!u) return;
   await setDoc(doc(db, "users", u.uid, "appState", appKey), { data, updated: Date.now() });
 }
+// Escucha en vivo del estado de una app (sincroniza entre dispositivos al instante)
+function watchState(appKey, cb) {
+  const u = auth.currentUser; if (!u) return function(){};
+  try {
+    return onSnapshot(doc(db, "users", u.uid, "appState", appKey),
+      (snap) => { cb(snap.exists() ? snap.data() : null); },
+      (err) => { console.warn("watchState " + appKey, err && err.message); });
+  } catch (e) { return function(){}; }
+}
 
 // ── PLANTILLAS de etapas (colección "presets") ──
 async function listPresets() {
@@ -123,6 +132,27 @@ async function createPreset({ name, steps }) {
 }
 async function deletePreset(id) { await deleteDoc(doc(db, "presets", id)); }
 
+// ── Escuchas en vivo de colecciones (sincronización instantánea) ──
+function watchOrders(cb) {
+  const u = auth.currentUser; if (!u) return function(){};
+  try { return onSnapshot(query(collection(db, "orders"), orderBy("created_at", "desc")),
+    () => cb(), (err) => console.warn("watchOrders", err && err.message)); }
+  catch (e) { return function(){}; }
+}
+function watchFeedback(cb) {
+  const u = auth.currentUser; if (!u) return function(){};
+  try { return onSnapshot(query(collection(db, "feedback"), orderBy("created", "desc")),
+    () => cb(), (err) => console.warn("watchFeedback", err && err.message)); }
+  catch (e) { return function(){}; }
+}
+function watchOrderByCode(code, cb) {
+  try {
+    const u1 = onSnapshot(doc(db, "orders", code), () => cb(), () => {});
+    const u2 = onSnapshot(collection(db, "orders", code, "steps"), () => cb(), () => {});
+    return function(){ try{u1();}catch(e){} try{u2();}catch(e){} };
+  } catch (e) { return function(){}; }
+}
+
 window.DPCloud = {
   ready, configured: FIREBASE_LISTO,
   login:  (email, pwd) => signInWithEmailAndPassword(auth, email, pwd),
@@ -133,7 +163,7 @@ window.DPCloud = {
   listOrders, createOrder, getOrderById, getOrderByCode,
   addStep, setStepStatus, deleteStep,
   listFeedback, addFeedback, updateFeedback, deleteFeedback,
-  loadState, saveState,
+  loadState, saveState, watchState, watchOrders, watchFeedback, watchOrderByCode,
   listPresets, createPreset, deletePreset
 };
 window.dispatchEvent(new Event("dpcloud-ready"));

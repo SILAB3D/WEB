@@ -2410,17 +2410,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
   function push(){ if(!cloudOn())return; try{window.DPCloud.saveState(APP, snapshot());}catch(e){} }
   localStorage.setItem=function(k,v){ _set(k,v); if(KEYS.indexOf(k)>=0){clearTimeout(tmr);tmr=setTimeout(push,1200);} };
   function localEmpty(){return KEYS.every(function(k){return !localStorage.getItem(k);});}
+  var lastU=0;
+  function applyRemote(d){ if(!d){ if(!localEmpty())push(); return; } var up=d.updated||0; if(up<=lastU)return; lastU=up; var data=d.data||{}; var changed=false; KEYS.forEach(function(k){ var cur=localStorage.getItem(k); var nv=data[k]; if(nv!=null && nv!==cur){ _set(k,nv); changed=true; } }); if(changed) location.reload(); }
   function start(){
     if(!(window.DPCloud&&window.DPCloud.configured))return;
     window.DPCloud.ready.then(function(){
       if(!window.DPCloud.currentUser())return;
-      window.DPCloud.loadState(APP).then(function(data){
-        if(data && typeof data==='object' && localEmpty()){
-          var any=false;
-          KEYS.forEach(function(k){ if(data[k]!=null){ _set(k,data[k]); any=true; } });
-          if(any && !sessionStorage.getItem(SEED)){ sessionStorage.setItem(SEED,'1'); location.reload(); }
-        } else { push(); }
-      }).catch(function(){});
+      if(window.DPCloud.watchState){ window.DPCloud.watchState(APP, applyRemote); }
+      else { window.DPCloud.loadState(APP).then(function(data){ if(data && typeof data==='object' && localEmpty()){ var any=false; KEYS.forEach(function(k){ if(data[k]!=null){ _set(k,data[k]); any=true; } }); if(any && !sessionStorage.getItem(SEED)){ sessionStorage.setItem(SEED,'1'); location.reload(); } } else { push(); } }).catch(function(){}); }
     });
   }
   var w=0;(function c(){ if(window.DPCloud){start();} else if(w<9000){w+=200;setTimeout(c,200);} })();

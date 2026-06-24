@@ -217,6 +217,7 @@ document.getElementById('new-order-modal').addEventListener('click', (e) => {
 async function init() {
   apiConfig = await window.electronAPI.getApiConfig();
   await loadOrders();
+  if (window.DPCloud && window.DPCloud.watchOrders) { try { window.DPCloud.watchOrders(function(){ loadOrders(); }); } catch(e){} }
 }
 
 function openWebsite() {

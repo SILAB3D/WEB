@@ -297,6 +297,7 @@ async function init() {
   }
 
   await loadOrderDetail();
+  if (window.DPCloud && window.DPCloud.watchOrderByCode && orderId) { try { window.DPCloud.watchOrderByCode(orderId, function(){ loadOrderDetail(); }); } catch(e){} }
 }
 
 init();

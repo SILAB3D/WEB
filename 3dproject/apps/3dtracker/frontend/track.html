@@ -190,7 +190,7 @@ async function load(){
 show('loading');
 var waited=0;
 (function waitCloud(){
-  if(window.DPCloud){ load(); timer=setInterval(load,5000); }
+  if(window.DPCloud){ load(); if(window.DPCloud.watchOrderByCode){ window.DPCloud.watchOrderByCode(code, load); } else { timer=setInterval(load,5000); } }
   else if(waited<10000){ waited+=200; setTimeout(waitCloud,200); }
   else { show('error'); document.getElementById('e-msg').textContent='No se ha podido cargar el servicio. Abre la aplicación con el servidor local (ver guía).'; }
 })();
