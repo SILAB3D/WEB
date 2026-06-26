@@ -273,9 +273,9 @@ function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d=
   if(d.purge&&typeof d.purge==='object')S.purge=Object.assign({values:[],active:{},colors:[]},d.purge);
   S.oseq=Number(d.oseq)||0;
 } }catch(e){} }
-var saveT=null;
-function save(){ try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(Date.now()));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
-function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('3dcalc',S,ts).catch(function(e){console.warn('[3DCalc] guardado en nube falló:',e&&(e.message||e));}); } else if(window.DPCloud&&window.DPCloud.configured){ console.warn('[3DCalc] sin sesión de Firebase: los cambios solo se guardan en este dispositivo.'); } }catch(e){} }
+var saveT=null, myTs=0, loaded=false;
+function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,700); }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ myTs=Date.now(); window.DPCloud.saveState('3dcalc',S,myTs).catch(function(e){console.warn('[3DCalc] guardado en nube falló:',e&&(e.message||e));}); } else if(window.DPCloud&&window.DPCloud.configured){ console.warn('[3DCalc] sin sesión de Firebase: no se puede guardar.'); } }catch(e){} }
 
 /* ===== motor de cálculo (idéntico a shared/backend.js) ===== */
 function depPerHour(p){var h=num(p.depreciation_time_h); if(h<=0)return 0; return (num(p.price_eur)+num(p.service_costs_life_eur))/h;}
@@ -992,9 +992,35 @@ function renderPurge(){
 }
 
 /* ===== init ===== */
-var hadLocal=false; try{hadLocal=!!localStorage.getItem(SK);}catch(e){}
-load(); try{ if(localStorage.getItem(SK) && !localStorage.getItem(SK+'_ts')) localStorage.setItem(SK+'_ts', String(Date.now())); }catch(e){} applyBrand(); go('dash');
-(function(){ if(!window.DPCloud)return; var firstSnap=true, _sub=false; try{ window.DPCloud.onAuth(function(_u){ if(!_u||_sub)return; _sub=true; function applyRemote(d){ if(firstSnap){ firstSnap=false; if(!localStorage.getItem(SK) && d && d.data){ try{localStorage.setItem(SK,JSON.stringify(d.data));localStorage.setItem(SK+'_ts',String(d.updated||Date.now()));}catch(e){} load(); applyBrand(); render(); } else { cloudPush(); } return; } if(!d)return; var up=d.updated||0; var lts=Number(localStorage.getItem(SK+'_ts'))||0; if(up<=lts)return; try{localStorage.setItem(SK,JSON.stringify(d.data||{}));localStorage.setItem(SK+'_ts',String(up));}catch(e){} load(); applyBrand(); render(); } if(window.DPCloud.watchState){ window.DPCloud.watchState('3dcalc', applyRemote); } else { window.DPCloud.loadState('3dcalc').then(function(data){ if(data&&typeof data==='object'&&!hadLocal){ localStorage.setItem(SK,JSON.stringify(data)); load(); applyBrand(); render(); } }).catch(function(){}); } }); }catch(e){} })();
+applyBrand();
+function _purge(){ try{localStorage.removeItem(SK);localStorage.removeItem(SK+'_ts');}catch(e){} }
+(function(){
+  function _msg(h,p){ var el=document.getElementById('view'); if(el&&!loaded)el.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--mut)"><div style="font-size:40px">\u2601\ufe0f</div><h3 style="margin:12px 0 6px">'+h+'</h3><p>'+p+'</p></div>'; }
+  try{document.getElementById('vtitle').textContent='Dashboard';}catch(e){}
+  _msg('Cargando tus datos\u2026','Conectando con tu cuenta de Firebase.');
+  var _sub=false, _first=true;
+  function applyRemote(d){
+    if(_first){
+      _first=false;
+      if(d && d.data && typeof d.data==='object'){ S=d.data; loaded=true; applyBrand(); _purge(); go('dash'); return; }
+      var old=null; try{ old=JSON.parse(localStorage.getItem(SK)); }catch(e){}
+      if(old && typeof old==='object'){ S=old; loaded=true; applyBrand(); go('dash'); cloudPush(); return; }
+      loaded=true; applyBrand(); go('dash'); cloudPush(); return;
+    }
+    if(!d||!d.data||typeof d.data!=='object')return;
+    if((d.updated||0)<=myTs)return;
+    S=d.data; applyBrand(); render();
+  }
+  function startCloud(){
+    try{ window.DPCloud.onAuth(function(_u){
+      if(!_u||_sub)return; _sub=true;
+      if(window.DPCloud.watchState){ window.DPCloud.watchState('3dcalc', applyRemote); }
+      else { window.DPCloud.loadState('3dcalc').then(function(data){ applyRemote(data?{data:data,updated:Date.now()}:null); }).catch(function(){ loaded=true; go('dash'); }); }
+    }); }catch(e){}
+    setTimeout(function(){ if(!loaded) _msg('Inicia sesi\u00f3n para ver tus datos','Vuelve al inicio de la suite e inicia sesi\u00f3n. Si ya lo hiciste, recarga con Ctrl+Shift+R.'); }, 8000);
+  }
+  var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ startCloud(); } else if(w<10000){ w+=150; setTimeout(c,150); } else { _msg('No se pudo conectar con Firebase','Recarga la p\u00e1gina (Ctrl+Shift+R).'); } })();
+})();
 </script>
 <script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
 </body>

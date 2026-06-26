@@ -836,6 +836,17 @@ html, body {
 .sb-cta:hover{background:#bf9dff}
 </style>
   <script type="module" src="../../firebase/dpcloud.js"></script>
+  <script>
+  /* solo-nube: los datos de la app viven en memoria; Firebase es la unica persistencia */
+  (function(){
+    var DK={'3dp_ev':1,'3dp_params':1,'planner_ts':1};
+    var mem={}, _g=localStorage.getItem.bind(localStorage), _s=localStorage.setItem.bind(localStorage), _r=localStorage.removeItem.bind(localStorage);
+    window.__dpReal={get:_g,set:_s,rem:_r};
+    localStorage.getItem=function(k){return DK[k]?(Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:null):_g(k);};
+    localStorage.setItem=function(k,v){if(DK[k]){mem[k]=String(v);}else{_s(k,v);}};
+    localStorage.removeItem=function(k){if(DK[k]){delete mem[k];}else{_r(k);}};
+  })();
+  </script>
 </head>
 <body>
 <div id="dp-shell">
@@ -2403,24 +2414,36 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 <script>
 (function(){
-  var APP='planner', KEYS=['3dp_ev','3dp_params'], SEED='dp3seed-'+APP;
-  var _set=localStorage.setItem.bind(localStorage), tmr=null;
+  var APP='planner', KEYS=['3dp_ev','3dp_params'];
+  var _set=localStorage.setItem.bind(localStorage), tmr=null, loaded=false;
   function cloudOn(){return !!(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser());}
   function snapshot(){var o={};KEYS.forEach(function(k){o[k]=localStorage.getItem(k);});return o;}
-  function push(){ if(!cloudOn()){ if(window.DPCloud&&window.DPCloud.configured) console.warn('['+APP+'] sin sesión de Firebase: los cambios solo se guardan en este dispositivo.'); return; } try{ var ts=Number(localStorage.getItem(APP+'_ts'))||Date.now(); window.DPCloud.saveState(APP, snapshot(), ts).catch(function(e){console.warn('['+APP+'] guardado en nube falló:',e&&(e.message||e));});}catch(e){} }
-  localStorage.setItem=function(k,v){ _set(k,v); if(KEYS.indexOf(k)>=0){ _set(APP+'_ts',String(Date.now())); clearTimeout(tmr);tmr=setTimeout(push,1200);} };
-  function localEmpty(){return KEYS.every(function(k){return !localStorage.getItem(k);});}
+  function push(){ if(!cloudOn()){ if(window.DPCloud&&window.DPCloud.configured) console.warn('['+APP+'] sin sesion: no se puede guardar.'); return; } try{ var ts=Date.now(); _set(APP+'_ts',String(ts)); window.DPCloud.saveState(APP, snapshot(), ts).catch(function(e){console.warn('['+APP+'] guardado en nube fallo:',e&&(e.message||e));});}catch(e){} }
+  localStorage.setItem=function(k,v){ _set(k,v); if(KEYS.indexOf(k)>=0 && loaded){ clearTimeout(tmr);tmr=setTimeout(push,900);} };
+  function refresh(){ try{ S.events=JSON.parse(localStorage.getItem('3dp_ev')||'[]'); var pp=JSON.parse(localStorage.getItem('3dp_params')||'null'); if(pp)S.params=pp; render(); }catch(e){} }
+  function ov(show,h,p){ var o=document.getElementById('dpLoadOv'); if(show){ if(!o){ o=document.createElement('div'); o.id='dpLoadOv'; o.style.cssText='position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center'; try{o.style.background=getComputedStyle(document.body).backgroundColor||'#0e1116';}catch(e){o.style.background='#0e1116';} o.style.color='#9aa3b2'; document.body.appendChild(o);} o.innerHTML='<div style="text-align:center;padding:24px"><div style="font-size:40px">\u2601\ufe0f</div><h3 style="margin:10px 0 4px">'+h+'</h3><p>'+(p||'')+'</p></div>'; } else if(o){ o.remove(); } }
+  ov(true,'Cargando tus datos\u2026','Conectando con tu cuenta de Firebase.');
   var firstSnap=true;
-  function applyRemote(d){ if(firstSnap){ firstSnap=false; if(localEmpty() && d && d.data){ var d0=d.data; var any=false; KEYS.forEach(function(k){ if(d0[k]!=null){ _set(k,d0[k]); any=true; } }); if(any){ _set(APP+'_ts',String(d.updated||Date.now())); location.reload(); } } else { push(); } return; } if(!d)return; var up=d.updated||0; var lts=Number(localStorage.getItem(APP+'_ts'))||0; if(up<=lts)return; var data=d.data||{}; var changed=false; KEYS.forEach(function(k){ var cur=localStorage.getItem(k); var nv=data[k]; if(nv!=null && nv!==cur){ _set(k,nv); changed=true; } }); try{_set(APP+'_ts',String(up));}catch(e){} if(changed) location.reload(); }
+  function applyRemote(d){
+    if(firstSnap){ firstSnap=false;
+      var has = d && d.data && (d.data['3dp_ev']!=null || d.data['3dp_params']!=null);
+      if(has){ KEYS.forEach(function(k){ if(d.data[k]!=null) _set(k,d.data[k]); }); _set(APP+'_ts',String(d.updated||Date.now())); loaded=true; refresh(); ov(false); try{ if(window.__dpReal){window.__dpReal.rem('3dp_ev');window.__dpReal.rem('3dp_params');} }catch(e){} return; }
+      var oe=null,op=null; try{ oe=window.__dpReal&&window.__dpReal.get('3dp_ev'); op=window.__dpReal&&window.__dpReal.get('3dp_params'); }catch(e){}
+      if(oe||op){ if(oe)_set('3dp_ev',oe); if(op)_set('3dp_params',op); loaded=true; refresh(); ov(false); push(); return; }
+      loaded=true; refresh(); ov(false); push(); return;
+    }
+    if(!d)return; var up=d.updated||0; var lts=Number(localStorage.getItem(APP+'_ts'))||0; if(up<=lts)return;
+    var data=d.data||{}; var changed=false; KEYS.forEach(function(k){ var cur=localStorage.getItem(k); var nv=data[k]; if(nv!=null && nv!==cur){ _set(k,nv); changed=true; } }); try{_set(APP+'_ts',String(up));}catch(e){} if(changed) refresh();
+  }
   function start(){
-    if(!(window.DPCloud&&window.DPCloud.configured))return;
     var _sub=false; window.DPCloud.onAuth(function(_u){
       if(!_u||_sub)return; _sub=true;
       if(window.DPCloud.watchState){ window.DPCloud.watchState(APP, applyRemote); }
-      else { window.DPCloud.loadState(APP).then(function(data){ if(data && typeof data==='object' && localEmpty()){ var any=false; KEYS.forEach(function(k){ if(data[k]!=null){ _set(k,data[k]); any=true; } }); if(any && !sessionStorage.getItem(SEED)){ sessionStorage.setItem(SEED,'1'); location.reload(); } } else { push(); } }).catch(function(){}); }
+      else { window.DPCloud.loadState(APP).then(function(data){ applyRemote(data?{data:data,updated:Date.now()}:null); }).catch(function(){ loaded=true; ov(false); }); }
     });
+    setTimeout(function(){ if(!loaded) ov(true,'Inicia sesi\u00f3n para ver tus datos','Vuelve al inicio de la suite e inicia sesi\u00f3n. Si ya lo hiciste, recarga con Ctrl+Shift+R.'); }, 8000);
   }
-  var w=0;(function c(){ if(window.DPCloud){start();} else if(w<9000){w+=200;setTimeout(c,200);} })();
+  var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ start(); } else if(w<10000){ w+=150;setTimeout(c,150);} else { ov(true,'No se pudo conectar con Firebase','Recarga la pagina (Ctrl+Shift+R).'); } })();
 })();
 </script>
 
