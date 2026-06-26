@@ -108,8 +108,9 @@ async function loadState(appKey) {
   return d.exists() ? d.data().data : null;
 }
 async function saveState(appKey, data, updated) {
-  const u = auth.currentUser; if (!u) return;
-  await setDoc(doc(db, "users", u.uid, "appState", appKey), { data, updated: updated || Date.now() });
+  const u = auth.currentUser; if (!u) { console.warn("[DPCloud] saveState sin sesión:", appKey); return; }
+  let clean; try { clean = JSON.parse(JSON.stringify(data)); } catch (e) { clean = data; }
+  await setDoc(doc(db, "users", u.uid, "appState", appKey), { data: clean, updated: updated || Date.now() });
 }
 // Escucha en vivo del estado de una app (sincroniza entre dispositivos al instante)
 function watchState(appKey, cb) {

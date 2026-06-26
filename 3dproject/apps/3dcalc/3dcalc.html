@@ -275,7 +275,7 @@ function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d=
 } }catch(e){} }
 var saveT=null;
 function save(){ try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(Date.now()));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
-function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('3dcalc',S,ts).catch(function(e){console.warn('[3DCalc] guardado en nube falló:',e&&(e.message||e));}); } }catch(e){} }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('3dcalc',S,ts).catch(function(e){console.warn('[3DCalc] guardado en nube falló:',e&&(e.message||e));}); } else if(window.DPCloud&&window.DPCloud.configured){ console.warn('[3DCalc] sin sesión de Firebase: los cambios solo se guardan en este dispositivo.'); } }catch(e){} }
 
 /* ===== motor de cálculo (idéntico a shared/backend.js) ===== */
 function depPerHour(p){var h=num(p.depreciation_time_h); if(h<=0)return 0; return (num(p.price_eur)+num(p.service_costs_life_eur))/h;}

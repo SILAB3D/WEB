@@ -2407,7 +2407,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   var _set=localStorage.setItem.bind(localStorage), tmr=null;
   function cloudOn(){return !!(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser());}
   function snapshot(){var o={};KEYS.forEach(function(k){o[k]=localStorage.getItem(k);});return o;}
-  function push(){ if(!cloudOn())return; try{ var ts=Number(localStorage.getItem(APP+'_ts'))||Date.now(); window.DPCloud.saveState(APP, snapshot(), ts).catch(function(e){console.warn('['+APP+'] guardado en nube falló:',e&&(e.message||e));});}catch(e){} }
+  function push(){ if(!cloudOn()){ if(window.DPCloud&&window.DPCloud.configured) console.warn('['+APP+'] sin sesión de Firebase: los cambios solo se guardan en este dispositivo.'); return; } try{ var ts=Number(localStorage.getItem(APP+'_ts'))||Date.now(); window.DPCloud.saveState(APP, snapshot(), ts).catch(function(e){console.warn('['+APP+'] guardado en nube falló:',e&&(e.message||e));});}catch(e){} }
   localStorage.setItem=function(k,v){ _set(k,v); if(KEYS.indexOf(k)>=0){ _set(APP+'_ts',String(Date.now())); clearTimeout(tmr);tmr=setTimeout(push,1200);} };
   function localEmpty(){return KEYS.every(function(k){return !localStorage.getItem(k);});}
   var firstSnap=true;

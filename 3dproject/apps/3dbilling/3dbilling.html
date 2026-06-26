@@ -219,7 +219,7 @@ function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d=
 }
 var saveT=null;
 function save(){ try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(Date.now()));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
-function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('billing',S,ts).catch(function(e){console.warn('[3DBilling] guardado en nube falló:',e&&(e.message||e));}); } }catch(e){} }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('billing',S,ts).catch(function(e){console.warn('[3DBilling] guardado en nube falló:',e&&(e.message||e));}); } else if(window.DPCloud&&window.DPCloud.configured){ console.warn('[3DBilling] sin sesión de Firebase: los cambios solo se guardan en este dispositivo.'); } }catch(e){} }
 function eur(n){ n=Number(n)||0; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
 function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0] || {company:'SILAB3D',slogan:'',logo:''}; }
