@@ -217,16 +217,16 @@ var S={receipts:[],presets:[],seq:0,cur:null};
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d==='object')S=d;}catch(e){} if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0;
 }
-var saveT=null;
-function save(){ try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(Date.now()));}catch(e){} clearTimeout(saveT); saveT=setTimeout(cloudPush,1000); }
-function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ var ts=Number(localStorage.getItem(SK+'_ts'))||Date.now(); window.DPCloud.saveState('billing',S,ts).catch(function(e){console.warn('[3DBilling] guardado en nube falló:',e&&(e.message||e));}); } else if(window.DPCloud&&window.DPCloud.configured){ console.warn('[3DBilling] sin sesión de Firebase: los cambios solo se guardan en este dispositivo.'); } }catch(e){} }
+var saveT=null, myTs=0, loaded=false;
+function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,700); }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ myTs=Date.now(); window.DPCloud.saveState('billing',S,myTs).catch(function(e){console.warn('[3DBilling] guardado en nube falló:',e&&(e.message||e));}); } else if(window.DPCloud&&window.DPCloud.configured){ console.warn('[3DBilling] sin sesión de Firebase: no se puede guardar.'); } }catch(e){} }
 function eur(n){ n=Number(n)||0; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
 function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0] || {company:'SILAB3D',slogan:'',logo:''}; }
 function cur(){ return S.receipts.filter(function(r){return r.id===S.cur;})[0] || null; }
 function total(r){ var t=0; (r.lines||[]).forEach(function(l){ t+=Number(l.amount)||0; }); return t; }
 function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function newReceipt(){
+function newReceipt(){ if(!loaded){return;}
   S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var num='SL-'+y+'-'+String(S.seq).padStart(3,'0');
   var r={id:uid(),number:num,date:todayISO(),docType:'Recibo',presetId:(S.presets[0]&&S.presets[0].id)||'',notes:[{id:uid(),text:DEFAULT_TERMS,on:true}],client:{name:'',email:''},
     lines:[{name:'',desc:'',materials:'',units:1,amount:0}],created:Date.now()};
@@ -325,17 +325,30 @@ function savePreset(){
   save(); pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList();
 }
 document.getElementById('pf-logo').addEventListener('change',function(e){ var f=e.target.files&&e.target.files[0]; if(!f)return; var rd=new FileReader(); rd.onload=function(){ pfLogo=rd.result; document.getElementById('pf-prev').innerHTML='<img src="'+pfLogo+'">'; }; rd.readAsDataURL(f); });
-load();
-try{ if(localStorage.getItem(SK) && !localStorage.getItem(SK+'_ts')) localStorage.setItem(SK+'_ts', String(Date.now())); }catch(e){}
-if(S.receipts.length) S.cur=S.receipts[0].id;
-renderSidebar(); renderSheet();
+function normBilling(){ if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; }
+function _purgeLocal(){ try{ localStorage.removeItem(SK); localStorage.removeItem(SK+'_ts'); }catch(e){} }
 (function(){
-  if(!window.DPCloud)return; var firstSnap=true, _sub=false;
+  var m=document.getElementById('main'); if(m)m.innerHTML='<div class="empty"><div class="e-ic">\u2601\ufe0f</div><h3>Cargando tus datos\u2026</h3><p>Conectando con tu cuenta de Firebase. Si no has iniciado sesi\u00f3n, no se mostrar\u00e1n datos.</p></div>';
+  var rl=document.getElementById('rlist'); if(rl)rl.innerHTML='';
+  if(!window.DPCloud)return; var _sub=false, _first=true;
+  function applyRemote(d){
+    var hasCloud = d && d.data && typeof d.data==='object' && Array.isArray(d.data.receipts) && d.data.receipts.length>0;
+    if(_first){
+      _first=false;
+      if(hasCloud){ S=d.data; normBilling(); loaded=true; renderSidebar(); renderSheet(); _purgeLocal(); return; }
+      var old=null; try{ old=JSON.parse(localStorage.getItem(SK)); }catch(e){}
+      if(old && typeof old==='object' && Array.isArray(old.receipts) && old.receipts.length){ S=old; normBilling(); loaded=true; renderSidebar(); renderSheet(); cloudPush(); return; }
+      if(d && d.data && typeof d.data==='object') S=d.data;
+      normBilling(); loaded=true; renderSidebar(); renderSheet(); return;
+    }
+    if(!d||!d.data||typeof d.data!=='object')return;
+    if((d.updated||0)<=myTs)return;
+    S=d.data; normBilling(); renderSidebar(); renderSheet();
+  }
   try{ window.DPCloud.onAuth(function(_u){
     if(!_u||_sub)return; _sub=true;
-    function applyRemote(d){ if(firstSnap){ firstSnap=false; if(!S.receipts.length && d && d.data){ var n0=d.data; S=n0; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(d.updated||Date.now()));}catch(e){} renderSidebar(); renderSheet(); } else { cloudPush(); } return; } if(!d)return; var up=d.updated||0; var lts=Number(localStorage.getItem(SK+'_ts'))||0; if(up<=lts)return; var nd=d.data; if(!nd||typeof nd!=='object')return; S=nd; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(up));}catch(e){} renderSidebar(); renderSheet(); }
     if(window.DPCloud.watchState){ window.DPCloud.watchState('billing', applyRemote); }
-    else { window.DPCloud.loadState('billing').then(function(data){ if(data && (!S.receipts.length)){ S=data; if(!Array.isArray(S.presets))S.presets=[]; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; renderSidebar(); renderSheet(); } }).catch(function(){}); }
+    else { window.DPCloud.loadState('billing').then(function(data){ applyRemote(data?{data:data,updated:Date.now()}:null); }).catch(function(){ loaded=true; renderSidebar(); renderSheet(); }); }
   }); }catch(e){}
 })();
 </script>
