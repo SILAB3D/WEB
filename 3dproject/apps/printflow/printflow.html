@@ -1393,8 +1393,8 @@ load();
   function applyRemote(d){ if(firstSnap){ firstSnap=false; if(localEmpty() && d && d.data){ var d0=d.data; var any=false; KEYS.forEach(function(k){ if(d0[k]!=null){ _set(k,d0[k]); any=true; } }); if(any){ _set(APP+'_ts',String(d.updated||Date.now())); location.reload(); } } else { push(); } return; } if(!d)return; var up=d.updated||0; var lts=Number(localStorage.getItem(APP+'_ts'))||0; if(up<=lts)return; var data=d.data||{}; var changed=false; KEYS.forEach(function(k){ var cur=localStorage.getItem(k); var nv=data[k]; if(nv!=null && nv!==cur){ _set(k,nv); changed=true; } }); try{_set(APP+'_ts',String(up));}catch(e){} if(changed) location.reload(); }
   function start(){
     if(!(window.DPCloud&&window.DPCloud.configured))return;
-    window.DPCloud.ready.then(function(){
-      if(!window.DPCloud.currentUser())return;
+    var _sub=false; window.DPCloud.onAuth(function(_u){
+      if(!_u||_sub)return; _sub=true;
       if(window.DPCloud.watchState){ window.DPCloud.watchState(APP, applyRemote); }
       else { window.DPCloud.loadState(APP).then(function(data){ if(data && typeof data==='object' && localEmpty()){ var any=false; KEYS.forEach(function(k){ if(data[k]!=null){ _set(k,data[k]); any=true; } }); if(any && !sessionStorage.getItem(SEED)){ sessionStorage.setItem(SEED,'1'); location.reload(); } } else { push(); } }).catch(function(){}); }
     });

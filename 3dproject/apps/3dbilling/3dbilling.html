@@ -330,9 +330,9 @@ try{ if(localStorage.getItem(SK) && !localStorage.getItem(SK+'_ts')) localStorag
 if(S.receipts.length) S.cur=S.receipts[0].id;
 renderSidebar(); renderSheet();
 (function(){
-  if(!window.DPCloud)return; var firstSnap=true;
-  try{ window.DPCloud.ready.then(function(){
-    if(!window.DPCloud.currentUser())return;
+  if(!window.DPCloud)return; var firstSnap=true, _sub=false;
+  try{ window.DPCloud.onAuth(function(_u){
+    if(!_u||_sub)return; _sub=true;
     function applyRemote(d){ if(firstSnap){ firstSnap=false; if(!S.receipts.length && d && d.data){ var n0=d.data; S=n0; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(d.updated||Date.now()));}catch(e){} renderSidebar(); renderSheet(); } else { cloudPush(); } return; } if(!d)return; var up=d.updated||0; var lts=Number(localStorage.getItem(SK+'_ts'))||0; if(up<=lts)return; var nd=d.data; if(!nd||typeof nd!=='object')return; S=nd; if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; try{localStorage.setItem(SK,JSON.stringify(S));localStorage.setItem(SK+'_ts',String(up));}catch(e){} renderSidebar(); renderSheet(); }
     if(window.DPCloud.watchState){ window.DPCloud.watchState('billing', applyRemote); }
     else { window.DPCloud.loadState('billing').then(function(data){ if(data && (!S.receipts.length)){ S=data; if(!Array.isArray(S.presets))S.presets=[]; S.cur=(S.receipts[0]&&S.receipts[0].id)||null; renderSidebar(); renderSheet(); } }).catch(function(){}); }
