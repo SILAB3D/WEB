@@ -328,9 +328,9 @@ document.getElementById('pf-logo').addEventListener('change',function(e){ var f=
 function normBilling(){ if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; }
 function _purgeLocal(){ try{ localStorage.removeItem(SK); localStorage.removeItem(SK+'_ts'); }catch(e){} }
 (function(){
-  var m=document.getElementById('main'); if(m)m.innerHTML='<div class="empty"><div class="e-ic">\u2601\ufe0f</div><h3>Cargando tus datos\u2026</h3><p>Conectando con tu cuenta de Firebase. Si no has iniciado sesi\u00f3n, no se mostrar\u00e1n datos.</p></div>';
-  var rl=document.getElementById('rlist'); if(rl)rl.innerHTML='';
-  if(!window.DPCloud)return; var _sub=false, _first=true;
+  function _msg(h,p){ var m=document.getElementById('main'); if(m&&!loaded)m.innerHTML='<div class="empty"><div class="e-ic">\u2601\ufe0f</div><h3>'+h+'</h3><p>'+p+'</p></div>'; var rl=document.getElementById('rlist'); if(rl&&!loaded)rl.innerHTML=''; }
+  _msg('Cargando tus datos\u2026','Conectando con tu cuenta de Firebase.');
+  var _sub=false, _first=true;
   function applyRemote(d){
     var hasCloud = d && d.data && typeof d.data==='object' && Array.isArray(d.data.receipts) && d.data.receipts.length>0;
     if(_first){
@@ -345,11 +345,15 @@ function _purgeLocal(){ try{ localStorage.removeItem(SK); localStorage.removeIte
     if((d.updated||0)<=myTs)return;
     S=d.data; normBilling(); renderSidebar(); renderSheet();
   }
-  try{ window.DPCloud.onAuth(function(_u){
-    if(!_u||_sub)return; _sub=true;
-    if(window.DPCloud.watchState){ window.DPCloud.watchState('billing', applyRemote); }
-    else { window.DPCloud.loadState('billing').then(function(data){ applyRemote(data?{data:data,updated:Date.now()}:null); }).catch(function(){ loaded=true; renderSidebar(); renderSheet(); }); }
-  }); }catch(e){}
+  function startCloud(){
+    try{ window.DPCloud.onAuth(function(_u){
+      if(!_u||_sub)return; _sub=true;
+      if(window.DPCloud.watchState){ window.DPCloud.watchState('billing', applyRemote); }
+      else { window.DPCloud.loadState('billing').then(function(data){ applyRemote(data?{data:data,updated:Date.now()}:null); }).catch(function(){ loaded=true; renderSidebar(); renderSheet(); }); }
+    }); }catch(e){}
+    setTimeout(function(){ if(!loaded) _msg('Inicia sesi\u00f3n para ver tus datos','Vuelve al inicio de la suite e inicia sesi\u00f3n. Si ya lo hiciste, recarga con Ctrl+Shift+R.'); }, 8000);
+  }
+  var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ startCloud(); } else if(w<10000){ w+=150; setTimeout(c,150); } else { _msg('No se pudo conectar con Firebase','Recarga la p\u00e1gina (Ctrl+Shift+R).'); } })();
 })();
 </script>
 <script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
