@@ -752,8 +752,10 @@ html, body {
 
 @media (max-width: 680px) {
   :root { --px: 14px; }
+  #topbar { z-index: 60; }
+  .sb-overlay { top: 98px; }
   #sidebar {
-    position: fixed; left: 0; top: 0; bottom: 0;
+    position: fixed; left: 0; top: 98px; bottom: 0;
     z-index: 50; width: 280px;
     transform: translateX(-100%);
     transition: transform .28s ease;
