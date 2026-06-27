@@ -150,6 +150,23 @@ select{color:var(--t1)}
 option{background-color:#161922;color:#E8EBF4}
 [data-theme=light] option{background-color:#ffffff;color:#1A1C24}
 [data-theme=light] .side{background:#FFFFFF}
+/* frases: 50% automatico + presets */
+.dn-auto{font-size:12px;font-weight:700;color:#222;white-space:nowrap;align-self:center;margin-left:2px}
+.dn-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dn-pbtn{border:1px solid #D5D5D5;background:#fff;color:#666;border-radius:8px;padding:5px 11px;font:600 11px 'Outfit',sans-serif;cursor:pointer;text-transform:none;letter-spacing:0;flex-shrink:0}
+.dn-pbtn:hover{border-color:var(--ac);color:var(--ac2)}
+.dn-addrow{display:flex;gap:10px;flex-wrap:wrap}
+.dn-pop{border:1px solid #E2E2E2;border-radius:10px;padding:9px;margin:8px 0 4px;background:#FAFAFB}
+.dn-pp-save{width:100%;text-align:left;border:1px dashed #C9A23E;background:transparent;color:#9A7B2E;border-radius:8px;padding:8px 11px;font:600 12px 'Outfit',sans-serif;cursor:pointer}
+.dn-pp-save:hover{background:rgba(244,183,64,.1)}
+.dn-pp-list{margin-top:7px;display:flex;flex-direction:column;gap:5px}
+.dn-pp-item{display:flex;gap:6px;align-items:center}
+.dn-pp-apply{flex:1;text-align:left;border:1px solid #E2E2E2;background:#fff;color:#333;border-radius:8px;padding:7px 11px;font:500 12.5px 'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px}
+.dn-pp-apply:hover{border-color:var(--ac)}
+.dn-pp-n{color:#999;font-size:11px;margin-left:auto}
+.dn-pp-del{width:28px;height:32px;border:1px solid #E2E2E2;background:#fff;color:#bbb;border-radius:8px;font-size:13px;cursor:pointer;flex-shrink:0}
+.dn-pp-del:hover{color:#E5484D;border-color:#E5484D}
+.dn-pp-empty{margin-top:7px;color:#999;font-size:12px;padding:3px 2px}
 </style>
 <style>
 @media(max-width:760px){.side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:80vw;max-width:300px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 12px}.sheet{padding:24px 18px}}
@@ -220,7 +237,7 @@ function grow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight)+'px
 var SK='dp3_billing';
 var S={receipts:[],presets:[],seq:0,cur:null};
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d==='object')S=d;}catch(e){} if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0;
+function load(){ try{var d=JSON.parse(localStorage.getItem(SK)); if(d&&typeof d==='object')S=d;}catch(e){} if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!Array.isArray(S.phrasePresets))S.phrasePresets=[];
 }
 var saveT=null, myTs=0, loaded=false;
 function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,700); }
@@ -251,7 +268,7 @@ function renderSidebar(){
   }).join('');
 }
 function upd(field,val){ var r=cur(); if(!r)return; if(field==='client.name')r.client.name=val; else if(field==='client.email')r.client.email=val; else if(field==='date')r.date=val; else if(field==='number')r.number=val; save(); renderSidebar(); }
-function updLine(i,field,val){ var r=cur(); if(!r||!r.lines[i])return; r.lines[i][field]=val; if(field==='amount'){ var tv=document.getElementById('docTotal'); if(tv)tv.textContent=eur(total(r)); renderSidebar(); } save(); }
+function updLine(i,field,val){ var r=cur(); if(!r||!r.lines[i])return; r.lines[i][field]=val; if(field==='amount'){ var tv=document.getElementById('docTotal'); if(tv)tv.textContent=eur(total(r)); var _h=eur(total(r)*0.5); document.querySelectorAll('.dn-auto').forEach(function(el){ el.textContent=_h; }); renderSidebar(); } save(); }
 function addLine(){ var r=cur(); if(!r)return; r.lines.push({name:'',desc:'',materials:'',units:1,amount:0}); save(); renderSheet(); }
 function removeLine(i){ var r=cur(); if(!r)return; r.lines.splice(i,1); if(!r.lines.length)r.lines.push({name:'',desc:'',materials:'',units:1,amount:0}); save(); renderSheet(); renderSidebar(); }
 function logoHTML(p){
@@ -298,14 +315,21 @@ function phrasesHTML(r){
     return '<div class="dn-row'+(n.on?'':' dn-off')+'">'
       +'<input type="checkbox" class="dn-chk no-print" '+(n.on?'checked':'')+' onchange="togglePhrase(\''+n.id+'\')" title="Incluir esta frase en el documento">'
       +'<textarea rows="1" class="gr dn-ta" placeholder="Escribe una frase…" oninput="grow(this);setPhraseText(\''+n.id+'\',this.value)">'+esc(n.text)+'</textarea>'
-      +'<button class="row-del no-print" onclick="delPhrase(\''+n.id+'\')" title="Quitar frase">✕</button></div>';
+      +(n.auto==='pct50'?'<span class="dn-auto" title="50% del total (automático)">'+eur(total(r)*0.5)+'</span>':'')+'<button class="row-del no-print" onclick="delPhrase(\''+n.id+'\')" title="Quitar frase">✕</button></div>';
   }).join('');
-  return '<div class="doc-notes"><div class="dn-head no-print">Frases del documento — marca la casilla para incluir cada frase, desmárcala para ocultarla</div>'+rows+'<button class="add-line no-print" onclick="addPhrase()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir frase</button></div>';
+  return '<div class="doc-notes"><div class="dn-head no-print"><span>Frases del documento — marca la casilla para incluir cada frase</span><button class="dn-pbtn" onclick="togglePhrasePresets()" title="Guardar o aplicar conjuntos de frases">Presets'+((S.phrasePresets&&S.phrasePresets.length)?(' ('+S.phrasePresets.length+')'):'')+'</button></div>'+phrasePresetPanel()+rows+'<div class="dn-addrow no-print"><button class="add-line" onclick="addPhrase()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir frase</button><button class="add-line" onclick="addPhrasePct()" title="Frase con el 50% del total, automático"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> 50% del total</button></div></div>';
 }
 function addPhrase(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r.notes=[]; r.notes.push({id:uid(),text:'',on:true}); save(); renderSheet(); }
 function setPhraseText(id,v){ var r=cur(); if(!r||!Array.isArray(r.notes))return; var n=r.notes.filter(function(x){return x.id===id;})[0]; if(n){ n.text=v; save(); } }
 function togglePhrase(id){ var r=cur(); if(!r||!Array.isArray(r.notes))return; var n=r.notes.filter(function(x){return x.id===id;})[0]; if(n){ n.on=!n.on; save(); renderSheet(); } }
 function delPhrase(id){ var r=cur(); if(!r)return; r.notes=(r.notes||[]).filter(function(x){return x.id!==id;}); save(); renderSheet(); }
+function addPhrasePct(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r.notes=[]; r.notes.push({id:uid(),text:'Importe a abonar (50% del total):',on:true,auto:'pct50'}); save(); renderSheet(); }
+var phrasePresetOpen=false;
+function togglePhrasePresets(){ phrasePresetOpen=!phrasePresetOpen; renderSheet(); }
+function phrasePresetPanel(){ if(!phrasePresetOpen)return ''; var pr=S.phrasePresets||[]; var x='<div class="dn-pop no-print"><button class="dn-pp-save" onclick="savePhrasePreset()">+ Guardar las frases actuales como preset</button>'; if(pr.length){ x+='<div class="dn-pp-list">'; pr.forEach(function(pp){ x+='<div class="dn-pp-item"><button class="dn-pp-apply" onclick="applyPhrasePreset(\''+pp.id+'\')">'+esc(pp.name)+'<span class="dn-pp-n">'+((pp.notes&&pp.notes.length)||0)+' frases</span></button><button class="dn-pp-del" onclick="delPhrasePreset(\''+pp.id+'\')" title="Eliminar preset">✕</button></div>'; }); x+='</div>'; } else { x+='<div class="dn-pp-empty">No hay presets de frases guardados.</div>'; } x+='</div>'; return x; }
+function savePhrasePreset(){ var r=cur(); if(!r)return; var notes=Array.isArray(r.notes)?r.notes:[]; if(!notes.length){ alert('Este documento no tiene frases que guardar.'); return; } var n=prompt('Nombre del preset de frases:'); if(n==null)return; n=n.trim(); if(!n)return; if(!Array.isArray(S.phrasePresets))S.phrasePresets=[]; S.phrasePresets.push({id:uid(),name:n,notes:notes.map(function(x){return {text:x.text,on:x.on!==false,auto:x.auto||null};})}); phrasePresetOpen=true; save(); renderSheet(); }
+function applyPhrasePreset(id){ var r=cur(); if(!r)return; var pr=(S.phrasePresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if((r.notes&&r.notes.length) && !confirm('Se reemplazar\u00e1n las frases actuales del documento por el preset "'+pr.name+'". \u00bfContinuar?'))return; r.notes=(pr.notes||[]).map(function(x){return {id:uid(),text:x.text,on:x.on!==false,auto:x.auto||null};}); phrasePresetOpen=false; save(); renderSheet(); }
+function delPhrasePreset(id){ if(!Array.isArray(S.phrasePresets))return; var pr=S.phrasePresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('\u00bfEliminar el preset "'+pr.name+'"?'))return; S.phrasePresets=S.phrasePresets.filter(function(x){return x.id!==id;}); save(); renderSheet(); }
 function printPDF(){ var r=cur(); if(!r){alert('Crea o selecciona un recibo primero.');return;} var old=document.title; document.title=(r.number||'documento'); var restore=function(){document.title=old; window.removeEventListener('afterprint',restore);}; window.addEventListener('afterprint',restore); setTimeout(restore,2000); window.print(); }
 var pfLogo='';
 function openPresets(){ pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList(); document.getElementById('presetVeil').classList.add('open'); }
@@ -330,7 +354,7 @@ function savePreset(){
   save(); pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList();
 }
 document.getElementById('pf-logo').addEventListener('change',function(e){ var f=e.target.files&&e.target.files[0]; if(!f)return; var rd=new FileReader(); rd.onload=function(){ pfLogo=rd.result; document.getElementById('pf-prev').innerHTML='<img src="'+pfLogo+'">'; }; rd.readAsDataURL(f); });
-function normBilling(){ if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; }
+function normBilling(){ if(!Array.isArray(S.receipts))S.receipts=[]; if(!Array.isArray(S.presets))S.presets=[]; if(typeof S.seq!=='number')S.seq=0; if(!S.cur||!S.receipts.filter(function(r){return r.id===S.cur;})[0])S.cur=(S.receipts[0]&&S.receipts[0].id)||null; if(!Array.isArray(S.phrasePresets))S.phrasePresets=[]; }
 function _purgeLocal(){ try{ localStorage.removeItem(SK); localStorage.removeItem(SK+'_ts'); }catch(e){} }
 (function(){
   function _msg(h,p){ var m=document.getElementById('main'); if(m&&!loaded)m.innerHTML='<div class="empty"><div class="e-ic">\u2601\ufe0f</div><h3>'+h+'</h3><p>'+p+'</p></div>'; var rl=document.getElementById('rlist'); if(rl&&!loaded)rl.innerHTML=''; }
