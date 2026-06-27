@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3DLab — SILAB3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="../../firebase/dpcloud.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080F; --glass:rgba(255,255,255,.04); --border:rgba(255,255,255,.08);
+  --t1:#E8EBF4; --t2:#7A8099; --t3:#3A3D52; --ac:#8B7CFF; --ac2:#6C5CE7;
+}
+[data-theme=light]{ --bg:#F5F6FA; --glass:rgba(0,0,0,.03); --border:rgba(0,0,0,.10); --t1:#1A1C24; --t2:#5A6172; --t3:#AEB4C2; }
+html,body{height:100%;font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--t1)}
+body{height:100vh;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+/* shell */
+#dp-shell{position:fixed;top:0;left:0;right:0;height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;z-index:9500;background:rgba(10,11,18,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+[data-theme=light] #dp-shell{background:rgba(255,255,255,.80);border-bottom:1px solid rgba(0,0,0,.08)}
+#dp-shell .dp-back{display:flex;align-items:center;gap:6px;height:30px;padding:0 13px 0 9px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;font:500 13px 'Outfit',sans-serif;cursor:pointer}
+#dp-shell .dp-back:hover{background:rgba(255,255,255,.07)}
+[data-theme=light] #dp-shell .dp-back{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+#dp-shell .dp-appicon{width:27px;height:27px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(139,124,255,.16);border:1px solid rgba(139,124,255,.34)}
+#dp-shell .dp-title{font-size:13px;font-weight:600;color:#E8EBF4}
+[data-theme=light] #dp-shell .dp-title{color:#1A1C24}
+#dp-shell .dp-sp{flex:1}
+#dp-shell .dp-toggle{width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#E8EBF4;display:flex;align-items:center;justify-content:center;cursor:pointer}
+[data-theme=light] #dp-shell .dp-toggle{color:#1A1C24;border-color:rgba(0,0,0,.16)}
+/* top */
+.top{position:fixed;top:44px;left:0;right:0;height:54px;z-index:40;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.burger{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.burger:hover{background:var(--glass)}
+.chip{width:30px;height:30px;border-radius:9px;background:rgba(139,124,255,.16);border:1px solid rgba(139,124,255,.34);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tname{font-weight:700;font-size:16px;letter-spacing:-.2px}
+.sp{flex:1}
+/* layout */
+.layout{position:fixed;top:98px;left:0;right:0;bottom:0;display:flex}
+.side{width:300px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--glass)}
+.side .cta{margin:14px 14px 8px;height:38px;border:none;border-radius:11px;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;font:600 13px 'Outfit';display:flex;align-items:center;justify-content:center;gap:7px}
+.side-h{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t2);padding:8px 18px 4px}
+.tree{flex:1;overflow:auto;padding:4px 8px 18px}
+.tree-empty,.tempty{color:var(--t2);font-size:12.5px;padding:10px 14px}
+.tempty{padding:5px 14px 5px 40px;font-size:11.5px;color:var(--t3)}
+.trow{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:9px;cursor:pointer;position:relative;user-select:none}
+.trow:hover{background:var(--glass)}
+.trow.on{background:rgba(139,124,255,.14)}
+.trow.lvl1{padding-left:20px}
+.trow.lvl2{padding-left:34px}
+.tcaret{width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:var(--t2);transition:transform .15s;flex-shrink:0}
+.tcaret.op{transform:rotate(90deg)}
+.tcaret-sp{width:14px;flex-shrink:0}
+.tic{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
+.tlabel{flex:1;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tacts{display:none;gap:2px;flex-shrink:0}
+.trow:hover .tacts{display:flex}
+.tact{width:22px;height:22px;border:none;background:transparent;color:var(--t2);border-radius:6px;font-size:12px;display:flex;align-items:center;justify-content:center}
+.tact:hover{background:rgba(255,255,255,.10);color:var(--t1)}
+.tact.dl:hover{color:#FF7A7A}
+/* main */
+.main{flex:1;overflow:auto}
+.lab-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;color:var(--t2);padding:40px}
+.lab-empty .le-ic{font-size:42px;margin-bottom:10px;color:var(--ac)}
+.lab-empty h3{color:var(--t1);font-size:18px;margin-bottom:6px}
+.lab-empty p{font-size:13.5px;max-width:360px;line-height:1.6}
+.lab-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:14px 22px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.lab-bc{font-size:12px;color:var(--t2);font-weight:600}
+.lab-bc span{opacity:.5;margin:0 3px}
+.lab-tname{flex:0 1 320px;min-width:160px;background:transparent;border:1px solid transparent;border-radius:9px;color:var(--t1);font:700 18px 'Outfit';padding:6px 10px}
+.lab-tname:hover{border-color:var(--border)}
+.lab-tname:focus{outline:none;border-color:var(--ac);background:var(--glass)}
+.tbtn{height:34px;padding:0 14px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);font:600 12.5px 'Outfit';display:flex;align-items:center;gap:6px}
+.tbtn:hover{background:var(--glass)}
+.tbtn.danger:hover{border-color:#FF7A7A;color:#FF7A7A}
+.lab-body{padding:22px;display:flex;flex-direction:column;gap:22px;max-width:1100px}
+.lab-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px 20px}
+.lab-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.lab-h h2{font-size:15px;font-weight:700}
+.mini{height:32px;padding:0 13px;border-radius:9px;border:1px solid var(--ac);background:rgba(139,124,255,.12);color:var(--ac);font:600 12.5px 'Outfit'}
+.mini:hover{background:rgba(139,124,255,.2)}
+.lab-none{color:var(--t2);font-size:13px;padding:10px 2px}
+table{border-collapse:collapse;width:100%}
+.ptable td,.ptable th,.ctable td,.ctable th{border:1px solid var(--border);padding:0;text-align:left}
+.ptable th,.ctable th{padding:9px 12px;font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--t2);background:rgba(255,255,255,.02)}
+.ptable td input,.ctable td input{width:100%;background:transparent;border:none;color:var(--t1);font:400 13.5px 'Outfit';padding:9px 12px;outline:none}
+.ptable td input:focus,.ctable td input:focus{background:rgba(139,124,255,.08)}
+.ptable td:last-child,.ctable td:last-child{width:38px;text-align:center}
+.ptable th:last-child,.ctable th:last-child{width:38px}
+.del{width:26px;height:26px;border:none;background:transparent;color:var(--t3);border-radius:7px;font-size:13px}
+.del:hover{background:rgba(255,122,122,.14);color:#FF7A7A}
+.lab-scroll{overflow:auto;border-radius:10px}
+.ctable th.vh{color:var(--ac)}
+.ctable td.cv input{background:rgba(139,124,255,.16);font-weight:600;color:var(--t1)}
+[data-theme=light] .ctable td.cv input{background:rgba(108,92,231,.14)}
+.ctable td.cv input:focus{background:rgba(139,124,255,.26)}
+.lab-hint{font-size:12px;color:var(--t3);margin-top:12px;line-height:1.5}
+@media(max-width:760px){
+  .layout{top:98px}
+  .side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:82vw;max-width:300px;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
+  body.side-off .side{transform:translateX(-101%)}
+  .lab-body{padding:16px 12px}
+}
+</style>
+</head>
+<body>
+<div id="dp-shell">
+  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    3DProject
+  </button>
+  <span class="dp-appicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7CFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg></span>
+  <span class="dp-title">3DLab</span>
+  <span class="dp-sp"></span>
+  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
+</div>
+<div class="top">
+  <button class="burger" onclick="document.body.classList.toggle('side-off')" title="Mostrar u ocultar el panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7CFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg></span>
+  <span class="tname">3DLab</span>
+  <span class="sp"></span>
+</div>
+<div class="layout">
+  <aside class="side" id="side">
+    <button class="cta" onclick="addMod()"><svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg> Nueva modalidad</button>
+    <div class="side-h">Modalidades</div>
+    <div class="tree" id="tree"></div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<script>
+/* ===== tema / shell ===== */
+function ic(t){return t==='dark'
+  ?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>'
+  :'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('dp3-theme',t);}catch(e){}var b=document.getElementById('dpThemeBtn');if(b)b.innerHTML=ic(t);if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}}
+window.dpToggleTheme=function(){applyTheme((document.documentElement.getAttribute('data-theme')||'dark')==='dark'?'light':'dark');};
+window.dpHome=function(){if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'home'},'*');}catch(e){}}else{window.location.href='../../index.html';}};
+window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='theme'&&d.theme){applyTheme(d.theme);}});
+(function(){var p=null;try{p=new URLSearchParams(location.search).get('dptheme');}catch(e){}var s=null;try{s=localStorage.getItem('dp3-theme');}catch(e){}applyTheme(p||s||'dark');})();
+
+/* ===== iconos ===== */
+var icMod='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+var icFolder='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+var icFile='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>';
+var icFlask='<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg>';
+function caret(op){return '<span class="tcaret'+(op?' op':'')+'"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M4 2.5L8 6L4 9.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';}
+
+/* ===== estado ===== */
+var S={mods:[],sel:{m:null,p:null,t:null}};
+var expanded={};
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escAttr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function norm(){ if(!Array.isArray(S.mods))S.mods=[]; if(!S.sel||typeof S.sel!=='object')S.sel={m:null,p:null,t:null};
+  S.mods.forEach(function(m){ if(!Array.isArray(m.projs))m.projs=[]; m.projs.forEach(function(p){ if(!Array.isArray(p.tests))p.tests=[]; p.tests.forEach(function(t){ if(!Array.isArray(t.params))t.params=[]; if(!Array.isArray(t.studies))t.studies=[]; t.studies.forEach(function(s){ if(!s.vals||typeof s.vals!=='object')s.vals={}; }); }); }); });
+}
+
+/* ===== finders ===== */
+function findMod(id){return S.mods.filter(function(m){return m.id===id;})[0];}
+function findProj(m,id){return m?m.projs.filter(function(p){return p.id===id;})[0]:null;}
+function findTest(p,id){return p?p.tests.filter(function(t){return t.id===id;})[0]:null;}
+function curMod(){return findMod(S.sel.m);}
+function curProj(){return findProj(curMod(),S.sel.p);}
+function curTest(){return findTest(curProj(),S.sel.t);}
+
+/* ===== expandir ===== */
+function toggle(id){expanded[id]=!expanded[id];renderTree();}
+function toggleP(mId,pId){expanded[pId]=!expanded[pId];renderTree();}
+
+/* ===== CRUD árbol ===== */
+function addMod(){ if(!loaded)return; var n=prompt('Nombre de la modalidad:'); if(n==null)return; n=n.trim(); if(!n)return; var m={id:uid(),name:n,projs:[]}; S.mods.push(m); expanded[m.id]=true; save(); renderTree(); }
+function renMod(id){ var m=findMod(id); if(!m)return; var n=prompt('Renombrar modalidad:',m.name); if(n==null)return; m.name=n.trim()||m.name; save(); renderTree(); if(S.sel.m===id)renderMain(); }
+function delMod(id){ var m=findMod(id); if(!m)return; if(!confirm('¿Eliminar la modalidad "'+m.name+'" con todos sus proyectos y tests?'))return; S.mods=S.mods.filter(function(x){return x.id!==id;}); if(S.sel.m===id)S.sel={m:null,p:null,t:null}; save(); renderTree(); renderMain(); }
+function addProj(mId){ var m=findMod(mId); if(!m)return; var n=prompt('Nombre del proyecto:'); if(n==null)return; n=n.trim(); if(!n)return; var p={id:uid(),name:n,tests:[]}; m.projs.push(p); expanded[mId]=true; expanded[p.id]=true; save(); renderTree(); }
+function renProj(mId,pId){ var p=findProj(findMod(mId),pId); if(!p)return; var n=prompt('Renombrar proyecto:',p.name); if(n==null)return; p.name=n.trim()||p.name; save(); renderTree(); if(S.sel.p===pId)renderMain(); }
+function delProj(mId,pId){ var m=findMod(mId); var p=findProj(m,pId); if(!p)return; if(!confirm('¿Eliminar el proyecto "'+p.name+'" y sus tests?'))return; m.projs=m.projs.filter(function(x){return x.id!==pId;}); if(S.sel.p===pId){S.sel.p=null;S.sel.t=null;} save(); renderTree(); renderMain(); }
+function addTest(mId,pId){ var p=findProj(findMod(mId),pId); if(!p)return; var n=prompt('Nombre del test:'); if(n==null)return; n=n.trim(); if(!n)return; var t={id:uid(),name:n,params:[],studies:[]}; p.tests.push(t); expanded[mId]=true; expanded[pId]=true; S.sel={m:mId,p:pId,t:t.id}; save(); renderTree(); renderMain(); }
+function renTest(mId,pId,tId){ var t=findTest(findProj(findMod(mId),pId),tId); if(!t)return; var n=prompt('Renombrar test:',t.name); if(n==null)return; t.name=n.trim()||t.name; save(); renderTree(); if(S.sel.t===tId)renderMain(); }
+function delTest(mId,pId,tId){ var p=findProj(findMod(mId),pId); var t=findTest(p,tId); if(!t)return; if(!confirm('¿Eliminar el test "'+t.name+'"?'))return; p.tests=p.tests.filter(function(x){return x.id!==tId;}); if(S.sel.t===tId)S.sel.t=null; save(); renderTree(); renderMain(); }
+function selectTest(mId,pId,tId){ S.sel={m:mId,p:pId,t:tId}; renderTree(); renderMain(); if(window.innerWidth<=760)document.body.classList.add('side-off'); }
+function renTestInline(v){ var t=curTest(); if(!t)return; t.name=(v||'').trim()||t.name; save(); renderTree(); }
+
+/* ===== parámetros ===== */
+function addParam(){ var t=curTest(); if(!t)return; var p={id:uid(),name:'Parámetro '+(t.params.length+1),val:''}; t.params.push(p); t.studies.forEach(function(s){ if(!(p.id in s.vals))s.vals[p.id]=p.val; }); save(); renderMain(); }
+function setParamName(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.name=v;save();renderMain();} }
+function setParamVal(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.val=v;save();} }
+function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(function(x){return x.id!==id;}); t.studies.forEach(function(s){ delete s.vals[id]; }); save(); renderMain(); }
+
+/* ===== estudios (condiciones) ===== */
+function addStudy(){ var t=curTest(); if(!t)return; var s={id:uid(),name:'Estudio '+(t.studies.length+1),ident:'',vals:{}}; t.params.forEach(function(p){ s.vals[p.id]=p.val; }); t.studies.push(s); save(); renderMain(); }
+function setStudyName(id,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(s){s.name=v;save();} }
+function setStudyIdent(id,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(s){s.ident=v;save();} }
+function setStudyVal(sid,pid,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===sid;})[0]; if(s){s.vals[pid]=v;save();renderMain();} }
+function delStudy(id){ var t=curTest(); if(!t)return; t.studies=t.studies.filter(function(x){return x.id!==id;}); save(); renderMain(); }
+
+function varyingParams(t){ var set={}; t.params.forEach(function(p){ var d={}; t.studies.forEach(function(s){ d[(s.vals[p.id]!=null?String(s.vals[p.id]):'')]=1; }); set[p.id]=(t.studies.length>1 && Object.keys(d).length>1); }); return set; }
+
+/* ===== render árbol ===== */
+function renderTree(){
+  var tr=document.getElementById('tree'); if(!tr)return;
+  if(!S.mods.length){ tr.innerHTML='<div class="tree-empty">No hay modalidades todavía.<br>Crea la primera con <b>Nueva modalidad</b>.</div>'; return; }
+  var h='';
+  S.mods.forEach(function(m){
+    var op=!!expanded[m.id];
+    h+='<div class="trow lvl0'+(S.sel.m===m.id&&!S.sel.p?' on':'')+'" onclick="toggle(\''+m.id+'\')">'+caret(op)+'<span class="tic">'+icMod+'</span><span class="tlabel">'+esc(m.name)+'</span><span class="tacts">'
+      +'<button class="tact" title="Nuevo proyecto" onclick="event.stopPropagation();addProj(\''+m.id+'\')">+</button>'
+      +'<button class="tact" title="Renombrar" onclick="event.stopPropagation();renMod(\''+m.id+'\')">&#9998;</button>'
+      +'<button class="tact dl" title="Eliminar" onclick="event.stopPropagation();delMod(\''+m.id+'\')">&times;</button></span></div>';
+    if(op){
+      if(!m.projs.length)h+='<div class="tempty lvl1">Sin proyectos · usa +</div>';
+      m.projs.forEach(function(p){
+        var po=!!expanded[p.id];
+        h+='<div class="trow lvl1" onclick="toggleP(\''+m.id+'\',\''+p.id+'\')">'+caret(po)+'<span class="tic">'+icFolder+'</span><span class="tlabel">'+esc(p.name)+'</span><span class="tacts">'
+          +'<button class="tact" title="Nuevo test" onclick="event.stopPropagation();addTest(\''+m.id+'\',\''+p.id+'\')">+</button>'
+          +'<button class="tact" title="Renombrar" onclick="event.stopPropagation();renProj(\''+m.id+'\',\''+p.id+'\')">&#9998;</button>'
+          +'<button class="tact dl" title="Eliminar" onclick="event.stopPropagation();delProj(\''+m.id+'\',\''+p.id+'\')">&times;</button></span></div>';
+        if(po){
+          if(!p.tests.length)h+='<div class="tempty lvl2">Sin tests · usa +</div>';
+          p.tests.forEach(function(t){
+            h+='<div class="trow lvl2'+(S.sel.t===t.id?' on':'')+'" onclick="selectTest(\''+m.id+'\',\''+p.id+'\',\''+t.id+'\')"><span class="tcaret-sp"></span><span class="tic">'+icFile+'</span><span class="tlabel">'+esc(t.name)+'</span><span class="tacts">'
+              +'<button class="tact" title="Renombrar" onclick="event.stopPropagation();renTest(\''+m.id+'\',\''+p.id+'\',\''+t.id+'\')">&#9998;</button>'
+              +'<button class="tact dl" title="Eliminar" onclick="event.stopPropagation();delTest(\''+m.id+'\',\''+p.id+'\',\''+t.id+'\')">&times;</button></span></div>';
+          });
+        }
+      });
+    }
+  });
+  tr.innerHTML=h;
+}
+
+/* ===== render test ===== */
+function renderMain(){
+  var main=document.getElementById('main'); if(!main)return;
+  var t=curTest();
+  if(!t){ main.innerHTML='<div class="lab-empty"><div class="le-ic">'+icFlask+'</div><h3>Ningún test seleccionado</h3><p>Crea una <b>modalidad</b>, dentro un <b>proyecto</b> y dentro un <b>test</b> usando el panel de la izquierda.</p></div>'; return; }
+  var m=curMod(),p=curProj(); var vary=varyingParams(t);
+  var h='<div class="lab-bar"><div class="lab-bc">'+esc(m?m.name:'')+' <span>/</span> '+esc(p?p.name:'')+'</div>'
+    +'<input class="lab-tname" value="'+escAttr(t.name)+'" onchange="renTestInline(this.value)">'
+    +'<span class="sp"></span>'
+    +'<button class="tbtn" onclick="exportCSV()" title="Exportar a CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> CSV</button>'
+    +'<button class="tbtn" onclick="exportPDF()" title="Exportar a PDF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg> PDF</button>'
+    +'<button class="tbtn danger" onclick="delTest(\''+m.id+'\',\''+p.id+'\',\''+t.id+'\')">Eliminar</button></div>';
+  h+='<div class="lab-body">';
+  // parámetros
+  h+='<section class="lab-card"><div class="lab-h"><h2>Parámetros definidos</h2><button class="mini" onclick="addParam()">+ Parámetro</button></div>';
+  if(t.params.length){
+    h+='<table class="ptable"><thead><tr><th>Parámetro</th><th>Valor</th><th></th></tr></thead><tbody>';
+    t.params.forEach(function(pa){ h+='<tr><td><input value="'+escAttr(pa.name)+'" onchange="setParamName(\''+pa.id+'\',this.value)"></td><td><input value="'+escAttr(pa.val)+'" onchange="setParamVal(\''+pa.id+'\',this.value)" placeholder="—"></td><td><button class="del" title="Eliminar" onclick="delParam(\''+pa.id+'\')">&times;</button></td></tr>'; });
+    h+='</tbody></table>';
+  } else h+='<div class="lab-none">Sin parámetros. Añade el primero con <b>+ Parámetro</b>.</div>';
+  h+='</section>';
+  // condiciones
+  h+='<section class="lab-card"><div class="lab-h"><h2>Condiciones a testar</h2><button class="mini" onclick="addStudy()">+ Estudio</button></div>';
+  h+='<div class="lab-scroll"><table class="ctable"><thead><tr><th>Estudio</th><th>Identificador</th>';
+  t.params.forEach(function(pa){ h+='<th'+(vary[pa.id]?' class="vh"':'')+'>'+esc(pa.name)+'</th>'; });
+  h+='<th></th></tr></thead><tbody>';
+  if(t.studies.length){
+    t.studies.forEach(function(s){
+      h+='<tr><td><input value="'+escAttr(s.name)+'" onchange="setStudyName(\''+s.id+'\',this.value)"></td><td><input value="'+escAttr(s.ident)+'" onchange="setStudyIdent(\''+s.id+'\',this.value)" placeholder="ID"></td>';
+      t.params.forEach(function(pa){ var v=s.vals[pa.id]!=null?s.vals[pa.id]:''; h+='<td'+(vary[pa.id]?' class="cv"':'')+'><input value="'+escAttr(v)+'" onchange="setStudyVal(\''+s.id+'\',\''+pa.id+'\',this.value)" placeholder="—"></td>'; });
+      h+='<td><button class="del" title="Eliminar" onclick="delStudy(\''+s.id+'\')">&times;</button></td></tr>';
+    });
+  } else { h+='<tr><td colspan="'+(t.params.length+3)+'" class="lab-none" style="text-align:center;padding:14px">Sin estudios. Añade el primero con <b>+ Estudio</b>.</td></tr>'; }
+  h+='</tbody></table></div>';
+  h+='<p class="lab-hint">Las columnas de parámetros se generan desde los <b>parámetros definidos</b>. Los valores que varían entre estudios se resaltan en color.</p>';
+  h+='</section></div>';
+  main.innerHTML=h;
+}
+
+/* ===== exportación ===== */
+function csvCell(v){ v=(v==null?'':String(v)); if(/[",\n\r;]/.test(v))v='"'+v.replace(/"/g,'""')+'"'; return v; }
+function download(name,content,mime){ try{ var b=new Blob(['﻿'+content],{type:mime+';charset=utf-8'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},800); }catch(e){alert('No se pudo descargar: '+e);} }
+function safeName(n){ return (String(n||'test').replace(/[\\/:*?"<>|]+/g,'_').trim())||'test'; }
+function exportCSV(){
+  var t=curTest(); if(!t)return; var m=curMod(),p=curProj();
+  var rows=[];
+  rows.push(['Modalidad',m?m.name:'']); rows.push(['Proyecto',p?p.name:'']); rows.push(['Test',t.name]); rows.push([]);
+  rows.push(['PARÁMETROS DEFINIDOS']); rows.push(['Nombre','Valor']);
+  t.params.forEach(function(pa){ rows.push([pa.name,pa.val]); }); rows.push([]);
+  rows.push(['CONDICIONES A TESTAR']);
+  rows.push(['Estudio','Identificador'].concat(t.params.map(function(pa){return pa.name;})));
+  t.studies.forEach(function(s){ rows.push([s.name,s.ident].concat(t.params.map(function(pa){return s.vals[pa.id]!=null?s.vals[pa.id]:'';}))); });
+  var csv=rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');
+  download(safeName(t.name)+'.csv', csv, 'text/csv');
+}
+function exportPDF(){
+  var t=curTest(); if(!t)return; var m=curMod(),p=curProj();
+  var JS=window.jspdf&&window.jspdf.jsPDF; if(!JS){ alert('No se pudo cargar el generador de PDF. Reintenta en unos segundos.'); return; }
+  var doc=new JS({orientation:'landscape',unit:'mm',format:'a4'});
+  doc.setFontSize(17); doc.setTextColor(30,30,40); doc.text(String(t.name||'Test'),14,16);
+  doc.setFontSize(10); doc.setTextColor(120,120,130); doc.text((m?m.name:'')+'   /   '+(p?p.name:''),14,22.5);
+  doc.autoTable({ startY:28, head:[['Parámetro','Valor']], body:t.params.map(function(pa){return [String(pa.name),String(pa.val==null?'':pa.val)];}),
+    theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14} });
+  var vary=varyingParams(t);
+  var head=[['Estudio','Identificador'].concat(t.params.map(function(pa){return String(pa.name);}))];
+  var body=t.studies.map(function(s){ return [String(s.name),String(s.ident)].concat(t.params.map(function(pa){return String(s.vals[pa.id]==null?'':s.vals[pa.id]);})); });
+  doc.autoTable({ startY:(doc.lastAutoTable?doc.lastAutoTable.finalY:30)+9, head:head, body:body,
+    theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14},
+    didParseCell:function(data){ if(data.section==='body'){ var col=data.column.index-2; if(col>=0 && col<t.params.length && vary[t.params[col].id]){ data.cell.styles.fillColor=[238,234,255]; data.cell.styles.textColor=[70,40,150]; data.cell.styles.fontStyle='bold'; } } } });
+  doc.save(safeName(t.name)+'.pdf');
+}
+
+/* ===== solo-nube (Firebase) ===== */
+var saveT=null, myTs=0, loaded=false;
+function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,600); }
+function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ myTs=Date.now(); window.DPCloud.saveState('3dlab',S,myTs).catch(function(e){console.warn('[3DLab] guardado en nube falló:',e&&(e.message||e));}); } else if(window.DPCloud&&window.DPCloud.configured){ console.warn('[3DLab] sin sesión de Firebase: no se puede guardar.'); } }catch(e){} }
+(function(){
+  function _msg(hh,pp){ if(loaded)return; var el=document.getElementById('main'); if(el)el.innerHTML='<div class="lab-empty"><div class="le-ic">&#9729;&#65039;</div><h3>'+hh+'</h3><p>'+pp+'</p></div>'; var tr=document.getElementById('tree'); if(tr)tr.innerHTML=''; }
+  _msg('Cargando tus datos…','Conectando con tu cuenta de Firebase.');
+  var _sub=false, _first=true;
+  function applyRemote(d){
+    if(_first){ _first=false;
+      if(d&&d.data&&typeof d.data==='object'){ S=d.data; }
+      norm(); loaded=true; renderTree(); renderMain(); return;
+    }
+    if(!d||!d.data||typeof d.data!=='object')return;
+    if((d.updated||0)<=myTs)return;
+    S=d.data; norm(); renderTree(); renderMain();
+  }
+  function startCloud(){
+    try{ window.DPCloud.onAuth(function(_u){ if(!_u||_sub)return; _sub=true;
+      if(window.DPCloud.watchState){ window.DPCloud.watchState('3dlab', applyRemote); }
+      else { window.DPCloud.loadState('3dlab').then(function(data){ applyRemote(data?{data:data,updated:Date.now()}:null); }).catch(function(){ loaded=true; renderTree(); renderMain(); }); }
+    }); }catch(e){}
+    setTimeout(function(){ if(!loaded)_msg('Inicia sesión para ver tus datos','Vuelve al inicio de la suite e inicia sesión. Si ya lo hiciste, recarga con Ctrl+Shift+R.'); }, 8000);
+  }
+  var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ startCloud(); } else if(w<10000){ w+=150; setTimeout(c,150); } else { _msg('No se pudo conectar con Firebase','Recarga la página (Ctrl+Shift+R).'); } })();
+})();
+</script>
+<script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
+</body>
+</html>

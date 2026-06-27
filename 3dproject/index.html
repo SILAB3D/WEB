@@ -151,6 +151,7 @@ body::after {
 .card:nth-child(4) { animation-delay: .32s; }
 .card:nth-child(5) { animation-delay: .40s; }
 .card:nth-child(6) { animation-delay: .48s; }
+.card:nth-child(7) { animation-delay: .56s; }
 
 /* per-card color glow in corner */
 .card::before {
@@ -171,6 +172,7 @@ body::after {
 .card.d::before { background: var(--violet); }
 .card.e::before { background: var(--green); }
 .card.f::before { background: var(--amber); }
+.card.g::before { background: #8B7CFF; }
 
 .card:hover {
   transform: translateY(-6px);
@@ -182,6 +184,7 @@ body::after {
 .card.d:hover { border-color: rgba(184,124,255,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(184,124,255,.1); }
 .card.e:hover { border-color: rgba(52,211,153,.35);  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(52,211,153,.1); }
 .card.f:hover { border-color: rgba(244,183,64,.35);  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(244,183,64,.1); }
+.card.g:hover { border-color: rgba(139,124,255,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(139,124,255,.1); }
 
 .card:hover::before { opacity: .2; transform: scale(1); }
 .card:active { transform: translateY(-3px) scale(.99); }
@@ -227,6 +230,7 @@ body::after {
 .icon.id { background: rgba(184,124,255,.12); border: 1px solid rgba(184,124,255,.2); }
 .icon.ie { background: rgba(52,211,153,.12);  border: 1px solid rgba(52,211,153,.2); }
 .icon.if { background: rgba(244,183,64,.12);  border: 1px solid rgba(244,183,64,.2); }
+.icon.ig { background: rgba(139,124,255,.12); border: 1px solid rgba(139,124,255,.22); }
 
 .arrow {
   width: 30px; height: 30px;
@@ -842,6 +846,23 @@ body.dp-authed #authGate{display:none}
       <div class="card-line"></div>
     </div>
 
+    <!-- 3DLab -->
+    <div class="card g" onclick="launchApp('lab')">
+      <div class="card-top">
+        <div class="icon ig">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B7CFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">3DLab</div>
+        <p class="app-desc">Tests de impresión bajo distintas condiciones: Modalidad › Proyecto › Test, con parámetros y matriz de estudios. Resalta variables y exporta CSV/PDF.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
   </div>
 
   <p class="footer" id="dpFooter">3DProject Suite &nbsp;·&nbsp; v3.0</p>
@@ -953,13 +974,21 @@ const APPS = {
       <rect x="13" y="10.5" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".3"/>
       <rect x="4.5" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8" opacity=".3"/>
       <rect x="13" y="15" width="4.5" height="3" rx=".6" fill="#00DDB8"/></svg>`
+  },
+  lab: {
+    name: '3DLab',
+    desc: 'Tests de impresión bajo distintas condiciones. Organiza Modalidad › Proyecto › Test, define parámetros y una matriz de estudios con resaltado de variables. Exporta a CSV y PDF.',
+    url: 'apps/3dlab/3dlab.html',
+    color: '#8B7CFF', bg: 'rgba(139,124,255,.1)', border: 'rgba(139,124,255,.2)',
+    cls: 'mg',
+    svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8B7CFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg>`
   }
 };
 
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260626-2158';
+const APP_VER = '20260627-1304';
 
 function launchApp(id) {
   const a = APPS[id];
