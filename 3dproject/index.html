@@ -413,9 +413,10 @@ body::after {
   flex-direction: column;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .25s var(--ease);
+  visibility: hidden;
+  transition: opacity .25s var(--ease), visibility 0s linear .25s;
 }
-.viewer.open { opacity: 1; pointer-events: all; }
+.viewer.open { opacity: 1; pointer-events: all; visibility: visible; transition: opacity .25s var(--ease), visibility 0s linear 0s; }
 
 .vbar {
   flex-shrink: 0;
@@ -600,6 +601,26 @@ body.dp-authed #authGate{display:none}
 #authGate .ag-msg.info{color:var(--t2)}
 #authGate .ag-note{font-size:11.5px;color:var(--t3);margin-top:18px;line-height:1.5;border-top:1px solid var(--border);padding-top:14px}
 
+/* ── Widget de etapas pendientes de PrintFlow ── */
+.pf-fab{position:fixed;right:20px;bottom:20px;z-index:250;height:46px;padding:0 15px 0 13px;border-radius:24px;border:1px solid rgba(255,122,69,.4);background:rgba(255,122,69,.12);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--t1);display:none;align-items:center;gap:9px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.35);font:600 13px 'Outfit',sans-serif}
+.pf-fab:hover{border-color:var(--orange);background:rgba(255,122,69,.18)}
+.pf-fab .pf-ic{color:var(--orange);display:flex}
+.pf-badge{min-width:21px;height:21px;padding:0 6px;border-radius:11px;background:var(--orange);color:#231101;font:700 12px 'Outfit',sans-serif;display:flex;align-items:center;justify-content:center}
+.pf-panel{position:fixed;right:20px;bottom:74px;z-index:251;width:340px;max-width:calc(100vw - 40px);max-height:min(60vh,460px);display:none;flex-direction:column;background:#0F111C;border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.6);overflow:hidden}
+.pf-panel.open{display:flex}
+[data-theme=light] .pf-panel{background:#fff}
+.pf-ph{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);font:700 13px 'Outfit',sans-serif;color:var(--t1)}
+.pf-x{border:none;background:transparent;color:var(--t2);font-size:16px;cursor:pointer;line-height:1}
+.pf-x:hover{color:var(--t1)}
+.pf-list{overflow-y:auto;padding:6px}
+.pf-grp{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);padding:9px 11px 3px}
+.pf-item{padding:9px 11px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.pf-item:hover{background:var(--glass)}
+.pf-step{font-size:13px;font-weight:600;color:var(--t1)}
+.pf-meta{font-size:11.5px;color:var(--t2)}
+.pf-empty{padding:22px;text-align:center;color:var(--t2);font-size:13px}
+.pf-open{margin:8px;height:38px;border:none;border-radius:10px;background:linear-gradient(120deg,var(--orange),#E0622E);color:#fff;font:600 13px 'Outfit',sans-serif;cursor:pointer;flex-shrink:0}
+.pf-open:hover{filter:brightness(1.05)}
 </style>
 <style>
 @media(max-width:640px){.shell{padding:32px 16px;gap:26px}.grid{gap:10px;max-width:100%}.card{width:100%}.logo-text{font-size:34px}}
@@ -878,6 +899,18 @@ body.dp-authed #authGate{display:none}
 
 </div>
 
+<!-- Widget: etapas pendientes de verificacion (PrintFlow) -->
+<div id="pfFab" class="pf-fab" onclick="togglePfPanel(event)" title="Etapas pendientes de verificar en PrintFlow">
+  <span class="pf-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+  <span>Pendientes</span>
+  <span class="pf-badge" id="pfBadge">0</span>
+</div>
+<div id="pfPanel" class="pf-panel">
+  <div class="pf-ph"><span>Etapas pendientes de verificar</span><button class="pf-x" onclick="togglePfPanel(event)" title="Cerrar">&times;</button></div>
+  <div class="pf-list" id="pfList"></div>
+  <button class="pf-open" onclick="launchApp('flow');togglePfPanel()">Abrir PrintFlow</button>
+</div>
+
 <!-- App viewer (iframe) -->
 <div class="viewer" id="viewer">
   <div class="vbar">
@@ -988,7 +1021,7 @@ const APPS = {
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260627-1540';
+const APP_VER = '20260627-1606';
 
 function launchApp(id) {
   const a = APPS[id];
@@ -1005,6 +1038,7 @@ function launchApp(id) {
 
 function closeViewer() {
   document.getElementById('viewer').classList.remove('open');
+  try{ document.body.style.overflow=''; document.documentElement.style.overflow=''; }catch(e){}
   // libera el iframe para detener cualquier proceso de la subapp
   setTimeout(() => { document.getElementById('v-frame').src = 'about:blank'; }, 260);
 }
@@ -1225,5 +1259,51 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
 })();
 </script>
 
+<script>
+/* Widget de etapas pendientes de PrintFlow (lee appState 'printflow' en vivo desde Firebase) */
+(function(){
+  var pending=[];
+  function escH(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function compute(S){
+    var out=[]; if(!S||!Array.isArray(S.projects))return out;
+    S.projects.forEach(function(p){
+      var steps=[]; (p.steps||[]).forEach(function(s){ steps.push({id:s.id,name:s.name}); (s.branches||[]).forEach(function(b){ steps.push({id:b.id,name:b.name}); }); });
+      (p.samples||[]).forEach(function(sm){ var v=sm.validations||{}; steps.forEach(function(st){ if(!v[st.id]) out.push({proj:p.name||'Proyecto',code:sm.code||'—',step:st.name||'etapa'}); }); });
+    });
+    return out;
+  }
+  function render(){
+    var fab=document.getElementById('pfFab'), badge=document.getElementById('pfBadge'), list=document.getElementById('pfList');
+    var n=pending.length;
+    if(badge) badge.textContent = n>99?'99+':String(n);
+    if(fab) fab.style.display = n>0?'flex':'none';
+    if(n===0){ var pan=document.getElementById('pfPanel'); if(pan)pan.classList.remove('open'); }
+    if(list){
+      if(!n){ list.innerHTML='<div class="pf-empty">Todo verificado &#10003;</div>'; }
+      else {
+        var byP={}; pending.forEach(function(it){ (byP[it.proj]=byP[it.proj]||[]).push(it); });
+        var h=''; Object.keys(byP).forEach(function(pn){ h+='<div class="pf-grp">'+escH(pn)+'</div>'; byP[pn].slice(0,60).forEach(function(it){ h+='<div class="pf-item" onclick="launchApp(\'flow\');togglePfPanel()"><span class="pf-step">'+escH(it.step)+'</span><span class="pf-meta">Muestra '+escH(it.code)+'</span></div>'; }); });
+        list.innerHTML=h;
+      }
+    }
+    window.__pfPendingCount=n;
+  }
+  window.togglePfPanel=function(ev){ if(ev&&ev.stopPropagation)ev.stopPropagation(); var p=document.getElementById('pfPanel'); if(p)p.classList.toggle('open'); };
+  document.addEventListener('click',function(e){ var pan=document.getElementById('pfPanel'),fab=document.getElementById('pfFab'); if(!pan||!pan.classList.contains('open'))return; if(pan.contains(e.target)||(fab&&fab.contains(e.target)))return; pan.classList.remove('open'); });
+  function start(){
+    try{ window.DPCloud.onAuth(function(u){
+      if(!u||!u.email)return;
+      if(window.__pfSub)return; window.__pfSub=true;
+      if(!window.DPCloud.watchState)return;
+      window.DPCloud.watchState('printflow', function(d){
+        var S=null; try{ if(d&&d.data&&d.data.bioflow6) S=JSON.parse(d.data.bioflow6); }catch(e){}
+        pending=compute(S); render();
+        if(typeof window.pfOnPending==='function'){ try{ window.pfOnPending(pending); }catch(e){} }
+      });
+    }); }catch(e){}
+  }
+  var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ start(); } else if(w<12000){ w+=200; setTimeout(c,200); } })();
+})();
+</script>
 </body>
 </html>

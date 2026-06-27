@@ -64,7 +64,7 @@ body.side-off .side{margin-left:-249px}
 .empty h3{font-size:18px;color:var(--t1);margin-bottom:8px;font-weight:600}
 .empty p{font-size:13.5px;line-height:1.6;margin-bottom:18px}
 .sheet{width:760px;max-width:100%;background:#fff;color:#1a1a1a;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:42px 46px;font-size:14px}
-.sheet .gr{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:hidden;resize:none;display:block}
+.sheet .gr{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:hidden;resize:none;display:block;min-width:0}
 .doc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:22px;border-bottom:2px solid #ECECEC}
 .dh-brand{display:flex;gap:14px;align-items:center}
 .dh-logo{width:74px;height:74px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -139,7 +139,7 @@ table.lines td.u textarea{text-align:center}
 .logo-up .prev img{max-width:100%;max-height:100%;object-fit:contain}
 @media print{
   @page{margin:14mm}
-  #dp-shell,.top,.side,.add-line,.row-del,.veil,.side-bottom,.dt-toggle,.no-print,.dn-off{display:none!important}
+  #dp-shell,.top,.side,.docside,.dock-toggle,.add-line,.row-del,.veil,.side-bottom,.dt-toggle,.no-print,.dn-off{display:none!important}
   body{height:auto;overflow:visible;background:#fff}
   .layout{position:static;display:block}
   .main{display:block;padding:0;overflow:visible}
@@ -167,6 +167,19 @@ option{background-color:#161922;color:#E8EBF4}
 .dn-pp-del{width:28px;height:32px;border:1px solid #E2E2E2;background:#fff;color:#bbb;border-radius:8px;font-size:13px;cursor:pointer;flex-shrink:0}
 .dn-pp-del:hover{color:#E5484D;border-color:#E5484D}
 .dn-pp-empty{margin-top:7px;color:#999;font-size:12px;padding:3px 2px}
+/* panel derecho de presets (cabecera + frases) */
+.docside{width:300px;flex-shrink:0;border-left:1px solid var(--border);background:#0E1118;overflow-y:auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:22px}
+[data-theme=light] .docside{background:#FFFFFF}
+.dock-h{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
+.dock-sub{font-size:11.5px;color:var(--t3);margin-bottom:11px;line-height:1.5}
+.dock-form{margin-top:12px;border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:9px}
+.dock-form .mfield{margin-bottom:0}
+.dock-empty{font-size:12px;color:var(--t3);padding:6px 2px}
+@media(min-width:981px){.dock-toggle{display:none!important}}
+@media(max-width:980px){
+  .docside{position:fixed;top:98px;right:0;bottom:0;z-index:70;width:84vw;max-width:330px;transform:translateX(101%);transition:transform .25s ease;box-shadow:-8px 0 30px rgba(0,0,0,.45)}
+  body.dock-open .docside{transform:translateX(0)}
+}
 </style>
 <style>
 @media(max-width:760px){.side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:80vw;max-width:300px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 12px}.sheet{padding:24px 18px}}
@@ -188,6 +201,7 @@ option{background-color:#161922;color:#E8EBF4}
   <span class="chip"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
   <span class="tname">3DBilling</span>
   <span class="sp"></span>
+  <button class="tbtn dock-toggle" onclick="toggleDock()" title="Cabecera y frases (presets)">Presets</button>
   <button class="tbtn" onclick="duplicateReceipt()" id="btn-dup" title="Duplicar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> Duplicar</button>
   <button class="tbtn primary" onclick="printPDF()" id="btn-print"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg> Imprimir / PDF</button>
 </div>
@@ -197,32 +211,30 @@ option{background-color:#161922;color:#E8EBF4}
     <div class="side-h">Recibos</div>
     <div class="rlist" id="rlist"></div>
     <div class="side-bottom">
-      <button onclick="openPresets()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg> Cabecera (presets)</button>
+      <button onclick="toggleDock()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg> Cabecera (presets)</button>
     </div>
   </aside>
   <main class="main" id="main"></main>
-</div>
-<div class="veil" id="presetVeil" onclick="if(event.target===this)closePresets()">
-  <div class="modal">
-    <h2>Presets de cabecera</h2>
-    <p class="m-sub">Elige la cabecera del recibo o crea una nueva (logo, empresa y lema).</p>
-    <div id="presetList"></div>
-    <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px">
-      <div class="mfield"><label>Nombre del preset</label><input id="pf-name" placeholder="Ej: SILAB3D"></div>
-      <div class="mfield"><label>Empresa</label><input id="pf-company" placeholder="SILAB3D"></div>
-      <div class="mfield"><label>Lema</label><input id="pf-slogan" placeholder="INNOVACIÓN CAPA A CAPA"></div>
-      <div class="mfield"><label>Logo</label>
-        <div class="logo-up"><span class="prev" id="pf-prev">—</span>
-          <button class="btn ghost" onclick="document.getElementById('pf-logo').click()">Cargar logo…</button>
-          <input type="file" id="pf-logo" accept="image/*" style="display:none">
-        </div>
-      </div>
-      <div class="m-actions">
-        <button class="btn ghost" onclick="closePresets()">Cerrar</button>
-        <button class="btn primary" onclick="savePreset()">Guardar preset</button>
+  <aside class="docside" id="docside">
+    <div class="dock-sec">
+      <div class="dock-h">Cabecera del documento</div>
+      <p class="dock-sub">Elige una cabecera para este documento o crea una nueva.</p>
+      <div id="presetList"></div>
+      <div class="dock-form">
+        <div class="mfield"><label>Nombre del preset</label><input id="pf-name" placeholder="Ej: SILAB3D"></div>
+        <div class="mfield"><label>Empresa</label><input id="pf-company" placeholder="SILAB3D"></div>
+        <div class="mfield"><label>Lema</label><input id="pf-slogan" placeholder="INNOVACIÓN CAPA A CAPA"></div>
+        <div class="mfield"><label>Logo</label><div class="logo-up"><span class="prev" id="pf-prev">—</span><button class="btn ghost" onclick="document.getElementById('pf-logo').click()">Cargar…</button><input type="file" id="pf-logo" accept="image/*" style="display:none"></div></div>
+        <button class="btn primary" style="width:100%" onclick="savePreset()">Guardar cabecera</button>
       </div>
     </div>
-  </div>
+    <div class="dock-sec">
+      <div class="dock-h">Presets de frases</div>
+      <p class="dock-sub">Guarda las frases del documento como preset y reutilízalas.</p>
+      <div id="phrasePresetList"></div>
+      <button class="btn primary" style="width:100%;margin-top:8px" onclick="savePhrasePreset()">Guardar frases actuales</button>
+    </div>
+  </aside>
 </div>
 <script>
 function ic(t){return t==='dark'
@@ -279,6 +291,7 @@ function logoHTML(p){
 }
 function renderSheet(){
   var main=document.getElementById('main'); var r=cur();
+  try{ renderPresetList(); renderPhrasePresetList(); }catch(e){}
   if(!r){ main.innerHTML='<div class="empty"><div class="e-ic">🧾</div><h3>Crea tu primer recibo</h3><p>Pulsa “Nuevo recibo” para empezar. Podrás añadir varios pedidos, elegir la cabecera y exportar a PDF.</p><button class="cta" style="max-width:200px;margin:0 auto" onclick="newReceipt()">＋ Nuevo recibo</button></div>'; return; }
   var p=preset(r.presetId);
   if(!Array.isArray(r.notes)){ r.notes=[{id:uid(),text:DEFAULT_TERMS,on:true}]; save(); }
@@ -317,7 +330,7 @@ function phrasesHTML(r){
       +'<textarea rows="1" class="gr dn-ta" placeholder="Escribe una frase…" oninput="grow(this);setPhraseText(\''+n.id+'\',this.value)">'+esc(n.text)+'</textarea>'
       +(n.auto==='pct50'?'<span class="dn-auto" title="50% del total (automático)">'+eur(total(r)*0.5)+'</span>':'')+'<button class="row-del no-print" onclick="delPhrase(\''+n.id+'\')" title="Quitar frase">✕</button></div>';
   }).join('');
-  return '<div class="doc-notes"><div class="dn-head no-print"><span>Frases del documento — marca la casilla para incluir cada frase</span><button class="dn-pbtn" onclick="togglePhrasePresets()" title="Guardar o aplicar conjuntos de frases">Presets'+((S.phrasePresets&&S.phrasePresets.length)?(' ('+S.phrasePresets.length+')'):'')+'</button></div>'+phrasePresetPanel()+rows+'<div class="dn-addrow no-print"><button class="add-line" onclick="addPhrase()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir frase</button><button class="add-line" onclick="addPhrasePct()" title="Frase con el 50% del total, automático"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> 50% del total</button></div></div>';
+  return '<div class="doc-notes"><div class="dn-head no-print">Frases del documento — marca la casilla para incluir cada frase</div>'+rows+'<div class="dn-addrow no-print"><button class="add-line" onclick="addPhrase()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir frase</button><button class="add-line" onclick="addPhrasePct()" title="Frase con el 50% del total, automático"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> 50% del total</button></div></div>';
 }
 function addPhrase(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r.notes=[]; r.notes.push({id:uid(),text:'',on:true}); save(); renderSheet(); }
 function setPhraseText(id,v){ var r=cur(); if(!r||!Array.isArray(r.notes))return; var n=r.notes.filter(function(x){return x.id===id;})[0]; if(n){ n.text=v; save(); } }
@@ -327,9 +340,12 @@ function addPhrasePct(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r
 var phrasePresetOpen=false;
 function togglePhrasePresets(){ phrasePresetOpen=!phrasePresetOpen; renderSheet(); }
 function phrasePresetPanel(){ if(!phrasePresetOpen)return ''; var pr=S.phrasePresets||[]; var x='<div class="dn-pop no-print"><button class="dn-pp-save" onclick="savePhrasePreset()">+ Guardar las frases actuales como preset</button>'; if(pr.length){ x+='<div class="dn-pp-list">'; pr.forEach(function(pp){ x+='<div class="dn-pp-item"><button class="dn-pp-apply" onclick="applyPhrasePreset(\''+pp.id+'\')">'+esc(pp.name)+'<span class="dn-pp-n">'+((pp.notes&&pp.notes.length)||0)+' frases</span></button><button class="dn-pp-del" onclick="delPhrasePreset(\''+pp.id+'\')" title="Eliminar preset">✕</button></div>'; }); x+='</div>'; } else { x+='<div class="dn-pp-empty">No hay presets de frases guardados.</div>'; } x+='</div>'; return x; }
-function savePhrasePreset(){ var r=cur(); if(!r)return; var notes=Array.isArray(r.notes)?r.notes:[]; if(!notes.length){ alert('Este documento no tiene frases que guardar.'); return; } var n=prompt('Nombre del preset de frases:'); if(n==null)return; n=n.trim(); if(!n)return; if(!Array.isArray(S.phrasePresets))S.phrasePresets=[]; S.phrasePresets.push({id:uid(),name:n,notes:notes.map(function(x){return {text:x.text,on:x.on!==false,auto:x.auto||null};})}); phrasePresetOpen=true; save(); renderSheet(); }
-function applyPhrasePreset(id){ var r=cur(); if(!r)return; var pr=(S.phrasePresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if((r.notes&&r.notes.length) && !confirm('Se reemplazar\u00e1n las frases actuales del documento por el preset "'+pr.name+'". \u00bfContinuar?'))return; r.notes=(pr.notes||[]).map(function(x){return {id:uid(),text:x.text,on:x.on!==false,auto:x.auto||null};}); phrasePresetOpen=false; save(); renderSheet(); }
-function delPhrasePreset(id){ if(!Array.isArray(S.phrasePresets))return; var pr=S.phrasePresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('\u00bfEliminar el preset "'+pr.name+'"?'))return; S.phrasePresets=S.phrasePresets.filter(function(x){return x.id!==id;}); save(); renderSheet(); }
+function savePhrasePreset(){ var r=cur(); if(!r)return; var notes=Array.isArray(r.notes)?r.notes:[]; if(!notes.length){ alert('Este documento no tiene frases que guardar.'); return; } var n=prompt('Nombre del preset de frases:'); if(n==null)return; n=n.trim(); if(!n)return; if(!Array.isArray(S.phrasePresets))S.phrasePresets=[]; S.phrasePresets.push({id:uid(),name:n,notes:notes.map(function(x){return {text:x.text,on:x.on!==false,auto:x.auto||null};})}); save(); renderPhrasePresetList(); toggleOpenDock(); }
+function applyPhrasePreset(id){ var r=cur(); if(!r)return; var pr=(S.phrasePresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if((r.notes&&r.notes.length) && !confirm('Se reemplazar\u00e1n las frases actuales del documento por el preset "'+pr.name+'". \u00bfContinuar?'))return; r.notes=(pr.notes||[]).map(function(x){return {id:uid(),text:x.text,on:x.on!==false,auto:x.auto||null};}); save(); renderSheet(); renderPhrasePresetList(); }
+function delPhrasePreset(id,ev){ if(ev)ev.stopPropagation(); if(!Array.isArray(S.phrasePresets))return; var pr=S.phrasePresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('\u00bfEliminar el preset "'+pr.name+'"?'))return; S.phrasePresets=S.phrasePresets.filter(function(x){return x.id!==id;}); save(); renderPhrasePresetList(); }
+function renderPhrasePresetList(){ var el=document.getElementById('phrasePresetList'); if(!el)return; var pr=S.phrasePresets||[]; el.innerHTML = pr.length ? pr.map(function(p){ return '<div class="preset-row" onclick="applyPhrasePreset(\''+p.id+'\')"><div class="pr-info"><div class="pr-name">'+esc(p.name)+'</div><div class="pr-meta">'+((p.notes&&p.notes.length)||0)+' frases</div></div><button class="pr-del" onclick="delPhrasePreset(\''+p.id+'\',event)" title="Eliminar">\u2715</button></div>'; }).join('') : '<div class="dock-empty">A\u00fan no hay presets de frases.</div>'; }
+function toggleDock(){ document.body.classList.toggle('dock-open'); }
+function toggleOpenDock(){ if(window.innerWidth<=980) document.body.classList.add('dock-open'); }
 function printPDF(){ var r=cur(); if(!r){alert('Crea o selecciona un recibo primero.');return;} var old=document.title; document.title=(r.number||'documento'); var restore=function(){document.title=old; window.removeEventListener('afterprint',restore);}; window.addEventListener('afterprint',restore); setTimeout(restore,2000); window.print(); }
 var pfLogo='';
 function openPresets(){ pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList(); document.getElementById('presetVeil').classList.add('open'); }
