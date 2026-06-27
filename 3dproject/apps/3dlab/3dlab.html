@@ -155,12 +155,17 @@ table{border-collapse:collapse;width:100%}
 .pp-del{width:30px;height:34px;border:1px solid var(--border);background:transparent;color:var(--t3);border-radius:9px;font-size:14px;flex-shrink:0}
 .pp-del:hover{color:#FF7A7A;border-color:#FF7A7A}
 .pp-empty{margin-top:8px;color:var(--t2);font-size:12.5px;padding:4px 2px}
+@media(min-width:761px){body.side-off .side{display:none}}
 @media(max-width:760px){
   .layout{top:98px}
   .side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:82vw;max-width:300px;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
   body.side-off .side{transform:translateX(-101%)}
   .lab-body{padding:16px 12px}
 }
+/* desplegables (select/option) legibles en movil */
+select{color:var(--t1)}
+option{background-color:#161922;color:#E8EBF4}
+[data-theme=light] option{background-color:#ffffff;color:#1A1C24}
 </style>
 </head>
 <body>

@@ -152,6 +152,10 @@ table.t .sw{display:inline-block;width:14px;height:14px;border-radius:4px;border
 .modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow:auto}
 .modal h3{font-family:'DM Serif Display',serif;font-style:italic;font-size:21px;margin-bottom:16px}
 textarea.inp{resize:vertical;min-height:60px}
+/* desplegables (select/option) legibles en movil */
+select{color:var(--t1)}
+option{background-color:#161922;color:#E8EBF4}
+[data-theme=light] option{background-color:#ffffff;color:#1A1C24}
 </style>
 <style>
 @media(max-width:760px){.side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 14px}}
