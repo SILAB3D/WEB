@@ -156,6 +156,23 @@ table{border-collapse:collapse;width:100%}
 .pp-del:hover{color:#FF7A7A;border-color:#FF7A7A}
 .pp-empty{margin-top:8px;color:var(--t2);font-size:12.5px;padding:4px 2px}
 @media(min-width:761px){body.side-off .side{display:none}}
+/* descripción del test + comentarios de columnas + reordenar estudios */
+.lab-descwrap{margin-bottom:2px}
+.lab-descin{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:12px;color:var(--t1);font:400 13.5px 'Outfit',sans-serif;padding:11px 14px;outline:none;resize:none;line-height:1.5;min-height:44px;overflow:hidden}
+.lab-descin:focus{border-color:var(--ac)}
+.lab-descin::placeholder{color:var(--t3)}
+.ctable th.ph{padding:0;min-width:142px;white-space:normal}
+.ph-row{display:flex;align-items:center}
+.ctable th.ph .ph-row .phn{flex:1;min-width:0;width:auto}
+.ph-cm{font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3);font-size:10.5px;padding:0 10px 7px 12px;white-space:normal;line-height:1.3}
+.thcm{width:20px;height:22px;border:none;background:transparent;color:var(--t3);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.thcm:hover{background:rgba(255,255,255,.08);color:var(--t1)}
+.thcm.has{color:var(--ac)}
+.ctable td.actcell{width:84px;padding:0}
+.ctable thead th:last-child{width:84px}
+.rowacts{display:flex;align-items:center;justify-content:center;gap:1px}
+.rmv{width:22px;height:26px;border:none;background:transparent;color:var(--t3);border-radius:6px;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.rmv:hover{background:rgba(139,124,255,.16);color:var(--ac)}
 @media(max-width:760px){
   .layout{top:98px}
   .side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:82vw;max-width:300px;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
@@ -266,6 +283,10 @@ function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(f
 function addCol(){ var t=curTest(); if(!t)return; t.cols.push({id:uid(),name:'Parámetro '+(t.cols.length+1)}); save(); renderMain(); }
 function setColName(id,v){ var t=curTest(); if(!t)return; var c=t.cols.filter(function(x){return x.id===id;})[0]; if(c){c.name=v;save();renderMain();} }
 function delCol(id){ var t=curTest(); if(!t)return; t.cols=t.cols.filter(function(x){return x.id!==id;}); t.studies.forEach(function(s){ delete s.vals[id]; }); save(); renderMain(); }
+function setTestDesc(v){ var t=curTest(); if(!t)return; t.desc=v; save(); }
+function growLD(el){ try{ el.style.height='auto'; el.style.height=(el.scrollHeight)+'px'; }catch(e){} }
+function editColComment(id){ var t=curTest(); if(!t)return; var c=t.cols.filter(function(x){return x.id===id;})[0]; if(!c)return; var v=prompt('Comentario para el parámetro "'+(c.name||'')+'":', c.comment||''); if(v==null)return; c.comment=v.trim(); save(); renderMain(); }
+function moveStudy(id,dir){ var t=curTest(); if(!t)return; var i=t.studies.findIndex(function(x){return x.id===id;}); if(i<0)return; var j=i+dir; if(j<0||j>=t.studies.length)return; var tmp=t.studies[i]; t.studies[i]=t.studies[j]; t.studies[j]=tmp; save(); renderMain(); }
 
 /* ===== estudios (condiciones) ===== */
 function addStudy(){ var t=curTest(); if(!t)return; var s={id:uid(),name:'Estudio '+(t.studies.length+1),ident:'',vals:{}}; t.cols.forEach(function(c){ s.vals[c.id]=''; }); t.studies.push(s); save(); renderMain(); }
@@ -357,6 +378,7 @@ function renderMain(){
     +'<button class="tbtn" onclick="exportPDF()" title="Exportar a PDF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg> PDF</button>'
     +'<button class="tbtn danger" onclick="delTest(\''+m.id+'\',\''+p.id+'\',\''+t.id+'\')">Eliminar</button></div>';
   h+='<div class="lab-body">';
+  h+='<div class="lab-descwrap"><textarea class="lab-descin" rows="1" placeholder="Descripci\u00f3n del test: objetivo, condiciones generales, notas\u2026" oninput="growLD(this);setTestDesc(this.value)">'+esc(t.desc||'')+'</textarea></div>';
   // parámetros
   h+='<section class="lab-card"><div class="lab-h"><h2>Parámetros definidos</h2><div class="lab-hbtns"><button class="mini ghost" onclick="togglePresets()">Presets'+((S.paramPresets&&S.paramPresets.length)?(' ('+S.paramPresets.length+')'):'')+'</button><button class="mini" onclick="addParam()">+ Parámetro</button></div></div>';
   h+=presetPanel();
@@ -369,19 +391,20 @@ function renderMain(){
   // condiciones
   h+='<section class="lab-card"><div class="lab-h"><h2>Condiciones a testar</h2><div class="lab-hbtns"><button class="mini" onclick="addCol()">+ Par\u00e1metro</button><button class="mini" onclick="addStudy()">+ Estudio</button></div></div>';
   h+='<div class="lab-scroll"><table class="ctable"><thead><tr><th>Estudio</th><th>Identificador</th><th class="rh">Resultado</th>';
-  t.cols.forEach(function(pa){ var vv=paramVariesAny(t,map,pa.id); h+='<th class="ph'+(vv?' vh':'')+'"><input class="phn" value="'+escAttr(pa.name)+'" onchange="setColName(\''+pa.id+'\',this.value)" title="Nombre del par\u00e1metro"><button class="thdel" title="Eliminar par\u00e1metro" onclick="delCol(\''+pa.id+'\')">&times;</button></th>'; });
+  t.cols.forEach(function(pa){ var vv=paramVariesAny(t,map,pa.id); var hc=pa.comment&&String(pa.comment).trim(); h+='<th class="ph'+(vv?' vh':'')+'"><div class="ph-row"><input class="phn" value="'+escAttr(pa.name)+'" onchange="setColName(\''+pa.id+'\',this.value)" title="Nombre del parámetro"><button class="thcm'+(hc?' has':'')+'" title="Comentario del parámetro" onclick="editColComment(\''+pa.id+'\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button><button class="thdel" title="Eliminar parámetro" onclick="delCol(\''+pa.id+'\')">&times;</button></div>'+(hc?'<div class="ph-cm">'+esc(pa.comment)+'</div>':'')+'</th>'; });
   h+='<th></th></tr></thead><tbody>';
   if(t.studies.length){
     t.studies.forEach(function(s){
       h+='<tr><td><input value="'+escAttr(s.name)+'" onchange="setStudyName(\''+s.id+'\',this.value)"></td><td><input value="'+escAttr(s.ident)+'" onchange="setStudyIdent(\''+s.id+'\',this.value)" placeholder="ID"></td><td class="rescell"><button class="resdot r'+(s.result||0)+'" title="'+RES[s.result||0]+' — clic para cambiar" onclick="cycleResult(\''+s.id+'\')"></button></td>';
       t.cols.forEach(function(pa){ var v=s.vals[pa.id]!=null?s.vals[pa.id]:''; var hl=map[s.id]&&map[s.id][pa.id]; h+='<td'+(hl?' class="cv"':'')+'><input value="'+escAttr(v)+'" onchange="setStudyVal(\''+s.id+'\',\''+pa.id+'\',this.value)" placeholder="—"></td>'; });
-      h+='<td><button class="del" title="Eliminar" onclick="delStudy(\''+s.id+'\')">&times;</button></td></tr>';
+      h+='<td class="actcell"><div class="rowacts"><button class="rmv" title="Subir" onclick="moveStudy(\''+s.id+'\',-1)">▲</button><button class="rmv" title="Bajar" onclick="moveStudy(\''+s.id+'\',1)">▼</button><button class="del" title="Eliminar" onclick="delStudy(\''+s.id+'\')">&times;</button></div></td></tr>';
     });
   } else { h+='<tr><td colspan="'+(t.cols.length+4)+'" class="lab-none" style="text-align:center;padding:14px">Sin estudios. Añade el primero con <b>+ Estudio</b>.</td></tr>'; }
   h+='</tbody></table></div>';
   h+='<p class="lab-hint">La tabla de parámetros definidos y las columnas de condiciones son independientes. Añade o elimina columnas con <b>+ Parámetro</b> o la × de cada cabecera. Se resaltan las celdas <b>no comunes entre estudios con el mismo nombre</b>.</p>';
   h+='</section></div>';
   main.innerHTML=h;
+  var _d=document.querySelector('.lab-descin'); if(_d)growLD(_d);
 }
 
 /* ===== exportación ===== */
@@ -391,12 +414,13 @@ function safeName(n){ return (String(n||'test').replace(/[\\/:*?"<>|]+/g,'_').tr
 function exportCSV(){
   var t=curTest(); if(!t)return; var m=curMod(),p=curProj();
   var rows=[];
-  rows.push(['Modalidad',m?m.name:'']); rows.push(['Proyecto',p?p.name:'']); rows.push(['Test',t.name]); rows.push([]);
+  rows.push(['Modalidad',m?m.name:'']); rows.push(['Proyecto',p?p.name:'']); rows.push(['Test',t.name]); rows.push(['Descripción',t.desc||'']); rows.push([]);
   rows.push(['PARÁMETROS DEFINIDOS']); rows.push(['Nombre','Valor']);
   t.params.forEach(function(pa){ rows.push([pa.name,pa.val]); }); rows.push([]);
   rows.push(['CONDICIONES A TESTAR']);
   rows.push(['Estudio','Identificador','Resultado'].concat(t.cols.map(function(pa){return pa.name;})));
   t.studies.forEach(function(s){ rows.push([s.name,s.ident,RES[s.result||0]].concat(t.cols.map(function(pa){return s.vals[pa.id]!=null?s.vals[pa.id]:'';}))); });
+  var _cm=t.cols.filter(function(c){return c.comment&&String(c.comment).trim();}); if(_cm.length){ rows.push([]); rows.push(['COMENTARIOS DE PARÁMETROS']); _cm.forEach(function(c){ rows.push([c.name,c.comment]); }); }
   var csv=rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');
   download(safeName(t.name)+'.csv', csv, 'text/csv');
 }
@@ -406,7 +430,8 @@ function exportPDF(){
   var doc=new JS({orientation:'landscape',unit:'mm',format:'a4'});
   doc.setFontSize(17); doc.setTextColor(30,30,40); doc.text(String(t.name||'Test'),14,16);
   doc.setFontSize(10); doc.setTextColor(120,120,130); doc.text((m?m.name:'')+'   /   '+(p?p.name:''),14,22.5);
-  doc.autoTable({ startY:28, head:[['Parámetro','Valor']], body:t.params.map(function(pa){return [String(pa.name),String(pa.val==null?'':pa.val)];}),
+  var _dy=28; if(t.desc&&String(t.desc).trim()){ doc.setFontSize(9); doc.setTextColor(90,90,100); var _dl=doc.splitTextToSize('Descripción: '+String(t.desc),270); doc.text(_dl,14,28); _dy=28+_dl.length*4.2+3; }
+  doc.autoTable({ startY:_dy, head:[['Parámetro','Valor']], body:t.params.map(function(pa){return [String(pa.name),String(pa.val==null?'':pa.val)];}),
     theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14} });
   var map=varyMap(t);
   var head=[['Estudio','Identificador','Resultado'].concat(t.cols.map(function(pa){return String(pa.name);}))];
@@ -414,6 +439,7 @@ function exportPDF(){
   doc.autoTable({ startY:(doc.lastAutoTable?doc.lastAutoTable.finalY:30)+9, head:head, body:body,
     theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14},
     didParseCell:function(data){ if(data.section==='body'){ var st=t.studies[data.row.index]; if(data.column.index===2 && st){ var rc=[null,[255,107,107],[244,183,64],[52,211,153]][st.result||0]; if(rc){ data.cell.styles.fillColor=rc; data.cell.styles.textColor=[255,255,255]; data.cell.styles.fontStyle='bold'; } } var col=data.column.index-3; if(col>=0 && col<t.cols.length && st && map[st.id] && map[st.id][t.cols[col].id]){ data.cell.styles.fillColor=[238,234,255]; data.cell.styles.textColor=[70,40,150]; data.cell.styles.fontStyle='bold'; } } } });
+  var _pc=t.cols.filter(function(c){return c.comment&&String(c.comment).trim();}); if(_pc.length){ var _yy=(doc.lastAutoTable?doc.lastAutoTable.finalY:_dy)+8; doc.setFontSize(9); doc.setTextColor(60,60,70); doc.text('Comentarios de parámetros:',14,_yy); _yy+=5; doc.setTextColor(95,95,105); _pc.forEach(function(c){ var _ln=doc.splitTextToSize('\u2022 '+c.name+': '+c.comment,270); doc.text(_ln,14,_yy); _yy+=_ln.length*4.2+1.5; }); }
   doc.save(safeName(t.name)+'.pdf');
 }
 
