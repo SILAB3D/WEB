@@ -1111,12 +1111,13 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
 (function(){
   var DP_DEV_NO_LOGIN = false; /* Seguridad ACTIVA: la suite exige iniciar sesión con tu usuario y contraseña de Firebase. */
   if(DP_DEV_NO_LOGIN){ try{document.body.classList.add('dp-authed');}catch(e){} }
-  var authedOnce=false, loggingOut=false;
+  var authedOnce=false, loggingOut=false, setupRan=false;
   var msg=function(txt,cls){var m=document.getElementById('agMsg');if(m){m.textContent=txt;m.className='ag-msg '+(cls||'info');}};
   var note=function(html){var n=document.getElementById('agNote');if(n)n.innerHTML=html||'';};
   function devBypass(){ try{document.body.classList.add('dp-authed');}catch(e){} 
     try{ if(window.DPCloud&&window.DPCloud.configured){ window.DPCloud.ready.then(function(){ if(!window.DPCloud.currentUser()&&window.DPCloud.loginGuest){ window.DPCloud.loginGuest().catch(function(){}); } }); } }catch(e){} }
   function setup(){
+    if(setupRan)return; setupRan=true;
     if(!window.DPCloud.configured){
       msg('Firebase aún no está configurado.','err');
       note('Abre <b>firebase/firebase-config.js</b> y pega los datos de tu proyecto. Tienes la GUÍA_FIREBASE paso a paso en la carpeta del proyecto.');
@@ -1127,7 +1128,7 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
     msg('Introduce tus credenciales.','info'); note('');
     window.DPCloud.ready.then(function(){
       window.DPCloud.onAuth(function(user){
-        if(user){
+        if(user && user.email){
           authedOnce=true; loggingOut=false;
           document.body.classList.add('dp-authed');
           var lo=document.getElementById('dpLogout'); if(lo)lo.title='Cerrar sesión'+(user.email?(' ('+user.email+')'):' (invitado)');
@@ -1175,4 +1176,25 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
     else if(waited<8000){ waited+=200; setTimeout(check,200); }
     else {
       msg('No se pudo cargar Firebase.','err');
-      note('Parece que has abierto la app haciendo doble clic en el archivo. Debes <b>servirla con un servidor local</b> (la GUÍA_FIREBASE lo explica en 2 minutos). Resumen: abre una terminal en la carpeta 3DPROJECT y ejecuta <code>npx 
+      note('Parece que has abierto la app haciendo doble clic en el archivo. Debes <b>servirla con un servidor local</b> (la GUÍA_FIREBASE lo explica en 2 minutos). Resumen: abre una terminal en la carpeta 3DPROJECT y ejecuta <code>npx serve</code>, luego entra en la dirección que te muestre.');
+      var b=document.getElementById('agBtn'); if(b)b.disabled=true;
+      var g1=document.getElementById('agGuest'); if(g1)g1.disabled=true;
+    }
+  })();
+  /* Red de seguridad de sesion: entra a la suite si hay sesion; si hay Firebase
+     sin sesion, asegura el formulario; tolera fallos de temporizacion. */
+  (function(){
+    var n=0; var iv=setInterval(function(){ n++;
+      if(window.DPCloud && window.DPCloud.configured){
+        if(!setupRan){ try{ setup(); }catch(e){} }
+        try{ var u=window.DPCloud.currentUser && window.DPCloud.currentUser(); if(u && u.email){ document.body.classList.add('dp-authed'); clearInterval(iv); return; } }catch(e){}
+        try{ var m=document.getElementById('agMsg'); if(m && m.textContent.indexOf('Conectando')>=0){ m.textContent='Introduce tus credenciales.'; m.className='ag-msg info'; } }catch(e){}
+      }
+      if(n>160) clearInterval(iv);
+    },250);
+  })();
+})();
+</script>
+
+</body>
+</html>
