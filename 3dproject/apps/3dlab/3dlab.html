@@ -99,6 +99,62 @@ table{border-collapse:collapse;width:100%}
 [data-theme=light] .ctable td.cv input{background:rgba(108,92,231,.14)}
 .ctable td.cv input:focus{background:rgba(139,124,255,.26)}
 .lab-hint{font-size:12px;color:var(--t3);margin-top:12px;line-height:1.5}
+/* cabeceras de parametros editables */
+.lab-hbtns{display:flex;gap:8px}
+.ctable th.ph{padding:0;min-width:128px;white-space:nowrap}
+.ctable th.ph .phn{width:calc(100% - 22px);background:transparent;border:none;color:var(--t2);font:700 11.5px 'Outfit';text-transform:uppercase;letter-spacing:.4px;padding:9px 2px 9px 12px;outline:none}
+.ctable th.ph.vh .phn{color:var(--ac)}
+.ctable th.ph .phn:focus{color:var(--t1)}
+.thdel{width:18px;height:18px;border:none;background:transparent;color:var(--t3);border-radius:5px;font-size:13px;vertical-align:middle;line-height:1}
+.thdel:hover{color:#FF7A7A;background:rgba(255,122,122,.14)}
+/* dashboard */
+.dash{padding:26px 24px;max-width:1180px}
+.dash-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:18px}
+.dash-head h1{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.dash-head p{color:var(--t2);font-size:13.5px;margin-top:4px}
+.dash-stats{display:flex;gap:10px}
+.dstat{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:10px 16px;text-align:center;min-width:78px}
+.dstat b{display:block;font-size:20px;font-weight:800;color:var(--ac)}
+.dstat span{font-size:11px;color:var(--t2)}
+.dash-actions{margin-bottom:16px}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;align-items:start}
+.dcard{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 18px}
+.dcard-h{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.dic{color:var(--ac);display:flex;align-items:center}
+.dic.sm svg{width:14px;height:14px}.dic.xs svg{width:13px;height:13px}
+.dctitle{font-weight:700;font-size:15px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dmini{width:24px;height:24px;border:1px solid var(--border);background:transparent;color:var(--t2);border-radius:7px;font-size:15px;line-height:1;flex-shrink:0}
+.dmini:hover{color:var(--ac);border-color:var(--ac)}
+.dproj{border-top:1px solid var(--border);padding:10px 0 4px;margin-top:6px}
+.dproj-h{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dpname{font-weight:600;font-size:13px;flex:1;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dtests{display:flex;flex-wrap:wrap;gap:6px;padding-left:2px}
+.dtest{display:inline-flex;align-items:center;gap:6px;background:rgba(139,124,255,.1);border:1px solid rgba(139,124,255,.22);color:var(--t1);border-radius:8px;padding:6px 10px;font:500 12.5px 'Outfit'}
+.dtest:hover{background:rgba(139,124,255,.2)}
+.dempty{color:var(--t3);font-size:12px;padding:4px 2px}.dempty.sm{padding-left:6px}
+/* resultado (codigo de color) */
+.mini.ghost{border-color:var(--border);background:transparent;color:var(--t1)}
+.mini.ghost:hover{background:var(--glass);border-color:var(--ac)}
+.ctable th.rh{width:98px;text-align:center}
+.ctable td.rescell{text-align:center;width:98px;padding:0}
+.resdot{width:20px;height:20px;border-radius:50%;border:2px solid var(--t3);background:transparent;cursor:pointer;vertical-align:middle;transition:transform .1s}
+.resdot:hover{transform:scale(1.18)}
+.resdot.r1{background:#FF6B6B;border-color:#FF6B6B}
+.resdot.r2{background:#F4B740;border-color:#F4B740}
+.resdot.r3{background:#34D399;border-color:#34D399}
+/* presets de parametros */
+.preset-pop{margin:-4px 0 16px;border:1px solid var(--border);border-radius:12px;padding:10px;background:rgba(139,124,255,.05)}
+.pp-save{width:100%;text-align:left;border:1px dashed var(--ac);background:transparent;color:var(--ac);border-radius:9px;padding:9px 12px;font:600 12.5px 'Outfit'}
+.pp-save:hover{background:rgba(139,124,255,.12)}
+.pp-list{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.pp-item{display:flex;align-items:center;gap:6px}
+.pp-apply{flex:1;text-align:left;border:1px solid var(--border);background:var(--glass);color:var(--t1);border-radius:9px;padding:8px 12px;font:500 13px 'Outfit';display:flex;align-items:center;gap:8px}
+.pp-apply:hover{border-color:var(--ac);background:rgba(139,124,255,.1)}
+.pp-ic{color:var(--ac);font-weight:700}
+.pp-n{color:var(--t2);font-size:11.5px;margin-left:auto}
+.pp-del{width:30px;height:34px;border:1px solid var(--border);background:transparent;color:var(--t3);border-radius:9px;font-size:14px;flex-shrink:0}
+.pp-del:hover{color:#FF7A7A;border-color:#FF7A7A}
+.pp-empty{margin-top:8px;color:var(--t2);font-size:12.5px;padding:4px 2px}
 @media(max-width:760px){
   .layout{top:98px}
   .side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:82vw;max-width:300px;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
@@ -123,6 +179,7 @@ table{border-collapse:collapse;width:100%}
   <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7CFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg></span>
   <span class="tname">3DLab</span>
   <span class="sp"></span>
+  <button class="tbtn" onclick="goDashboard()" title="Ir al panel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg> Panel</button>
 </div>
 <div class="layout">
   <aside class="side" id="side">
@@ -157,7 +214,8 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function escAttr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 function norm(){ if(!Array.isArray(S.mods))S.mods=[]; if(!S.sel||typeof S.sel!=='object')S.sel={m:null,p:null,t:null};
-  S.mods.forEach(function(m){ if(!Array.isArray(m.projs))m.projs=[]; m.projs.forEach(function(p){ if(!Array.isArray(p.tests))p.tests=[]; p.tests.forEach(function(t){ if(!Array.isArray(t.params))t.params=[]; if(!Array.isArray(t.studies))t.studies=[]; t.studies.forEach(function(s){ if(!s.vals||typeof s.vals!=='object')s.vals={}; }); }); }); });
+  if(!Array.isArray(S.paramPresets))S.paramPresets=[];
+  S.mods.forEach(function(m){ if(!Array.isArray(m.projs))m.projs=[]; m.projs.forEach(function(p){ if(!Array.isArray(p.tests))p.tests=[]; p.tests.forEach(function(t){ if(!Array.isArray(t.params))t.params=[]; if(!Array.isArray(t.studies))t.studies=[]; t.studies.forEach(function(s){ if(!s.vals||typeof s.vals!=='object')s.vals={}; if(typeof s.result!=='number')s.result=0; }); }); }); });
 }
 
 /* ===== finders ===== */
@@ -173,11 +231,11 @@ function toggle(id){expanded[id]=!expanded[id];renderTree();}
 function toggleP(mId,pId){expanded[pId]=!expanded[pId];renderTree();}
 
 /* ===== CRUD árbol ===== */
-function addMod(){ if(!loaded)return; var n=prompt('Nombre de la modalidad:'); if(n==null)return; n=n.trim(); if(!n)return; var m={id:uid(),name:n,projs:[]}; S.mods.push(m); expanded[m.id]=true; save(); renderTree(); }
-function renMod(id){ var m=findMod(id); if(!m)return; var n=prompt('Renombrar modalidad:',m.name); if(n==null)return; m.name=n.trim()||m.name; save(); renderTree(); if(S.sel.m===id)renderMain(); }
+function addMod(){ if(!loaded)return; var n=prompt('Nombre de la modalidad:'); if(n==null)return; n=n.trim(); if(!n)return; var m={id:uid(),name:n,projs:[]}; S.mods.push(m); expanded[m.id]=true; save(); renderTree(); renderMain(); }
+function renMod(id){ var m=findMod(id); if(!m)return; var n=prompt('Renombrar modalidad:',m.name); if(n==null)return; m.name=n.trim()||m.name; save(); renderTree(); renderMain(); }
 function delMod(id){ var m=findMod(id); if(!m)return; if(!confirm('¿Eliminar la modalidad "'+m.name+'" con todos sus proyectos y tests?'))return; S.mods=S.mods.filter(function(x){return x.id!==id;}); if(S.sel.m===id)S.sel={m:null,p:null,t:null}; save(); renderTree(); renderMain(); }
-function addProj(mId){ var m=findMod(mId); if(!m)return; var n=prompt('Nombre del proyecto:'); if(n==null)return; n=n.trim(); if(!n)return; var p={id:uid(),name:n,tests:[]}; m.projs.push(p); expanded[mId]=true; expanded[p.id]=true; save(); renderTree(); }
-function renProj(mId,pId){ var p=findProj(findMod(mId),pId); if(!p)return; var n=prompt('Renombrar proyecto:',p.name); if(n==null)return; p.name=n.trim()||p.name; save(); renderTree(); if(S.sel.p===pId)renderMain(); }
+function addProj(mId){ var m=findMod(mId); if(!m)return; var n=prompt('Nombre del proyecto:'); if(n==null)return; n=n.trim(); if(!n)return; var p={id:uid(),name:n,tests:[]}; m.projs.push(p); expanded[mId]=true; expanded[p.id]=true; save(); renderTree(); renderMain(); }
+function renProj(mId,pId){ var p=findProj(findMod(mId),pId); if(!p)return; var n=prompt('Renombrar proyecto:',p.name); if(n==null)return; p.name=n.trim()||p.name; save(); renderTree(); renderMain(); }
 function delProj(mId,pId){ var m=findMod(mId); var p=findProj(m,pId); if(!p)return; if(!confirm('¿Eliminar el proyecto "'+p.name+'" y sus tests?'))return; m.projs=m.projs.filter(function(x){return x.id!==pId;}); if(S.sel.p===pId){S.sel.p=null;S.sel.t=null;} save(); renderTree(); renderMain(); }
 function addTest(mId,pId){ var p=findProj(findMod(mId),pId); if(!p)return; var n=prompt('Nombre del test:'); if(n==null)return; n=n.trim(); if(!n)return; var t={id:uid(),name:n,params:[],studies:[]}; p.tests.push(t); expanded[mId]=true; expanded[pId]=true; S.sel={m:mId,p:pId,t:t.id}; save(); renderTree(); renderMain(); }
 function renTest(mId,pId,tId){ var t=findTest(findProj(findMod(mId),pId),tId); if(!t)return; var n=prompt('Renombrar test:',t.name); if(n==null)return; t.name=n.trim()||t.name; save(); renderTree(); if(S.sel.t===tId)renderMain(); }
@@ -186,6 +244,15 @@ function selectTest(mId,pId,tId){ S.sel={m:mId,p:pId,t:tId}; renderTree(); rende
 function renTestInline(v){ var t=curTest(); if(!t)return; t.name=(v||'').trim()||t.name; save(); renderTree(); }
 
 /* ===== parámetros ===== */
+var RES=['Sin evaluar','Inaceptable','Mejorable','Perfecto'];
+function cycleResult(id){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(!s)return; s.result=((s.result||0)+1)%4; save(); renderMain(); }
+/* presets de parametros definidos */
+var presetOpen=false;
+function togglePresets(){ presetOpen=!presetOpen; renderMain(); }
+function presetPanel(){ if(!presetOpen)return ''; var pr=S.paramPresets||[]; var x='<div class="preset-pop"><button class="pp-save" onclick="savePreset()">+ Guardar parámetros actuales como preset</button>'; if(pr.length){ x+='<div class="pp-list">'; pr.forEach(function(pp){ x+='<div class="pp-item"><button class="pp-apply" onclick="applyPreset(\''+pp.id+'\')" title="Aplicar este preset al test"><span class="pp-ic">&#9656;</span>'+esc(pp.name)+'<span class="pp-n">'+pp.params.length+' parám.</span></button><button class="pp-del" title="Eliminar preset" onclick="delPreset(\''+pp.id+'\')">&times;</button></div>'; }); x+='</div>'; } else { x+='<div class="pp-empty">No hay presets guardados todavía.</div>'; } x+='</div>'; return x; }
+function savePreset(){ var t=curTest(); if(!t)return; if(!t.params.length){ alert('Este test no tiene parámetros que guardar.'); return; } var n=prompt('Nombre del preset de parámetros:'); if(n==null)return; n=n.trim(); if(!n)return; if(!Array.isArray(S.paramPresets))S.paramPresets=[]; S.paramPresets.push({id:uid(),name:n,params:t.params.map(function(pp){return {name:pp.name,val:pp.val};})}); presetOpen=true; save(); renderMain(); }
+function applyPreset(id){ var t=curTest(); if(!t)return; var pr=(S.paramPresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if(t.params.length && !confirm('Se reemplazarán los parámetros actuales del test por el preset "'+pr.name+'". Los valores de estudios se conservan donde coincida el nombre. ¿Continuar?'))return; var oldp=t.params.map(function(pp){return {id:pp.id,name:pp.name};}); var np=pr.params.map(function(pp){return {id:uid(),name:pp.name,val:pp.val};}); t.studies.forEach(function(s){ var nv={}; np.forEach(function(x){ var o=oldp.filter(function(q){return q.name===x.name;})[0]; nv[x.id]=(o && s.vals[o.id]!=null)?s.vals[o.id]:x.val; }); s.vals=nv; }); t.params=np; presetOpen=false; save(); renderMain(); }
+function delPreset(id){ if(!Array.isArray(S.paramPresets))return; var pr=S.paramPresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('¿Eliminar el preset "'+pr.name+'"?'))return; S.paramPresets=S.paramPresets.filter(function(x){return x.id!==id;}); save(); renderMain(); }
 function addParam(){ var t=curTest(); if(!t)return; var p={id:uid(),name:'Parámetro '+(t.params.length+1),val:''}; t.params.push(p); t.studies.forEach(function(s){ if(!(p.id in s.vals))s.vals[p.id]=p.val; }); save(); renderMain(); }
 function setParamName(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.name=v;save();renderMain();} }
 function setParamVal(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.val=v;save();} }
@@ -193,12 +260,20 @@ function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(f
 
 /* ===== estudios (condiciones) ===== */
 function addStudy(){ var t=curTest(); if(!t)return; var s={id:uid(),name:'Estudio '+(t.studies.length+1),ident:'',vals:{}}; t.params.forEach(function(p){ s.vals[p.id]=p.val; }); t.studies.push(s); save(); renderMain(); }
-function setStudyName(id,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(s){s.name=v;save();} }
+function setStudyName(id,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(s){s.name=v;save();renderMain();} }
 function setStudyIdent(id,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(s){s.ident=v;save();} }
 function setStudyVal(sid,pid,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===sid;})[0]; if(s){s.vals[pid]=v;save();renderMain();} }
 function delStudy(id){ var t=curTest(); if(!t)return; t.studies=t.studies.filter(function(x){return x.id!==id;}); save(); renderMain(); }
 
-function varyingParams(t){ var set={}; t.params.forEach(function(p){ var d={}; t.studies.forEach(function(s){ d[(s.vals[p.id]!=null?String(s.vals[p.id]):'')]=1; }); set[p.id]=(t.studies.length>1 && Object.keys(d).length>1); }); return set; }
+function varyMap(t){
+  var groups={}; t.studies.forEach(function(s){ var k=String(s.name==null?'':s.name); (groups[k]=groups[k]||[]).push(s); });
+  var map={}; t.studies.forEach(function(s){ map[s.id]={}; });
+  Object.keys(groups).forEach(function(k){ var g=groups[k];
+    t.params.forEach(function(p){ var d={}; g.forEach(function(s){ d[(s.vals[p.id]!=null?String(s.vals[p.id]):'')]=1; }); var varies=(g.length>1 && Object.keys(d).length>1); g.forEach(function(s){ map[s.id][p.id]=varies; }); });
+  });
+  return map;
+}
+function paramVariesAny(t,map,pid){ for(var i=0;i<t.studies.length;i++){ var id=t.studies[i].id; if(map[id]&&map[id][pid])return true; } return false; }
 
 /* ===== render árbol ===== */
 function renderTree(){
@@ -233,13 +308,40 @@ function renderTree(){
   tr.innerHTML=h;
 }
 
+/* ===== dashboard ===== */
+function goDashboard(){ S.sel.t=null; renderTree(); renderMain(); if(window.innerWidth<=760)document.body.classList.add('side-off'); }
+function renderDashboard(){
+  var main=document.getElementById('main'); if(!main)return;
+  var nm=S.mods.length, np=0, nt=0;
+  S.mods.forEach(function(m){ np+=m.projs.length; m.projs.forEach(function(pr){ nt+=pr.tests.length; }); });
+  var h='<div class="dash"><div class="dash-head"><div><h1>Panel de 3DLab</h1><p>Accede a tus modalidades, proyectos y tests.</p></div>'
+    +'<div class="dash-stats"><div class="dstat"><b>'+nm+'</b><span>Modalidades</span></div><div class="dstat"><b>'+np+'</b><span>Proyectos</span></div><div class="dstat"><b>'+nt+'</b><span>Tests</span></div></div></div>';
+  h+='<div class="dash-actions"><button class="mini" onclick="addMod()">+ Nueva modalidad</button></div>';
+  if(!S.mods.length){ h+='<div class="lab-none" style="padding:28px 4px">No hay modalidades todav\u00eda. Crea la primera con <b>+ Nueva modalidad</b>.</div>'; }
+  else { h+='<div class="dash-grid">';
+    S.mods.forEach(function(m){
+      h+='<div class="dcard"><div class="dcard-h"><span class="dic">'+icMod+'</span><span class="dctitle">'+esc(m.name)+'</span><button class="dmini" title="Nuevo proyecto" onclick="addProj(\''+m.id+'\')">+</button></div>';
+      if(!m.projs.length)h+='<div class="dempty">Sin proyectos</div>';
+      m.projs.forEach(function(pr){
+        h+='<div class="dproj"><div class="dproj-h"><span class="dic sm">'+icFolder+'</span><span class="dpname">'+esc(pr.name)+'</span><button class="dmini" title="Nuevo test" onclick="addTest(\''+m.id+'\',\''+pr.id+'\')">+</button></div>';
+        if(pr.tests.length){ h+='<div class="dtests">'; pr.tests.forEach(function(tt){ h+='<button class="dtest" onclick="selectTest(\''+m.id+'\',\''+pr.id+'\',\''+tt.id+'\')"><span class="dic xs">'+icFile+'</span>'+esc(tt.name)+'</button>'; }); h+='</div>'; }
+        else h+='<div class="dempty sm">Sin tests</div>';
+        h+='</div>';
+      });
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>'; main.innerHTML=h;
+}
+
 /* ===== render test ===== */
 function renderMain(){
   var main=document.getElementById('main'); if(!main)return;
   var t=curTest();
-  if(!t){ main.innerHTML='<div class="lab-empty"><div class="le-ic">'+icFlask+'</div><h3>Ningún test seleccionado</h3><p>Crea una <b>modalidad</b>, dentro un <b>proyecto</b> y dentro un <b>test</b> usando el panel de la izquierda.</p></div>'; return; }
-  var m=curMod(),p=curProj(); var vary=varyingParams(t);
-  var h='<div class="lab-bar"><div class="lab-bc">'+esc(m?m.name:'')+' <span>/</span> '+esc(p?p.name:'')+'</div>'
+  if(!t){ renderDashboard(); return; }
+  var m=curMod(),p=curProj(); var map=varyMap(t);
+  var h='<div class="lab-bar"><button class="tbtn" onclick="goDashboard()" title="Volver al panel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg></button><div class="lab-bc">'+esc(m?m.name:'')+' <span>/</span> '+esc(p?p.name:'')+'</div>'
     +'<input class="lab-tname" value="'+escAttr(t.name)+'" onchange="renTestInline(this.value)">'
     +'<span class="sp"></span>'
     +'<button class="tbtn" onclick="exportCSV()" title="Exportar a CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> CSV</button>'
@@ -247,7 +349,8 @@ function renderMain(){
     +'<button class="tbtn danger" onclick="delTest(\''+m.id+'\',\''+p.id+'\',\''+t.id+'\')">Eliminar</button></div>';
   h+='<div class="lab-body">';
   // parámetros
-  h+='<section class="lab-card"><div class="lab-h"><h2>Parámetros definidos</h2><button class="mini" onclick="addParam()">+ Parámetro</button></div>';
+  h+='<section class="lab-card"><div class="lab-h"><h2>Parámetros definidos</h2><div class="lab-hbtns"><button class="mini ghost" onclick="togglePresets()">Presets'+((S.paramPresets&&S.paramPresets.length)?(' ('+S.paramPresets.length+')'):'')+'</button><button class="mini" onclick="addParam()">+ Parámetro</button></div></div>';
+  h+=presetPanel();
   if(t.params.length){
     h+='<table class="ptable"><thead><tr><th>Parámetro</th><th>Valor</th><th></th></tr></thead><tbody>';
     t.params.forEach(function(pa){ h+='<tr><td><input value="'+escAttr(pa.name)+'" onchange="setParamName(\''+pa.id+'\',this.value)"></td><td><input value="'+escAttr(pa.val)+'" onchange="setParamVal(\''+pa.id+'\',this.value)" placeholder="—"></td><td><button class="del" title="Eliminar" onclick="delParam(\''+pa.id+'\')">&times;</button></td></tr>'; });
@@ -255,19 +358,19 @@ function renderMain(){
   } else h+='<div class="lab-none">Sin parámetros. Añade el primero con <b>+ Parámetro</b>.</div>';
   h+='</section>';
   // condiciones
-  h+='<section class="lab-card"><div class="lab-h"><h2>Condiciones a testar</h2><button class="mini" onclick="addStudy()">+ Estudio</button></div>';
-  h+='<div class="lab-scroll"><table class="ctable"><thead><tr><th>Estudio</th><th>Identificador</th>';
-  t.params.forEach(function(pa){ h+='<th'+(vary[pa.id]?' class="vh"':'')+'>'+esc(pa.name)+'</th>'; });
+  h+='<section class="lab-card"><div class="lab-h"><h2>Condiciones a testar</h2><div class="lab-hbtns"><button class="mini" onclick="addParam()">+ Par\u00e1metro</button><button class="mini" onclick="addStudy()">+ Estudio</button></div></div>';
+  h+='<div class="lab-scroll"><table class="ctable"><thead><tr><th>Estudio</th><th>Identificador</th><th class="rh">Resultado</th>';
+  t.params.forEach(function(pa){ var vv=paramVariesAny(t,map,pa.id); h+='<th class="ph'+(vv?' vh':'')+'"><input class="phn" value="'+escAttr(pa.name)+'" onchange="setParamName(\''+pa.id+'\',this.value)" title="Nombre del par\u00e1metro"><button class="thdel" title="Eliminar par\u00e1metro" onclick="delParam(\''+pa.id+'\')">&times;</button></th>'; });
   h+='<th></th></tr></thead><tbody>';
   if(t.studies.length){
     t.studies.forEach(function(s){
-      h+='<tr><td><input value="'+escAttr(s.name)+'" onchange="setStudyName(\''+s.id+'\',this.value)"></td><td><input value="'+escAttr(s.ident)+'" onchange="setStudyIdent(\''+s.id+'\',this.value)" placeholder="ID"></td>';
-      t.params.forEach(function(pa){ var v=s.vals[pa.id]!=null?s.vals[pa.id]:''; h+='<td'+(vary[pa.id]?' class="cv"':'')+'><input value="'+escAttr(v)+'" onchange="setStudyVal(\''+s.id+'\',\''+pa.id+'\',this.value)" placeholder="—"></td>'; });
+      h+='<tr><td><input value="'+escAttr(s.name)+'" onchange="setStudyName(\''+s.id+'\',this.value)"></td><td><input value="'+escAttr(s.ident)+'" onchange="setStudyIdent(\''+s.id+'\',this.value)" placeholder="ID"></td><td class="rescell"><button class="resdot r'+(s.result||0)+'" title="'+RES[s.result||0]+' — clic para cambiar" onclick="cycleResult(\''+s.id+'\')"></button></td>';
+      t.params.forEach(function(pa){ var v=s.vals[pa.id]!=null?s.vals[pa.id]:''; var hl=map[s.id]&&map[s.id][pa.id]; h+='<td'+(hl?' class="cv"':'')+'><input value="'+escAttr(v)+'" onchange="setStudyVal(\''+s.id+'\',\''+pa.id+'\',this.value)" placeholder="—"></td>'; });
       h+='<td><button class="del" title="Eliminar" onclick="delStudy(\''+s.id+'\')">&times;</button></td></tr>';
     });
-  } else { h+='<tr><td colspan="'+(t.params.length+3)+'" class="lab-none" style="text-align:center;padding:14px">Sin estudios. Añade el primero con <b>+ Estudio</b>.</td></tr>'; }
+  } else { h+='<tr><td colspan="'+(t.params.length+4)+'" class="lab-none" style="text-align:center;padding:14px">Sin estudios. Añade el primero con <b>+ Estudio</b>.</td></tr>'; }
   h+='</tbody></table></div>';
-  h+='<p class="lab-hint">Las columnas de parámetros se generan desde los <b>parámetros definidos</b>. Los valores que varían entre estudios se resaltan en color.</p>';
+  h+='<p class="lab-hint">Añade o elimina parámetros (columnas) con <b>+ Parámetro</b> o la × de cada cabecera. Se resaltan las celdas <b>no comunes entre estudios con el mismo nombre</b>.</p>';
   h+='</section></div>';
   main.innerHTML=h;
 }
@@ -283,8 +386,8 @@ function exportCSV(){
   rows.push(['PARÁMETROS DEFINIDOS']); rows.push(['Nombre','Valor']);
   t.params.forEach(function(pa){ rows.push([pa.name,pa.val]); }); rows.push([]);
   rows.push(['CONDICIONES A TESTAR']);
-  rows.push(['Estudio','Identificador'].concat(t.params.map(function(pa){return pa.name;})));
-  t.studies.forEach(function(s){ rows.push([s.name,s.ident].concat(t.params.map(function(pa){return s.vals[pa.id]!=null?s.vals[pa.id]:'';}))); });
+  rows.push(['Estudio','Identificador','Resultado'].concat(t.params.map(function(pa){return pa.name;})));
+  t.studies.forEach(function(s){ rows.push([s.name,s.ident,RES[s.result||0]].concat(t.params.map(function(pa){return s.vals[pa.id]!=null?s.vals[pa.id]:'';}))); });
   var csv=rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');
   download(safeName(t.name)+'.csv', csv, 'text/csv');
 }
@@ -296,12 +399,12 @@ function exportPDF(){
   doc.setFontSize(10); doc.setTextColor(120,120,130); doc.text((m?m.name:'')+'   /   '+(p?p.name:''),14,22.5);
   doc.autoTable({ startY:28, head:[['Parámetro','Valor']], body:t.params.map(function(pa){return [String(pa.name),String(pa.val==null?'':pa.val)];}),
     theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14} });
-  var vary=varyingParams(t);
-  var head=[['Estudio','Identificador'].concat(t.params.map(function(pa){return String(pa.name);}))];
-  var body=t.studies.map(function(s){ return [String(s.name),String(s.ident)].concat(t.params.map(function(pa){return String(s.vals[pa.id]==null?'':s.vals[pa.id]);})); });
+  var map=varyMap(t);
+  var head=[['Estudio','Identificador','Resultado'].concat(t.params.map(function(pa){return String(pa.name);}))];
+  var body=t.studies.map(function(s){ return [String(s.name),String(s.ident),RES[s.result||0]].concat(t.params.map(function(pa){return String(s.vals[pa.id]==null?'':s.vals[pa.id]);})); });
   doc.autoTable({ startY:(doc.lastAutoTable?doc.lastAutoTable.finalY:30)+9, head:head, body:body,
     theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14},
-    didParseCell:function(data){ if(data.section==='body'){ var col=data.column.index-2; if(col>=0 && col<t.params.length && vary[t.params[col].id]){ data.cell.styles.fillColor=[238,234,255]; data.cell.styles.textColor=[70,40,150]; data.cell.styles.fontStyle='bold'; } } } });
+    didParseCell:function(data){ if(data.section==='body'){ var st=t.studies[data.row.index]; if(data.column.index===2 && st){ var rc=[null,[255,107,107],[244,183,64],[52,211,153]][st.result||0]; if(rc){ data.cell.styles.fillColor=rc; data.cell.styles.textColor=[255,255,255]; data.cell.styles.fontStyle='bold'; } } var col=data.column.index-3; if(col>=0 && col<t.params.length && st && map[st.id] && map[st.id][t.params[col].id]){ data.cell.styles.fillColor=[238,234,255]; data.cell.styles.textColor=[70,40,150]; data.cell.styles.fontStyle='bold'; } } } });
   doc.save(safeName(t.name)+'.pdf');
 }
 
