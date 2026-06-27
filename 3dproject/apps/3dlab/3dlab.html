@@ -215,7 +215,7 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 function escAttr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 function norm(){ if(!Array.isArray(S.mods))S.mods=[]; if(!S.sel||typeof S.sel!=='object')S.sel={m:null,p:null,t:null};
   if(!Array.isArray(S.paramPresets))S.paramPresets=[];
-  S.mods.forEach(function(m){ if(!Array.isArray(m.projs))m.projs=[]; m.projs.forEach(function(p){ if(!Array.isArray(p.tests))p.tests=[]; p.tests.forEach(function(t){ if(!Array.isArray(t.params))t.params=[]; if(!Array.isArray(t.studies))t.studies=[]; t.studies.forEach(function(s){ if(!s.vals||typeof s.vals!=='object')s.vals={}; if(typeof s.result!=='number')s.result=0; }); }); }); });
+  S.mods.forEach(function(m){ if(!Array.isArray(m.projs))m.projs=[]; m.projs.forEach(function(p){ if(!Array.isArray(p.tests))p.tests=[]; p.tests.forEach(function(t){ if(!Array.isArray(t.params))t.params=[]; if(!Array.isArray(t.cols))t.cols=t.params.map(function(pp){return {id:pp.id,name:pp.name};}); if(!Array.isArray(t.studies))t.studies=[]; t.studies.forEach(function(s){ if(!s.vals||typeof s.vals!=='object')s.vals={}; if(typeof s.result!=='number')s.result=0; }); }); }); });
 }
 
 /* ===== finders ===== */
@@ -251,15 +251,18 @@ var presetOpen=false;
 function togglePresets(){ presetOpen=!presetOpen; renderMain(); }
 function presetPanel(){ if(!presetOpen)return ''; var pr=S.paramPresets||[]; var x='<div class="preset-pop"><button class="pp-save" onclick="savePreset()">+ Guardar parámetros actuales como preset</button>'; if(pr.length){ x+='<div class="pp-list">'; pr.forEach(function(pp){ x+='<div class="pp-item"><button class="pp-apply" onclick="applyPreset(\''+pp.id+'\')" title="Aplicar este preset al test"><span class="pp-ic">&#9656;</span>'+esc(pp.name)+'<span class="pp-n">'+pp.params.length+' parám.</span></button><button class="pp-del" title="Eliminar preset" onclick="delPreset(\''+pp.id+'\')">&times;</button></div>'; }); x+='</div>'; } else { x+='<div class="pp-empty">No hay presets guardados todavía.</div>'; } x+='</div>'; return x; }
 function savePreset(){ var t=curTest(); if(!t)return; if(!t.params.length){ alert('Este test no tiene parámetros que guardar.'); return; } var n=prompt('Nombre del preset de parámetros:'); if(n==null)return; n=n.trim(); if(!n)return; if(!Array.isArray(S.paramPresets))S.paramPresets=[]; S.paramPresets.push({id:uid(),name:n,params:t.params.map(function(pp){return {name:pp.name,val:pp.val};})}); presetOpen=true; save(); renderMain(); }
-function applyPreset(id){ var t=curTest(); if(!t)return; var pr=(S.paramPresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if(t.params.length && !confirm('Se reemplazarán los parámetros actuales del test por el preset "'+pr.name+'". Los valores de estudios se conservan donde coincida el nombre. ¿Continuar?'))return; var oldp=t.params.map(function(pp){return {id:pp.id,name:pp.name};}); var np=pr.params.map(function(pp){return {id:uid(),name:pp.name,val:pp.val};}); t.studies.forEach(function(s){ var nv={}; np.forEach(function(x){ var o=oldp.filter(function(q){return q.name===x.name;})[0]; nv[x.id]=(o && s.vals[o.id]!=null)?s.vals[o.id]:x.val; }); s.vals=nv; }); t.params=np; presetOpen=false; save(); renderMain(); }
+function applyPreset(id){ var t=curTest(); if(!t)return; var pr=(S.paramPresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if(t.params.length && !confirm('Se reemplazarán los parámetros definidos del test por el preset "'+pr.name+'". ¿Continuar?'))return; t.params=pr.params.map(function(pp){return {id:uid(),name:pp.name,val:pp.val};}); presetOpen=false; save(); renderMain(); }
 function delPreset(id){ if(!Array.isArray(S.paramPresets))return; var pr=S.paramPresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('¿Eliminar el preset "'+pr.name+'"?'))return; S.paramPresets=S.paramPresets.filter(function(x){return x.id!==id;}); save(); renderMain(); }
-function addParam(){ var t=curTest(); if(!t)return; var p={id:uid(),name:'Parámetro '+(t.params.length+1),val:''}; t.params.push(p); t.studies.forEach(function(s){ if(!(p.id in s.vals))s.vals[p.id]=p.val; }); save(); renderMain(); }
+function addParam(){ var t=curTest(); if(!t)return; t.params.push({id:uid(),name:'Parámetro '+(t.params.length+1),val:''}); save(); renderMain(); }
 function setParamName(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.name=v;save();renderMain();} }
 function setParamVal(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.val=v;save();} }
-function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(function(x){return x.id!==id;}); t.studies.forEach(function(s){ delete s.vals[id]; }); save(); renderMain(); }
+function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(function(x){return x.id!==id;}); save(); renderMain(); }
+function addCol(){ var t=curTest(); if(!t)return; t.cols.push({id:uid(),name:'Parámetro '+(t.cols.length+1)}); save(); renderMain(); }
+function setColName(id,v){ var t=curTest(); if(!t)return; var c=t.cols.filter(function(x){return x.id===id;})[0]; if(c){c.name=v;save();renderMain();} }
+function delCol(id){ var t=curTest(); if(!t)return; t.cols=t.cols.filter(function(x){return x.id!==id;}); t.studies.forEach(function(s){ delete s.vals[id]; }); save(); renderMain(); }
 
 /* ===== estudios (condiciones) ===== */
-function addStudy(){ var t=curTest(); if(!t)return; var s={id:uid(),name:'Estudio '+(t.studies.length+1),ident:'',vals:{}}; t.params.forEach(function(p){ s.vals[p.id]=p.val; }); t.studies.push(s); save(); renderMain(); }
+function addStudy(){ var t=curTest(); if(!t)return; var s={id:uid(),name:'Estudio '+(t.studies.length+1),ident:'',vals:{}}; t.cols.forEach(function(c){ s.vals[c.id]=''; }); t.studies.push(s); save(); renderMain(); }
 function setStudyName(id,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(s){s.name=v;save();renderMain();} }
 function setStudyIdent(id,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===id;})[0]; if(s){s.ident=v;save();} }
 function setStudyVal(sid,pid,v){ var t=curTest(); if(!t)return; var s=t.studies.filter(function(x){return x.id===sid;})[0]; if(s){s.vals[pid]=v;save();renderMain();} }
@@ -269,7 +272,7 @@ function varyMap(t){
   var groups={}; t.studies.forEach(function(s){ var k=String(s.name==null?'':s.name); (groups[k]=groups[k]||[]).push(s); });
   var map={}; t.studies.forEach(function(s){ map[s.id]={}; });
   Object.keys(groups).forEach(function(k){ var g=groups[k];
-    t.params.forEach(function(p){ var d={}; g.forEach(function(s){ d[(s.vals[p.id]!=null?String(s.vals[p.id]):'')]=1; }); var varies=(g.length>1 && Object.keys(d).length>1); g.forEach(function(s){ map[s.id][p.id]=varies; }); });
+    t.cols.forEach(function(p){ var d={}; g.forEach(function(s){ d[(s.vals[p.id]!=null?String(s.vals[p.id]):'')]=1; }); var varies=(g.length>1 && Object.keys(d).length>1); g.forEach(function(s){ map[s.id][p.id]=varies; }); });
   });
   return map;
 }
@@ -358,19 +361,19 @@ function renderMain(){
   } else h+='<div class="lab-none">Sin parámetros. Añade el primero con <b>+ Parámetro</b>.</div>';
   h+='</section>';
   // condiciones
-  h+='<section class="lab-card"><div class="lab-h"><h2>Condiciones a testar</h2><div class="lab-hbtns"><button class="mini" onclick="addParam()">+ Par\u00e1metro</button><button class="mini" onclick="addStudy()">+ Estudio</button></div></div>';
+  h+='<section class="lab-card"><div class="lab-h"><h2>Condiciones a testar</h2><div class="lab-hbtns"><button class="mini" onclick="addCol()">+ Par\u00e1metro</button><button class="mini" onclick="addStudy()">+ Estudio</button></div></div>';
   h+='<div class="lab-scroll"><table class="ctable"><thead><tr><th>Estudio</th><th>Identificador</th><th class="rh">Resultado</th>';
-  t.params.forEach(function(pa){ var vv=paramVariesAny(t,map,pa.id); h+='<th class="ph'+(vv?' vh':'')+'"><input class="phn" value="'+escAttr(pa.name)+'" onchange="setParamName(\''+pa.id+'\',this.value)" title="Nombre del par\u00e1metro"><button class="thdel" title="Eliminar par\u00e1metro" onclick="delParam(\''+pa.id+'\')">&times;</button></th>'; });
+  t.cols.forEach(function(pa){ var vv=paramVariesAny(t,map,pa.id); h+='<th class="ph'+(vv?' vh':'')+'"><input class="phn" value="'+escAttr(pa.name)+'" onchange="setColName(\''+pa.id+'\',this.value)" title="Nombre del par\u00e1metro"><button class="thdel" title="Eliminar par\u00e1metro" onclick="delCol(\''+pa.id+'\')">&times;</button></th>'; });
   h+='<th></th></tr></thead><tbody>';
   if(t.studies.length){
     t.studies.forEach(function(s){
       h+='<tr><td><input value="'+escAttr(s.name)+'" onchange="setStudyName(\''+s.id+'\',this.value)"></td><td><input value="'+escAttr(s.ident)+'" onchange="setStudyIdent(\''+s.id+'\',this.value)" placeholder="ID"></td><td class="rescell"><button class="resdot r'+(s.result||0)+'" title="'+RES[s.result||0]+' — clic para cambiar" onclick="cycleResult(\''+s.id+'\')"></button></td>';
-      t.params.forEach(function(pa){ var v=s.vals[pa.id]!=null?s.vals[pa.id]:''; var hl=map[s.id]&&map[s.id][pa.id]; h+='<td'+(hl?' class="cv"':'')+'><input value="'+escAttr(v)+'" onchange="setStudyVal(\''+s.id+'\',\''+pa.id+'\',this.value)" placeholder="—"></td>'; });
+      t.cols.forEach(function(pa){ var v=s.vals[pa.id]!=null?s.vals[pa.id]:''; var hl=map[s.id]&&map[s.id][pa.id]; h+='<td'+(hl?' class="cv"':'')+'><input value="'+escAttr(v)+'" onchange="setStudyVal(\''+s.id+'\',\''+pa.id+'\',this.value)" placeholder="—"></td>'; });
       h+='<td><button class="del" title="Eliminar" onclick="delStudy(\''+s.id+'\')">&times;</button></td></tr>';
     });
-  } else { h+='<tr><td colspan="'+(t.params.length+4)+'" class="lab-none" style="text-align:center;padding:14px">Sin estudios. Añade el primero con <b>+ Estudio</b>.</td></tr>'; }
+  } else { h+='<tr><td colspan="'+(t.cols.length+4)+'" class="lab-none" style="text-align:center;padding:14px">Sin estudios. Añade el primero con <b>+ Estudio</b>.</td></tr>'; }
   h+='</tbody></table></div>';
-  h+='<p class="lab-hint">Añade o elimina parámetros (columnas) con <b>+ Parámetro</b> o la × de cada cabecera. Se resaltan las celdas <b>no comunes entre estudios con el mismo nombre</b>.</p>';
+  h+='<p class="lab-hint">La tabla de parámetros definidos y las columnas de condiciones son independientes. Añade o elimina columnas con <b>+ Parámetro</b> o la × de cada cabecera. Se resaltan las celdas <b>no comunes entre estudios con el mismo nombre</b>.</p>';
   h+='</section></div>';
   main.innerHTML=h;
 }
@@ -386,8 +389,8 @@ function exportCSV(){
   rows.push(['PARÁMETROS DEFINIDOS']); rows.push(['Nombre','Valor']);
   t.params.forEach(function(pa){ rows.push([pa.name,pa.val]); }); rows.push([]);
   rows.push(['CONDICIONES A TESTAR']);
-  rows.push(['Estudio','Identificador','Resultado'].concat(t.params.map(function(pa){return pa.name;})));
-  t.studies.forEach(function(s){ rows.push([s.name,s.ident,RES[s.result||0]].concat(t.params.map(function(pa){return s.vals[pa.id]!=null?s.vals[pa.id]:'';}))); });
+  rows.push(['Estudio','Identificador','Resultado'].concat(t.cols.map(function(pa){return pa.name;})));
+  t.studies.forEach(function(s){ rows.push([s.name,s.ident,RES[s.result||0]].concat(t.cols.map(function(pa){return s.vals[pa.id]!=null?s.vals[pa.id]:'';}))); });
   var csv=rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');
   download(safeName(t.name)+'.csv', csv, 'text/csv');
 }
@@ -400,11 +403,11 @@ function exportPDF(){
   doc.autoTable({ startY:28, head:[['Parámetro','Valor']], body:t.params.map(function(pa){return [String(pa.name),String(pa.val==null?'':pa.val)];}),
     theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14} });
   var map=varyMap(t);
-  var head=[['Estudio','Identificador','Resultado'].concat(t.params.map(function(pa){return String(pa.name);}))];
-  var body=t.studies.map(function(s){ return [String(s.name),String(s.ident),RES[s.result||0]].concat(t.params.map(function(pa){return String(s.vals[pa.id]==null?'':s.vals[pa.id]);})); });
+  var head=[['Estudio','Identificador','Resultado'].concat(t.cols.map(function(pa){return String(pa.name);}))];
+  var body=t.studies.map(function(s){ return [String(s.name),String(s.ident),RES[s.result||0]].concat(t.cols.map(function(pa){return String(s.vals[pa.id]==null?'':s.vals[pa.id]);})); });
   doc.autoTable({ startY:(doc.lastAutoTable?doc.lastAutoTable.finalY:30)+9, head:head, body:body,
     theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14},
-    didParseCell:function(data){ if(data.section==='body'){ var st=t.studies[data.row.index]; if(data.column.index===2 && st){ var rc=[null,[255,107,107],[244,183,64],[52,211,153]][st.result||0]; if(rc){ data.cell.styles.fillColor=rc; data.cell.styles.textColor=[255,255,255]; data.cell.styles.fontStyle='bold'; } } var col=data.column.index-3; if(col>=0 && col<t.params.length && st && map[st.id] && map[st.id][t.params[col].id]){ data.cell.styles.fillColor=[238,234,255]; data.cell.styles.textColor=[70,40,150]; data.cell.styles.fontStyle='bold'; } } } });
+    didParseCell:function(data){ if(data.section==='body'){ var st=t.studies[data.row.index]; if(data.column.index===2 && st){ var rc=[null,[255,107,107],[244,183,64],[52,211,153]][st.result||0]; if(rc){ data.cell.styles.fillColor=rc; data.cell.styles.textColor=[255,255,255]; data.cell.styles.fontStyle='bold'; } } var col=data.column.index-3; if(col>=0 && col<t.cols.length && st && map[st.id] && map[st.id][t.cols[col].id]){ data.cell.styles.fillColor=[238,234,255]; data.cell.styles.textColor=[70,40,150]; data.cell.styles.fontStyle='bold'; } } } });
   doc.save(safeName(t.name)+'.pdf');
 }
 
