@@ -9,19 +9,19 @@
   <script type="module" src="../../../firebase/dpcloud.js"></script>
 </head>
 <body>
-<div id="dp-shell">
-  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    3DProject
-  </button>
-  <span class="dp-appicon" style="background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.30)"><svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.4" fill="none"/><path d="M11 5.5V11L14.5 13.5" stroke="#34D399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="1.4" fill="#34D399"/></svg></span>
-  <span class="dp-title">3DTracker</span>
-  <span class="dp-sp"></span>
-  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"></button>
+<div class="appbar">
+  <button class="ab-burger" onclick="toggleSidebar()" title="Mostrar u ocultar el menú"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <span class="ab-chip"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.5" fill="none"/><path d="M11 5.5V11L14.5 13.5" stroke="#34D399" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="1.4" fill="#34D399"/></svg></span>
+  <span class="ab-name">3DTracker</span>
+  <span class="ab-sub" id="topbar-subtitle">Cargando…</span>
+  <button class="ab-back" onclick="dpHome()" title="Volver a 3DProject"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> <span class="ab-bktx">3DProject</span></button>
+  <span class="ab-sp"></span>
+  <input type="text" id="search-input" class="ab-search" placeholder="Buscar pedido o email…">
+  <button class="btn btn-primary btn-sm" onclick="openNewOrderModal()">+ Nuevo pedido</button>
+  <button class="ab-theme" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
 </div>
 
-
-  <!-- Toast container -->
+<!-- Toast container -->
   <div id="toast-container"></div>
 
   <div class="app-layout">
@@ -33,7 +33,7 @@
       <button class="nav-item active" id="nav-orders">
         <span class="nav-icon">📦</span> Pedidos
       </button>
-      <button class="nav-item" id="nav-web" onclick="window.open('../frontend/index.html','_blank')">
+      <button class="nav-item" id="nav-web" onclick="window.open('https://silab3d.com/pages/pedidos.html','_blank')">
         <span class="nav-icon">🌍</span> Portal cliente
       </button>
 
@@ -46,28 +46,6 @@
 
     <!-- Main -->
     <div class="main-content">
-      <div class="topbar">
-        <div class="tb-left">
-          <button class="tb-burger" onclick="toggleSidebar()" title="Mostrar u ocultar el panel" aria-label="Panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-          <span class="tb-chip"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#34D399" stroke-width="1.5" fill="none"/><path d="M11 5.7V11l3.4 2.4" stroke="#34D399" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <div>
-            <div class="topbar-title">3DTracker</div>
-            <div class="topbar-subtitle" id="topbar-subtitle">Cargando...</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:0.75rem;align-items:center;">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Buscar pedido o email..."
-            style="width:220px;"
-          />
-          <button class="btn btn-primary btn-sm" onclick="openNewOrderModal()">
-            + Nuevo pedido
-          </button>
-        </div>
-      </div>
-
       <div class="page-body">
 
         <!-- Stats -->
@@ -111,6 +89,7 @@
                 <th>Pasos</th>
                 <th>Estado</th>
                 <th>Fecha</th>
+                <th></th>
               </tr>
             </thead>
             <tbody id="orders-tbody"></tbody>

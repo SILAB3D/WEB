@@ -85,6 +85,10 @@ async function setStepStatus(code, stepId, status) {
 async function deleteStep(code, stepId) {
   await deleteDoc(doc(db, "orders", code, "steps", stepId));
 }
+async function deleteOrder(code) {
+  try { const snap = await getDocs(collection(db, "orders", code, "steps")); await Promise.all(snap.docs.map(d => deleteDoc(d.ref))); } catch (e) {}
+  await deleteDoc(doc(db, "orders", code));
+}
 
 // ── FEEDBACK ──
 async function listFeedback() {
@@ -162,7 +166,7 @@ window.DPCloud = {
   onAuth: (cb) => onAuthStateChanged(auth, cb),
   currentUser: () => auth.currentUser,
   listOrders, createOrder, getOrderById, getOrderByCode,
-  addStep, setStepStatus, deleteStep,
+  addStep, setStepStatus, deleteStep, deleteOrder,
   listFeedback, addFeedback, updateFeedback, deleteFeedback,
   loadState, saveState, watchState, watchOrders, watchFeedback, watchOrderByCode,
   listPresets, createPreset, deletePreset

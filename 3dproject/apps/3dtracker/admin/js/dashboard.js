@@ -100,6 +100,7 @@ function renderTable(orders) {
         <td data-label="Pasos" style="color:var(--text-secondary);">${count}</td>
         <td data-label="Estado"><span class="badge ${status.css}">${status.label}</span></td>
         <td data-label="Fecha" style="color:var(--text-muted);">${formatDate(order.created_at)}</td>
+        <td data-label="" style="text-align:center;width:46px"><button class="ord-del" title="Eliminar pedido" onclick="event.stopPropagation();deleteOrderUI('${order.id}','${escapeHtml(order.order_code)}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
       </tr>`;
   }).join('');
 
@@ -145,6 +146,7 @@ async function loadOrders() {
 
   try {
     allOrders = await window.DPCloud.listOrders();
+    await autoPurgeCompleted();
     updateStats(allOrders);
     renderTable(filterOrders(searchTerm));
   } catch (err) {
@@ -152,6 +154,29 @@ async function loadOrders() {
     showToast(`Error al cargar pedidos: ${err.message}`, 'error');
   }
 }
+
+// ── Borrado manual + autopurgado de completados (>30 días) ──
+function _orderCompletedAt(o){
+  var s=o.order_steps; if(!Array.isArray(s)||!s.length)return null;
+  if(!s.every(function(x){return x.status==='done';}))return null;
+  var t=0; s.forEach(function(x){ var dd=x.updated_at?new Date(x.updated_at).getTime():0; if(dd>t)t=dd; }); return t||null;
+}
+async function autoPurgeCompleted(){
+  try{
+    if(!(window.DPCloud&&window.DPCloud.deleteOrder))return;
+    var cutoff=Date.now()-30*24*3600*1000, del=[];
+    (allOrders||[]).forEach(function(o){ var c=_orderCompletedAt(o); if(c && c<cutoff) del.push(o); });
+    if(!del.length)return;
+    await Promise.all(del.map(function(o){ return window.DPCloud.deleteOrder(o.id).catch(function(){}); }));
+    var rm={}; del.forEach(function(o){rm[o.id]=1;});
+    allOrders=allOrders.filter(function(o){return !rm[o.id];});
+  }catch(e){}
+}
+window.deleteOrderUI=async function(id,code){
+  if(!confirm('¿Eliminar el pedido '+code+'? Esta acción no se puede deshacer.'))return;
+  try{ await window.DPCloud.deleteOrder(id); showToast('Pedido '+code+' eliminado','success'); loadOrders(); }
+  catch(e){ showToast('No se pudo eliminar: '+(e.message||e),'error'); }
+};
 
 // ── Modal: Nuevo pedido ───────────────────────
 function openNewOrderModal() {

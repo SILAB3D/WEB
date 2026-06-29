@@ -493,7 +493,7 @@ svg.ic{flex-shrink:0;display:inline-block;vertical-align:middle}
 [data-theme=light] #dp-shell .dp-toggle:hover{background:rgba(0,0,0,.05)}
 
 #thBtn{display:none!important}
-#app{height:calc(100dvh - 44px)!important;margin-top:44px!important}
+#app{height:100dvh!important;margin-top:0!important}
 /* desplegables (select/option) legibles en movil */
 select{color:var(--t1)}
 option{background-color:#161922;color:#E8EBF4}
@@ -511,19 +511,20 @@ option{background-color:#161922;color:#E8EBF4}
     localStorage.removeItem=function(k){if(DK[k]){delete mem[k];}else{_r(k);}};
   })();
   </script>
+<style>
+/* franja superior unificada (estilo 3DBilling) */
+.bar{height:52px;background:rgba(10,11,18,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:0 14px;gap:9px}
+[data-theme=light] .bar{background:rgba(255,255,255,.86)}
+.bar .icon-btn{width:34px;height:34px;border:1px solid var(--bd2);border-radius:9px;color:var(--tx)}
+.bar .logo-chip{width:30px;height:30px;border-radius:9px;box-shadow:none}
+.bar .logo{font-size:15px;gap:8px;letter-spacing:-.2px}
+.bar .back3d{border-radius:9px!important;height:34px;padding:0 12px 0 9px;background:transparent;border:1px solid var(--bd2);color:var(--tx);font-weight:500;gap:6px}
+.bar .back3d:hover{background:var(--sf2)}
+.bar .pill-btn{border-radius:9px;padding:8px 13px}
+.bar .gsrch input{border-radius:9px}
+</style>
 </head>
 <body>
-<div id="dp-shell">
-  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    3DProject
-  </button>
-  <span class="dp-appicon" style="background:rgba(255,122,69,.14);border:1px solid rgba(255,122,69,.30)"><svg viewBox="0 0 22 22" fill="none"><circle cx="4" cy="16" r="2.2" stroke="#FF7A45" stroke-width="1.4"/><circle cx="11" cy="9" r="2.2" stroke="#FF7A45" stroke-width="1.4"/><circle cx="18" cy="4" r="2.2" stroke="#FF7A45" stroke-width="1.4"/><line x1="6.1" y1="14.4" x2="8.9" y2="10.6" stroke="#FF7A45" stroke-width="1.2" stroke-linecap="round"/><line x1="13.1" y1="7.4" x2="15.9" y2="5.6" stroke="#FF7A45" stroke-width="1.2" stroke-linecap="round"/></svg></span>
-  <span class="dp-title">PrintFlow</span>
-  <span class="dp-sp"></span>
-  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"></button>
-</div>
-
 <div id="tip" class="tip"></div>
 
 <div id="app">
@@ -535,6 +536,7 @@ option{background-color:#161922;color:#E8EBF4}
       <span class="logo-chip"><svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4c0 6 14 8 14 16"/><path d="M19 4c0 6-14 8-14 16"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="9.5" y1="11" x2="14.5" y2="11"/><line x1="9.5" y1="13.5" x2="14.5" y2="13.5"/><line x1="8" y1="17.5" x2="16" y2="17.5"/></svg></span>
       PrintFlow<sup>3D</sup>
     </button>
+    <button class="pill-btn back3d" onclick="dpHome()" title="Volver a 3DProject"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> <span>3DProject</span></button>
     <div class="bar-sp"></div>
     <div class="gsrch">
       <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

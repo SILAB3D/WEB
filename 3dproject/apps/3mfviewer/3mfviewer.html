@@ -1074,12 +1074,12 @@
   --s-tint-o:rgba(224,96,47,0.08);--s-tint-r:rgba(220,38,38,0.08);--s-tint-r2:rgba(220,38,38,0.30);--s-tint-g:rgba(34,160,110,0.12);--s-tint-ob:rgba(224,96,47,0.30);
 }
 
-body{padding-top:44px!important}
+body{padding-top:0!important}
 
 
 /* ===== Paneles estándar: barra superior + panel lateral ===== */
 body{padding-top:96px!important}
-.mf-topbar{position:fixed;top:44px;left:0;right:0;height:52px;z-index:30;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--s-panel);border-bottom:1px solid var(--bambu-border);font-family:'Outfit',sans-serif}
+.mf-topbar{position:fixed;top:0;left:0;right:0;height:52px;z-index:30;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--s-panel);border-bottom:1px solid var(--bambu-border);font-family:'Outfit',sans-serif}
 .mf-burger{width:34px;height:34px;border-radius:9px;border:1px solid var(--bambu-border);background:transparent;color:var(--bambu-black);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .mf-burger:hover{background:var(--bambu-green-light)}
 .mf-chip{width:30px;height:30px;border-radius:9px;background:rgba(77,159,255,.14);border:1px solid rgba(77,159,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -1088,7 +1088,7 @@ body{padding-top:96px!important}
 .mf-file{font-size:12.5px;color:var(--bambu-gray);max-width:38vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mf-topbtn{height:34px;padding:0 14px;border-radius:9px;border:none;background:var(--bambu-green);color:#06243f;font:600 13px 'Outfit',sans-serif;cursor:pointer;flex-shrink:0}
 .mf-topbtn:hover{filter:brightness(1.07)}
-.mf-side{position:fixed;top:96px;left:0;bottom:0;width:240px;z-index:25;background:var(--s-panel);border-right:1px solid var(--bambu-border);display:flex;flex-direction:column;padding:16px 12px;gap:4px;font-family:'Outfit',sans-serif;transition:transform .25s ease;overflow-y:auto}
+.mf-side{position:fixed;top:52px;left:0;bottom:0;width:240px;z-index:25;background:var(--s-panel);border-right:1px solid var(--bambu-border);display:flex;flex-direction:column;padding:16px 12px;gap:4px;font-family:'Outfit',sans-serif;transition:transform .25s ease;overflow-y:auto}
 .mf-primary{width:100%;padding:11px;border-radius:11px;border:none;background:var(--bambu-green);color:#06243f;font:700 13.5px 'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px}
 .mf-primary:hover{filter:brightness(1.07)}
 .mf-nav-title{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--bambu-gray);margin:12px 4px 4px}
@@ -1107,26 +1107,17 @@ body.mf-collapsed .container{margin-left:0!important}
 </style>
 </head>
 <body>
-<div id="dp-shell">
-  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    3DProject
-  </button>
-  <span class="dp-appicon" style="background:rgba(77,159,255,.14);border:1px solid rgba(77,159,255,.30)"><svg viewBox="0 0 22 22" fill="none"><polygon points="11,1.5 20,6.5 20,15.5 11,20.5 2,15.5 2,6.5" stroke="#4D9FFF" stroke-width="1.4" fill="none"/><polygon points="11,6 16,8.8 16,13.2 11,16 6,13.2 6,8.8" stroke="#4D9FFF" stroke-width=".8" fill="none" opacity=".5"/><circle cx="11" cy="11" r="2.2" fill="#4D9FFF"/></svg></span>
-  <span class="dp-title">3MFVIEWER</span>
-  <span class="dp-sp"></span>
-  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"></button>
-</div>
-
   <div class="mf-topbar">
     <button class="mf-burger" onclick="mfToggleSide()" title="Mostrar u ocultar el panel" aria-label="Panel">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
     <span class="mf-chip"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><polygon points="11,1.5 20,6.5 20,15.5 11,20.5 2,15.5 2,6.5" stroke="#4D9FFF" stroke-width="1.4" fill="none"/><polygon points="11,6 16,8.8 16,13.2 11,16 6,13.2 6,8.8" stroke="#4D9FFF" stroke-width=".8" fill="none" opacity=".5"/><circle cx="11" cy="11" r="2.2" fill="#4D9FFF"/></svg></span>
     <span class="mf-name">3MF Viewer</span>
+    <button class="mf-topbtn" onclick="dpHome()" title="Volver a 3DProject"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> 3DProject</button>
     <span class="mf-sp"></span>
     <span class="mf-file" id="mfFileName">Ning&#250;n archivo cargado</span>
     <button class="mf-topbtn" onclick="document.getElementById('fileInput').click()">Cargar .3mf</button>
+    <button class="mf-topbtn" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema" style="width:36px;padding:0;justify-content:center"></button>
   </div>
   <aside class="mf-side" id="mfSide">
     <button class="mf-primary" onclick="document.getElementById('fileInput').click()">

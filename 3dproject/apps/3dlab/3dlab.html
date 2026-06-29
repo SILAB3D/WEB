@@ -40,7 +40,7 @@ input,textarea{font-family:inherit}
 .tname{font-weight:700;font-size:16px;letter-spacing:-.2px}
 .sp{flex:1}
 /* layout */
-.layout{position:fixed;top:98px;left:0;right:0;bottom:0;display:flex}
+.layout{position:fixed;top:52px;left:0;right:0;bottom:0;display:flex}
 .side{width:300px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;background:#0E1018}
 .side .cta{margin:14px 14px 8px;height:38px;border:none;border-radius:11px;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;font:600 13px 'Outfit';display:flex;align-items:center;justify-content:center;gap:7px}
 .side-h{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t2);padding:8px 18px 4px}
@@ -174,8 +174,8 @@ table{border-collapse:collapse;width:100%}
 .rmv{width:22px;height:26px;border:none;background:transparent;color:var(--t3);border-radius:6px;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .rmv:hover{background:rgba(139,124,255,.16);color:var(--ac)}
 @media(max-width:760px){
-  .layout{top:98px}
-  .side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:82vw;max-width:300px;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
+  .layout{top:52px}
+  .side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:82vw;max-width:300px;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
   body.side-off .side{transform:translateX(-101%)}
   .lab-body{padding:16px 12px}
 }
@@ -184,25 +184,28 @@ select{color:var(--t1)}
 option{background-color:#161922;color:#E8EBF4}
 [data-theme=light] option{background-color:#ffffff;color:#1A1C24}
 [data-theme=light] .side{background:#FFFFFF}
+/* === banner unificado === */
+.appbar{position:fixed;top:0;left:0;right:0;height:52px;z-index:9500;display:flex;align-items:center;gap:9px;padding:0 14px;background:rgba(10,11,18,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+[data-theme=light] .appbar{background:rgba(255,255,255,.86);border-bottom:1px solid rgba(0,0,0,.08)}
+.appbar .chip{flex-shrink:0}
+.ab-name{font-weight:700;font-size:15px;letter-spacing:-.2px}
+.ab-back{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 9px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);font:500 12.5px 'Outfit',sans-serif;flex-shrink:0}
+.ab-back:hover{background:var(--glass)}
+.ab-sp{flex:1}
+.ab-theme{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ab-theme:hover{background:var(--glass)}
+@media(max-width:640px){ .ab-bktx{display:none} .ab-back{padding:0 9px} .ab-name{display:none} .ablbl{display:none} }
 </style>
 </head>
 <body>
-<div id="dp-shell">
-  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    3DProject
-  </button>
-  <span class="dp-appicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7CFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg></span>
-  <span class="dp-title">3DLab</span>
-  <span class="dp-sp"></span>
-  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
-</div>
-<div class="top">
-  <button class="burger" onclick="document.body.classList.toggle('side-off')" title="Mostrar u ocultar el panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+<div class="appbar">
+  <button class="burger" onclick="document.body.classList.toggle('side-off')" title="Mostrar u ocultar el menú"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
   <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7CFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M8.5 14h7"/></svg></span>
-  <span class="tname">3DLab</span>
-  <span class="sp"></span>
-  <button class="tbtn" onclick="goDashboard()" title="Ir al panel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg> Panel</button>
+  <span class="ab-name">3DLab</span>
+  <button class="ab-back" onclick="dpHome()" title="Volver a 3DProject"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> <span class="ab-bktx">3DProject</span></button>
+  <span class="ab-sp"></span>
+  <button class="tbtn" onclick="goDashboard()" title="Ir al panel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg> <span class="ablbl">Panel</span></button>
+  <button class="ab-theme" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
 </div>
 <div class="layout">
   <aside class="side" id="side">

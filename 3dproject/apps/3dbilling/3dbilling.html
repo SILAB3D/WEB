@@ -38,7 +38,7 @@ input,textarea{font-family:inherit}
 .tbtn{height:36px;padding:0 15px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--t1);font:600 13px 'Outfit',sans-serif;display:flex;align-items:center;gap:7px}
 .tbtn:hover{background:var(--glass)}
 .tbtn.primary{border:none;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#3a2400}
-.layout{position:fixed;top:98px;left:0;right:0;bottom:0;display:flex}
+.layout{position:fixed;top:52px;left:0;right:0;bottom:0;display:flex}
 .side{width:248px;flex-shrink:0;border-right:1px solid var(--border);background:#0E1118;display:flex;flex-direction:column;padding:14px 12px;overflow-y:auto;transition:margin-left .25s ease}
 body.side-off .side{margin-left:-249px}
 .cta{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;border:none;border-radius:12px;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#3a2400;font:700 13.5px 'Outfit',sans-serif;margin-bottom:14px}
@@ -177,39 +177,84 @@ option{background-color:#161922;color:#E8EBF4}
 .dock-empty{font-size:12px;color:var(--t3);padding:6px 2px}
 @media(min-width:981px){.dock-toggle{display:none!important}}
 @media(max-width:980px){
-  .docside{position:fixed;top:98px;right:0;bottom:0;z-index:70;width:84vw;max-width:330px;transform:translateX(101%);transition:transform .25s ease;box-shadow:-8px 0 30px rgba(0,0,0,.45)}
+  .docside{position:fixed;top:52px;right:0;bottom:0;z-index:70;width:84vw;max-width:330px;transform:translateX(101%);transition:transform .25s ease;box-shadow:-8px 0 30px rgba(0,0,0,.45)}
   body.dock-open .docside{transform:translateX(0)}
 }
+/* === banner unificado === */
+.appbar{position:fixed;top:0;left:0;right:0;height:52px;z-index:9500;display:flex;align-items:center;gap:9px;padding:0 14px;background:rgba(10,11,18,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+[data-theme=light] .appbar{background:rgba(255,255,255,.86);border-bottom:1px solid rgba(0,0,0,.08)}
+.ab-ic-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ab-ic-btn:hover{background:var(--glass)}
+.ab-app{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ab-appic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(244,183,64,.16);border:1px solid rgba(244,183,64,.32)}
+.ab-name{font-weight:700;font-size:15px;letter-spacing:-.2px}
+.ab-back{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 9px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);font:500 12.5px 'Outfit',sans-serif;flex-shrink:0}
+.ab-back:hover{background:var(--glass)}
+.ab-sp{flex:1}
+.ab-theme{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ab-theme:hover{background:var(--glass)}
+.tbtn.primary{border:none;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#3a2400}
+@media(max-width:760px){ .ablbl{display:none} .ab-name{display:none} .appbar .tbtn{padding:0 11px} }
+@media(max-width:560px){ .ab-bktx{display:none} .ab-back{padding:0 9px} }
+/* === árbol del panel izquierdo === */
+.btree{flex:1;overflow-y:auto;padding:6px 4px 16px}
+.bgrp{display:flex;align-items:center;gap:7px;padding:9px 8px 4px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t2);cursor:pointer;user-select:none}
+.bgrp .bg-car{font-size:9px;color:var(--t3);transition:transform .15s;display:inline-block}
+.bgrp.op .bg-car{transform:rotate(90deg)}
+.bgrp .bg-n{margin-left:auto;color:var(--t3);font-weight:600}
+.bgrp-empty{font-size:11.5px;color:var(--t3);padding:2px 8px 6px 22px}
+.bitem{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:9px;cursor:pointer;border:1px solid transparent}
+.bitem:hover{background:var(--glass)}
+.bitem.on{background:rgba(244,183,64,.1);border-color:rgba(244,183,64,.25)}
+.bitem.dash{font-weight:600;font-size:13.5px;margin-bottom:2px}
+.bitem.doc{margin-left:8px}
+.bic{width:17px;height:17px;display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
+.bi-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.bi-num{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bi-sub{font-size:10.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bi-tot{font-size:11.5px;font-weight:700;color:var(--ac);flex-shrink:0}
+.bi-del{opacity:0;border:none;background:transparent;color:var(--t2);font-size:13px;padding:2px 4px;border-radius:6px;flex-shrink:0}
+.bitem:hover .bi-del{opacity:1}
+.bi-del:hover{color:#FF7A7A;background:rgba(255,77,77,.1)}
+/* === dashboard === */
+.bdash{width:100%;max-width:920px;align-self:flex-start}
+.bd-h1{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.bd-sub{color:var(--t2);font-size:13.5px;margin:4px 0 18px}
+.bd-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.bd-stat{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.bd-stat b{display:block;font-size:21px;font-weight:800;color:var(--ac)}
+.bd-stat span{font-size:11.5px;color:var(--t2)}
+.bd-actions{margin-bottom:22px}
+.cta-d{height:40px;padding:0 18px;border:none;border-radius:11px;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#3a2400;font:700 13px 'Outfit',sans-serif;display:inline-flex;align-items:center;gap:7px;cursor:pointer}
+.bd-h2{font-size:14px;font-weight:700;margin-bottom:10px}
+.bd-list{display:flex;flex-direction:column;gap:8px}
+.bd-row{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:11px 14px;cursor:pointer}
+.bd-row:hover{border-color:var(--ac)}
+.bd-rtype{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);font-weight:700;width:84px;flex-shrink:0}
+.bd-rn{font-weight:700;font-size:13px;flex-shrink:0}
+.bd-rc{color:var(--t2);font-size:12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bd-rt{font-weight:800;color:var(--ac);flex-shrink:0}
+.bd-empty{color:var(--t2);font-size:13px;padding:14px 2px}
 </style>
 <style>
-@media(max-width:760px){.side{position:fixed;top:98px;bottom:0;left:0;z-index:60;width:80vw;max-width:300px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 12px}.sheet{padding:24px 18px}}
+@media(max-width:760px){.side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:80vw;max-width:300px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 12px}.sheet{padding:24px 18px}}
 </style>
 </head>
 <body>
-<div id="dp-shell">
-  <button class="dp-back" onclick="dpHome()" title="Volver a 3DProject">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    3DProject
-  </button>
-  <span class="dp-appicon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
-  <span class="dp-title">3DBilling</span>
-  <span class="dp-sp"></span>
-  <button class="dp-toggle" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
-</div>
-<div class="top">
-  <button class="burger" onclick="document.body.classList.toggle('side-off')" title="Mostrar u ocultar el panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-  <span class="chip"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
-  <span class="tname">3DBilling</span>
-  <span class="sp"></span>
+<div class="appbar">
+  <button class="ab-ic-btn" onclick="toggleSide()" title="Mostrar u ocultar el menú"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <span class="ab-app"><span class="ab-appic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F4B740" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.2-1.4L13.5 22 12 20.6 10.5 22 8.7 20.6 6 22z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span><span class="ab-name">3DBilling</span></span>
+  <button class="ab-back" onclick="dpHome()" title="Volver a 3DProject"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> <span class="ab-bktx">3DProject</span></button>
+  <span class="ab-sp"></span>
   <button class="tbtn dock-toggle" onclick="toggleDock()" title="Cabecera y frases (presets)">Presets</button>
-  <button class="tbtn" onclick="duplicateReceipt()" id="btn-dup" title="Duplicar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> Duplicar</button>
-  <button class="tbtn primary" onclick="printPDF()" id="btn-print"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg> Imprimir / PDF</button>
+  <button class="tbtn" onclick="duplicateReceipt()" id="btn-dup" title="Duplicar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> <span class="ablbl">Duplicar</span></button>
+  <button class="tbtn primary" onclick="printPDF()" id="btn-print"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg> <span class="ablbl">Imprimir / PDF</span></button>
+  <button class="ab-theme" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
 </div>
 <div class="layout">
   <aside class="side" id="side">
     <button class="cta" onclick="newReceipt()"><svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg> Nuevo recibo</button>
-    <div class="side-h">Recibos</div>
-    <div class="rlist" id="rlist"></div>
+    <div class="btree" id="rlist"></div>
     <div class="side-bottom">
       <button onclick="toggleDock()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg> Cabecera (presets)</button>
     </div>
@@ -260,24 +305,45 @@ function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] 
 function cur(){ return S.receipts.filter(function(r){return r.id===S.cur;})[0] || null; }
 function total(r){ var t=0; (r.lines||[]).forEach(function(l){ t+=Number(l.amount)||0; }); return t; }
 function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function newReceipt(){ if(!loaded){return;}
+function newReceipt(){ if(!loaded){return;} billView=null;
   S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var num='SL-'+y+'-'+String(S.seq).padStart(3,'0');
   var r={id:uid(),number:num,date:todayISO(),docType:'Recibo',presetId:(S.presets[0]&&S.presets[0].id)||'',notes:[{id:uid(),text:DEFAULT_TERMS,on:true}],client:{name:'',email:''},
     lines:[{name:'',desc:'',materials:'',units:1,amount:0}],created:Date.now()};
   S.receipts.unshift(r); S.cur=r.id; save(); renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off');
 }
-function selectReceipt(id){ S.cur=id; renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off'); }
+function selectReceipt(id){ billView=null; S.cur=id; renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off'); }
 function deleteReceipt(id,ev){ if(ev)ev.stopPropagation(); if(!confirm('¿Eliminar este recibo?'))return; S.receipts=S.receipts.filter(function(r){return r.id!==id;}); if(S.cur===id)S.cur=(S.receipts[0]&&S.receipts[0].id)||null; save(); renderSidebar(); renderSheet(); }
 function duplicateReceipt(){ var r=cur(); if(!r)return; S.seq=(S.seq||0)+1; var y=new Date().getFullYear(); var c=JSON.parse(JSON.stringify(r)); c.id=uid(); c.number='SL-'+y+'-'+String(S.seq).padStart(3,'0'); c.date=todayISO(); c.created=Date.now(); S.receipts.unshift(c); S.cur=c.id; save(); renderSidebar(); renderSheet(); }
+var billView='dash', billExp={r:true,p:true};
+var IC_DASH='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>';
+var IC_DOC='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
+function toggleSide(){ document.body.classList.toggle('side-off'); }
+function toggleGrp(k){ billExp[k]=!billExp[k]; renderSidebar(); }
+function goDash(){ billView='dash'; renderSidebar(); renderSheet(); if(window.innerWidth<=760)document.body.classList.add('side-off'); }
 function renderSidebar(){
-  var el=document.getElementById('rlist');
-  if(!S.receipts.length){ el.innerHTML='<div style="color:var(--t2);font-size:12.5px;padding:10px 4px;line-height:1.5">No hay recibos. Crea uno con “Nuevo recibo”.</div>'; return; }
-  el.innerHTML=S.receipts.map(function(r){
-    return '<div class="ritem'+(r.id===S.cur?' on':'')+'" onclick="selectReceipt(\''+r.id+'\')">'
-      +'<div class="ri-main"><div class="ri-num">'+esc(r.number)+'</div><div class="ri-sub">'+esc(r.client&&r.client.name?r.client.name:'Sin cliente')+'</div></div>'
-      +'<span class="ri-tot">'+eur(total(r))+'</span>'
-      +'<button class="ri-del" onclick="deleteReceipt(\''+r.id+'\',event)" title="Eliminar">✕</button></div>';
-  }).join('');
+  var el=document.getElementById('rlist'); if(!el)return;
+  var recs=S.receipts.filter(function(r){return (r.docType||'Recibo')!=='Presupuesto';});
+  var pres=S.receipts.filter(function(r){return (r.docType||'Recibo')==='Presupuesto';});
+  function leaf(r){ return '<div class="bitem doc'+((billView!=='dash'&&r.id===S.cur)?' on':'')+'" onclick="selectReceipt(\''+r.id+'\')"><span class="bic">'+IC_DOC+'</span><span class="bi-main"><span class="bi-num">'+esc(r.number)+'</span><span class="bi-sub">'+esc(r.client&&r.client.name?r.client.name:'Sin cliente')+'</span></span><span class="bi-tot">'+eur(total(r))+'</span><button class="bi-del" onclick="deleteReceipt(\''+r.id+'\',event)" title="Eliminar">✕</button></div>'; }
+  function grp(title,key,arr){ var op=billExp[key]; var x='<div class="bgrp'+(op?' op':'')+'" onclick="toggleGrp(\''+key+'\')"><span class="bg-car">▶</span>'+title+'<span class="bg-n">'+arr.length+'</span></div>'; if(op){ x+= arr.length?arr.map(leaf).join(''):'<div class="bgrp-empty">Ninguno</div>'; } return x; }
+  var html='<div class="bitem dash'+(billView==='dash'?' on':'')+'" onclick="goDash()"><span class="bic">'+IC_DASH+'</span>Dashboard</div>';
+  html+=grp('Recibos','r',recs)+grp('Presupuestos','p',pres);
+  el.innerHTML=html;
+}
+function renderBillDash(){
+  var main=document.getElementById('main'); if(!main)return;
+  var recs=S.receipts.filter(function(r){return (r.docType||'Recibo')!=='Presupuesto';});
+  var pres=S.receipts.filter(function(r){return (r.docType||'Recibo')==='Presupuesto';});
+  var tR=recs.reduce(function(a,r){return a+total(r);},0), tP=pres.reduce(function(a,r){return a+total(r);},0);
+  var recent=S.receipts.slice().sort(function(a,b){return String(b.date||'').localeCompare(String(a.date||''));}).slice(0,8);
+  var h='<div class="bdash"><h1 class="bd-h1">Panel de 3DBilling</h1><p class="bd-sub">Resumen de tus recibos y presupuestos.</p>';
+  h+='<div class="bd-stats"><div class="bd-stat"><b>'+recs.length+'</b><span>Recibos</span></div><div class="bd-stat"><b>'+pres.length+'</b><span>Presupuestos</span></div><div class="bd-stat"><b>'+eur(tR)+'</b><span>Total recibos</span></div><div class="bd-stat"><b>'+eur(tP)+'</b><span>Total presupuestos</span></div></div>';
+  h+='<div class="bd-actions"><button class="cta-d" onclick="newReceipt()">＋ Nuevo documento</button></div>';
+  h+='<h2 class="bd-h2">Documentos recientes</h2><div class="bd-list">';
+  if(recent.length){ recent.forEach(function(r){ h+='<div class="bd-row" onclick="selectReceipt(\''+r.id+'\')"><span class="bd-rtype">'+esc(r.docType||'Recibo')+'</span><span class="bd-rn">'+esc(r.number)+'</span><span class="bd-rc">'+esc(r.client&&r.client.name?r.client.name:'Sin cliente')+'</span><span class="bd-rt">'+eur(total(r))+'</span></div>'; }); }
+  else { h+='<div class="bd-empty">Aún no hay documentos. Crea el primero con “Nuevo documento”.</div>'; }
+  h+='</div></div>';
+  main.innerHTML=h;
 }
 function upd(field,val){ var r=cur(); if(!r)return; if(field==='client.name')r.client.name=val; else if(field==='client.email')r.client.email=val; else if(field==='date')r.date=val; else if(field==='number')r.number=val; save(); renderSidebar(); }
 function updLine(i,field,val){ var r=cur(); if(!r||!r.lines[i])return; r.lines[i][field]=val; if(field==='amount'){ var tv=document.getElementById('docTotal'); if(tv)tv.textContent=eur(total(r)); var _h=eur(total(r)*0.5); document.querySelectorAll('.dn-auto').forEach(function(el){ el.textContent=_h; }); renderSidebar(); } save(); }
@@ -292,7 +358,7 @@ function logoHTML(p){
 function renderSheet(){
   var main=document.getElementById('main'); var r=cur();
   try{ renderPresetList(); renderPhrasePresetList(); }catch(e){}
-  if(!r){ main.innerHTML='<div class="empty"><div class="e-ic">🧾</div><h3>Crea tu primer recibo</h3><p>Pulsa “Nuevo recibo” para empezar. Podrás añadir varios pedidos, elegir la cabecera y exportar a PDF.</p><button class="cta" style="max-width:200px;margin:0 auto" onclick="newReceipt()">＋ Nuevo recibo</button></div>'; return; }
+  if(billView==='dash'||!r){ renderBillDash(); return; }
   var p=preset(r.presetId);
   if(!Array.isArray(r.notes)){ r.notes=[{id:uid(),text:DEFAULT_TERMS,on:true}]; save(); }
   var rows=r.lines.map(function(l,i){
