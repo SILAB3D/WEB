@@ -167,6 +167,65 @@ option{background-color:#161922;color:#E8EBF4}
 .ab-theme{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ab-theme:hover{background:var(--glass)}
 @media(max-width:640px){ .ab-bktx{display:none} .ab-back{padding:0 9px} .ab-name{display:none} .ablbl{display:none} }
+/* === pedidos: notificaciones, secciones, filas, editor === */
+.ord-notifs{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.ord-notif{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(244,183,64,.10);border:1px solid rgba(244,183,64,.34);border-radius:12px;padding:11px 14px}
+.ord-notif .onx{flex:1;min-width:200px;font-size:13px}
+.onx-sub{font-size:11.5px;color:var(--t2);margin-top:2px}
+.onx-acts{display:flex;gap:6px;flex-wrap:wrap}
+.onb{border:1px solid var(--border);background:transparent;color:var(--t1);border-radius:8px;padding:6px 11px;font:600 12px 'Outfit',sans-serif;cursor:pointer}
+.onb.rej:hover{border-color:#FF6B8A;color:#FF6B8A;background:rgba(255,107,138,.1)}
+.onb.prod:hover{border-color:#4D9FFF;color:#4D9FFF;background:rgba(77,159,255,.1)}
+.onb.fin:hover{border-color:#34D399;color:#34D399;background:rgba(52,211,153,.1)}
+.ord-sec{margin-bottom:16px}
+.ord-sec-h{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--t1);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.ord-dot{width:10px;height:10px;border-radius:50%}
+.ord-cnt{margin-left:4px;min-width:20px;height:18px;padding:0 6px;border-radius:9px;background:var(--glass);border:1px solid var(--border);color:var(--t2);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.ord-list{display:flex;flex-direction:column;gap:7px}
+.ord-row{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid var(--border);border-radius:11px;padding:9px 12px;cursor:pointer;transition:border-color .12s,background .12s}
+.ord-row:hover{border-color:var(--ac);background:rgba(139,124,255,.06)}
+.ord-state{flex-shrink:0;border:1px solid;border-radius:8px;padding:4px 10px;font:700 11px 'Outfit',sans-serif;cursor:pointer;text-transform:uppercase;letter-spacing:.3px}
+.ord-no{flex-shrink:0;font-weight:700;color:var(--t2);font-size:12.5px;min-width:50px}
+.ord-cli{flex:0 1 160px;font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ord-desc{flex:1;color:var(--t2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ord-price{flex-shrink:0;font-weight:700;font-size:14px;color:var(--t1)}
+.ord-del{flex-shrink:0}
+.ord-empty{color:var(--t3);font-size:12.5px;padding:6px 4px}
+.ord-sortlbl{font-size:12px;color:var(--t2);align-self:center}
+.ord-sortsel{max-width:190px}
+.od-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.od-arch{font-size:12px;color:var(--t3)}
+.od-price-card{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-top:14px}
+.odb-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t2);margin-bottom:8px}
+.odb-r{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.odb-r span{color:var(--t2)}
+.odb-total{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:16px;font-weight:800}
+.odb-total b{color:var(--ac)}
+
+/* === pedidos: ajustes filas + desglose === */
+.ord-cyc{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:7px;opacity:.85}
+.ord-cyc:hover{opacity:1;background:rgba(255,255,255,.07)}
+.ord-no{min-width:60px}
+.ord-date{flex-shrink:0;min-width:90px;color:var(--t2);font-size:12.5px}
+.ord-price{min-width:84px;text-align:right}
+.ord-head-row{display:flex;align-items:center;gap:12px;padding:2px 12px 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3)}
+.ord-head-row .ohc{white-space:nowrap}
+.ord-head-row .ord-del{width:26px}
+.odb-grp{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ac);margin:11px 0 4px}
+.odb-sub{border-top:1px dashed var(--border);margin-top:4px;padding-top:6px;font-weight:600}
+.odb-sub span{color:var(--t1)}
+
+/* === utilitarios === */
+.ut-row{display:flex;align-items:flex-end;gap:10px;margin-bottom:10px}
+.ut-main{flex:1;min-width:0}
+.ut-cnt{display:flex;align-items:center;flex-shrink:0}
+.ut-b{width:30px;height:34px;border:1px solid var(--border);background:var(--glass);color:var(--t1);font-size:16px;line-height:1;cursor:pointer}
+.ut-b:first-child{border-radius:9px 0 0 9px}
+.ut-b:last-child{border-radius:0 9px 9px 0}
+.ut-q{width:46px;height:34px;text-align:center;border:1px solid var(--border);border-left:none;border-right:none;background:transparent;color:var(--t1);font:600 13px 'Outfit',sans-serif}
+.ut-total{text-align:right;font-size:13px;color:var(--t2);margin-top:2px}
+.ut-total b{color:var(--t1);margin-left:4px}
+
 </style>
 <style>
 @media(max-width:760px){.side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 14px}}
@@ -250,7 +309,8 @@ var POSTPROCESADO={'No':0,'Sencillo (Lijado ligero)':15,'Medio (Lijado + Ensambl
 var PROBABILIDAD_ERROR={'Exenta (0%)':0,'Mínima (10%)':0.1,'Baja (25%)':0.25,'Media (50%)':0.5,'Alta (100%)':1,'Muy Alta (150%)':1.5,'Crítica (200%)':2};
 var MARKUP={'Normal (230%)':2.3};
 var URGENCIA={'Normal':0,'Urgente':0.5};
-var ORDER_LIFECYCLE=['Presupuesto enviado','Aceptado','En producción','Post-procesado','Listo para entregar','Entregado'];
+var ORDER_STATES=['Pendiente','Activo','Finalizado'];
+var NOTIF_DAYS=7;
 function defData(){return {
   printers:[{name:'Creality K1SE Combo',material_diameter_mm:1.75,price_eur:738,depreciation_time_h:3000,service_costs_life_eur:100,energy_consumption_kwh:0.15}],
   filament_types:[{name:'PLA',price_per_kg:20},{name:'PETG',price_per_kg:18},{name:'PLA SILK/MARBLE',price_per_kg:23},{name:'ASA',price_per_kg:24},{name:'TPU',price_per_kg:21}],
@@ -294,7 +354,7 @@ function setTimeHM(el){ var d=hmToDec(el.value); S.calc_state.tiempo_h=String(d)
 function setOrdTimeHM(id,el){ var d=hmToDec(el.value); setOrdField(id,'horas',String(d)); el.value=decToHM(d); }
 function uploadPdfLogo(el){ var f=el.files&&el.files[0]; if(!f)return; var rd=new FileReader(); rd.onload=function(){ S.global_config.pdf_logo=rd.result; save(); renderCfg(); }; rd.readAsDataURL(f); }
 function pdfBrand(){ var g=S.global_config||{}; return { company:(g.pdf_company||'SILAB3D'), slogan:(g.pdf_slogan||'INNOVACIÓN CAPA A CAPA'), logo:(g.pdf_logo||DEFAULT_LOGO) }; }
-function orderToCalcState(o){ return { impresora:o.impresora, filamento_tipo:o.filamento, filamento_color:o.filamento_color, is_multimaterial:!!o.is_multimaterial, material_breakdown:o.material_breakdown||[], peso_g:o.peso_g, tiempo_h:o.horas, diseno_modelado:o.diseno_modelado, busqueda_modelos:o.busqueda_modelos, eliminacion_soportes:o.eliminacion_soportes, postprocesado:o.postprocesado, probabilidad_error:o.probabilidad_error, markup:o.markup, urgencia_nivel:o.urgencia_nivel, gasto_misc:o.gasto_misc, cantidad:o.cantidad }; }
+function orderToCalcState(o){ return { impresora:o.impresora, filamento_tipo:o.filamento, filamento_color:o.filamento_color, is_multimaterial:!!o.is_multimaterial, material_breakdown:o.material_breakdown||[], peso_g:o.peso_g, tiempo_h:o.horas, diseno_modelado:o.diseno_modelado, busqueda_modelos:o.busqueda_modelos, eliminacion_soportes:o.eliminacion_soportes, postprocesado:o.postprocesado, probabilidad_error:o.probabilidad_error, markup:o.markup, urgencia_nivel:o.urgencia_nivel, gasto_misc:o.gasto_misc, cantidad:o.cantidad, util:o.util }; }
 function compute(c){
   c=c||S.calc_state; var g=S.global_config;
   var printer=S.printers.filter(function(p){return p.name===c.impresora;})[0]||S.printers[0]||{};
@@ -325,8 +385,9 @@ function compute(c){
   var subtotalTM=bruto*markup+bruto*errorRate+resto;
   var precioCalcUrg=subtotalTM*(1+urg);
   var precioMin=num(g.precio_minimo);
+  var accesorios=accessoriesTotal(c);
   var precioSinMisc=roundUpToNickel(Math.max(precioCalcUrg,precioMin));
-  var precio=roundUpToNickel(precioSinMisc+gastoMisc);
+  var precio=roundUpToNickel(precioSinMisc+gastoMisc+accesorios);
   var recargo=subtotalTM*urg;
   var minAplicado=precioSinMisc>precioCalcUrg;
   var cant=Math.max(1,Math.floor(num(c.cantidad)||1));
@@ -337,32 +398,48 @@ function compute(c){
     filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,
     bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,
     markupVal:markupVal,errorVal:errorVal,beneficioNeto:beneficioNeto,
-    precio:precio,precioUnit:roundMoney(precio/cant),cant:cant,precioMin:precioMin,minAplicado:minAplicado};
+    precio:precio,precioUnit:roundMoney(precio/cant),cant:cant,precioMin:precioMin,minAplicado:minAplicado,accesorios:accesorios};
 }
 
 /* ===== extras de la calculadora (colores, compartido, asistente de error) ===== */
 var COLOR_MAP={Negro:'#111827',Blanco:'#F9FAFB',Gris:'#6B7280',Rojo:'#EF4444',Azul:'#3B82F6',Verde:'#10B981',Amarillo:'#FACC15',Naranja:'#F97316',Morado:'#8B5CF6',Rosa:'#EC4899',Transparente:'#D1D5DB'};
 function colorHex(n){return COLOR_MAP[n]||'#9CA3AF';}
-var EST_OPTS=[['Alta — Base ancha y sólida',0],['Media — Esbelto / Contacto medio',0.5],['Baja — Inestable / Mínimo contacto',1.5]];
-var MATDIF_OPTS=[['Fácil — PLA, PETG, TPU',0],['Medio — ASA, ABS, Madera',0.5],['Difícil — Nylon, PC, Glow',1.5]];
-var MULTI_OPTS=[['No — Monocolor / Un solo material',0],['Sí — Cambio de color / AMS / MMU',1.5]];
-var PUESTA_OPTS=[['Probado — Modelo ya impreso',0],['Nuevo — Primer intento / Ajuste',0.5],['Complejo — Requiere I+D / Fallos probables',1.5]];
-function scoreToError(score){ if(score<=0.2)return 'Exenta (0%)'; if(score<=0.6)return 'Mínima (10%)'; if(score<=1.2)return 'Baja (25%)'; if(score<=2.2)return 'Media (50%)'; if(score<=3.5)return 'Alta (100%)'; if(score<=5.0)return 'Muy Alta (150%)'; return 'Crítica (200%)'; }
-var riskIE={est:0,mat:0,multi:0,puesta:0};
-function openRisk(){ riskIE.multi=S.calc_state.is_multimaterial?1.5:0; renderRisk(); }
+var GEO_OPTS=[['Base grande',0],['Base reducida',1]];
+var DIF_OPTS=[['Sencilla (PLA, PETG o similares)',0],['Compleja (todos los demás)',1]];
+var DUR_OPTS=[['Reducida (<5 horas)',0],['Elevada (>5 horas)',1]];
+var IDI_OPTS=[['Modelo fiable',0],['Requiere optimización',1]];
+var RISK_LEVELS=['Baja (25%)','Media (50%)','Alta (100%)','Muy Alta (150%)','Crítica (200%)'];
+function scoreToError(score){ score=Math.max(0,Math.min(4,Math.round(num(score)))); return RISK_LEVELS[score]; }
+var riskIE={geo:0,dif:0,dur:0,idi:0};
+function openRisk(){ var c=S.calc_state; var mat=String(c.filamento_tipo||'').toUpperCase(); riskIE.dif=(/PLA|PETG/.test(mat))?0:1; riskIE.dur=(num(c.tiempo_h)>5)?1:0; riskIE.geo=0; riskIE.idi=0; renderRisk(); }
 function setRisk(f,v){ riskIE[f]=num(v); renderRisk(); }
-function riskScore(){ return riskIE.est+riskIE.mat+riskIE.multi+riskIE.puesta; }
+function riskScore(){ return riskIE.geo+riskIE.dif+riskIE.dur+riskIE.idi; }
 function applyRisk(){ S.calc_state.probabilidad_error=scoreToError(riskScore()); save(); closeModal(); renderCalc(); }
 function selPairs(pairs,cur,field){ return '<select class="selx" onchange="setRisk(\''+field+'\',this.value)">'+pairs.map(function(p){return '<option value="'+p[1]+'"'+(Number(cur)===p[1]?' selected':'')+'>'+esc(p[0])+'</option>';}).join('')+'</select>'; }
 function renderRisk(){
   var sc=riskScore(), sug=scoreToError(sc);
-  openModal('<h3>Asistente de probabilidad de error</h3><div class="h-sub" style="margin-top:-8px">Estima el riesgo de fallo para sugerir el fondo de error adecuado.</div>'
-   +'<div class="fg"><label class="lbl">Estabilidad de la pieza</label>'+selPairs(EST_OPTS,riskIE.est,'est')+'</div>'
-   +'<div class="fg"><label class="lbl">Dificultad del material</label>'+selPairs(MATDIF_OPTS,riskIE.mat,'mat')+'</div>'
-   +'<div class="fg"><label class="lbl">Multicolor / cambios de material</label>'+selPairs(MULTI_OPTS,riskIE.multi,'multi')+'</div>'
-   +'<div class="fg"><label class="lbl">Puesta a punto</label>'+selPairs(PUESTA_OPTS,riskIE.puesta,'puesta')+'</div>'
-   +'<div class="card" style="margin:6px 0 14px;padding:14px;text-align:center"><div style="font-size:10.5px;color:var(--t2);text-transform:uppercase;letter-spacing:.6px">Riesgo estimado</div><div style="font-size:22px;font-weight:800;color:var(--ac);margin-top:4px">'+esc(sug)+'</div><div style="font-size:11px;color:var(--t3)">índice '+sc.toFixed(1)+'</div></div>'
+  openModal('<h3>Asistente de probabilidad de error</h3><div class="h-sub" style="margin-top:-8px">Responde a 4 factores; la probabilidad estimada oscilará del 25% al 200%.</div>'
+   +'<div class="fg"><label class="lbl">Geometría y estabilidad</label>'+selPairs(GEO_OPTS,riskIE.geo,'geo')+'</div>'
+   +'<div class="fg"><label class="lbl">Dificultad técnica</label>'+selPairs(DIF_OPTS,riskIE.dif,'dif')+'</div>'
+   +'<div class="fg"><label class="lbl">Duración individual</label>'+selPairs(DUR_OPTS,riskIE.dur,'dur')+'</div>'
+   +'<div class="fg"><label class="lbl">I+D</label>'+selPairs(IDI_OPTS,riskIE.idi,'idi')+'</div>'
+   +'<div class="card" style="margin:6px 0 14px;padding:14px;text-align:center"><div style="font-size:10.5px;color:var(--t2);text-transform:uppercase;letter-spacing:.6px">Probabilidad estimada</div><div style="font-size:22px;font-weight:800;color:var(--ac);margin-top:4px">'+esc(sug)+'</div></div>'
    +'<div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="applyRisk()">Aplicar sugerencia</button></div>');
+}
+function ensureUtil(c){ if(!c.util||typeof c.util!=='object')c.util={}; var u=c.util; if(!u.simple||typeof u.simple!=='object')u.simple={on:false,qty:0}; if(!u.caja||typeof u.caja!=='object')u.caja={size:'pequena',qty:0}; if(!u.bolsa||typeof u.bolsa!=='object')u.bolsa={size:'pequena',qty:0}; return u; }
+function accessoriesTotal(c){ var u=ensureUtil(c); var t=0; if(u.simple.on)t+=0.30*Math.max(0,num(u.simple.qty)); t+=(u.caja.size==='grande'?2:1)*Math.max(0,num(u.caja.qty)); t+=(u.bolsa.size==='grande'?1.5:0.8)*Math.max(0,num(u.bolsa.qty)); return roundMoney(t); }
+function setUtil(grp,field,v){ var u=ensureUtil(S.calc_state); if(field==='on')v=(v==='si'||v===true); u[grp][field]=v; save(); renderCalc(); }
+function utilStep(grp,d){ var u=ensureUtil(S.calc_state); u[grp].qty=Math.max(0,(num(u[grp].qty)||0)+d); save(); renderCalc(); }
+function utilSetQty(grp,v){ var u=ensureUtil(S.calc_state); u[grp].qty=Math.max(0,Math.floor(num(v))); save(); renderCalc(); }
+function utilHTML(c){ var u=ensureUtil(c);
+  function cnt(grp,q){ return '<div class="ut-cnt"><button type="button" class="ut-b" onclick="utilStep(\''+grp+'\',-1)">−</button><input class="ut-q" type="number" min="0" step="1" value="'+esc(q)+'" onchange="utilSetQty(\''+grp+'\',this.value)"><button type="button" class="ut-b" onclick="utilStep(\''+grp+'\',1)">+</button></div>'; }
+  var simpleSel='<select class="selx" onchange="setUtil(\'simple\',\'on\',this.value)"><option value="no"'+(!u.simple.on?' selected':'')+'>No</option><option value="si"'+(u.simple.on?' selected':'')+'>Sí (0,30 €/ud)</option></select>';
+  var cajaSel='<select class="selx" onchange="setUtil(\'caja\',\'size\',this.value)"><option value="pequena"'+(u.caja.size!=='grande'?' selected':'')+'>Pequeña (1 €/ud)</option><option value="grande"'+(u.caja.size==='grande'?' selected':'')+'>Grande (2 €/ud)</option></select>';
+  var bolsaSel='<select class="selx" onchange="setUtil(\'bolsa\',\'size\',this.value)"><option value="pequena"'+(u.bolsa.size!=='grande'?' selected':'')+'>Pequeña (0,80 €/ud)</option><option value="grande"'+(u.bolsa.size==='grande'?' selected':'')+'>Grande (1,50 €/ud)</option></select>';
+  return '<div class="ut-row"><div class="ut-main"><label class="lbl">Accesorios simples (arandelas y NFC)</label>'+simpleSel+'</div>'+cnt('simple',u.simple.qty)+'</div>'
+    +'<div class="ut-row"><div class="ut-main"><label class="lbl">Caja</label>'+cajaSel+'</div>'+cnt('caja',u.caja.qty)+'</div>'
+    +'<div class="ut-row"><div class="ut-main"><label class="lbl">Bolsa</label>'+bolsaSel+'</div>'+cnt('bolsa',u.bolsa.qty)+'</div>'
+    +'<div class="ut-total">Total accesorios <b>'+eur(accessoriesTotal(c))+'</b></div>';
 }
 function setShared(v){ S.calc_state.is_shared=v; save(); renderCalc(); }
 function setShare(v){ v=Math.max(0,Math.min(100,num(v))); S.calc_state.shared_percent_3dcc=v; S.calc_state.shared_percent_silab3d=100-v; save(); renderCalc(); }
@@ -400,38 +477,35 @@ function renderCalc(){
   document.getElementById('view').innerHTML=
    '<div class="h1">Calculadora de presupuesto</div><div class="h-sub">Réplica fiel de la calculadora de referencia: mismos factores y misma fórmula de precio.</div>'
    +'<div class="grid2"><div>'
-   +'<div class="card"><div class="card-h">Datos del presupuesto</div>'
+   +'<div class="card"><div class="card-h">Información del proyecto</div>'
      +'<div class="fg row"><div><label class="lbl">Empresa</label><select class="selx" onchange="setCalc(\'empresa\',this.value)">'+empresaOpts+'</select></div>'
        +'<div><label class="lbl">Cliente</label><input class="inp" value="'+esc(c.cliente)+'" oninput="setCalc(\'cliente\',this.value)"></div></div>'
      +'<div class="fg row"><div><label class="lbl">Email del cliente</label><input class="inp" value="'+esc(c.cliente_email)+'" oninput="setCalc(\'cliente_email\',this.value)"></div><div><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(c.fecha)+'" onchange="setCalc(\'fecha\',this.value)"></div></div>'
      +'<div class="fg"><label class="lbl">Descripción / proyecto</label><input class="inp" value="'+esc(c.descripcion)+'" oninput="setCalc(\'descripcion\',this.value)"></div>'
    +'</div>'
-   +'<div class="card"><div class="card-h">Impresión</div>'
+   +'<div class="card"><div class="card-h">Parámetros básicos</div>'
      +'<div class="fg"><label class="lbl">Impresora</label><select class="selx" onchange="setCalc(\'impresora\',this.value)">'+printerOpts+'</select></div>'
      +'<label class="chk"><input type="checkbox" '+(c.is_multimaterial?'checked':'')+' onchange="setCalcRe(\'is_multimaterial\',this.checked)"> Multicolor / multimaterial</label>'
      +(c.is_multimaterial?mix
        :'<div class="fg row"><div><label class="lbl">Tipo de filamento</label><select class="selx" onchange="setCalc(\'filamento_tipo\',this.value)">'+ftypeOpts+'</select></div>'
-         +'<div><label class="lbl">Color</label><div style="display:flex;gap:8px;align-items:center"><span class="sw" style="width:20px;height:20px;background:'+colorHex(c.filamento_color)+'"></span><select class="selx" onchange="setCalc(\'filamento_color\',this.value)">'+colorOpts+'</select></div></div></div>')
+         +'<div><label class="lbl">Color</label><input class="inp" list="colorlist" value="'+esc(c.filamento_color)+'" placeholder="Escribe o elige un color" onchange="setCalc(\'filamento_color\',this.value)"><datalist id="colorlist">'+colorOpts+'</datalist></div></div>')
      +'<div class="fg row"><div><label class="lbl">Peso estimado</label><div class="suffix"><input class="inp" type="number" step="1" value="'+esc(c.peso_g)+'" '+(c.is_multimaterial?'disabled':'')+' oninput="setCalc(\'peso_g\',this.value)"><span class="u">g</span></div></div>'
        +'<div><label class="lbl">Tiempo (hh:mm)</label><div class="suffix"><input class="inp" type="text" inputmode="numeric" placeholder="hh:mm" value="'+esc(decToHM(c.tiempo_h))+'" onchange="setTimeHM(this)"><span class="u">h:m</span></div></div></div>'
+     +'<div class="fg row"><div><label class="lbl">Unidades (cantidad)</label><input class="inp" type="number" step="1" min="1" value="'+esc(c.cantidad)+'" oninput="setCalc(\'cantidad\',this.value)"></div><div></div></div>'
    +'</div>'
-   +'<div class="card"><div class="card-h">Mano de obra</div>'
+   +'<div class="card"><div class="card-h">Parámetros complementarios</div>'
      +'<div class="fg"><label class="lbl">Diseño / modelado</label><select class="selx" onchange="setCalc(\'diseno_modelado\',this.value)">'+optList(Object.keys(DISENO_MODELADO),c.diseno_modelado)+'</select></div>'
      +'<div class="fg"><label class="lbl">Búsqueda de modelos</label><select class="selx" onchange="setCalc(\'busqueda_modelos\',this.value)">'+optList(Object.keys(BUSQUEDA_MODELOS),c.busqueda_modelos)+'</select></div>'
      +'<div class="fg"><label class="lbl">Eliminación de soportes</label><select class="selx" onchange="setCalc(\'eliminacion_soportes\',this.value)">'+optList(Object.keys(ELIMINACION_SOPORTES),c.eliminacion_soportes)+'</select></div>'
      +'<div class="fg"><label class="lbl">Post-procesado</label><select class="selx" onchange="setCalc(\'postprocesado\',this.value)">'+optList(Object.keys(POSTPROCESADO),c.postprocesado)+'</select></div>'
-   +'</div>'
-   +'<div class="card"><div class="card-h">Tarifa</div>'
      +'<div class="fg row"><div><label class="lbl">Probabilidad de error</label><select class="selx" onchange="setCalc(\'probabilidad_error\',this.value)">'+optList(Object.keys(PROBABILIDAD_ERROR),c.probabilidad_error)+'</select><button class="btn ghost" style="padding:6px 10px;margin-top:6px;font-size:12px;width:100%" onclick="openRisk()">⚙ Asistente de riesgo</button></div>'
        +'<div><label class="lbl">Markup</label><select class="selx" onchange="setCalc(\'markup\',this.value)">'+optList(Object.keys(MARKUP),c.markup)+'</select></div></div>'
      +'<div class="fg row"><div><label class="lbl">Urgencia</label><select class="selx" onchange="setCalc(\'urgencia_nivel\',this.value)">'+optList(Object.keys(URGENCIA),c.urgencia_nivel)+'</select></div>'
-       +'<div><label class="lbl">Cantidad</label><input class="inp" type="number" step="1" min="1" value="'+esc(c.cantidad)+'" oninput="setCalc(\'cantidad\',this.value)"></div></div>'
-     +'<div class="fg"><label class="lbl">Gastos extra / misc.</label><div class="suffix"><input class="inp" type="number" step="0.01" value="'+esc(c.gasto_misc)+'" oninput="setCalc(\'gasto_misc\',this.value)"><span class="u">'+esc(u)+'</span></div></div>'
+       +'<div><label class="lbl">Gastos extra / misc.</label><div class="suffix"><input class="inp" type="number" step="0.01" value="'+esc(c.gasto_misc)+'" oninput="setCalc(\'gasto_misc\',this.value)"><span class="u">'+esc(u)+'</span></div></div></div>'
    +'</div>'
-   +'<div class="card"><div class="card-h">Reparto del pedido</div>'
-     +'<label class="chk"><input type="checkbox" '+(c.is_shared?'checked':'')+' onchange="setShared(this.checked)"> Pedido compartido (3DCC / SILAB3D)</label>'
-     +(c.is_shared?'<div class="fg" style="margin-top:8px"><label class="lbl">Reparto — <span id="shlbl">3DCC '+c.shared_percent_3dcc+'% \u00b7 SILAB3D '+(100-c.shared_percent_3dcc)+'%</span></label><input type="range" min="0" max="100" value="'+c.shared_percent_3dcc+'" style="width:100%;accent-color:var(--ac)" oninput="document.getElementById(\'shlbl\').textContent=\'3DCC \'+this.value+\'% \u00b7 SILAB3D \'+(100-this.value)+\'%\'" onchange="setShare(this.value)"></div>':'')
+   +'<div class="card"><div class="card-h">Utilitarios</div>'+utilHTML(c)
    +'</div>'
+   
    +'</div><div><div class="card res" id="resultBox">'+resultHTML()+'</div></div></div>';
 }
 function resultHTML(){
@@ -442,11 +516,11 @@ function resultHTML(){
     +'<div class="total">'+fmt(r.precio)+'</div>'
     +'<div class="total-u">'+fmt(r.precioUnit)+' / unidad</div>'
     +'<div class="brk">'
-    +'<div class="grp">Coste bruto (materia prima + máquina)</div>'
+    +'<div class="grp">Parámetros básicos</div>'
     +row('Filamento',r.filamento)+row('Electricidad',r.electricidad)+row('Deterioro impresora',r.deterioro)
     +'<div class="r sub"><span>Subtotal bruto</span><b>'+fmt(r.bruto)+'</b></div>';
   if(r.resto>0){
-    html+='<div class="grp">Complementos (mano de obra)</div>'
+    html+='<div class="grp">Parámetros complementarios</div>'
       +row('Diseño &amp; modelado',r.diseno)+row('Búsqueda modelos',r.busqueda)+row('Elim. soportes',r.soportes)+row('Postprocesado',r.postproc)
       +'<div class="r sub"><span>Subtotal complementos</span><b>'+fmt(r.resto)+'</b></div>';
   }
@@ -455,69 +529,102 @@ function resultHTML(){
   if(r.errorVal>0)html+='<div class="r"><span>Fondo error ('+esc(S.calc_state.probabilidad_error)+')</span><b>+'+fmt(r.errorVal)+'</b></div>';
   if(r.recargo>0)html+='<div class="r"><span>Plus urgencia</span><b>+'+fmt(r.recargo)+'</b></div>';
   if(r.gastoMisc>0)html+='<div class="r"><span>Extras / misc.</span><b>+'+fmt(r.gastoMisc)+'</b></div>';
-  html+='<div class="r sub"><span>Beneficio neto</span><b>'+fmt(r.beneficioNeto)+'</b></div>'
-    +'<div class="sep"></div>'
+  html+='<div class="r sub"><span>Beneficio neto</span><b>'+fmt(r.beneficioNeto)+'</b></div>';
+  if(r.accesorios>0)html+='<div class="grp">Utilitarios</div><div class="r"><span>Accesorios</span><b>+'+fmt(r.accesorios)+'</b></div>';
+  html+='<div class="sep"></div>'
     +'<div class="r big"><span>PVP final</span><b>'+fmt(r.precio)+'</b></div>'
     +'</div>';
   if(r.minAplicado)html+='<span class="pill">Tarifa mínima aplicada ('+fmt(r.precioMin)+')</span>';
   html+='<button class="btn" style="width:100%;margin-top:16px" onclick="saveAsOrder()">Guardar como pedido</button>';
+  html+='<div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" onclick="calcPDF(\'cliente\')">⬇ PDF cliente</button><button class="btn ghost" style="flex:1" onclick="calcPDF(\'empresa\')">⬇ PDF interno</button></div>';
   return html;
 }
 
 /* ===== pedidos ===== */
 function todayISO(){return new Date().toISOString().slice(0,10);}
-function estColor(e){return {'Presupuesto enviado':'#7A8099','Aceptado':'#4D9FFF','En producción':'#F4B740','Post-procesado':'#B87CFF','Listo para entregar':'#00DDB8','Entregado':'#34D399'}[e]||'#7A8099';}
-function saveAsOrder(){ var r=compute(),c=S.calc_state; S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Presupuesto enviado',diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); save(); go('ord'); }
-function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:'P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Presupuesto enviado',payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:''}); save(); renderOrders(); }
+function estColor(e){return {'Pendiente':'#F4B740','Activo':'#4D9FFF','Finalizado':'#34D399'}[ordState({estado:e})]||'#F4B740';}
+function toTs(v){ var t=Date.parse(v); return isNaN(t)?0:t; }
+function ordState(o){ var e=o&&o.estado; if(e==='Pendiente'||e==='Activo'||e==='Finalizado')return e; if(e==='Entregado')return 'Finalizado'; if(e==null||e===''||e==='Presupuesto enviado')return 'Pendiente'; return 'Activo'; }
+function randomOrderNo(){ var used={}; (S.orders||[]).forEach(function(o){if(o&&o.number)used[String(o.number)]=1;}); var n; do{ n=String(Math.floor(10000+Math.random()*90000)); }while(used[n]); return n; }
+function migrateOrders(){ if(!Array.isArray(S.orders))return; S.orders.forEach(function(o){ if(!o)return; o.estado=ordState(o); o.archived=!!o.archived; if(!o.number)o.number=randomOrderNo(); if(!o.status_updated_at)o.status_updated_at=toTs(o.created_at)||Date.now(); if(!o.notif_snooze_until)o.notif_snooze_until=0; }); }
+function ordStaleList(){ var now=Date.now(); return (S.orders||[]).filter(function(o){ if(!o||o.archived)return false; if(ordState(o)==='Finalizado')return false; var last=o.status_updated_at||toTs(o.created_at)||0; var snz=o.notif_snooze_until||0; return (now-last)>NOTIF_DAYS*864e5 && now>snz; }); }
+function notifReject(id){ var o=getOrder(id); if(!o)return; o.archived=true; save(); renderOrders(); }
+function notifProd(id){ var o=getOrder(id); if(!o)return; o.estado='Activo'; o.status_updated_at=Date.now(); o.notif_snooze_until=Date.now()+NOTIF_DAYS*864e5; if(!o.material_contabilizado)consumeStock(o); save(); renderOrders(); }
+function notifFinish(id){ var o=getOrder(id); if(!o)return; o.estado='Finalizado'; o.status_updated_at=Date.now(); save(); renderOrders(); }
+function cycleOrderState(id){ var o=getOrder(id); if(!o)return; var i=ORDER_STATES.indexOf(ordState(o)); var ne=ORDER_STATES[(i+1)%ORDER_STATES.length]; setOrderEstado(id,ne); renderOrders(); }
+function saveAsOrder(){ var r=compute(),c=S.calc_state; S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); save(); go('ord'); }
+function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:''}); save(); renderOrders(); }
 function setOrd(id,f,v){ var o=S.orders.filter(function(x){return x.id===id;})[0]; if(!o)return; if(f==='precio_final'||f==='importe_pagado')v=num(v); o[f]=v; if(f==='cliente'||f==='cliente_email')ensureClient(o); if(f==='importe_pagado'||f==='precio_final')autoArchive(o); save(); updateOrdBadge(); var pe=document.getElementById('pend-'+id); if(pe){var p=num(o.precio_final)-num(o.importe_pagado); pe.innerHTML=p>0.005?'<span class="pend">'+eur(p)+'</span>':'<span class="paid">Pagado</span>';} }
 function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
 var ordQ='';
 function ordSearch(v){ ordQ=(v||'').toLowerCase(); renderOrders(); }
-function activeOrders(){ return S.orders.filter(function(o){return !o.archived && o.estado!=='Entregado';}); }
+function activeOrders(){ return S.orders.filter(function(o){return !o.archived && ordState(o)!=='Finalizado';}); }
 function updateOrdBadge(){ var b=document.getElementById('ordBadge'); if(b){var n=activeOrders().length; b.innerHTML=n?'<span class="badge-amber">'+n+'</span>':'';} }
-var ordPayFilter='';
-function ordPayF(v){ ordPayFilter=(ordPayFilter===v?'':v); renderOrders(); }
-function ordPayStatus(o){ var pd=num(o.importe_pagado), tt=num(o.precio_final); if(pd<=0)return 'Pendiente'; if(pd>=tt&&tt>0)return 'Pagado'; return 'Parcial'; }
-function ordVisible(){ var base=S.orders.filter(function(o){return showArch? o.archived : !o.archived;}); base=base.filter(function(o){ if(!ordQ)return true; return (((o.number||'')+' '+(o.cliente||'')+' '+(o.descripcion||'')).toLowerCase().indexOf(ordQ)>=0); }); if(ordPayFilter)base=base.filter(function(o){return ordPayStatus(o)===ordPayFilter;}); return base; }
-function ordCSV(){ var list=ordVisible(); if(!list.length){toast3('No hay pedidos','#FF6B8A');return;} var head=['Nº','Fecha','Cliente','Estado','Material','Precio','Pagado','Pendiente']; var rows=list.map(function(o){return [o.number||'',o.fecha||'',('"'+String(o.cliente||'').replace(/"/g,'""')+'"'),o.estado||'',o.filamento||'',num(o.precio_final).toFixed(2),num(o.importe_pagado).toFixed(2),(num(o.precio_final)-num(o.importe_pagado)).toFixed(2)];}); var csv=[head.join(',')].concat(rows.map(function(r){return r.join(',');})).join('\n'); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}); var aE=document.createElement('a'); aE.href=URL.createObjectURL(blob); aE.download='pedidos.csv'; aE.click(); }
+var ordSort='fecha';
+function setOrdSort(v){ ordSort=v||'fecha'; renderOrders(); }
+function ordSortApply(list){ var l=list.slice();
+  if(ordSort==='cliente') l.sort(function(a,b){return String(a.cliente||'').toLowerCase().localeCompare(String(b.cliente||'').toLowerCase());});
+  else if(ordSort==='numero') l.sort(function(a,b){return (num(a.number)||0)-(num(b.number)||0);});
+  else if(ordSort==='precio') l.sort(function(a,b){return num(b.precio_final)-num(a.precio_final);});
+  else l.sort(function(a,b){return (toTs(b.created_at)||0)-(toTs(a.created_at)||0);});
+  return l;
+}
+function ordVisible(){ var base=S.orders.filter(function(o){return showArch? o.archived : !o.archived;}); base=base.filter(function(o){ if(!ordQ)return true; return (((o.number||'')+' '+(o.cliente||'')+' '+(o.descripcion||'')).toLowerCase().indexOf(ordQ)>=0); }); return ordSortApply(base); }
+function ordCSV(){ var list=ordVisible(); if(!list.length){toast3('No hay pedidos','#FF6B8A');return;} var head=['No','Fecha','Cliente','Estado','Material','Precio']; var rows=list.map(function(o){return [o.number||'',o.fecha||'',('"'+String(o.cliente||'').replace(/"/g,'""')+'"'),ordState(o),o.filamento||'',num(o.precio_final).toFixed(2)];}); var csv=[head.join(',')].concat(rows.map(function(r){return r.join(',');})).join('\n'); var blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}); var aE=document.createElement('a'); aE.href=URL.createObjectURL(blob); aE.download='pedidos.csv'; aE.click(); }
+function ordRowHTML(o){ var col=estColor(o.estado), st=ordState(o); var I=o.id; var fch=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
+  return '<div class="ord-row" onclick="openOrder(\''+I+'\')">'
+    +'<button class="ord-cyc" style="color:'+col+'" title="'+st+' — clic para reclasificar" onclick="event.stopPropagation();cycleOrderState(\''+I+'\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>'
+    +'<span class="ord-no">#'+esc(o.number||'')+'</span>'
+    +'<span class="ord-date">'+esc(fch)+'</span>'
+    +'<span class="ord-cli">'+esc(o.cliente||'—')+'</span>'
+    +'<span class="ord-desc">'+esc(o.descripcion||'')+'</span>'
+    +'<span class="ord-price">'+eur(o.precio_final)+'</span>'
+    +'<button class="del ord-del" title="Eliminar" onclick="event.stopPropagation();delOrder(\''+I+'\')">✕</button>'
+    +'</div>';
+}
+function ordSectionHTML(title,col,arr){ var rows=arr.length? arr.map(ordRowHTML).join('') : '<div class="ord-empty">Sin pedidos</div>';
+  return '<div class="ord-sec"><div class="ord-sec-h"><span class="ord-dot" style="background:'+col+'"></span>'+title+'<span class="ord-cnt">'+arr.length+'</span></div><div class="ord-list">'+rows+'</div></div>';
+}
 function renderOrders(){
-  var ACC=['Aceptado','En producción','Post-procesado','Listo para entregar','Entregado'];
-  var acc=S.orders.filter(function(o){return ACC.indexOf(o.estado)>=0;});
-  var facturado=acc.reduce(function(s,o){return s+num(o.precio_final);},0);
-  var cobrado=acc.reduce(function(s,o){return s+num(o.importe_pagado);},0);
-  var pendKpi=acc.reduce(function(s,o){var d=num(o.precio_final)-num(o.importe_pagado);return s+(d>0?d:0);},0);
+  var all=S.orders.filter(function(o){return !o.archived;});
+  var totales=all.length;
+  var finalizados=all.filter(function(o){return ordState(o)==='Finalizado';}).length;
+  var activos=all.filter(function(o){return ordState(o)!=='Finalizado';}).length;
+  var pendientes=all.filter(function(o){return ordState(o)==='Pendiente';}).length;
   var list=ordVisible();
-  var rows=list.map(function(o){
-    var pend=num(o.precio_final)-num(o.importe_pagado);
-    var estOpts=ORDER_LIFECYCLE.map(function(e){return '<option'+(o.estado===e?' selected':'')+'>'+e+'</option>';}).join('');
-    return '<tr><td style="white-space:nowrap;cursor:pointer" onclick="openOrder(\''+o.id+'\')"><b style="color:var(--ac)">'+esc(o.number)+'</b></td>'
-      +'<td><input value="'+esc(o.cliente)+'" placeholder="Cliente" onchange="setOrd(\''+o.id+'\',\'cliente\',this.value)"></td>'
-      +'<td><input value="'+esc(o.descripcion)+'" placeholder="Descripción" onchange="setOrd(\''+o.id+'\',\'descripcion\',this.value)"></td>'
-      +'<td><select class="est-sel" style="border-left:3px solid '+estColor(o.estado)+'" onchange="setOrderEstado(\''+o.id+'\',this.value);renderOrders()">'+estOpts+'</select></td>'
-      +'<td style="text-align:right"><input type="number" step="0.01" style="text-align:right" value="'+esc(o.precio_final)+'" onchange="setOrd(\''+o.id+'\',\'precio_final\',this.value)"></td>'
-      +'<td style="text-align:right"><input type="number" step="0.01" style="text-align:right" value="'+esc(o.importe_pagado)+'" onchange="setOrd(\''+o.id+'\',\'importe_pagado\',this.value)"></td>'
-      +'<td style="text-align:right;white-space:nowrap">'+(pend>0.005?'<span class="pend">'+eur(pend)+'</span>':'<span class="paid">Pagado</span>')+'</td>'
-      +'<td style="text-align:right;white-space:nowrap"><button class="btn ghost" style="padding:4px 9px" onclick="openOrder(\''+o.id+'\')">Detalle</button> <button class="del" onclick="delOrder(\''+o.id+'\')">✕</button></td></tr>';
-  }).join('');
   var nArch=S.orders.filter(function(o){return o.archived;}).length;
-  var kpi=function(l,v,c){return '<div class="kpi" style="text-align:center;padding:12px"><div class="k-l">'+l+'</div><div class="k-v" style="font-size:17px'+(c?(';color:'+c):'')+'">'+v+'</div></div>';};
+  var kpi=function(l,v,c){return '<div class="kpi" style="text-align:center;padding:12px"><div class="k-l">'+l+'</div><div class="k-v" style="font-size:20px'+(c?(';color:'+c):'')+'">'+v+'</div></div>';};
+  var stale=ordStaleList(), notif='';
+  if(stale.length){ notif='<div class="ord-notifs">'+stale.map(function(o){ var I=o.id;
+    return '<div class="ord-notif"><div class="onx"><b>'+esc(o.cliente||('Pedido #'+(o.number||'')))+'</b> · '+esc(o.descripcion||'sin descripción')+'<div class="onx-sub">Sin cambios de estado en '+NOTIF_DAYS+'+ días — actualiza su estado.</div></div>'
+      +'<div class="onx-acts"><button class="onb rej" onclick="notifReject(\''+I+'\')">Rechazado</button><button class="onb prod" onclick="notifProd(\''+I+'\')">En producción</button><button class="onb fin" onclick="notifFinish(\''+I+'\')">Finalizado</button></div></div>';
+  }).join('')+'</div>'; }
+  var body;
+  if(showArch){ body='<div class="card">'+(list.length?'<div class="ord-list">'+list.map(ordRowHTML).join('')+'</div>':'<div class="empty">No hay pedidos archivados.</div>')+'</div>'; }
+  else if(!list.length){ body='<div class="empty">No hay pedidos. Crea uno o guarda un cálculo desde la Calculadora.</div>'; }
+  else {
+    var ohead='<div class="ord-head-row"><span class="ord-cyc"></span><span class="ohc ord-no">Código</span><span class="ohc ord-date">Fecha</span><span class="ohc ord-cli">Cliente</span><span class="ohc ord-desc">Descripción</span><span class="ohc ord-price">Precio</span><span class="ord-del"></span></div>';
+    body=ohead+ordSectionHTML('Pendientes','#F4B740',list.filter(function(o){return ordState(o)==='Pendiente';}))
+        +ordSectionHTML('Activos','#4D9FFF',list.filter(function(o){return ordState(o)==='Activo';}))
+        +ordSectionHTML('Finalizados','#34D399',list.filter(function(o){return ordState(o)==='Finalizado';}));
+  }
+  var sortSel='<select class="selx ord-sortsel" onchange="setOrdSort(this.value)">'+[['fecha','Fecha de creación'],['cliente','Cliente'],['numero','Nº de pedido'],['precio','Precio']].map(function(p){return '<option value="'+p[0]+'"'+(ordSort===p[0]?' selected':'')+'>'+p[1]+'</option>';}).join('')+'</select>';
   document.getElementById('view').innerHTML=
-    '<div class="h1">Pedidos</div><div class="h-sub">Toca el número o «Detalle» para gestionar cobros, estado, recálculo, PDF y más.</div>'
+    '<div class="h1">Pedidos</div><div class="h-sub">Clasifica cada pedido con su botón de estado. Pulsa un pedido para ver y editar todos sus parámetros.</div>'
+    +notif
     +'<div class="kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">'
-      +kpi('Activos / total', acc.length+' / '+S.orders.length)
-      +kpi('Facturado', eur(facturado),'#4D9FFF')
-      +kpi('Cobrado', eur(cobrado),'#34D399')
-      +kpi('Pendiente', eur(pendKpi),'#F4B740')
+      +kpi('Pedidos totales', totales)
+      +kpi('Pedidos activos', activos,'#4D9FFF')
+      +kpi('Pedidos pendientes', pendientes,'#F4B740')
+      +kpi('Pedidos finalizados', finalizados,'#34D399')
     +'</div>'
     +'<div class="ord-toolbar" style="flex-wrap:wrap;gap:8px"><input class="inp ord-search" placeholder="Buscar nº, cliente o descripción…" value="'+esc(ordQ)+'" oninput="ordSearch(this.value)">'
-      +'<span class="pf">'+['Pendiente','Parcial','Pagado'].map(function(s){return '<button class="pf-b'+(ordPayFilter===s?' on':'')+'" onclick="ordPayF(\''+s+'\')">'+s+'</button>';}).join('')+'</span>'
+      +'<label class="ord-sortlbl">Ordenar por</label>'+sortSel
       +'<span class="sp"></span>'
       +'<button class="btn ghost" onclick="ordCSV()">⬇ CSV</button>'
       +(nArch?'<button class="btn ghost" onclick="toggleArch()">'+(showArch?'← Activos':'Archivados ('+nArch+')')+'</button>':'')
       +'<button class="btn" onclick="newOrder()">＋ Nuevo</button></div>'
-    +'<div class="card">'
-    +(list.length?'<table class="t"><thead><tr><th>Nº</th><th>Cliente</th><th>Descripción</th><th>Estado</th><th style="text-align:right">Precio</th><th style="text-align:right">Pagado</th><th style="text-align:right">Pendiente</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>':'<div class="empty">'+(showArch?'No hay pedidos archivados.':(ordPayFilter?'Ningún pedido en este estado de cobro.':'No hay pedidos. Crea uno o guarda un cálculo desde la Calculadora.'))+'</div>')
-    +'</div>';
+    +body;
   updateOrdBadge();
 }
 
@@ -825,46 +932,72 @@ function consumeStock(o){
   o.material_contabilizado=true;
   if(low.length) toast3('Stock bajo → '+low.join(' · '),'#F4B740'); else toast3('Material descontado del inventario','#34D399');
 }
-function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; if(estado==='Aceptado' && !o.material_contabilizado) consumeStock(o); autoArchive(o); save(); updateOrdBadge(); }
+function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; o.status_updated_at=Date.now(); o.notif_snooze_until=0; if(estado==='Activo' && !o.material_contabilizado) consumeStock(o); save(); updateOrdBadge(); }
 function openOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); }
 function reopenOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); renderOrders(); }
+function setOrdParam(id,f,v){ var o=getOrder(id); if(!o)return; if(['peso_g','horas','cantidad','gasto_misc'].indexOf(f)>=0)v=num(v); o[f]=v; if(f==='filamento')o.is_multimaterial=false; try{ var r=compute(orderToCalcState(o)); o.precio_final=r.precio; o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); }catch(e){} save(); reopenOrder(id); }
+function setOrdParamTime(id,el){ var d=hmToDec(el.value); setOrdParam(id,'horas',String(d)); }
+function setOrdMeta(id,f,v){ var o=getOrder(id); if(!o)return; o[f]=v; if(f==='cliente'||f==='cliente_email')ensureClient(o); save(); }
+function _odBrk(r){
+  function row(l,v,p){return '<div class="odb-r"><span>'+l+'</span><b>'+((p&&(v||0)>0)?'+':'')+eur(v)+'</b></div>';}
+  function grp(l){return '<div class="odb-grp">'+l+'</div>';}
+  function sub(l,v){return '<div class="odb-r odb-sub"><span>'+l+'</span><b>'+eur(v)+'</b></div>';}
+  var h=grp('Parámetros básicos')+row('Filamento',r.filamento)+row('Electricidad',r.electricidad)+row('Deterioro impresora',r.deterioro)+sub('Subtotal básico',r.bruto);
+  if(r.resto>0){ h+=grp('Parámetros complementarios')+row('Diseño y modelado',r.diseno)+row('Búsqueda de modelos',r.busqueda)+row('Eliminación de soportes',r.soportes)+row('Post-procesado',r.postproc)+sub('Subtotal complementarios',r.resto); }
+  h+=grp('Márgenes y beneficio')+row('Markup (×'+r.markup.toFixed(1)+')',r.markupVal,true);
+  if(r.errorVal>0)h+=row('Fondo de error',r.errorVal,true);
+  if(r.recargo>0)h+=row('Plus urgencia',r.recargo,true);
+  if(r.gastoMisc>0)h+=row('Extras / misc.',r.gastoMisc,true);
+  h+=sub('Beneficio neto',r.beneficioNeto);
+  if(r.accesorios>0)h+=grp('Utilitarios')+row('Accesorios',r.accesorios);
+  return h;
+}
 function orderModalHTML(o){
-  var pend=num(o.precio_final)-num(o.importe_pagado);
-  var estOpts=ORDER_LIFECYCLE.map(function(e){return '<option'+(o.estado===e?' selected':'')+'>'+e+'</option>';}).join('');
-  var payRows=(o.payment_history||[]).length
-    ? '<table class="t" style="margin-bottom:8px"><tbody>'+o.payment_history.map(function(p){return '<tr><td style="font-size:12px;color:var(--t2)">'+fmtD(p.created_at)+'</td><td style="font-size:12px">'+esc(p.method||'')+'</td><td style="text-align:right;font-weight:600">'+eur(p.amount)+'</td><td style="text-align:right"><button class="del" onclick="removePayment(\''+o.id+'\',\''+p.id+'\')">✕</button></td></tr>';}).join('')+'</tbody></table>'
-    : '<div class="note" style="margin-bottom:8px">Sin cobros registrados.</div>';
-  var I=o.id;
-  return '<h3>Pedido '+esc(o.number||'')+(o.archived?' · <span style="color:var(--t3);font-size:13px">archivado</span>':'')+'</h3>'
-    +'<div class="od-grid"><div><label class="lbl">Estado</label><select class="selx" style="border-left:3px solid '+estColor(o.estado)+'" onchange="setOrderEstado(\''+I+'\',this.value);reopenOrder(\''+I+'\')">'+estOpts+'</select></div>'
-      +'<div><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(o.fecha)+'" onchange="setOrdField(\''+I+'\',\'fecha\',this.value)"></div></div>'
-    +'<div class="od-grid"><div><label class="lbl">Cliente</label><input class="inp" value="'+esc(o.cliente)+'" onchange="setOrdField(\''+I+'\',\'cliente\',this.value)"></div>'
-      +'<div><label class="lbl">Email</label><input class="inp" value="'+esc(o.cliente_email)+'" onchange="setOrdField(\''+I+'\',\'cliente_email\',this.value)"></div></div>'
-    +'<div class="fg"><label class="lbl">Descripción</label><input class="inp" value="'+esc(o.descripcion)+'" onchange="setOrdField(\''+I+'\',\'descripcion\',this.value)"></div>'
-    +'<div class="od-grid"><div><label class="lbl">Material</label><input class="inp" value="'+esc(o.filamento)+'" onchange="setOrdField(\''+I+'\',\'filamento\',this.value)"></div>'
-      +'<div><label class="lbl">Color</label><input class="inp" value="'+esc(o.filamento_color)+'" onchange="setOrdField(\''+I+'\',\'filamento_color\',this.value)"></div></div>'
-    +'<div class="od-grid3"><div><label class="lbl">Peso (g)</label><input class="inp" type="number" value="'+esc(o.peso_g)+'" onchange="setOrdField(\''+I+'\',\'peso_g\',this.value)"></div>'
-      +'<div><label class="lbl">Tiempo (hh:mm)</label><input class="inp" type="text" inputmode="numeric" placeholder="hh:mm" value="'+esc(decToHM(o.horas))+'" onchange="setOrdTimeHM(\''+I+'\',this)"></div>'
-      +'<div><label class="lbl">Cantidad</label><input class="inp" type="number" value="'+esc(o.cantidad)+'" onchange="setOrdField(\''+I+'\',\'cantidad\',this.value)"></div></div>'
-    +'<div class="od-grid"><div><label class="lbl">Precio final (€)</label><input class="inp" type="number" step="0.01" value="'+esc(o.precio_final)+'" onchange="setOrdField(\''+I+'\',\'precio_final\',this.value)"></div>'
-      +'<div><label class="lbl">Pendiente</label><div class="od-pend">'+(pend>0.005?'<span class="pend">'+eur(pend)+'</span>':'<span class="paid">Pagado</span>')+'</div></div></div>'
-    +(o.material_contabilizado?'<div class="od-flag">✓ Material ya descontado del inventario</div>':'')
-    +'<div class="od-sec">Cobros</div>'+payRows
-    +'<div class="od-payform"><input class="inp" id="pay-amt" type="number" step="0.01" placeholder="Importe €"><input class="inp" id="pay-met" placeholder="Método (Bizum, efectivo…)"><button class="btn" onclick="addPayment(\''+I+'\')">Registrar cobro</button></div>'
-    +'<div class="od-sec">Acciones</div>'
+  var I=o.id, st=ordState(o), col=estColor(o.estado);
+  var r=null; try{ r=compute(orderToCalcState(o)); }catch(e){}
+  var printerOpts=S.printers.map(function(p){return '<option'+(o.impresora===p.name?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');
+  var ftnames=S.filament_types.map(function(f){return f.name;}); if(o.filamento && ftnames.indexOf(o.filamento)<0)ftnames=[o.filamento].concat(ftnames);
+  var ftypeOpts=ftnames.map(function(n){return '<option'+(o.filamento===n?' selected':'')+'>'+esc(n)+'</option>';}).join('');
+  var cnames=Object.keys(COLOR_MAP); if(o.filamento_color && cnames.indexOf(o.filamento_color)<0)cnames=[o.filamento_color].concat(cnames);
+  var colorOpts=cnames.map(function(n){return '<option>'+esc(n)+'</option>';}).join('');
+  return '<div class="od-head"><h3 style="margin:0">Pedido #'+esc(o.number||'')+'</h3>'
+      +'<button class="ord-state" style="background:'+col+'22;color:'+col+';border-color:'+col+'66" title="Clic para cambiar de estado" onclick="cycleOrderState(\''+I+'\');reopenOrder(\''+I+'\')">'+st+'</button>'
+      +(o.archived?'<span class="od-arch">archivado</span>':'')+'</div>'
+    +'<div class="od-sec">Información del proyecto</div>'
+    +'<div class="od-grid"><div><label class="lbl">Cliente</label><input class="inp" value="'+esc(o.cliente)+'" onchange="setOrdMeta(\''+I+'\',\'cliente\',this.value)"></div>'
+      +'<div><label class="lbl">Email</label><input class="inp" value="'+esc(o.cliente_email)+'" onchange="setOrdMeta(\''+I+'\',\'cliente_email\',this.value)"></div></div>'
+    +'<div class="od-grid"><div><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(o.fecha)+'" onchange="setOrdMeta(\''+I+'\',\'fecha\',this.value)"></div>'
+      +'<div><label class="lbl">Nº de pedido</label><input class="inp" value="'+esc(o.number||'')+'" disabled></div></div>'
+    +'<div class="fg"><label class="lbl">Descripción</label><input class="inp" value="'+esc(o.descripcion)+'" onchange="setOrdMeta(\''+I+'\',\'descripcion\',this.value)"></div>'
+    +'<div class="od-sec">Parámetros básicos</div>'
+    +'<div class="od-grid"><div><label class="lbl">Impresora</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'impresora\',this.value)">'+printerOpts+'</select></div>'
+      +'<div><label class="lbl">Material</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'filamento\',this.value)">'+ftypeOpts+'</select></div></div>'
+    +'<div class="od-grid3"><div><label class="lbl">Color</label><input class="inp" list="ocolorlist" value="'+esc(o.filamento_color)+'" onchange="setOrdMeta(\''+I+'\',\'filamento_color\',this.value)"><datalist id="ocolorlist">'+colorOpts+'</datalist></div>'
+      +'<div><label class="lbl">Peso (g)</label><input class="inp" type="number" value="'+esc(o.peso_g)+'" onchange="setOrdParam(\''+I+'\',\'peso_g\',this.value)"></div>'
+      +'<div><label class="lbl">Tiempo (hh:mm)</label><input class="inp" type="text" inputmode="numeric" placeholder="hh:mm" value="'+esc(decToHM(o.horas))+'" onchange="setOrdParamTime(\''+I+'\',this)"></div></div>'
+    +'<div class="od-sec">Parámetros complementarios</div>'
+    +'<div class="od-grid"><div><label class="lbl">Diseño / modelado</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'diseno_modelado\',this.value)">'+optList(Object.keys(DISENO_MODELADO),o.diseno_modelado)+'</select></div>'
+      +'<div><label class="lbl">Búsqueda de modelos</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'busqueda_modelos\',this.value)">'+optList(Object.keys(BUSQUEDA_MODELOS),o.busqueda_modelos)+'</select></div></div>'
+    +'<div class="od-grid"><div><label class="lbl">Eliminación de soportes</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'eliminacion_soportes\',this.value)">'+optList(Object.keys(ELIMINACION_SOPORTES),o.eliminacion_soportes)+'</select></div>'
+      +'<div><label class="lbl">Post-procesado</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'postprocesado\',this.value)">'+optList(Object.keys(POSTPROCESADO),o.postprocesado)+'</select></div></div>'
+    +'<div class="od-grid3"><div><label class="lbl">Probabilidad de error</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'probabilidad_error\',this.value)">'+optList(Object.keys(PROBABILIDAD_ERROR),o.probabilidad_error)+'</select></div>'
+      +'<div><label class="lbl">Markup</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'markup\',this.value)">'+optList(Object.keys(MARKUP),o.markup)+'</select></div>'
+      +'<div><label class="lbl">Urgencia</label><select class="selx" onchange="setOrdParam(\''+I+'\',\'urgencia_nivel\',this.value)">'+optList(Object.keys(URGENCIA),o.urgencia_nivel)+'</select></div></div>'
+    +'<div class="od-grid"><div><label class="lbl">Cantidad</label><input class="inp" type="number" min="1" value="'+esc(o.cantidad||1)+'" onchange="setOrdParam(\''+I+'\',\'cantidad\',this.value)"></div>'
+      +'<div><label class="lbl">Gastos extra / misc. (€)</label><input class="inp" type="number" step="0.01" value="'+esc(o.gasto_misc||0)+'" onchange="setOrdParam(\''+I+'\',\'gasto_misc\',this.value)"></div></div>'
+    +'<div class="od-price-card"><div class="odb-h">Desglose de precio</div>'+(r?_odBrk(r):'')+'<div class="odb-total"><span>PVP final</span><b>'+eur(o.precio_final)+'</b></div></div>'
     +'<div class="od-actions">'
-      +'<button class="btn ghost" onclick="loadOrderToCalc(\''+I+'\')">↺ Recalcular</button>'
+      +'<button class="btn ghost" onclick="orderPDF(\''+I+'\',\'cliente\')">⬇ PDF cliente</button>'
+      +'<button class="btn ghost" onclick="orderPDF(\''+I+'\',\'empresa\')">⬇ PDF interno</button>'
+      +'<button class="btn ghost" onclick="loadOrderToCalc(\''+I+'\')">↺ Abrir en calculadora</button>'
       +'<button class="btn ghost" onclick="dupOrder(\''+I+'\')">⧉ Duplicar</button>'
       +'<button class="btn ghost" onclick="toggleArchive(\''+I+'\')">'+(o.archived?'♻ Restaurar':'🗄 Archivar')+'</button>'
-      +'<button class="btn ghost" onclick="orderPDF(\''+I+'\',\'cliente\')">⬇ PDF cliente</button>'+'<button class="btn ghost" onclick="orderPDF(\''+I+'\',\'empresa\')">⬇ PDF interno</button>'+
-      +'<label class="btn ghost" style="cursor:pointer">📎 Imagen<input type="file" accept="image/*" style="display:none" onchange="attachImage(\''+I+'\',this)"></label>'
-      +'<span class="od-err">Errores: <button class="od-step" onclick="setErr(\''+I+'\',-1)">−</button> <b>'+num(o.repeticiones_error)+'</b> <button class="od-step" onclick="setErr(\''+I+'\',1)">+</button></span>'
     +'</div>'
-    +(o.imagen?'<img class="od-img" src="'+o.imagen+'" alt="imagen del pedido">':'')
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">'
       +'<button class="btn" style="background:rgba(255,107,138,.12);color:#FF6B8A;border:1px solid rgba(255,107,138,.4)" onclick="delOrderM(\''+I+'\')">Eliminar</button>'
       +'<button class="btn ghost" onclick="closeModal()">Cerrar</button></div>';
 }
+
 function delOrderM(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); closeModal(); renderOrders(); }
 function addPayment(id){ var o=getOrder(id); if(!o)return; var ae=document.getElementById('pay-amt'), me=document.getElementById('pay-met'); var amt=num(ae&&ae.value); var met=((me&&me.value)||'').trim(); if(amt<=0){toast3('Indica un importe válido','#FF6B8A');return;} o.payment_history=o.payment_history||[]; o.payment_history.unshift({id:uid(),created_at:new Date().toISOString(),amount:roundMoney(amt),method:met||'Manual'}); o.importe_pagado=roundMoney(num(o.importe_pagado)+amt); o.payment_method=met||o.payment_method||''; autoArchive(o); save(); reopenOrder(id); }
 function removePayment(id,pid){ var o=getOrder(id); if(!o)return; var p=(o.payment_history||[]).filter(function(x){return x.id===pid;})[0]; if(!p)return; o.importe_pagado=roundMoney(Math.max(0,num(o.importe_pagado)-num(p.amount))); o.payment_history=o.payment_history.filter(function(x){return x.id!==pid;}); save(); reopenOrder(id); }
@@ -877,7 +1010,7 @@ function loadOrderToCalc(id){ var o=getOrder(id); if(!o)return; var c=S.calc_sta
   c.probabilidad_error=o.probabilidad_error||'Baja (25%)'; c.markup=o.markup||'Normal (230%)'; c.urgencia_nivel=o.urgencia_nivel||'Normal'; c.gasto_misc=num(o.gasto_misc);
   c.is_shared=!!o.is_shared; if(o.shared_split){c.shared_percent_3dcc=num(o.shared_split['3DCC']);c.shared_percent_silab3d=num(o.shared_split['SILAB3D']);}
   save(); closeModal(); go('calc'); toast3('Parámetros cargados en la calculadora','#4D9FFF'); }
-function dupOrder(id){ var o=getOrder(id); if(!o)return; S.oseq=(S.oseq||0)+1; var c=JSON.parse(JSON.stringify(o)); c.id=uid(); c.number='P-'+new Date().getFullYear()+'-'+String(S.oseq).padStart(3,'0'); c.created_at=new Date().toISOString(); c.estado='Presupuesto enviado'; c.importe_pagado=0; c.payment_history=[]; c.material_contabilizado=false; c.archived=false; S.orders.unshift(c); save(); closeModal(); renderOrders(); toast3('Pedido duplicado','#34D399'); }
+function dupOrder(id){ var o=getOrder(id); if(!o)return; S.oseq=(S.oseq||0)+1; var c=JSON.parse(JSON.stringify(o)); c.id=uid(); c.number=randomOrderNo(); c.created_at=new Date().toISOString(); c.estado='Pendiente'; c.status_updated_at=Date.now(); c.notif_snooze_until=0; c.importe_pagado=0; c.payment_history=[]; c.material_contabilizado=false; c.archived=false; S.orders.unshift(c); save(); closeModal(); renderOrders(); toast3('Pedido duplicado','#34D399'); }
 function toggleArchive(id){ var o=getOrder(id); if(!o)return; o.archived=!o.archived; save(); reopenOrder(id); }
 function setErr(id,d){ var o=getOrder(id); if(!o)return; o.repeticiones_error=Math.max(0,num(o.repeticiones_error)+d); save(); reopenOrder(id); }
 function attachImage(id,input){ var o=getOrder(id); if(!o||!input.files||!input.files[0])return; var f=input.files[0]; if(f.size>1600000){toast3('Imagen demasiado grande (máx ~1,5 MB)','#FF6B8A');return;} var rd=new FileReader(); rd.onload=function(){ o.imagen=rd.result; save(); reopenOrder(id); }; rd.readAsDataURL(f); }
@@ -968,60 +1101,67 @@ function _dataCard(doc,x,y,w,rows){
   return y+h;
 }
 function renderTicketPage(doc,o,kind){
-  var internal=(kind==='empresa'); var ac=internal?[124,92,231]:[22,127,111];
+  var internal=(kind==='empresa'); var ac=[22,127,111];
   var br=pdfBrand(); var M=16, W=210;
   var cliente=o.cliente||'—', desc=o.descripcion||'—', fecha=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
   var r=null; try{ r=compute(orderToCalcState(o)); }catch(e){}
   var tiempo=decToHM(o.horas)+' h';
   var material=((r&&r.filName)||o.filamento||'—')+((o.filamento_color&&!(r&&r.filColor==='Multicolor'))?' ('+o.filamento_color+')':'');
-  var y;
+  var precio=(Number(o.precio_final)||(r?r.precio:0));
+  // ===== cabecera compartida =====
+  try{ doc.addImage(br.logo,'JPEG',M,11,22,22); }catch(e){}
+  doc.setTextColor(20,22,28); doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.text(br.company,M+28,20);
+  doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.text(String(br.slogan).toUpperCase(),M+28,26);
+  doc.setTextColor(120,120,130); doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+  doc.text((internal?'Ticket interno':'Presupuesto')+' para '+cliente+'  ·  '+fecha,M+28,32);
+  if(internal){ doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.text('USO INTERNO',W-M,15,{align:'right'}); }
+  doc.setDrawColor(ac[0],ac[1],ac[2]); doc.setLineWidth(0.8); doc.line(M,39,W-M,39);
+  var y=49;
+  // ===== Datos del Proyecto (compartido) =====
+  doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Datos del Proyecto',M,y); y+=3;
+  y=_dataCard(doc,M,y+2,W-2*M,[
+    ['Cliente',cliente,'Descripción',desc],
+    ['Material',material,'Peso estimado',(o.peso_g||0)+' g'],
+    ['Tiempo de impresora',tiempo,'Entrega',(o.urgencia_nivel&&o.urgencia_nivel!=='Normal')?o.urgencia_nivel:'Plazo estándar']
+  ]);
+  // ===== caja PRECIO FINAL (compartido) =====
+  var py=y+9, bw=W-2*M, bh=22;
+  doc.setFillColor(245,247,250); doc.rect(M,py,bw,bh,'F'); doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(M,py,2.6,bh,'F');
+  doc.setTextColor(120,124,134); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.text('PRECIO FINAL',M+9,py+8);
+  doc.setTextColor(20,22,28); doc.setFont('helvetica','bold'); doc.setFontSize(23); doc.text(precio.toFixed(2)+' €',M+9,py+18);
+  if(r&&r.cant>1){ doc.setTextColor(120,124,134); doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(r.precioUnit.toFixed(2)+' € / ud  ·  '+r.cant+' uds',W-M-4,py+18,{align:'right'}); }
+  y=py+bh+11;
   if(internal){
-    doc.setFillColor(15,20,38); doc.rect(0,0,W,34,'F');
-    try{ doc.addImage(br.logo,'JPEG',M,7,20,20); }catch(e){}
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text(br.company+'  ·  Desglose Interno',M+26,16);
-    doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(155,162,178); doc.text([fecha,cliente,desc].filter(Boolean).join('   ·   '),M+26,23);
-    doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(0,34,W,1.6,'F'); y=46;
-  } else {
-    try{ doc.addImage(br.logo,'JPEG',M,11,22,22); }catch(e){}
-    doc.setTextColor(20,22,28); doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.text(br.company,M+28,20);
-    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.text(String(br.slogan).toUpperCase(),M+28,26);
-    doc.setTextColor(120,120,130); doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.text('Presupuesto para '+cliente+'  ·  '+fecha,M+28,32);
-    doc.setDrawColor(ac[0],ac[1],ac[2]); doc.setLineWidth(0.8); doc.line(M,39,W-M,39); y=49;
-  }
-  doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12);
-  doc.text(internal?'Datos Operativos':'Datos del Proyecto',M,y); y+=3;
-  var rows = internal ? [
-      ['Cliente',cliente,'Descripción',desc],
-      ['Impresora',(r&&r.printer&&r.printer.name)||o.impresora||'—','Material',material],
-      ['Precio material',(r?r.pricekg.toFixed(2):'0.00')+' €/kg','Peso',(o.peso_g||0)+' g'],
-      ['Tiempo',tiempo,'Urgencia',o.urgencia_nivel||'Normal']
-    ] : [
-      ['Cliente',cliente,'Descripción',desc],
-      ['Material',material,'Peso estimado',(o.peso_g||0)+' g'],
-      ['Tiempo de impresora',tiempo,'Entrega',(o.urgencia_nivel&&o.urgencia_nivel!=='Normal')?o.urgencia_nivel:'Plazo estándar']
-    ];
-  y=_dataCard(doc,M,y+2,W-2*M,rows);
-  if(internal){
+    // ===== Parámetros del presupuesto =====
+    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Parámetros del presupuesto',M,y); y+=3;
+    y=_dataCard(doc,M,y+2,W-2*M,[
+      ['Impresora',(r&&r.printer&&r.printer.name)||o.impresora||'—','Precio material',(r?r.pricekg.toFixed(2):'0.00')+' €/kg'],
+      ['Diseño / modelado',o.diseno_modelado||'—','Búsqueda modelos',o.busqueda_modelos||'—'],
+      ['Elim. soportes',o.eliminacion_soportes||'—','Postprocesado',o.postprocesado||'—'],
+      ['Probabilidad error',o.probabilidad_error||'—','Markup',(o.markup||'—')+(r?'  (×'+r.markup.toFixed(1)+')':'')],
+      ['Urgencia',o.urgencia_nivel||'Normal','Cantidad',(o.cantidad||1)+' ud.']
+    ]);
+    // ===== Desglose de Costes =====
     doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Desglose de Costes',M,y+9);
-    var items=[];
-    if(r){ var base=r.filamento+r.electricidad+r.diseno+r.busqueda+r.soportes+r.deterioro+r.postproc+(r.gastoMisc||0);
-      var add=function(nm,v){ items.push([nm,(v||0).toFixed(2)+' €', base>0?((v||0)/base*100).toFixed(1)+'%':'0.0%']); };
-      add('Filamento',r.filamento); add('Electricidad',r.electricidad); add('Diseño & Modelado',r.diseno);
-      add('Búsqueda modelos',r.busqueda); add('Elim. soportes',r.soportes); add('Deterioro imp.',r.deterioro); add('Postprocesado',r.postproc);
-      if(r.gastoMisc>0) add('Gastos varios',r.gastoMisc);
+    var body=[];
+    if(r){
+      var bf=function(s){return {content:s,styles:{fontStyle:'bold'}};};
+      var push=function(nm,v){ body.push([nm,(v||0).toFixed(2)+' €']); };
+      push('Filamento',r.filamento); push('Electricidad',r.electricidad); push('Deterioro impresora',r.deterioro);
+      body.push([bf('Subtotal bruto'),bf(r.bruto.toFixed(2)+' €')]);
+      if(r.resto>0){ push('Diseño & modelado',r.diseno); push('Búsqueda modelos',r.busqueda); push('Elim. soportes',r.soportes); push('Postprocesado',r.postproc); }
+      push('Markup (×'+r.markup.toFixed(1)+')',r.markupVal);
+      if(r.errorVal>0) push('Fondo error ('+(o.probabilidad_error||'')+')',r.errorVal);
+      if(r.recargo>0) push('Plus urgencia',r.recargo);
+      if(r.gastoMisc>0) push('Extras / misc.',r.gastoMisc);
+      if(r.accesorios>0) push('Utilitarios (accesorios)',r.accesorios);
     }
-    doc.autoTable({ startY:y+13, head:[['Concepto','Importe','% Total']], body:items, theme:'grid',
-      headStyles:{fillColor:[15,20,38],textColor:255,fontStyle:'bold'}, columnStyles:{1:{halign:'right'},2:{halign:'right'}},
-      styles:{fontSize:10,cellPadding:3,lineColor:[235,237,242]}, alternateRowStyles:{fillColor:[248,249,251]}, margin:{left:M,right:M} });
-    var fy=(doc.lastAutoTable?doc.lastAutoTable.finalY:y)+9;
-    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(28,30,38); doc.text('Precio final (con margen y urgencia):',M,fy);
-    doc.setTextColor(ac[0],ac[1],ac[2]); doc.text(((Number(o.precio_final)||(r?r.precio:0))).toFixed(2)+' €',W-M,fy,{align:'right'});
+    doc.autoTable({ startY:y+13, head:[['Concepto','Importe']], body:body, theme:'grid',
+      headStyles:{fillColor:ac,textColor:255,fontStyle:'bold'}, columnStyles:{1:{halign:'right'}},
+      styles:{fontSize:9.5,cellPadding:2.6,lineColor:[235,237,242]}, alternateRowStyles:{fillColor:[248,249,251]}, margin:{left:M,right:M},
+      foot:[[{content:'PVP FINAL',styles:{fontStyle:'bold',textColor:[20,22,28]}},{content:precio.toFixed(2)+' €',styles:{fontStyle:'bold',halign:'right',textColor:ac}}]],
+      footStyles:{fillColor:[238,243,242]} });
   } else {
-    var py=y+7, bw=W-2*M, bh=22;
-    doc.setFillColor(245,247,250); doc.rect(M,py,bw,bh,'F'); doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(M,py,2.6,bh,'F');
-    doc.setTextColor(120,124,134); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.text('PRECIO FINAL',M+9,py+8);
-    doc.setTextColor(20,22,28); doc.setFont('helvetica','bold'); doc.setFontSize(23); doc.text(((Number(o.precio_final)||(r?r.precio:0))).toFixed(2)+' €',M+9,py+18);
-    y=py+bh+11;
     doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Condiciones',M,y);
     var conds=['El coste indicado es el precio final del proyecto, incluyendo todos los gastos necesarios para llevarlo a cabo.','Para plazos estándar, el tiempo de entrega dependerá de la complejidad del proyecto y la cola de trabajo en curso.','Se requiere el abono del 50% del presupuesto como anticipo para iniciar la producción.','Nuestros términos y condiciones generales están disponibles en nuestra web y se aplican a este presupuesto.'];
     doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(70,72,82); var cy=y+7;
@@ -1030,6 +1170,8 @@ function renderTicketPage(doc,o,kind){
   doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(165,168,176);
   doc.text(br.company+'   ·   '+(o.number||''),M,289);
 }
+function calcStateToOrder(){ var c=S.calc_state, r=compute(); return {number:'PRESUPUESTO',fecha:(c.fecha||todayISO()),cliente:c.cliente,cliente_email:c.cliente_email,descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{}))}; }
+function calcPDF(kind){ if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var o=calcStateToOrder(); var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,kind==='empresa'?'empresa':'cliente'); var nm=(o.cliente||'presupuesto').replace(/[^\w\-]+/g,'_'); doc.save('presupuesto-'+nm+'-'+(kind==='empresa'?'interno':'cliente')+'.pdf'); }
 function orderPDF(id,kind){ var o=getOrder(id); if(!o)return; if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,kind==='empresa'?'empresa':'cliente'); doc.save((o.number||'pedido')+'-'+(kind==='empresa'?'taller':'cliente')+'.pdf'); }
 function exportBothPdf(id){ var o=getOrder(id); if(!o)return; if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,'cliente'); doc.addPage(); renderTicketPage(doc,o,'empresa'); doc.save((o.number||'pedido')+'.pdf'); }
 
