@@ -56,16 +56,16 @@ async function listOrders() {
   await Promise.all(orders.map(async o => { try { o.order_steps = await _steps(o.id); } catch (e) { o.order_steps = []; } }));
   return orders;
 }
-async function createOrder({ customer_email, customer_name, description }) {
-  const order_code = genCode();
-  await setDoc(doc(db, "orders", order_code), {
-    order_code,
+async function createOrder({ customer_email, customer_name, description, order_code }) {
+  const code = order_code || genCode();
+  await setDoc(doc(db, "orders", code), {
+    order_code: code,
     customer_email: customer_email || "",
     customer_name:  customer_name  || "",
     description:    description     || "",
     created_at: serverTimestamp()
   });
-  return { id: order_code, order_code, customer_email, customer_name, description };
+  return { id: code, order_code: code, customer_email, customer_name, description };
 }
 async function getOrderById(code) { return getOrderByCode(code); }
 async function getOrderByCode(code) {

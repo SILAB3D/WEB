@@ -621,6 +621,31 @@ body.dp-authed #authGate{display:none}
 .pf-empty{padding:22px;text-align:center;color:var(--t2);font-size:13px}
 .pf-open{margin:8px;height:38px;border:none;border-radius:10px;background:linear-gradient(120deg,var(--orange),#E0622E);color:#fff;font:600 13px 'Outfit',sans-serif;cursor:pointer;flex-shrink:0}
 .pf-open:hover{filter:brightness(1.05)}
+/* ── Widget de pedidos activos de 3DTracker ── */
+.tk-fab{position:fixed;left:20px;bottom:20px;z-index:250;height:46px;padding:0 15px 0 13px;border-radius:24px;border:1px solid rgba(47,191,113,.4);background:rgba(47,191,113,.12);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--t1);display:none;align-items:center;gap:9px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.35);font:600 13px 'Outfit',sans-serif}
+.tk-fab:hover{border-color:#2FBF71;background:rgba(47,191,113,.18)}
+.tk-fab .tk-ic{color:#2FBF71;display:flex}
+.tk-badge{min-width:21px;height:21px;padding:0 6px;border-radius:11px;background:#2FBF71;color:#052014;font:700 12px 'Outfit',sans-serif;display:flex;align-items:center;justify-content:center}
+.tk-panel{position:fixed;left:20px;bottom:74px;z-index:251;width:344px;max-width:calc(100vw - 40px);max-height:min(62vh,480px);display:none;flex-direction:column;background:#0F111C;border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.6);overflow:hidden}
+.tk-panel.open{display:flex}
+[data-theme=light] .tk-panel{background:#fff}
+.tk-ph{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);font:700 13px 'Outfit',sans-serif;color:var(--t1)}
+.tk-x{border:none;background:transparent;color:var(--t2);font-size:16px;cursor:pointer;line-height:1}
+.tk-x:hover{color:var(--t1)}
+.tk-list{overflow-y:auto;padding:6px}
+.tk-item{padding:10px 11px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;gap:5px}
+.tk-item:hover{background:var(--glass)}
+.tk-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tk-code{font-size:13px;font-weight:700;color:var(--t1)}
+.tk-pct{font-size:12px;font-weight:700;color:#2FBF71;flex-shrink:0}
+.tk-bar{height:5px;background:rgba(255,255,255,.09);border-radius:3px;overflow:hidden}
+[data-theme=light] .tk-bar{background:rgba(0,0,0,.08)}
+.tk-bar>span{display:block;height:100%;background:#2FBF71;border-radius:3px;transition:width .3s}
+.tk-meta{font-size:11.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk-stage{font-size:11.5px;color:var(--t1);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk-empty{padding:22px;text-align:center;color:var(--t2);font-size:13px}
+.tk-open{margin:8px;height:38px;border:none;border-radius:10px;background:linear-gradient(120deg,#2FBF71,#1F9E5A);color:#fff;font:600 13px 'Outfit',sans-serif;cursor:pointer;flex-shrink:0}
+.tk-open:hover{filter:brightness(1.05)}
 </style>
 <style>
 @media(max-width:640px){.shell{padding:32px 16px;gap:26px}.grid{gap:10px;max-width:100%}.card{width:100%}.logo-text{font-size:34px}}
@@ -911,6 +936,18 @@ body.dp-authed #authGate{display:none}
   <button class="pf-open" onclick="launchApp('flow');togglePfPanel()">Abrir PrintFlow</button>
 </div>
 
+<!-- Widget: pedidos activos (3DTracker) -->
+<div id="tkFab" class="tk-fab" onclick="toggleTkPanel(event)" title="Pedidos activos en 3DTracker">
+  <span class="tk-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg></span>
+  <span>Pedidos activos</span>
+  <span class="tk-badge" id="tkBadge">0</span>
+</div>
+<div id="tkPanel" class="tk-panel">
+  <div class="tk-ph"><span>Pedidos activos</span><button class="tk-x" onclick="toggleTkPanel(event)" title="Cerrar">&times;</button></div>
+  <div class="tk-list" id="tkList"></div>
+  <button class="tk-open" onclick="launchApp('tracker');toggleTkPanel()">Abrir 3DTracker</button>
+</div>
+
 <!-- App viewer (iframe) -->
 <div class="viewer" id="viewer">
   <div class="vbar">
@@ -1021,7 +1058,7 @@ const APPS = {
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260630-1930';
+const APP_VER = '20260701-2355';
 
 function launchApp(id) {
   const a = APPS[id];
@@ -1052,6 +1089,8 @@ document.addEventListener('keydown', e => {
 <script>
 window.dpOnTheme=function(t){var f=document.getElementById('v-frame');if(f&&f.contentWindow){try{f.contentWindow.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}}};
 window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='home'){closeViewer();}});
+function openTrackerOrder(code){ try{ sessionStorage.setItem('dp3-admin-shared', JSON.stringify({orderId:code,orderCode:code})); }catch(e){} var _t=(document.documentElement.getAttribute('data-theme')||'dark'); var frame=document.getElementById('v-frame'); frame.src='apps/3dtracker/admin/order-detail.html?dptheme='+_t+'&v='+APP_VER; document.getElementById('viewer').classList.add('open'); }
+window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='openTrackerOrder'&&d.code){openTrackerOrder(d.code);}});
 </script>
 <script>
 (function(){
@@ -1300,6 +1339,65 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
         pending=compute(S); render();
         if(typeof window.pfOnPending==='function'){ try{ window.pfOnPending(pending); }catch(e){} }
       });
+    }); }catch(e){}
+  }
+  var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ start(); } else if(w<12000){ w+=200; setTimeout(c,200); } })();
+})();
+</script>
+<script>
+/* Widget de pedidos activos de 3DTracker (lee la coleccion 'orders' en vivo desde Firebase) */
+(function(){
+  var orders=[];
+  function escH(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function stageOf(o){
+    var st=Array.isArray(o.order_steps)?o.order_steps.slice():[];
+    st.sort(function(a,b){return (a.order_index||0)-(b.order_index||0);});
+    if(!st.length) return {stage:'Sin etapas',done:0,total:0,pct:0};
+    var done=st.filter(function(x){return x.status==='done';}).length;
+    var cur=st.filter(function(x){return x.status!=='done';})[0];
+    return {stage:cur?(cur.step_name||'Etapa'):'Completado',done:done,total:st.length,pct:Math.round(done/st.length*100)};
+  }
+  function activeList(){
+    return (orders||[]).filter(function(o){
+      var st=Array.isArray(o.order_steps)?o.order_steps:[];
+      var total=st.length, done=st.filter(function(x){return x.status==='done';}).length;
+      return !(total>0 && done===total);
+    });
+  }
+  function render(){
+    var fab=document.getElementById('tkFab'), badge=document.getElementById('tkBadge'), list=document.getElementById('tkList');
+    var act=activeList(), n=act.length;
+    if(badge) badge.textContent = n>99?'99+':String(n);
+    if(fab) fab.style.display = n>0?'flex':'none';
+    if(n===0){ var pan=document.getElementById('tkPanel'); if(pan)pan.classList.remove('open'); }
+    if(list){
+      if(!n){ list.innerHTML='<div class="tk-empty">No hay pedidos activos.</div>'; }
+      else {
+        list.innerHTML=act.slice(0,80).map(function(o){ var s=stageOf(o); var meta=escH(o.customer_name||'—')+(o.description?(' · '+escH(o.description)):'');
+          return '<div class="tk-item" onclick="launchApp(\'tracker\');toggleTkPanel()">'
+            +'<div class="tk-top"><span class="tk-code">'+escH(o.order_code||o.id||'')+'</span><span class="tk-pct">'+s.pct+'%</span></div>'
+            +'<div class="tk-bar"><span style="width:'+s.pct+'%"></span></div>'
+            +'<div class="tk-meta">'+meta+'</div>'
+            +'<div class="tk-stage">Etapa: '+escH(s.stage)+' ('+s.done+'/'+s.total+')</div>'
+            +'</div>';
+        }).join('');
+      }
+    }
+    window.__tkActiveCount=n;
+  }
+  window.toggleTkPanel=function(ev){ if(ev&&ev.stopPropagation)ev.stopPropagation(); var p=document.getElementById('tkPanel'); if(p)p.classList.toggle('open'); };
+  document.addEventListener('click',function(e){ var pan=document.getElementById('tkPanel'),fab=document.getElementById('tkFab'); if(!pan||!pan.classList.contains('open'))return; if(pan.contains(e.target)||(fab&&fab.contains(e.target)))return; pan.classList.remove('open'); });
+  var busy=false;
+  function refresh(){ if(busy)return; if(!(window.DPCloud&&window.DPCloud.listOrders))return; busy=true;
+    window.DPCloud.listOrders().then(function(list){ orders=Array.isArray(list)?list:[]; render(); }).catch(function(){}).then(function(){ busy=false; }); }
+  window.dpTrackerRefresh=refresh;
+  function start(){
+    try{ window.DPCloud.onAuth(function(u){
+      if(!u||!u.email)return;
+      if(window.__tkSub)return; window.__tkSub=true;
+      refresh();
+      if(window.DPCloud.watchOrders){ try{ window.DPCloud.watchOrders(function(){ refresh(); }); }catch(e){} }
+      setInterval(function(){ if(!document.hidden) refresh(); }, 30000);
     }); }catch(e){}
   }
   var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ start(); } else if(w<12000){ w+=200; setTimeout(c,200); } })();

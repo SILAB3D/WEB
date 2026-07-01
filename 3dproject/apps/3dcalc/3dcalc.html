@@ -46,8 +46,8 @@ body.side-off .side{margin-left:-231px}
 .nav a.on{background:rgba(0,221,184,.1);color:var(--ac);border:1px solid rgba(0,221,184,.22)}
 .nav a svg{flex-shrink:0}
 .side-note{margin-top:auto;font-size:11px;color:var(--t3);line-height:1.5;padding:12px 4px 0;border-top:1px solid var(--border)}
-.main{flex:1;overflow-y:auto;padding:24px;display:flex;justify-content:center}
-.wrap{width:100%;max-width:960px}
+.main{flex:1;overflow-y:auto;padding:24px 24px 52px;display:block}
+.wrap{width:100%;max-width:960px;margin:0 auto}
 .h1{font-family:'DM Serif Display',serif;font-style:italic;font-size:26px;margin-bottom:4px}
 .h-sub{font-size:13.5px;color:var(--t2);margin-bottom:22px}
 /* form */
@@ -186,7 +186,7 @@ option{background-color:#161922;color:#E8EBF4}
 .ord-row:hover{border-color:var(--ac);background:rgba(139,124,255,.06)}
 .ord-state{flex-shrink:0;border:1px solid;border-radius:8px;padding:4px 10px;font:700 11px 'Outfit',sans-serif;cursor:pointer;text-transform:uppercase;letter-spacing:.3px}
 .ord-no{flex-shrink:0;font-weight:700;color:var(--t2);font-size:12.5px;min-width:50px}
-.ord-cli{flex:0 1 160px;font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ord-cli{flex:0 0 150px;font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ord-desc{flex:1;color:var(--t2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .ord-price{flex-shrink:0;font-weight:700;font-size:14px;color:var(--t1)}
 .ord-del{flex-shrink:0}
@@ -205,9 +205,9 @@ option{background-color:#161922;color:#E8EBF4}
 /* === pedidos: ajustes filas + desglose === */
 .ord-cyc{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:7px;opacity:.85}
 .ord-cyc:hover{opacity:1;background:rgba(255,255,255,.07)}
-.ord-no{min-width:60px}
-.ord-date{flex-shrink:0;min-width:90px;color:var(--t2);font-size:12.5px}
-.ord-price{min-width:84px;text-align:right}
+.ord-no{width:96px;min-width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ord-date{flex-shrink:0;width:92px;min-width:92px;color:var(--t2);font-size:12.5px}
+.ord-price{width:92px;min-width:92px;text-align:right}
 .ord-head-row{display:flex;align-items:center;gap:12px;padding:2px 12px 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3)}
 .ord-head-row .ohc{white-space:nowrap}
 .ord-head-row .ord-del{width:26px}
@@ -222,13 +222,89 @@ option{background-color:#161922;color:#E8EBF4}
 .ut-b{width:30px;height:34px;border:1px solid var(--border);background:var(--glass);color:var(--t1);font-size:16px;line-height:1;cursor:pointer}
 .ut-b:first-child{border-radius:9px 0 0 9px}
 .ut-b:last-child{border-radius:0 9px 9px 0}
-.ut-q{width:46px;height:34px;text-align:center;border:1px solid var(--border);border-left:none;border-right:none;background:transparent;color:var(--t1);font:600 13px 'Outfit',sans-serif}
+.ut-q{width:46px;height:34px;text-align:center;border:1px solid var(--border);border-left:none;border-right:none;background:transparent;color:var(--t1);font:600 13px 'Outfit',sans-serif;padding:0;-moz-appearance:textfield;appearance:textfield}
+.ut-q::-webkit-outer-spin-button,.ut-q::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .ut-total{text-align:right;font-size:13px;color:var(--t2);margin-top:2px}
 .ut-total b{color:var(--t1);margin-left:4px}
 
+/* === configuración: fórmula + precios informativos === */
+.fx-grid{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.fx{display:flex;gap:14px;align-items:baseline;padding:10px 14px;border-bottom:1px solid var(--border)}
+.fx:last-child{border-bottom:none}
+.fx-k{flex:0 0 130px;font-weight:700;font-size:12.5px;color:var(--ac)}
+.fx-v{flex:1;font-size:12.5px;color:var(--t2);line-height:1.5}
+.cfg-ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.cfg-ro-b{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.cfg-ro-h{font-size:12px;font-weight:700;padding:9px 12px;background:var(--glass);color:var(--t1);border-bottom:1px solid var(--border)}
+.cfg-ro-b table.ro{width:100%;border-collapse:collapse}
+.cfg-ro-b table.ro td{padding:7px 12px;font-size:12.5px;border-bottom:1px solid var(--border);color:var(--t2)}
+.cfg-ro-b table.ro tr:last-child td{border-bottom:none}
+.cfg-ro-b table.ro td:last-child{color:var(--t1);font-weight:600}
+.cfg-ro-tag{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle}
+
+/* === plantillas: editor de PDF, frases, presets, tokens === */
+.tpl-sub{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t2);margin:16px 0 8px}
+.tpl-cond-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.tpl-cond{flex:1;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--t1);font:400 13px 'Outfit',sans-serif;padding:9px 11px;outline:none;resize:vertical;line-height:1.5}
+.tpl-cond:focus{border-color:var(--ac)}
+.tpl-actions{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+.tpl-chips{display:flex;flex-wrap:wrap;gap:6px}
+.tpl-chip{border:1px solid var(--border);background:var(--glass);color:var(--ac);border-radius:8px;padding:5px 9px;font:600 12px 'Outfit',sans-serif;cursor:pointer}
+.tpl-chip:hover{border-color:var(--ac);background:rgba(139,124,255,.12)}
+.tpl-pp-list{display:flex;flex-direction:column;gap:6px}
+.tpl-pp{display:flex;gap:6px;align-items:center}
+.tpl-pp-a{flex:1;text-align:left;border:1px solid var(--border);background:var(--glass);color:var(--t1);border-radius:9px;padding:8px 11px;font:500 13px 'Outfit',sans-serif;cursor:pointer}
+.tpl-pp-a span{color:var(--t2);font-size:11.5px}
+.tpl-pp-a:hover{border-color:var(--ac)}
+.tpl-pp-d{width:30px;height:34px;border:1px solid var(--border);background:transparent;color:var(--t3);border-radius:9px;cursor:pointer;flex-shrink:0}
+.tpl-pp-d:hover{color:#FF6B8A;border-color:#FF6B8A}
+.tpl-pp-empty{color:var(--t3);font-size:12.5px;padding:4px 2px}
+
+/* === dashboard resumen === */
+.dash-hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:22px 26px}
+.dash-ring{width:148px;height:148px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.dash-ring-in{width:110px;height:110px;border-radius:50%;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dash-ring-pct{font-size:30px;font-weight:800;color:var(--t1);line-height:1}
+.dash-ring-lb{font-size:11.5px;color:var(--t2);margin-top:3px}
+.dash-tiles{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;min-width:220px}
+.dtile{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 17px}
+.dtile-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:11px}
+.dtile-v{font-size:24px;font-weight:800;color:var(--t1);line-height:1.1}
+.dtile-of{font-size:14px;font-weight:600;color:var(--t3)}
+.dtile-l{font-size:12.5px;color:var(--t2);margin-top:6px;display:flex;flex-direction:column;line-height:1.35}
+.dtile-l span{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+
+/* === precios complementarios (mejorado) === */
+.pp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.pp-grp{border:1px solid var(--border);border-radius:13px;overflow:hidden;background:var(--glass)}
+.pp-grp-h{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ac);padding:10px 13px;border-bottom:1px solid var(--border)}
+.pp-ro{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 13px;border-bottom:1px solid var(--border)}
+.pp-ro:last-child{border-bottom:none}
+.pp-ro-n{font-size:12.5px;color:var(--t2)}
+.pp-ro-p{font-size:12.5px;font-weight:700;color:var(--t1);background:rgba(139,124,255,.12);border:1px solid rgba(139,124,255,.28);border-radius:20px;padding:2px 10px;white-space:nowrap}
+.pp-ro-p.free{color:var(--t3);background:transparent;border-color:var(--border);font-weight:600}
+/* === diagrama de la formula === */
+.fxd-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t2);margin:20px 0 12px}
+.fxd{display:flex;flex-direction:column;align-items:center}
+.fxd-inrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.fxd-plus{color:var(--t3);font-weight:700}
+.fxd-box{border:1px solid var(--border);border-radius:11px;padding:9px 16px;font-size:13px;font-weight:600;color:var(--t1);background:var(--glass);text-align:center}
+.fxd-box.in{background:transparent;color:var(--t2);font-weight:500}
+.fxd-box.brute{border-color:rgba(139,124,255,.45);color:var(--ac)}
+.fxd-box.final{background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;border:none;font-weight:800;font-size:15px;padding:12px 28px;box-shadow:0 8px 22px rgba(139,124,255,.28)}
+.fxd-conn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:5px 0}
+.fxd-line{width:2px;height:12px;background:var(--border)}
+.fxd-lbl{font-size:11px;color:var(--t2);background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:3px 12px;text-align:center;max-width:90vw}
+
+/* === casilla de frases === */
+.tpl-ck{display:flex;align-items:flex-start;padding-top:9px}
+.tpl-ck input{width:17px;height:17px;cursor:pointer;accent-color:var(--ac)}
+.tpl-cond.off{opacity:.45}
+
+.fxd-sub{display:block;font-size:10px;color:var(--t3);font-weight:400;margin-top:2px}
 </style>
 <style>
-@media(max-width:760px){.side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 14px}}
+@media(max-width:760px){.side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 14px 44px}}
 </style>
 <style>
 .od-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
@@ -279,13 +355,10 @@ option{background-color:#161922;color:#E8EBF4}
       <a data-v="dash" onclick="go('dash')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="3" width="7" height="4" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="9" width="7" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg> Dashboard</a>
       <a data-v="calc" onclick="go('calc')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="2" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="7.5" x2="19" y2="7.5" stroke="currentColor" stroke-width="1"/><circle cx="7" cy="11.5" r="1" fill="currentColor"/><circle cx="11" cy="11.5" r="1" fill="currentColor"/><circle cx="15" cy="11.5" r="1" fill="currentColor"/><circle cx="7" cy="15.5" r="1" fill="currentColor"/><circle cx="11" cy="15.5" r="1" fill="currentColor"/><circle cx="15" cy="15.5" r="1" fill="currentColor"/></svg> Calculadora</a>
       <a data-v="ord" onclick="go('ord')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7h6M8 11h6M8 15h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Pedidos <span id="ordBadge"></span></a>
-      <a data-v="inv" onclick="go('inv')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M3 7l8-4 8 4v8l-8 4-8-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 7l8 4 8-4M11 11v8" stroke="currentColor" stroke-width="1.2"/></svg> Inventario</a>
-      <a data-v="purge" onclick="go('purge')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="13" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="13" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg> Matriz de purga</a>
-      <a data-v="stat" onclick="go('stat')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><path d="M3 19V3M3 19h16M7 15v-4M11 15V7M15 15v-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Estadísticas</a>
       <a data-v="cli" onclick="go('cli')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 18a5.5 5.5 0 0 1 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15 5.2a3 3 0 0 1 0 5.6M16.5 18a5.5 5.5 0 0 0-3-4.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Clientes</a>
+      <a data-v="plantillas" onclick="go('plantillas')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="12" width="16" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg> Plantillas</a>
       <a data-v="cfg" onclick="go('cfg')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 2v2.5M11 17.5V20M2 11h2.5M17.5 11H20M4.6 4.6l1.8 1.8M15.6 15.6l1.8 1.8M17.4 4.6l-1.8 1.8M6.4 15.6l-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Configuración</a>
     </nav>
-    <div class="side-note">Réplica de la calculadora de referencia. Ajusta impresoras, materiales y tarifas en <b>Configuración</b> y el stock en <b>Inventario</b>.</div>
   </aside>
   <main class="main"><div class="wrap" id="view"></div></main>
 </div>
@@ -315,7 +388,7 @@ function defData(){return {
   printers:[{name:'Creality K1SE Combo',material_diameter_mm:1.75,price_eur:738,depreciation_time_h:3000,service_costs_life_eur:100,energy_consumption_kwh:0.15}],
   filament_types:[{name:'PLA',price_per_kg:20},{name:'PETG',price_per_kg:18},{name:'PLA SILK/MARBLE',price_per_kg:23},{name:'ASA',price_per_kg:24},{name:'TPU',price_per_kg:21}],
   filament_stock:[{material:'PLA',color:'Negro',remaining_g:1000,buy_threshold_g:150},{material:'PLA',color:'Blanco',remaining_g:1000,buy_threshold_g:150},{material:'PETG',color:'Transparente',remaining_g:1000,buy_threshold_g:150}],
-  global_config:{energy_cost_kwh:0.24,labor_cost_h:15,money_unit:'€',precio_minimo:3,brand_color:'#3b82f6'},
+  global_config:{energy_cost_kwh:0.24,labor_cost_h:15,money_unit:'€',precio_minimo:3,brand_color:'#3b82f6',util_prices:{simple:0.30,caja_m:1,caja_l:2,bolsa_s:0.15,bolsa_m:0.80,bolsa_l:1.50}},
   calc_state:{empresa:'3DCC',cliente:'',cliente_email:'',fecha:new Date().toISOString().slice(0,10),descripcion:'',impresora:'Creality K1SE Combo',filamento_tipo:'PLA',filamento_color:'Negro',is_multimaterial:false,material_breakdown:[],peso_g:'50',tiempo_h:'1',diseno_modelado:'No necesario',busqueda_modelos:'No',eliminacion_soportes:'No',postprocesado:'No',probabilidad_error:'Baja (25%)',markup:'Normal (230%)',urgencia_nivel:'Normal',gasto_misc:0,cantidad:1,is_shared:false,shared_percent_3dcc:50,shared_percent_silab3d:50},
   orders:[], oseq:0, clients:[], purge:{values:[],active:{},colors:[]}
 };}
@@ -352,7 +425,7 @@ function hmToDec(v){ v=String(v==null?'':v).trim().replace(',','.'); if(v.indexO
 function decToHM(d){ d=Number(d)||0; if(d<0)d=0; var h=Math.floor(d+1e-9); var m=Math.round((d-h)*60); if(m>=60){h++;m-=60;} return h+':'+(m<10?'0':'')+m; }
 function setTimeHM(el){ var d=hmToDec(el.value); S.calc_state.tiempo_h=String(d); save(); try{updateResult();}catch(e){} el.value=decToHM(d); }
 function setOrdTimeHM(id,el){ var d=hmToDec(el.value); setOrdField(id,'horas',String(d)); el.value=decToHM(d); }
-function uploadPdfLogo(el){ var f=el.files&&el.files[0]; if(!f)return; var rd=new FileReader(); rd.onload=function(){ S.global_config.pdf_logo=rd.result; save(); renderCfg(); }; rd.readAsDataURL(f); }
+function uploadPdfLogo(el){ var f=el.files&&el.files[0]; if(!f)return; var rd=new FileReader(); rd.onload=function(){ S.global_config.pdf_logo=rd.result; save(); render(); }; rd.readAsDataURL(f); }
 function pdfBrand(){ var g=S.global_config||{}; return { company:(g.pdf_company||'SILAB3D'), slogan:(g.pdf_slogan||'INNOVACIÓN CAPA A CAPA'), logo:(g.pdf_logo||DEFAULT_LOGO) }; }
 function orderToCalcState(o){ return { impresora:o.impresora, filamento_tipo:o.filamento, filamento_color:o.filamento_color, is_multimaterial:!!o.is_multimaterial, material_breakdown:o.material_breakdown||[], peso_g:o.peso_g, tiempo_h:o.horas, diseno_modelado:o.diseno_modelado, busqueda_modelos:o.busqueda_modelos, eliminacion_soportes:o.eliminacion_soportes, postprocesado:o.postprocesado, probabilidad_error:o.probabilidad_error, markup:o.markup, urgencia_nivel:o.urgencia_nivel, gasto_misc:o.gasto_misc, cantidad:o.cantidad, util:o.util }; }
 function compute(c){
@@ -426,17 +499,29 @@ function renderRisk(){
    +'<div class="card" style="margin:6px 0 14px;padding:14px;text-align:center"><div style="font-size:10.5px;color:var(--t2);text-transform:uppercase;letter-spacing:.6px">Probabilidad estimada</div><div style="font-size:22px;font-weight:800;color:var(--ac);margin-top:4px">'+esc(sug)+'</div></div>'
    +'<div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="applyRisk()">Aplicar sugerencia</button></div>');
 }
-function ensureUtil(c){ if(!c.util||typeof c.util!=='object')c.util={}; var u=c.util; if(!u.simple||typeof u.simple!=='object')u.simple={on:false,qty:0}; if(!u.caja||typeof u.caja!=='object')u.caja={size:'pequena',qty:0}; if(!u.bolsa||typeof u.bolsa!=='object')u.bolsa={size:'pequena',qty:0}; return u; }
-function accessoriesTotal(c){ var u=ensureUtil(c); var t=0; if(u.simple.on)t+=0.30*Math.max(0,num(u.simple.qty)); t+=(u.caja.size==='grande'?2:1)*Math.max(0,num(u.caja.qty)); t+=(u.bolsa.size==='grande'?1.5:0.8)*Math.max(0,num(u.bolsa.qty)); return roundMoney(t); }
-function setUtil(grp,field,v){ var u=ensureUtil(S.calc_state); if(field==='on')v=(v==='si'||v===true); u[grp][field]=v; save(); renderCalc(); }
+function ensureUtil(c){ if(!c.util||typeof c.util!=='object')c.util={}; var u=c.util;
+  if(!u.simple||typeof u.simple!=='object')u.simple={type:'arandelas',qty:0};
+  if(!u.simple.type)u.simple.type='arandelas';
+  if(!u.caja||typeof u.caja!=='object')u.caja={size:'m',qty:0};
+  if(u.caja.size==='pequena')u.caja.size='m'; if(u.caja.size==='grande')u.caja.size='l'; if(['m','l'].indexOf(u.caja.size)<0)u.caja.size='m';
+  if(!u.bolsa||typeof u.bolsa!=='object')u.bolsa={size:'m',qty:0};
+  if(u.bolsa.size==='pequena')u.bolsa.size='m'; if(u.bolsa.size==='grande')u.bolsa.size='l'; if(['s','m','l'].indexOf(u.bolsa.size)<0)u.bolsa.size='m';
+  return u; }
+function accessoriesTotal(c){ var u=ensureUtil(c); var t=0;
+  t+=utilPrice('simple')*Math.max(0,num(u.simple.qty));
+  t+=utilPrice(u.caja.size==='l'?'caja_l':'caja_m')*Math.max(0,num(u.caja.qty));
+  var bk={s:'bolsa_s',m:'bolsa_m',l:'bolsa_l'}[u.bolsa.size]||'bolsa_m';
+  t+=utilPrice(bk)*Math.max(0,num(u.bolsa.qty));
+  return roundMoney(t); }
+function setUtil(grp,field,v){ var u=ensureUtil(S.calc_state); u[grp][field]=v; save(); renderCalc(); }
 function utilStep(grp,d){ var u=ensureUtil(S.calc_state); u[grp].qty=Math.max(0,(num(u[grp].qty)||0)+d); save(); renderCalc(); }
 function utilSetQty(grp,v){ var u=ensureUtil(S.calc_state); u[grp].qty=Math.max(0,Math.floor(num(v))); save(); renderCalc(); }
 function utilHTML(c){ var u=ensureUtil(c);
   function cnt(grp,q){ return '<div class="ut-cnt"><button type="button" class="ut-b" onclick="utilStep(\''+grp+'\',-1)">−</button><input class="ut-q" type="number" min="0" step="1" value="'+esc(q)+'" onchange="utilSetQty(\''+grp+'\',this.value)"><button type="button" class="ut-b" onclick="utilStep(\''+grp+'\',1)">+</button></div>'; }
-  var simpleSel='<select class="selx" onchange="setUtil(\'simple\',\'on\',this.value)"><option value="no"'+(!u.simple.on?' selected':'')+'>No</option><option value="si"'+(u.simple.on?' selected':'')+'>Sí (0,30 €/ud)</option></select>';
-  var cajaSel='<select class="selx" onchange="setUtil(\'caja\',\'size\',this.value)"><option value="pequena"'+(u.caja.size!=='grande'?' selected':'')+'>Pequeña (1 €/ud)</option><option value="grande"'+(u.caja.size==='grande'?' selected':'')+'>Grande (2 €/ud)</option></select>';
-  var bolsaSel='<select class="selx" onchange="setUtil(\'bolsa\',\'size\',this.value)"><option value="pequena"'+(u.bolsa.size!=='grande'?' selected':'')+'>Pequeña (0,80 €/ud)</option><option value="grande"'+(u.bolsa.size==='grande'?' selected':'')+'>Grande (1,50 €/ud)</option></select>';
-  return '<div class="ut-row"><div class="ut-main"><label class="lbl">Accesorios simples (arandelas y NFC)</label>'+simpleSel+'</div>'+cnt('simple',u.simple.qty)+'</div>'
+  var simpleSel='<select class="selx" onchange="setUtil(\'simple\',\'type\',this.value)"><option value="arandelas"'+(u.simple.type!=='nfc'?' selected':'')+'>Arandelas</option><option value="nfc"'+(u.simple.type==='nfc'?' selected':'')+'>NFC</option></select>';
+  var cajaSel='<select class="selx" onchange="setUtil(\'caja\',\'size\',this.value)"><option value="m"'+(u.caja.size!=='l'?' selected':'')+'>Caja M ('+eurUd(utilPrice('caja_m'))+')</option><option value="l"'+(u.caja.size==='l'?' selected':'')+'>Caja L ('+eurUd(utilPrice('caja_l'))+')</option></select>';
+  var bolsaSel='<select class="selx" onchange="setUtil(\'bolsa\',\'size\',this.value)"><option value="s"'+(u.bolsa.size==='s'?' selected':'')+'>Bolsa S ('+eurUd(utilPrice('bolsa_s'))+')</option><option value="m"'+(u.bolsa.size==='m'?' selected':'')+'>Bolsa M ('+eurUd(utilPrice('bolsa_m'))+')</option><option value="l"'+(u.bolsa.size==='l'?' selected':'')+'>Bolsa L ('+eurUd(utilPrice('bolsa_l'))+')</option></select>';
+  return '<div class="ut-row"><div class="ut-main"><label class="lbl">Accesorios simples ('+eurUd(utilPrice('simple'))+')</label>'+simpleSel+'</div>'+cnt('simple',u.simple.qty)+'</div>'
     +'<div class="ut-row"><div class="ut-main"><label class="lbl">Caja</label>'+cajaSel+'</div>'+cnt('caja',u.caja.qty)+'</div>'
     +'<div class="ut-row"><div class="ut-main"><label class="lbl">Bolsa</label>'+bolsaSel+'</div>'+cnt('bolsa',u.bolsa.qty)+'</div>'
     +'<div class="ut-total">Total accesorios <b>'+eur(accessoriesTotal(c))+'</b></div>';
@@ -445,8 +530,8 @@ function setShared(v){ S.calc_state.is_shared=v; save(); renderCalc(); }
 function setShare(v){ v=Math.max(0,Math.min(100,num(v))); S.calc_state.shared_percent_3dcc=v; S.calc_state.shared_percent_silab3d=100-v; save(); renderCalc(); }
 
 /* ===== navegación ===== */
-function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',inv:'Inventario',purge:'Matriz de purga',stat:'Estadísticas',cli:'Clientes',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
-function render(){ if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='inv')renderInv(); else if(view==='purge')renderPurge(); else if(view==='stat')renderStats(); else renderCfg(); }
+function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',cli:'Clientes',plantillas:'Plantillas',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
+function render(){ if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='plantillas')renderPlantillas(); else renderCfg(); }
 function updateResult(){ var el=document.getElementById('resultBox'); if(el)el.innerHTML=resultHTML(); }
 
 /* ===== calculadora ===== */
@@ -479,8 +564,8 @@ function renderCalc(){
    +'<div class="grid2"><div>'
    +'<div class="card"><div class="card-h">Información del proyecto</div>'
      +'<div class="fg row"><div><label class="lbl">Empresa</label><select class="selx" onchange="setCalc(\'empresa\',this.value)">'+empresaOpts+'</select></div>'
-       +'<div><label class="lbl">Cliente</label><input class="inp" value="'+esc(c.cliente)+'" oninput="setCalc(\'cliente\',this.value)"></div></div>'
-     +'<div class="fg row"><div><label class="lbl">Email del cliente</label><input class="inp" value="'+esc(c.cliente_email)+'" oninput="setCalc(\'cliente_email\',this.value)"></div><div><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(c.fecha)+'" onchange="setCalc(\'fecha\',this.value)"></div></div>'
+       +'<div><label class="lbl">Información del cliente</label><input class="inp" value="'+esc(c.cliente)+'" oninput="setCalc(\'cliente\',this.value)"></div></div>'
+     +'<div class="fg"><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(c.fecha)+'" onchange="setCalc(\'fecha\',this.value)"></div>'
      +'<div class="fg"><label class="lbl">Descripción / proyecto</label><input class="inp" value="'+esc(c.descripcion)+'" oninput="setCalc(\'descripcion\',this.value)"></div>'
    +'</div>'
    +'<div class="card"><div class="card-h">Parámetros básicos</div>'
@@ -545,7 +630,7 @@ function todayISO(){return new Date().toISOString().slice(0,10);}
 function estColor(e){return {'Pendiente':'#F4B740','Activo':'#4D9FFF','Finalizado':'#34D399'}[ordState({estado:e})]||'#F4B740';}
 function toTs(v){ var t=Date.parse(v); return isNaN(t)?0:t; }
 function ordState(o){ var e=o&&o.estado; if(e==='Pendiente'||e==='Activo'||e==='Finalizado')return e; if(e==='Entregado')return 'Finalizado'; if(e==null||e===''||e==='Presupuesto enviado')return 'Pendiente'; return 'Activo'; }
-function randomOrderNo(){ var used={}; (S.orders||[]).forEach(function(o){if(o&&o.number)used[String(o.number)]=1;}); var n; do{ n=String(Math.floor(10000+Math.random()*90000)); }while(used[n]); return n; }
+function randomOrderNo(){ var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; var used={}; (S.orders||[]).forEach(function(o){if(o&&o.number)used[String(o.number)]=1;}); var n; do{ n='3DP-'; for(var i=0;i<5;i++)n+=A.charAt(Math.floor(Math.random()*A.length)); }while(used[n]); return n; }
 function migrateOrders(){ if(!Array.isArray(S.orders))return; S.orders.forEach(function(o){ if(!o)return; o.estado=ordState(o); o.archived=!!o.archived; if(!o.number)o.number=randomOrderNo(); if(!o.status_updated_at)o.status_updated_at=toTs(o.created_at)||Date.now(); if(!o.notif_snooze_until)o.notif_snooze_until=0; }); }
 function ordStaleList(){ var now=Date.now(); return (S.orders||[]).filter(function(o){ if(!o||o.archived)return false; if(ordState(o)==='Finalizado')return false; var last=o.status_updated_at||toTs(o.created_at)||0; var snz=o.notif_snooze_until||0; return (now-last)>NOTIF_DAYS*864e5 && now>snz; }); }
 function notifReject(id){ var o=getOrder(id); if(!o)return; o.archived=true; save(); renderOrders(); }
@@ -603,8 +688,7 @@ function renderOrders(){
   if(showArch){ body='<div class="card">'+(list.length?'<div class="ord-list">'+list.map(ordRowHTML).join('')+'</div>':'<div class="empty">No hay pedidos archivados.</div>')+'</div>'; }
   else if(!list.length){ body='<div class="empty">No hay pedidos. Crea uno o guarda un cálculo desde la Calculadora.</div>'; }
   else {
-    var ohead='<div class="ord-head-row"><span class="ord-cyc"></span><span class="ohc ord-no">Código</span><span class="ohc ord-date">Fecha</span><span class="ohc ord-cli">Cliente</span><span class="ohc ord-desc">Descripción</span><span class="ohc ord-price">Precio</span><span class="ord-del"></span></div>';
-    body=ohead+ordSectionHTML('Pendientes','#F4B740',list.filter(function(o){return ordState(o)==='Pendiente';}))
+    body=ordSectionHTML('Pendientes','#F4B740',list.filter(function(o){return ordState(o)==='Pendiente';}))
         +ordSectionHTML('Activos','#4D9FFF',list.filter(function(o){return ordState(o)==='Activo';}))
         +ordSectionHTML('Finalizados','#34D399',list.filter(function(o){return ordState(o)==='Finalizado';}));
   }
@@ -771,6 +855,113 @@ function addFt(){ S.filament_types.push({name:'Material '+(S.filament_types.leng
 function delFt(i){ S.filament_types.splice(i,1); save(); renderCfg(); }
 function resetCfg(){ if(!confirm('¿Restablecer la configuración a los valores del repositorio de referencia?'))return; var d=defData(); S.printers=d.printers; S.filament_types=d.filament_types; S.global_config=d.global_config; save(); renderCfg(); }
 function gcField(label,f,suf){ return '<div class="fg"><label class="lbl">'+label+'</label><div class="suffix"><input class="inp" type="number" step="0.01" value="'+esc(S.global_config[f])+'" oninput="setGC(\''+f+'\',this.value)"><span class="u">'+(suf||'')+'</span></div></div>'; }
+var UTIL_DEFAULTS={simple:0.30,caja_m:1,caja_l:2,bolsa_s:0.15,bolsa_m:0.80,bolsa_l:1.50};
+function utilPrice(k){ var up=(S.global_config&&S.global_config.util_prices)||{}; var v=up[k]; return (v==null||isNaN(Number(v)))?UTIL_DEFAULTS[k]:Number(v); }
+function setUtilPrice(k,v){ if(!S.global_config.util_prices||typeof S.global_config.util_prices!=='object')S.global_config.util_prices=Object.assign({},UTIL_DEFAULTS); S.global_config.util_prices[k]=num(v); save(); }
+function eurUd(n){ n=Number(n)||0; return (n%1===0? String(n) : n.toFixed(2).replace('.',','))+' €/ud'; }
+function gcUtilField(label,k){ return '<div class="fg"><label class="lbl">'+label+'</label><div class="suffix"><input class="inp" type="number" step="0.01" min="0" value="'+esc(utilPrice(k))+'" oninput="setUtilPrice(\''+k+'\',this.value)"><span class="u">€/ud</span></div></div>'; }
+function pdfBrandCard(reRender){ return '<div class="card"><div class="card-h">Marca para los PDF</div><div class="cfg-grid">'
+   +'<div class="fg"><label class="lbl">Empresa</label><input class="inp" value="'+esc(S.global_config.pdf_company||'SILAB3D')+'" oninput="setGC(\'pdf_company\',this.value)"></div>'
+   +'<div class="fg"><label class="lbl">Lema</label><input class="inp" value="'+esc(S.global_config.pdf_slogan||'INNOVACIÓN CAPA A CAPA')+'" oninput="setGC(\'pdf_slogan\',this.value)"></div>'
+   +'<div class="fg" style="grid-column:1/-1"><label class="lbl">Logo (aparece en los PDF)</label><div style="display:flex;gap:10px;align-items:center"><span style="width:48px;height:48px;border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;flex-shrink:0"><img src="'+(S.global_config.pdf_logo||DEFAULT_LOGO)+'" style="max-width:100%;max-height:100%"></span><button class="btn ghost" onclick="document.getElementById(\'pdfLogoInput\').click()">Cambiar logo…</button><button class="btn ghost" onclick="setGC(\'pdf_logo\',\'\');'+reRender+'()">Restablecer</button><input type="file" id="pdfLogoInput" accept="image/*" style="display:none" onchange="uploadPdfLogo(this)"></div></div>'
+   +'</div></div>'; }
+var PDF_TPL_DEFAULT={
+  client:{ intro:'Presupuesto para {cliente}  ·  {fecha}', t_datos:'Datos del Proyecto', t_precio:'PRECIO FINAL', t_cond:'Condiciones', footer:'{empresa}   ·   {numero}',
+    conds:['El coste indicado es el precio final del proyecto, incluyendo todos los gastos necesarios para llevarlo a cabo.','Para plazos estándar, el tiempo de entrega dependerá de la complejidad del proyecto y la cola de trabajo en curso.','Se requiere el abono de {anticipo} como anticipo para iniciar la producción; la diferencia de {resto} se abonará en la entrega.','Nuestros términos y condiciones generales están disponibles en nuestra web y se aplican a este presupuesto.'] },
+  internal:{ intro:'Ticket interno para {cliente}  ·  {fecha}', tag:'USO INTERNO', t_datos:'Datos del Proyecto', t_precio:'PRECIO FINAL', t_params:'Parámetros del presupuesto', t_desglose:'Desglose de Costes', footer:'{empresa}   ·   {numero}' }
+};
+function pdfTpl(){ var g=S.global_config||{}; var t=g.pdf_tpl||{};
+  function m(base,ov){ var o={}; Object.keys(base).forEach(function(k){ if(k==='conds')return; o[k]=(ov&&ov[k]!=null&&ov[k]!=='')?ov[k]:base[k]; }); return o; }
+  var cl=m(PDF_TPL_DEFAULT.client,t.client||{});
+  cl.conds=normConds((t.client&&Array.isArray(t.client.conds))? t.client.conds : PDF_TPL_DEFAULT.client.conds);
+  var it=m(PDF_TPL_DEFAULT.internal,t.internal||{});
+  return {client:cl, internal:it};
+}
+function pdfPresets(){ return (S.global_config&&Array.isArray(S.global_config.pdf_presets))?S.global_config.pdf_presets:[]; }
+function normConds(arr){ if(!Array.isArray(arr))return []; return arr.map(function(c){ if(typeof c==='string')return {t:c,on:true}; if(c&&typeof c==='object')return {t:(c.t!=null?String(c.t):(c.text!=null?String(c.text):'')),on:c.on!==false}; return {t:'',on:true}; }); }
+function toggleCond(i){ var t=ensureTpl(); var c=t.client.conds[i]; if(c)c.on=(c.on===false); save(); renderPlantillas(); }
+function ensureTpl(){ var g=S.global_config; if(!g.pdf_tpl||typeof g.pdf_tpl!=='object')g.pdf_tpl={}; if(!g.pdf_tpl.client||typeof g.pdf_tpl.client!=='object')g.pdf_tpl.client={}; if(!g.pdf_tpl.internal||typeof g.pdf_tpl.internal!=='object')g.pdf_tpl.internal={}; if(!Array.isArray(g.pdf_tpl.client.conds))g.pdf_tpl.client.conds=(pdfTpl().client.conds||[]).slice(); g.pdf_tpl.client.conds=normConds(g.pdf_tpl.client.conds); return g.pdf_tpl; }
+function setTpl(scope,field,v){ var t=ensureTpl(); t[scope][field]=v; save(); }
+function addCond(){ var t=ensureTpl(); t.client.conds.push({t:'',on:true}); save(); renderPlantillas(); }
+function setCond(i,v){ var t=ensureTpl(); if(t.client.conds[i]&&typeof t.client.conds[i]==='object')t.client.conds[i].t=v; else t.client.conds[i]={t:v,on:true}; save(); }
+function delCond(i){ var t=ensureTpl(); t.client.conds.splice(i,1); save(); renderPlantillas(); }
+var _tplFocused=null;
+function tplFocus(el){ _tplFocused=el; }
+function insertTokenCond(tok){ var el=_tplFocused; if(!el){ toast3('Haz clic en una frase primero','#FF6B8A'); return; } var s=(el.selectionStart!=null?el.selectionStart:el.value.length), e=(el.selectionEnd!=null?el.selectionEnd:s); el.value=el.value.slice(0,s)+tok+el.value.slice(e); var idx=parseInt(el.getAttribute('data-i'),10)||0; setCond(idx,el.value); el.focus(); try{ el.selectionStart=el.selectionEnd=s+tok.length; }catch(e2){} }
+function savePreset(){ var t=pdfTpl(); var n=prompt('Nombre del preset de frases:'); if(n==null)return; n=n.trim(); if(!n)return; if(!Array.isArray(S.global_config.pdf_presets))S.global_config.pdf_presets=[]; S.global_config.pdf_presets.push({id:uid(),name:n,conds:(t.client.conds||[]).map(function(c){return {t:c.t,on:c.on!==false};})}); save(); renderPlantillas(); }
+function applyPreset(id){ var p=pdfPresets().filter(function(x){return x.id===id;})[0]; if(!p)return; var t=ensureTpl(); t.client.conds=normConds(p.conds||[]); save(); renderPlantillas(); }
+function delPreset(id){ if(!Array.isArray(S.global_config.pdf_presets))return; S.global_config.pdf_presets=S.global_config.pdf_presets.filter(function(x){return x.id!==id;}); save(); renderPlantillas(); }
+function pdfTokens(o,r){
+  var precio=(Number(o.precio_final)||(r?r.precio:0));
+  var anticipo50=roundMoney(precio/2);
+  var resto=Math.floor((precio/2)/5)*5;
+  var anticipo=roundMoney(precio-resto);
+  var br=pdfBrand();
+  return { '{empresa}':br.company,'{lema}':br.slogan,'{cliente}':(o.cliente||'—'),'{fecha}':(o.fecha||''),'{numero}':(o.number||''),'{descripcion}':(o.descripcion||'—'),
+    '{precio}':eur(precio),'{cantidad}':String(o.cantidad||1),'{material}':(o.filamento||'—'),'{peso}':((o.peso_g||0)+' g'),'{tiempo}':(decToHM(o.horas)+' h'),
+    '{anticipo50}':eur(anticipo50),'{anticipo}':eur(anticipo),'{resto}':eur(resto) };
+}
+function applyTokens(text,tok){ text=String(text==null?'':text); Object.keys(tok).forEach(function(k){ text=text.split(k).join(tok[k]); }); return text; }
+function clientPdfCard(){ var t=pdfTpl().client;
+  function f(label,field,full){ return '<div class="fg"'+(full?' style="grid-column:1/-1"':'')+'><label class="lbl">'+label+'</label><input class="inp" value="'+esc(t[field])+'" oninput="setTpl(\'client\',\''+field+'\',this.value)"></div>'; }
+  var conds=(t.conds||[]).map(function(cx,i){ var on=cx.on!==false; return '<div class="tpl-cond-row"><label class="tpl-ck" title="'+(on?'Frase incluida en el PDF':'Frase desactivada')+'"><input type="checkbox" '+(on?'checked':'')+' onchange="toggleCond('+i+')"></label><textarea class="tpl-cond'+(on?'':' off')+'" rows="2" data-i="'+i+'" onfocus="tplFocus(this)" oninput="setCond('+i+',this.value)">'+esc(cx.t||'')+'</textarea><button class="del" title="Eliminar frase" onclick="delCond('+i+')">✕</button></div>'; }).join('');
+  var presets=pdfPresets();
+  var pr=presets.length? presets.map(function(p){ return '<div class="tpl-pp"><button class="tpl-pp-a" onclick="applyPreset(\''+p.id+'\')">'+esc(p.name)+' <span>('+(p.conds?p.conds.length:0)+' frases)</span></button><button class="tpl-pp-d" title="Eliminar preset" onclick="delPreset(\''+p.id+'\')">✕</button></div>'; }).join('') : '<div class="tpl-pp-empty">Sin presets guardados.</div>';
+  return '<div class="card"><div class="card-h">Contenido del PDF de cliente</div><div class="cfg-grid">'
+    +f('Línea de cabecera','intro')+f('Título — Datos del proyecto','t_datos')+f('Título — Precio final','t_precio')+f('Título — Condiciones','t_cond')+f('Pie de página','footer',true)
+    +'</div><div class="tpl-sub">Condiciones (frases)</div><div class="note" style="margin:-2px 0 9px">Usa <b>**dobles asteriscos**</b> alrededor de un texto para ponerlo en <b>negrita</b> en el PDF.</div>'+conds
+    +'<div class="tpl-actions"><button class="btn ghost" onclick="addCond()">＋ Añadir frase</button><button class="btn ghost" onclick="savePreset()">Guardar frases como preset</button></div>'
+    +'<div class="tpl-sub">Presets de frases</div><div class="tpl-pp-list">'+pr+'</div></div>';
+}
+function internalPdfCard(){ var t=pdfTpl().internal;
+  function f(label,field,full){ return '<div class="fg"'+(full?' style="grid-column:1/-1"':'')+'><label class="lbl">'+label+'</label><input class="inp" value="'+esc(t[field])+'" oninput="setTpl(\'internal\',\''+field+'\',this.value)"></div>'; }
+  return '<div class="card"><div class="card-h">Contenido del PDF interno</div><div class="cfg-grid">'
+    +f('Línea de cabecera','intro')+f('Etiqueta (esquina superior)','tag')+f('Título — Datos del proyecto','t_datos')+f('Título — Precio final','t_precio')+f('Título — Parámetros','t_params')+f('Título — Desglose de costes','t_desglose')+f('Pie de página','footer',true)
+    +'</div></div>';
+}
+function tokensRefCard(){
+  var toks=[['{cliente}','Nombre del cliente'],['{fecha}','Fecha'],['{numero}','Nº de pedido'],['{descripcion}','Descripción'],['{empresa}','Empresa'],['{lema}','Lema'],['{precio}','Precio final'],['{cantidad}','Unidades'],['{material}','Material'],['{peso}','Peso'],['{tiempo}','Tiempo'],['{anticipo50}','50% exacto del total'],['{anticipo}','Anticipo redondeado (resto múltiplo de 5)'],['{resto}','Diferencia en la entrega (múltiplo de 5)']];
+  var chips=toks.map(function(t){ return '<button class="tpl-chip" title="'+esc(t[1])+'" onclick="insertTokenCond(\''+t[0]+'\')">'+esc(t[0])+'</button>'; }).join('');
+  var ex=''; try{ var r=compute(); var p=r.precio; var resto=Math.floor((p/2)/5)*5; var ant=roundMoney(p-resto); ex='<div class="note" style="margin-top:10px">Con el presupuesto actual ('+eur(p)+'): <b>{anticipo50}</b> = '+eur(roundMoney(p/2))+' · <b>{anticipo}</b> = '+eur(ant)+' · <b>{resto}</b> = '+eur(resto)+'</div>'; }catch(e){}
+  return '<div class="card"><div class="card-h">Tokens y fórmulas <span class="cfg-ro-tag">solo cliente</span></div><div class="h-sub" style="margin:-4px 0 10px">Haz clic en una frase de arriba y luego en un token para insertarlo; se calcula al generar cada PDF. <b>{anticipo}</b> pide un anticipo ≥50% cuyo resto en la entrega es un múltiplo de 5 exacto.</div><div class="tpl-chips">'+chips+'</div>'+ex+'</div>';
+}
+function renderPlantillas(){ document.getElementById('view').innerHTML='<div class="h1">Plantillas</div><div class="h-sub">Personaliza la marca, el contenido y las frases de los PDF (cliente e interno).</div>'+pdfBrandCard('renderPlantillas')+clientPdfCard()+tokensRefCard()+internalPdfCard(); }
+function paramPriceCard(){ var labor=num(S.global_config.labor_cost_h);
+  function grp(title,map,mode){ var rows=Object.keys(map).map(function(k){ var v=map[k]; var cost=(mode==='min'?(v/60):v)*labor; var free=cost<=0;
+      return '<div class="pp-ro"><span class="pp-ro-n">'+esc(k)+'</span><span class="pp-ro-p'+(free?' free':'')+'">'+(free?'Sin coste':eur(cost))+'</span></div>'; }).join('');
+    return '<div class="pp-grp"><div class="pp-grp-h">'+title+'</div>'+rows+'</div>'; }
+  return '<div class="card"><div class="card-h">Precios de parámetros complementarios <span class="cfg-ro-tag">solo informativo</span></div>'
+    +'<div class="pp-grid">'+grp('Diseño / modelado',DISENO_MODELADO,'h')+grp('Búsqueda de modelos',BUSQUEDA_MODELOS,'h')+grp('Eliminación de soportes',ELIMINACION_SOPORTES,'min')+grp('Post-procesado',POSTPROCESADO,'min')+'</div>'
+    +'<div class="note" style="margin-top:14px">Calculado con la mano de obra actual (<b>'+eur(labor)+'/h</b>). Para cambiarlos, ajusta el «Coste de mano de obra» en Configuración global.</div></div>';
+}
+function formulaCard(){ function fx(k,v){ return '<div class="fx"><span class="fx-k">'+k+'</span><span class="fx-v">'+v+'</span></div>'; }
+  function conn(lbl){ return '<div class="fxd-conn"><span class="fxd-line"></span>'+(lbl?'<span class="fxd-lbl">'+lbl+'</span><span class="fxd-line"></span>':'')+'</div>'; }
+  function box(txt,cls){ return '<div class="fxd-box'+(cls?(' '+cls):'')+'">'+txt+'</div>'; }
+  function boxN(main,sub,cls){ return '<div class="fxd-box'+(cls?(' '+cls):'')+'">'+main+(sub?'<span class="fxd-sub">'+sub+'</span>':'')+'</div>'; }
+  var diagram='<div class="fxd">'
+    +'<div class="fxd-inrow">'+box('Filamento','in')+'<span class="fxd-plus">+</span>'+box('Electricidad','in')+'<span class="fxd-plus">+</span>'+box('Deterioro','in')+'</div>'
+    +conn('')+box('Coste bruto','brute')
+    +conn('')
+    +'<div class="fxd-inrow">'+box('Bruto × Markup + Fondo de error')+'<span class="fxd-plus">+</span>'+boxN('Complementos','diseño · búsqueda · soportes · post-proc','in')+'</div>'
+    +conn('')+box('Subtotal')
+    +conn('+ Recargo de urgencia (%)')+box('Con urgencia')
+    +conn('+ Utilitarios (sin markup)')+box('+ Accesorios')
+    +conn('Redondeo a 0,05 € · nunca &lt; mínimo')+box('PVP FINAL','final')
+    +'</div>';
+  return '<div class="card"><div class="card-h">Fórmula de cálculo</div><div class="fx-grid">'
+    +fx('Filamento','peso (g) × €/kg ÷ 1000')
+    +fx('Electricidad','horas × consumo (kWh) × €/kWh')
+    +fx('Deterioro','horas × (precio + mantenimiento) ÷ amortización')
+    +fx('Coste bruto','filamento + electricidad + deterioro')
+    +fx('Complementos','diseño + búsqueda + soportes + post-procesado (× €/h)')
+    +fx('Precio base','bruto × markup + bruto × prob. error + complementos')
+    +fx('Urgencia','+ recargo % sobre el subtotal')
+    +fx('Utilitarios','uds × precio de accesorio — se suman al final <b>sin markup ni multiplicadores</b>')
+    +fx('Redondeo','a múltiplos de 0,05 € · nunca por debajo del precio mínimo')
+    +'</div>'
+    +'<div class="fxd-title">Diagrama del cálculo</div>'+diagram
+    +'</div>';
+}
 function renderCfg(){
   var prRows=S.printers.map(function(p,i){
     return '<tr><td><input value="'+esc(p.name)+'" onchange="setPr('+i+',\'name\',this.value)"></td>'
@@ -794,18 +985,20 @@ function renderCfg(){
      +'<div class="fg"><label class="lbl">Unidad monetaria</label><input class="inp" value="'+esc(S.global_config.money_unit)+'" oninput="setGC(\'money_unit\',this.value)"></div>'
      +'<div class="fg"><label class="lbl">Color de marca</label><div style="display:flex;gap:8px;align-items:center"><input type="color" value="'+esc(S.global_config.brand_color||'#00DDB8')+'" style="width:42px;height:38px;border:none;background:none;cursor:pointer" onchange="setBrand(this.value)"><input class="inp" value="'+esc(S.global_config.brand_color||'')+'" placeholder="#00DDB8" onchange="setBrand(this.value)"></div></div>'
    +'</div></div>'
-   +'<div class="card"><div class="card-h">Marca para los PDF</div><div class="cfg-grid">'
-     +'<div class="fg"><label class="lbl">Empresa</label><input class="inp" value="'+esc(S.global_config.pdf_company||'SILAB3D')+'" oninput="setGC(\'pdf_company\',this.value)"></div>'
-     +'<div class="fg"><label class="lbl">Lema</label><input class="inp" value="'+esc(S.global_config.pdf_slogan||'INNOVACIÓN CAPA A CAPA')+'" oninput="setGC(\'pdf_slogan\',this.value)"></div>'
-     +'<div class="fg" style="grid-column:1/-1"><label class="lbl">Logo (aparece en los PDF)</label><div style="display:flex;gap:10px;align-items:center"><span style="width:48px;height:48px;border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;flex-shrink:0"><img src="'+(S.global_config.pdf_logo||DEFAULT_LOGO)+'" style="max-width:100%;max-height:100%"></span><button class="btn ghost" onclick="document.getElementById(\'pdfLogoInput\').click()">Cambiar logo…</button><button class="btn ghost" onclick="setGC(\'pdf_logo\',\'\');renderCfg()">Restablecer</button><input type="file" id="pdfLogoInput" accept="image/*" style="display:none" onchange="uploadPdfLogo(this)"></div></div>'
-   +'</div></div>'
    +'<div class="card"><div class="card-h">Impresoras</div>'
      +'<table class="t"><thead><tr><th>Nombre</th><th>Precio (€)</th><th>Amortización (h)</th><th>Mant. vida (€)</th><th>Consumo (kWh)</th><th></th></tr></thead><tbody>'+prRows+'</tbody></table>'
      +'<div style="margin-top:12px"><button class="btn ghost" onclick="addPr()">＋ Añadir impresora</button></div></div>'
    +'<div class="card"><div class="card-h">Tipos de material</div>'
      +'<table class="t"><thead><tr><th>Material</th><th>Precio (€/kg)</th><th></th></tr></thead><tbody>'+ftRows+'</tbody></table>'
      +'<div style="margin-top:12px"><button class="btn ghost" onclick="addFt()">＋ Añadir material</button></div></div>'
-   +'<div class="card"><div class="card-h">Fórmula de cálculo</div><div class="note">Filamento = peso × €/kg ÷ 1000. Electricidad = horas × consumo × €/kWh. Deterioro = horas × (precio + mantenimiento) ÷ amortización. Diseño, búsqueda, soportes y post-procesado se valoran en horas × €/h. <b>Coste bruto</b> = filamento + electricidad + deterioro. Precio = bruto × markup + bruto × prob. error + complementos, con recargo de urgencia y redondeo a múltiplos de 0,05 €; nunca por debajo del precio mínimo.</div></div>'
+   +'<div class="card"><div class="card-h">Precios de utilitarios</div><div class="cfg-grid">'
+     +gcUtilField('Accesorios simples (Arandelas/NFC)','simple')
+     +gcUtilField('Caja M','caja_m')+gcUtilField('Caja L','caja_l')
+     +gcUtilField('Bolsa S','bolsa_s')+gcUtilField('Bolsa M','bolsa_m')+gcUtilField('Bolsa L','bolsa_l')
+   +'</div></div>'
+   +paramPriceCard()
+   +formulaCard()
+   
    +'<div style="margin:16px 0"><button class="btn ghost" onclick="resetCfg()">Restablecer valores de referencia</button></div>';
 }
 
@@ -819,35 +1012,28 @@ function pendingOrders(){return acceptedOrders().filter(function(o){return !o.ar
 function parseFecha(s){ if(!s)return null; if(/^\d{4}-\d{2}-\d{2}$/.test(s)){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);} var d=new Date(s); return isNaN(d.getTime())?null:d; }
 function monthRevenue(off){ var now=new Date(); var t=new Date(now.getFullYear(),now.getMonth()-off,1); return acceptedOrders().filter(function(o){var d=parseFecha(o.fecha);return d&&d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth();}).reduce(function(s,o){return s+num(o.precio_final);},0); }
 function renderDash(){
-  var os=S.orders;
-  var tm=monthRevenue(0), lm=monthRevenue(1);
-  var growth=lm===0?0:((tm-lm)/lm*100);
-  var pend=pendingOrders();
-  var pendAmt=pend.reduce(function(s,o){return s+(num(o.precio_final)-num(o.importe_pagado));},0);
-  var acc=acceptedOrders();
-  var totalRev=acc.reduce(function(s,o){return s+num(o.precio_final);},0);
-  var totalProfit=acc.reduce(function(s,o){return s+num(o.beneficio_neto);},0);
-  var margin=totalRev>0?totalProfit/totalRev*100:0;
-  var low=S.filament_stock.filter(function(s){return num(s.remaining_g)<=num(s.buy_threshold_g);}).length;
-  var recent=os.slice().sort(function(a,b){return String(b.created_at||b.fecha||'').localeCompare(String(a.created_at||a.fecha||''));}).slice(0,5);
-  var counts={}; os.forEach(function(o){var s=o.estado||'Desconocido';counts[s]=(counts[s]||0)+1;});
-  var sorted=Object.keys(counts).map(function(k){return [k,counts[k]];}).sort(function(a,b){return b[1]-a[1];});
-  var total=os.length||1, accDeg=0, segs=[], legend='';
-  sorted.forEach(function(e){var col=estColor(e[0]);var pct=e[1]/total*100;segs.push(col+' '+accDeg.toFixed(2)+'% '+(accDeg+pct).toFixed(2)+'%');accDeg+=pct;legend+='<div class="lg"><span class="dot" style="background:'+col+'"></span>'+esc(e[0])+' <span style="margin-left:auto;color:var(--t2)">'+e[1]+'</span></div>';});
-  var donut=os.length?'<div class="donut" style="background:conic-gradient('+segs.join(',')+')"></div>':'<div class="empty">Sin pedidos</div>';
-  var recentHTML=recent.length?recent.map(function(o){var col=estColor(o.estado);return '<div class="ri"><div class="ic"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div style="flex:1;min-width:0"><div class="who">'+esc(o.cliente||'—')+'</div><div class="desc">'+esc(o.descripcion||'')+'</div></div><div style="text-align:right"><div style="font-weight:700;font-size:13px">'+eur(o.precio_final)+'</div><span class="stbadge" style="color:'+col+'">'+esc(o.estado)+'</span></div></div>';}).join(''):'<div class="empty">No hay pedidos registrados.</div>';
+  var now=Date.now(), monthAgo=now-30*864e5;
+  var os=S.orders.filter(function(o){return !o.archived;});
+  var lastMonth=os.filter(function(o){ var t=toTs(o.created_at)||toTs(o.fecha); return t && t>=monthAgo; });
+  var accepted=lastMonth.filter(function(o){ return ordState(o)!=='Pendiente'; });
+  var acceptedAmt=accepted.reduce(function(s,o){return s+num(o.precio_final);},0);
+  var nAll=lastMonth.length, nAcc=accepted.length;
+  var pct=nAll? Math.round(nAcc/nAll*100):0;
+  var recent=S.orders.slice().sort(function(a,b){return (toTs(b.created_at)||0)-(toTs(a.created_at)||0);}).slice(0,5);
+  var recentHTML=recent.length?recent.map(function(o){ var st=ordState(o), col=estColor(o.estado); var fch=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
+    return '<div class="ri" onclick="openOrder(\''+o.id+'\')" style="cursor:pointer"><div class="ic"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div style="flex:1;min-width:0"><div class="who">'+esc(o.cliente||'—')+' <span style="color:var(--t3);font-weight:400;font-size:11.5px">#'+esc(o.number||'')+'</span></div><div class="desc">'+esc(o.descripcion||'')+'</div></div><div style="text-align:right"><div style="font-weight:700;font-size:13px">'+eur(o.precio_final)+'</div><span class="stbadge" style="color:'+col+'">'+esc(st)+' · '+esc(fch)+'</span></div></div>';
+  }).join(''):'<div class="empty">No hay pedidos registrados.</div>';
+  var ring='<div class="dash-ring" style="background:conic-gradient(#2FBF71 0% '+pct+'%, rgba(150,150,170,.16) '+pct+'% 100%)"><div class="dash-ring-in"><div class="dash-ring-pct">'+pct+'%</div><div class="dash-ring-lb">aceptados</div></div></div>';
   document.getElementById('view').innerHTML=
-   '<div class="h1">Resumen de negocio</div><div class="h-sub">'+esc(new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'}))+'</div>'
-   +'<div class="kpis">'
-   +'<div class="kpi"><div class="k-top"><span class="k-ic" style="background:rgba(0,221,184,.12);color:var(--ac)">€</span><span class="grow" style="color:'+(growth>=0?'#34D399':'#FF6B6B')+'">'+(growth>=0?'▲':'▼')+' '+Math.abs(growth).toFixed(1)+'%</span></div><div class="k-l">Ingresos este mes</div><div class="k-v">'+eur(tm)+'</div><div class="k-foot">vs '+eur(lm)+' mes anterior</div></div>'
-   +'<div class="kpi"><div class="k-top"><span class="k-ic" style="background:rgba(244,183,64,.14);color:#F4B740">◷</span><span class="grow" style="color:#F4B740">'+pend.length+' pedidos</span></div><div class="k-l">Pendiente de cobro</div><div class="k-v" style="color:#F4B740">'+eur(pendAmt)+'</div><div class="k-foot">Envíos no facturados o parciales</div></div>'
-   +'<div class="kpi"><div class="k-top"><span class="k-ic" style="background:rgba(52,211,153,.14);color:#34D399">%</span></div><div class="k-l">Margen de beneficio medio</div><div class="k-v" style="color:#34D399">'+margin.toFixed(1)+'%</div><div class="k-foot">Sobre histórico de aceptados</div></div>'
-   +'<div class="kpi"'+(low>0?' style="box-shadow:0 0 0 1px rgba(255,107,107,.4)"':'')+'><div class="k-top"><span class="k-ic" style="background:rgba(255,107,107,.14);color:#FF6B6B">▦</span>'+(low>0?'<span class="grow" style="color:#FF6B6B">¡ATENCIÓN!</span>':'')+'</div><div class="k-l">Stock bajo mínimos</div><div class="k-v" style="color:#FF6B6B">'+low+' <span style="font-size:13px;color:var(--t2);font-weight:400">materiales</span></div><div class="k-foot">'+(low>0?'Necesitas reponer material':'Inventario al día')+'</div></div>'
+   '<div class="h1">Dashboard</div><div class="h-sub">'+esc(new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'}))+'</div>'
+   +'<div class="dash-hero">'+ring
+     +'<div class="dash-tiles">'
+       +'<div class="dtile"><div class="dtile-ic" style="background:rgba(139,124,255,.16);color:var(--ac)"><svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 8h6M8 12h6M8 16h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="dtile-v">'+nAll+'</div><div class="dtile-l">Pedidos guardados<span>último mes</span></div></div>'
+       +'<div class="dtile"><div class="dtile-ic" style="background:rgba(47,191,113,.18);color:#2FBF71"><svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M4 11l5 5L19 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="dtile-v">'+nAcc+' <span class="dtile-of">/ '+nAll+'</span></div><div class="dtile-l">Pedidos aceptados<span>último mes</span></div></div>'
+       +'<div class="dtile"><div class="dtile-ic" style="background:rgba(52,211,153,.18);color:#34D399;font-weight:800;font-size:17px">€</div><div class="dtile-v">'+eur(acceptedAmt)+'</div><div class="dtile-l">Importe aceptado<span>último mes</span></div></div>'
+     +'</div>'
    +'</div>'
-   +'<div class="grid2" style="grid-template-columns:1.6fr 1fr">'
-   +'<div><div class="card-h" style="margin-bottom:10px">Actividad reciente</div><div class="card dash-recent">'+recentHTML+'</div></div>'
-   +'<div><div class="card-h" style="margin-bottom:10px">Estado general</div><div class="card">'+donut+'<div class="legend">'+legend+'</div><div style="border-top:1px solid var(--border);margin-top:14px;padding-top:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span style="color:var(--t2)">Pedidos totales</span><b>'+os.length+'</b></div><div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:var(--t2)">Tasa de aceptación</span><b style="color:var(--ac)">'+(os.length?Math.round(acc.length/os.length*100):0)+'%</b></div></div></div></div>'
-   +'</div>';
+   +'<div class="card-h" style="margin:22px 0 10px">Actividad reciente</div><div class="card dash-recent">'+recentHTML+'</div>';
 }
 
 /* ===== clientes ===== */
@@ -881,7 +1067,8 @@ function clientHistory(id){
    +'<table class="t"><thead><tr><th>Fecha</th><th>Descripción</th><th style="text-align:right">Total</th><th>Estado</th></tr></thead><tbody>'+rows+'</tbody></table>'
    +'<div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Cerrar</button></div>');
 }
-function renderClients(){
+function syncClientsFromOrders(){ var n0=(S.clients||[]).length; (S.orders||[]).forEach(function(o){ ensureClient(o); }); return (S.clients||[]).length!==n0; }
+function renderClients(){ if(syncClientsFromOrders())save();
   var list=S.clients.map(function(c){var st=clientStats(c.name);return Object.assign({},c,{_c:st.count,_t:st.total});}).filter(function(c){if(!cliQ)return true;return ((c.name+' '+(c.email||'')+' '+(c.tax_id||'')+' '+(c.phone||'')).toLowerCase().indexOf(cliQ)>=0);});
   var rows=list.map(function(c){
     return '<tr><td><div style="font-weight:700">'+esc(c.name)+'</div><div style="font-size:11.5px;color:var(--t2)">'+esc(c.email||'Sin email')+'</div></td>'
@@ -933,6 +1120,12 @@ function consumeStock(o){
   if(low.length) toast3('Stock bajo → '+low.join(' · '),'#F4B740'); else toast3('Material descontado del inventario','#34D399');
 }
 function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; o.status_updated_at=Date.now(); o.notif_snooze_until=0; if(estado==='Activo' && !o.material_contabilizado) consumeStock(o); save(); updateOrdBadge(); }
+function activateInTracker(id){ var o=getOrder(id); if(!o)return; if(!(window.DPCloud&&window.DPCloud.createOrder)){ toast3('3DTracker no disponible ahora','#FF6B8A'); return; }
+  var code=o.number; toast3('Activando en 3DTracker\u2026','#4D9FFF');
+  function nav(){ try{ window.parent.postMessage({__dp3:true,type:'openTrackerOrder',code:code},'*'); }catch(e){} closeModal(); }
+  function markAndGo(){ o.estado='Activo'; o.status_updated_at=Date.now(); o.notif_snooze_until=0; o.tracked=true; try{ if(!o.material_contabilizado)consumeStock(o); }catch(e){} try{ myTs=Date.now(); var p=window.DPCloud.saveState('3dcalc',S,myTs); if(p&&p.then){ p.then(nav,nav); return; } }catch(e){} save(); nav(); }
+  function create(){ window.DPCloud.createOrder({order_code:code,customer_name:o.cliente||'',customer_email:o.cliente_email||'',description:o.descripcion||''}).then(markAndGo).catch(function(){ toast3('No se pudo crear el pedido en 3DTracker','#FF6B8A'); }); }
+  if(window.DPCloud.getOrderByCode){ window.DPCloud.getOrderByCode(code).then(function(ex){ if(ex) markAndGo(); else create(); }).catch(create); } else create(); }
 function openOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); }
 function reopenOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); renderOrders(); }
 function setOrdParam(id,f,v){ var o=getOrder(id); if(!o)return; if(['peso_g','horas','cantidad','gasto_misc'].indexOf(f)>=0)v=num(v); o[f]=v; if(f==='filamento')o.is_multimaterial=false; try{ var r=compute(orderToCalcState(o)); o.precio_final=r.precio; o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); }catch(e){} save(); reopenOrder(id); }
@@ -962,7 +1155,7 @@ function orderModalHTML(o){
   var colorOpts=cnames.map(function(n){return '<option>'+esc(n)+'</option>';}).join('');
   return '<div class="od-head"><h3 style="margin:0">Pedido #'+esc(o.number||'')+'</h3>'
       +'<button class="ord-state" style="background:'+col+'22;color:'+col+';border-color:'+col+'66" title="Clic para cambiar de estado" onclick="cycleOrderState(\''+I+'\');reopenOrder(\''+I+'\')">'+st+'</button>'
-      +(o.archived?'<span class="od-arch">archivado</span>':'')+'</div>'
+      +(o.archived?'<span class="od-arch">archivado</span>':'')+'</div>'+'<button class="btn" style="width:100%;margin:2px 0 4px;background:linear-gradient(120deg,#2FBF71,#1F9E5A);color:#fff;border:none;font-weight:600" onclick="activateInTracker(\''+I+'\')">'+(o.tracked?'\u2197 Ver en 3DTracker':'\u2197 Activar en 3DTracker')+'</button>'
     +'<div class="od-sec">Información del proyecto</div>'
     +'<div class="od-grid"><div><label class="lbl">Cliente</label><input class="inp" value="'+esc(o.cliente)+'" onchange="setOrdMeta(\''+I+'\',\'cliente\',this.value)"></div>'
       +'<div><label class="lbl">Email</label><input class="inp" value="'+esc(o.cliente_email)+'" onchange="setOrdMeta(\''+I+'\',\'cliente_email\',this.value)"></div></div>'
@@ -1100,6 +1293,21 @@ function _dataCard(doc,x,y,w,rows){
   });
   return y+h;
 }
+function _pdfRich(doc,tx,x,y,maxW,lineH){
+  var segs=[]; var re=/\*\*([^*]+)\*\*/g; var last=0,mm;
+  while((mm=re.exec(tx))){ if(mm.index>last)segs.push([tx.slice(last,mm.index),false]); segs.push([mm[1],true]); last=re.lastIndex; }
+  if(last<String(tx).length)segs.push([String(tx).slice(last),false]);
+  var words=[]; segs.forEach(function(s){ s[0].split(/\s+/).forEach(function(w){ if(w)words.push([w,s[1]]); }); });
+  doc.setFont('helvetica','normal'); var spaceW=doc.getTextWidth(' ');
+  var cx=x, cy=y, first=true;
+  words.forEach(function(w){ doc.setFont('helvetica',w[1]?'bold':'normal'); var ww=doc.getTextWidth(w[0]);
+    if(!first && cx+spaceW+ww>x+maxW){ cx=x; cy+=lineH; first=true; }
+    if(!first) cx+=spaceW;
+    doc.text(w[0],cx,cy); cx+=ww; first=false;
+  });
+  doc.setFont('helvetica','normal');
+  return cy;
+}
 function renderTicketPage(doc,o,kind){
   var internal=(kind==='empresa'); var ac=[22,127,111];
   var br=pdfBrand(); var M=16, W=210;
@@ -1108,17 +1316,18 @@ function renderTicketPage(doc,o,kind){
   var tiempo=decToHM(o.horas)+' h';
   var material=((r&&r.filName)||o.filamento||'—')+((o.filamento_color&&!(r&&r.filColor==='Multicolor'))?' ('+o.filamento_color+')':'');
   var precio=(Number(o.precio_final)||(r?r.precio:0));
+  var TPL=pdfTpl(), TOK=pdfTokens(o,r), CS=internal?TPL.internal:TPL.client; function TT(s){return applyTokens(s,TOK);}
   // ===== cabecera compartida =====
   try{ doc.addImage(br.logo,'JPEG',M,11,22,22); }catch(e){}
   doc.setTextColor(20,22,28); doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.text(br.company,M+28,20);
   doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.text(String(br.slogan).toUpperCase(),M+28,26);
   doc.setTextColor(120,120,130); doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
-  doc.text((internal?'Ticket interno':'Presupuesto')+' para '+cliente+'  ·  '+fecha,M+28,32);
-  if(internal){ doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.text('USO INTERNO',W-M,15,{align:'right'}); }
+  doc.text(TT(CS.intro),M+28,32);
+  if(internal){ doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.text(TT(TPL.internal.tag),W-M,15,{align:'right'}); }
   doc.setDrawColor(ac[0],ac[1],ac[2]); doc.setLineWidth(0.8); doc.line(M,39,W-M,39);
   var y=49;
   // ===== Datos del Proyecto (compartido) =====
-  doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Datos del Proyecto',M,y); y+=3;
+  doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(TT(CS.t_datos),M,y); y+=3;
   y=_dataCard(doc,M,y+2,W-2*M,[
     ['Cliente',cliente,'Descripción',desc],
     ['Material',material,'Peso estimado',(o.peso_g||0)+' g'],
@@ -1127,13 +1336,13 @@ function renderTicketPage(doc,o,kind){
   // ===== caja PRECIO FINAL (compartido) =====
   var py=y+9, bw=W-2*M, bh=22;
   doc.setFillColor(245,247,250); doc.rect(M,py,bw,bh,'F'); doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(M,py,2.6,bh,'F');
-  doc.setTextColor(120,124,134); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.text('PRECIO FINAL',M+9,py+8);
+  doc.setTextColor(120,124,134); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.text(TT(CS.t_precio),M+9,py+8);
   doc.setTextColor(20,22,28); doc.setFont('helvetica','bold'); doc.setFontSize(23); doc.text(precio.toFixed(2)+' €',M+9,py+18);
   if(r&&r.cant>1){ doc.setTextColor(120,124,134); doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(r.precioUnit.toFixed(2)+' € / ud  ·  '+r.cant+' uds',W-M-4,py+18,{align:'right'}); }
   y=py+bh+11;
   if(internal){
     // ===== Parámetros del presupuesto =====
-    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Parámetros del presupuesto',M,y); y+=3;
+    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(TT(TPL.internal.t_params),M,y); y+=3;
     y=_dataCard(doc,M,y+2,W-2*M,[
       ['Impresora',(r&&r.printer&&r.printer.name)||o.impresora||'—','Precio material',(r?r.pricekg.toFixed(2):'0.00')+' €/kg'],
       ['Diseño / modelado',o.diseno_modelado||'—','Búsqueda modelos',o.busqueda_modelos||'—'],
@@ -1142,7 +1351,7 @@ function renderTicketPage(doc,o,kind){
       ['Urgencia',o.urgencia_nivel||'Normal','Cantidad',(o.cantidad||1)+' ud.']
     ]);
     // ===== Desglose de Costes =====
-    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Desglose de Costes',M,y+9);
+    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(TT(TPL.internal.t_desglose),M,y+9);
     var body=[];
     if(r){
       var bf=function(s){return {content:s,styles:{fontStyle:'bold'}};};
@@ -1162,18 +1371,26 @@ function renderTicketPage(doc,o,kind){
       foot:[[{content:'PVP FINAL',styles:{fontStyle:'bold',textColor:[20,22,28]}},{content:precio.toFixed(2)+' €',styles:{fontStyle:'bold',halign:'right',textColor:ac}}]],
       footStyles:{fillColor:[238,243,242]} });
   } else {
-    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('Condiciones',M,y);
-    var conds=['El coste indicado es el precio final del proyecto, incluyendo todos los gastos necesarios para llevarlo a cabo.','Para plazos estándar, el tiempo de entrega dependerá de la complejidad del proyecto y la cola de trabajo en curso.','Se requiere el abono del 50% del presupuesto como anticipo para iniciar la producción.','Nuestros términos y condiciones generales están disponibles en nuestra web y se aplican a este presupuesto.'];
-    doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(70,72,82); var cy=y+7;
-    conds.forEach(function(tx){ var ln=doc.splitTextToSize('•  '+tx,W-2*M-2); doc.text(ln,M,cy); cy+=ln.length*4.7+1.8; });
+    doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(TT(TPL.client.t_cond),M,y);
+    var conds=(TPL.client.conds||[]).filter(function(c){return c.on!==false;}).map(function(c){return TT(c.t||'');});
+    doc.setFontSize(9.5); var cy=y+9; var bx=M, tx0=M+5, cw=W-M-tx0;
+    conds.forEach(function(tx){ if(!String(tx).trim())return; doc.setFont('helvetica','bold'); doc.setTextColor(ac[0],ac[1],ac[2]); doc.text('•',bx,cy); doc.setTextColor(70,72,82); cy=_pdfRich(doc,tx,tx0,cy,cw,5.2)+6.6; });
   }
   doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(165,168,176);
-  doc.text(br.company+'   ·   '+(o.number||''),M,289);
+  doc.text(TT(CS.footer),M,289);
 }
 function calcStateToOrder(){ var c=S.calc_state, r=compute(); return {number:'PRESUPUESTO',fecha:(c.fecha||todayISO()),cliente:c.cliente,cliente_email:c.cliente_email,descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{}))}; }
-function calcPDF(kind){ if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var o=calcStateToOrder(); var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,kind==='empresa'?'empresa':'cliente'); var nm=(o.cliente||'presupuesto').replace(/[^\w\-]+/g,'_'); doc.save('presupuesto-'+nm+'-'+(kind==='empresa'?'interno':'cliente')+'.pdf'); }
-function orderPDF(id,kind){ var o=getOrder(id); if(!o)return; if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,kind==='empresa'?'empresa':'cliente'); doc.save((o.number||'pedido')+'-'+(kind==='empresa'?'taller':'cliente')+'.pdf'); }
-function exportBothPdf(id){ var o=getOrder(id); if(!o)return; if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,'cliente'); doc.addPage(); renderTicketPage(doc,o,'empresa'); doc.save((o.number||'pedido')+'.pdf'); }
+function pdfFileName(o,kind){
+  var f=String((o&&o.fecha)||todayISO()).slice(0,10).replace(/-/g,''); if(!/^[0-9]{8}$/.test(f))f=todayISO().replace(/-/g,'');
+  var tipo=(kind==='empresa')?'Presupuesto interno':(kind==='ambos'?'Presupuesto cliente e interno':'Presupuesto cliente');
+  var cli=String((o&&o.cliente)||'').trim(), desc=String((o&&o.descripcion)||'').trim();
+  var parts=[f,tipo]; if(cli)parts.push(cli); if(desc)parts.push(desc);
+  var name=parts.join('_').replace(/[\\\/:*?"<>|\r\n\t]+/g,' ').replace(/\s+/g,' ').trim();
+  return name+'.pdf';
+}
+function calcPDF(kind){ if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var o=calcStateToOrder(); var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,kind==='empresa'?'empresa':'cliente'); doc.save(pdfFileName(o,kind==='empresa'?'empresa':'cliente')); }
+function orderPDF(id,kind){ var o=getOrder(id); if(!o)return; if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,kind==='empresa'?'empresa':'cliente'); doc.save(pdfFileName(o,kind==='empresa'?'empresa':'cliente')); }
+function exportBothPdf(id){ var o=getOrder(id); if(!o)return; if(!(window.jspdf&&window.jspdf.jsPDF)){toast3('No se pudo cargar el generador de PDF','#FF6B8A');return;} var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); renderTicketPage(doc,o,'cliente'); doc.addPage(); renderTicketPage(doc,o,'empresa'); doc.save(pdfFileName(o,'ambos')); }
 
 /* ===== estadísticas ampliadas ===== */
 function statsExtra(os){
