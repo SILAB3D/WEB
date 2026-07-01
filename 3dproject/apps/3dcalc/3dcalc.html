@@ -128,7 +128,12 @@ table.t .sw{display:inline-block;width:14px;height:14px;border-radius:4px;border
 .hbars .hb .val{width:40px;text-align:right;font-weight:700}
 
 .low{color:#FF7A7A}
-.mix{margin-top:10px;border:1px solid var(--border);border-radius:10px;padding:10px}
+.mix{margin-top:10px;border:1px solid var(--border);border-radius:10px;padding:10px;overflow-x:auto}
+.mix table.t{table-layout:fixed}
+.mix table.t th,.mix table.t td{min-width:0;overflow:hidden}
+.mix table.t select,.mix table.t input{min-width:0;max-width:100%;text-overflow:ellipsis}
+.mix table.t td:last-child,.mix table.t th:last-child{width:30px}
+.mix table.t td:nth-child(3),.mix table.t th:nth-child(3){width:72px}
 .brk .grp{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin-top:10px}
 .brk .r.sub b{color:var(--t1);font-weight:700}
 .brk .r.sub span{color:var(--t1)}
@@ -542,7 +547,7 @@ function setMix(i,f,v){ var a=S.calc_state.material_breakdown; if(a&&a[i]){a[i][
 function delMix(i){ var a=S.calc_state.material_breakdown; if(a){a.splice(i,1); save(); renderCalc();} }
 function renderCalc(){
   var c=S.calc_state, g=S.global_config, u=g.money_unit||'€';
-  var colorNames=Object.keys(COLOR_MAP); if(c.filamento_color&&colorNames.indexOf(c.filamento_color)<0)colorNames=[c.filamento_color].concat(colorNames);
+  var colorNames=Object.keys(COLOR_MAP).concat(['Pendiente de configurar']); if(c.filamento_color&&colorNames.indexOf(c.filamento_color)<0)colorNames=[c.filamento_color].concat(colorNames);
   var colorOpts=colorNames.map(function(n){return '<option'+(c.filamento_color===n?' selected':'')+'>'+esc(n)+'</option>';}).join('');
   var printerOpts=S.printers.map(function(p){return '<option'+(c.impresora===p.name?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');
   var ftypeOpts=S.filament_types.map(function(f){return '<option'+(c.filamento_tipo===f.name?' selected':'')+'>'+esc(f.name)+'</option>';}).join('');
@@ -1151,7 +1156,7 @@ function orderModalHTML(o){
   var printerOpts=S.printers.map(function(p){return '<option'+(o.impresora===p.name?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');
   var ftnames=S.filament_types.map(function(f){return f.name;}); if(o.filamento && ftnames.indexOf(o.filamento)<0)ftnames=[o.filamento].concat(ftnames);
   var ftypeOpts=ftnames.map(function(n){return '<option'+(o.filamento===n?' selected':'')+'>'+esc(n)+'</option>';}).join('');
-  var cnames=Object.keys(COLOR_MAP); if(o.filamento_color && cnames.indexOf(o.filamento_color)<0)cnames=[o.filamento_color].concat(cnames);
+  var cnames=Object.keys(COLOR_MAP).concat(['Pendiente de configurar']); if(o.filamento_color && cnames.indexOf(o.filamento_color)<0)cnames=[o.filamento_color].concat(cnames);
   var colorOpts=cnames.map(function(n){return '<option>'+esc(n)+'</option>';}).join('');
   return '<div class="od-head"><h3 style="margin:0">Pedido #'+esc(o.number||'')+'</h3>'
       +'<button class="ord-state" style="background:'+col+'22;color:'+col+';border-color:'+col+'66" title="Clic para cambiar de estado" onclick="cycleOrderState(\''+I+'\');reopenOrder(\''+I+'\')">'+st+'</button>'
@@ -1287,8 +1292,12 @@ function _dataCard(doc,x,y,w,rows){
   rows.forEach(function(rw){
     for(var ci=0;ci<2;ci++){ var lab=rw[ci*2], val=rw[ci*2+1]; if(lab==null)continue; var cx=colx[ci];
       doc.setFont('helvetica','bold'); doc.setFontSize(7.3); doc.setTextColor(140,144,154); doc.text(String(lab).toUpperCase(),cx,ry);
-      doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.setTextColor(28,30,38);
-      var vv=doc.splitTextToSize(String(val==null?'':val), w/2-pad-7); doc.text(vv[0]||'',cx,ry+5);
+      doc.setFont('helvetica','bold'); doc.setFontSize(10.5);
+      var _isLink=(val&&typeof val==='object'&&val.url);
+      var _vs=String(_isLink?(val.v||''):(val==null?'':val));
+      var vv=doc.splitTextToSize(_vs, w/2-pad-7); var _ln=vv[0]||'';
+      if(_isLink){ doc.setTextColor(22,127,111); try{ doc.textWithLink(_ln,cx,ry+5,{url:val.url}); }catch(_e){ doc.text(_ln,cx,ry+5); } var _tw=doc.getTextWidth(_ln); doc.setDrawColor(22,127,111); doc.setLineWidth(0.3); doc.line(cx,ry+6.2,cx+_tw,ry+6.2); }
+      else { doc.setTextColor(28,30,38); doc.text(_ln,cx,ry+5); }
     } ry+=lh;
   });
   return y+h;
@@ -1308,13 +1317,15 @@ function _pdfRich(doc,tx,x,y,maxW,lineH){
   doc.setFont('helvetica','normal');
   return cy;
 }
+var CONFIG_URL='https://silab3d.com/pages/configurador-color.html';
 function renderTicketPage(doc,o,kind){
   var internal=(kind==='empresa'); var ac=[22,127,111];
   var br=pdfBrand(); var M=16, W=210;
   var cliente=o.cliente||'—', desc=o.descripcion||'—', fecha=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
   var r=null; try{ r=compute(orderToCalcState(o)); }catch(e){}
   var tiempo=decToHM(o.horas)+' h';
-  var material=((r&&r.filName)||o.filamento||'—')+((o.filamento_color&&!(r&&r.filColor==='Multicolor'))?' ('+o.filamento_color+')':'');
+  var pendingColor=(o.filamento_color==='Pendiente de configurar');
+  var material=((r&&r.filName)||o.filamento||'—')+((o.filamento_color&&!pendingColor&&!(r&&r.filColor==='Multicolor'))?' ('+o.filamento_color+')':'');
   var precio=(Number(o.precio_final)||(r?r.precio:0));
   var TPL=pdfTpl(), TOK=pdfTokens(o,r), CS=internal?TPL.internal:TPL.client; function TT(s){return applyTokens(s,TOK);}
   // ===== cabecera compartida =====
@@ -1328,11 +1339,13 @@ function renderTicketPage(doc,o,kind){
   var y=49;
   // ===== Datos del Proyecto (compartido) =====
   doc.setTextColor(ac[0],ac[1],ac[2]); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(TT(CS.t_datos),M,y); y+=3;
-  y=_dataCard(doc,M,y+2,W-2*M,[
+  var _datos=[
     ['Cliente',cliente,'Descripción',desc],
     ['Material',material,'Peso estimado',(o.peso_g||0)+' g'],
     ['Tiempo de impresora',tiempo,'Entrega',(o.urgencia_nivel&&o.urgencia_nivel!=='Normal')?o.urgencia_nivel:'Plazo estándar']
-  ]);
+  ];
+  if(pendingColor)_datos.push(['Color',{v:'Pendiente de configurar',url:CONFIG_URL},null,null]);
+  y=_dataCard(doc,M,y+2,W-2*M,_datos);
   // ===== caja PRECIO FINAL (compartido) =====
   var py=y+9, bw=W-2*M, bh=22;
   doc.setFillColor(245,247,250); doc.rect(M,py,bw,bh,'F'); doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(M,py,2.6,bh,'F');
