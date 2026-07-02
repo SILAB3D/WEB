@@ -1061,7 +1061,7 @@ const APPS = {
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260702-1030';
+const APP_VER = '20260702-2345';
 
 function launchApp(id) {
   const a = APPS[id];
@@ -1094,6 +1094,7 @@ window.dpOnTheme=function(t){var f=document.getElementById('v-frame');if(f&&f.co
 window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='home'){closeViewer();}});
 function openTrackerOrder(code){ try{ sessionStorage.setItem('dp3-admin-shared', JSON.stringify({orderId:code,orderCode:code})); }catch(e){} var _t=(document.documentElement.getAttribute('data-theme')||'dark'); var frame=document.getElementById('v-frame'); frame.src='apps/3dtracker/admin/order-detail.html?dptheme='+_t+'&v='+APP_VER; document.getElementById('viewer').classList.add('open'); }
 window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='openTrackerOrder'&&d.code){openTrackerOrder(d.code);}});
+window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type==='openBilling'){launchApp('billing');}});
 </script>
 <script>
 (function(){
