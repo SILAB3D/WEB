@@ -175,8 +175,8 @@ document.addEventListener('DOMContentLoaded', function () {
     //   2) Si Supabase falla (pausa/caída) → respaldo desde data/filamentos.json
     //      (checkpoint que mantiene al día un GitHub Action cada hora).
     async function fetchFilamentos() {
-        const inPagesFolder = window.location.pathname.toLowerCase().includes('/pages/');
-        const localPath = inPagesFolder ? '../data/filamentos.json' : 'data/filamentos.json';
+        // Ruta absoluta: funciona igual sea cual sea la profundidad de la página actual.
+        const localPath = '/data/filamentos.json';
         const sb = window.SILAB_SUPABASE || {};
         const sbKey = sb.anonKey || sb.key;
 

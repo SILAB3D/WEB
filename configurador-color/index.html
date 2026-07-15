@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurador de Proyecto - SILAB 3D</title>
+  <meta name="description" content="Configura tus proyectos de impresión 3D en SILAB 3D Salamanca.">
+  <link rel="icon" type="image/png" href="../img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --primary:#BC556D; --primary-dark:#B7516B; --primary-light:#F2D6DC;
+      --primary-xlight:#FAF2F4; --dark:#2F2F2F; --darker:#1A1A1A;
+      --white:#FFFFFF; --gray-bg:#F8F5F6; --gray-text:#6B7280;
+      --gray-line:#EDE0E3; --radius:18px; --radius-sm:12px; --nav-h:72px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Outfit',sans-serif;color:var(--dark);background:var(--gray-bg);
+         min-height:100vh;overflow-x:hidden;}
+    img{max-width:100%;height:auto;display:block;}
+    a{text-decoration:none;color:inherit;}
+    ul{list-style:none;}
+
+    /* ── Keyframes ── */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes popIn{0%{transform:scale(.8);opacity:0;}60%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+    @keyframes badge-pulse{0%,100%{box-shadow:0 0 0 0 rgba(188,85,109,.4);}50%{box-shadow:0 0 0 7px rgba(188,85,109,0);}}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes ripple{0%{box-shadow:0 0 0 0 rgba(188,85,109,.3);}100%{box-shadow:0 0 0 10px rgba(188,85,109,0);}}
+
+    /* ══════════════════════ NAVBAR ══════════════════════ */
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:900;height:var(--nav-h);
+      background:rgba(255,255,255,.95);backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(242,214,220,.7);transition:box-shadow .3s;}
+    .navbar.scrolled{box-shadow:0 2px 24px rgba(188,85,109,.12);}
+    .navbar-container{max-width:1200px;margin:0 auto;padding:0 28px;height:100%;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .hamburger-menu{display:none;flex-direction:column;gap:5px;background:none;border:none;
+      cursor:pointer;padding:8px;border-radius:10px;transition:background .2s;}
+    .hamburger-menu:hover{background:var(--primary-light);}
+    .hamburger-menu span{display:block;width:22px;height:2px;background:var(--dark);
+      border-radius:2px;transition:all .3s cubic-bezier(.4,0,.2,1);}
+    .hamburger-menu.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .hamburger-menu.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+    .hamburger-menu.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+    .navbar-left .btn-presupuesto{display:inline-flex;align-items:center;gap:7px;
+      background:var(--primary);color:#fff;padding:10px 22px;border-radius:50px;
+      font-size:.855rem;font-weight:700;white-space:nowrap;transition:all .3s;}
+    .navbar-left .btn-presupuesto:hover{background:var(--primary-dark);transform:translateY(-1px);
+      box-shadow:0 6px 22px rgba(188,85,109,.38);}
+    .navbar-center{display:flex;align-items:center;}
+    .navbar-logo{height:48px;width:auto;transition:transform .3s;}
+    .navbar-logo:hover{transform:scale(1.04);}
+    .nav-links{display:flex;align-items:center;gap:4px;}
+    .nav-links a{color:var(--dark);font-size:.9rem;font-weight:500;padding:8px 14px;
+      border-radius:10px;transition:all .2s;position:relative;}
+    .nav-links a:hover{color:var(--primary);background:var(--primary-light);}
+    .nav-links a.active{color:var(--primary);font-weight:700;}
+    .nav-links a.active::after{content:'';position:absolute;bottom:5px;left:50%;
+      transform:translateX(-50%);width:14px;height:2.5px;background:var(--primary);border-radius:2px;}
+    /* mobile menu */
+    .menu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+      backdrop-filter:blur(3px);z-index:950;}
+    .menu-overlay.show{display:block;}
+    .mobile-menu{position:fixed;top:0;left:0;width:290px;height:100vh;background:var(--white);
+      z-index:960;transform:translateX(-100%);transition:transform .38s cubic-bezier(.4,0,.2,1);
+      display:flex;flex-direction:column;box-shadow:6px 0 40px rgba(0,0,0,.14);}
+    .mobile-menu.open{transform:translateX(0);}
+    .mobile-menu-header{padding:26px 22px 20px;border-bottom:1px solid var(--primary-light);}
+    .mobile-menu-logo{height:42px;width:auto;}
+    .mobile-menu-nav{flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:3px;}
+    .mobile-menu-link{display:flex;align-items:center;gap:12px;padding:13px 16px;
+      border-radius:12px;font-weight:700;font-size:1rem;transition:all .2s;color:var(--dark);}
+    .mobile-menu-link:hover,.mobile-menu-link.active{background:var(--primary-light);color:var(--primary);}
+    .mobile-menu-icon{font-size:1.15rem;}
+    .mobile-menu-footer{padding:18px 20px 24px;border-top:1px solid var(--primary-light);}
+    .btn-presupuesto-mobile{display:block;background:var(--primary);color:white;text-align:center;
+      padding:14px;border-radius:14px;font-weight:700;font-size:.95rem;transition:background .2s,transform .2s;}
+    .btn-presupuesto-mobile:hover{background:var(--primary-dark);transform:translateY(-1px);}
+
+    /* ══════════════════════ PAGE ══════════════════════ */
+    .page-wrap{padding-top:var(--nav-h);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* Header */
+    .page-header{background:linear-gradient(148deg,var(--darker) 0%,#3a1420 55%,#591f2c 100%);
+      padding:52px 28px 46px;position:relative;overflow:hidden;flex-shrink:0;}
+    .page-header::before{content:'';position:absolute;inset:0;
+      background-image:radial-gradient(circle,rgba(188,85,109,.22) 1.5px,transparent 1.5px);
+      background-size:20px 20px;}
+    .page-header::after{content:'';position:absolute;top:-60px;right:-60px;width:210px;height:210px;
+      border-radius:50%;background:rgba(188,85,109,.14);}
+    .page-header-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+    .page-header-badge{display:inline-flex;align-items:center;gap:7px;
+      background:rgba(188,85,109,.32);border:1px solid rgba(188,85,109,.42);
+      color:rgba(255,255,255,.9);padding:5px 14px;border-radius:50px;
+      font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;}
+    .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--primary-light);
+      animation:badge-pulse 2s infinite;}
+    .page-header h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:#fff;
+      letter-spacing:-.04em;line-height:1.15;margin-bottom:10px;}
+    .page-header p{font-size:.975rem;color:rgba(255,255,255,.62);line-height:1.65;max-width:560px;}
+    .page-header p strong{color:rgba(255,255,255,.9);font-weight:600;}
+
+    /* ══════════════════════ LAYOUT ══════════════════════ */
+    .cfg-layout{flex:1;display:grid;grid-template-columns:1fr 340px;align-items:start;}
+
+    /* Left */
+    .cfg-left{padding:32px 28px 48px;min-height:calc(100vh - var(--nav-h) - 140px);}
+    .cfg-left-inner{max-width:720px;}
+
+    .cfg-toolbar{display:flex;align-items:center;justify-content:space-between;
+      gap:12px;margin-bottom:28px;flex-wrap:wrap;}
+    .cfg-heading{font-size:1.05rem;font-weight:800;color:var(--dark);letter-spacing:-.02em;
+      display:flex;align-items:center;gap:8px;}
+    .cfg-count-chip{background:var(--primary);color:white;font-size:.7rem;font-weight:800;
+      padding:2px 10px;border-radius:50px;}
+
+    .btn-add{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:50px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;
+      font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;
+      transition:all .28s;box-shadow:0 5px 18px rgba(188,85,109,.32);}
+    .btn-add:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(188,85,109,.5);}
+
+    /* Empty state */
+    .cfg-empty{text-align:center;padding:64px 20px;color:var(--gray-text);
+      border:2px dashed var(--gray-line);border-radius:20px;background:rgba(255,255,255,.6);}
+    .cfg-empty-icon{font-size:3.2rem;margin-bottom:14px;opacity:.7;}
+    .cfg-empty-text{font-size:.95rem;line-height:1.7;max-width:280px;margin:0 auto;}
+
+    /* Project list */
+    .project-list{display:flex;flex-direction:column;gap:20px;}
+
+    /* ══════════════════════ PROJECT CARD ══════════════════════ */
+    /* NOTE: NO overflow:hidden — prevents delete button & slot-x from clipping */
+    .project-card{background:var(--white);border:1.5px solid var(--gray-line);
+      border-radius:20px;box-shadow:0 2px 16px rgba(0,0,0,.05);
+      transition:border-color .25s,box-shadow .25s;animation:fadeInUp .3s ease;
+      position:relative;}
+    .project-card:hover{border-color:rgba(188,85,109,.3);box-shadow:0 8px 30px rgba(188,85,109,.12);}
+
+    /* Coloured top strip - uses border-radius top only */
+    .card-strip{height:5px;background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      border-radius:18px 18px 0 0;}
+
+    /* Card header row: num + name + del — all contained, no overflow */
+    .card-header{display:flex;align-items:center;gap:10px;
+      padding:16px 18px 0;width:100%;}
+    .pc-num{width:30px;height:30px;min-width:30px;border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;
+      font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;}
+    .pc-name{flex:1;min-width:0; /* KEY: allows shrink below content size */
+      padding:8px 13px;border:1.5px solid var(--gray-line);border-radius:10px;
+      font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--dark);
+      outline:none;background:var(--gray-bg);transition:border-color .2s,background .2s;}
+    .pc-name:focus{border-color:var(--primary);background:var(--white);
+      box-shadow:0 0 0 3px rgba(188,85,109,.1);}
+    /* Delete button — fixed size, always contained */
+    .pc-del{width:34px;height:34px;min-width:34px;border-radius:10px;
+      background:none;border:1.5px solid var(--gray-line);cursor:pointer;
+      font-size:.95rem;display:flex;align-items:center;justify-content:center;
+      transition:all .22s;line-height:1;padding:0;color:var(--gray-text);}
+    .pc-del:hover{background:#fee2e2;border-color:#fca5a5;color:#ef4444;
+      transform:scale(1.05);}
+
+    /* Card body */
+    .card-body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:18px;}
+
+    /* ── Material selector: 3 visual mini-cards ── */
+    .mat-section-label{font-size:.68rem;font-weight:800;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--gray-text);margin-bottom:8px;}
+    .mat-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .mat-card{display:flex;flex-direction:column;align-items:center;gap:5px;
+      padding:13px 8px 12px;border:1.5px solid var(--gray-line);border-radius:14px;
+      background:var(--white);cursor:pointer;transition:all .22s;text-align:center;
+      position:relative;overflow:hidden;}
+    .mat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      transform:scaleX(0);transform-origin:left;transition:transform .25s;}
+    .mat-card:hover::after,.mat-card.mc-active::after{transform:scaleX(1);}
+    .mat-card:hover{border-color:rgba(188,85,109,.35);background:var(--primary-xlight);
+      transform:translateY(-2px);}
+    .mat-card.mc-active{border-color:var(--primary);background:var(--primary-light);
+      box-shadow:0 4px 16px rgba(188,85,109,.18);}
+    .mat-card.mc-gold.mc-active{border-color:#e6a817;background:#fff8dc;
+      box-shadow:0 4px 14px rgba(241,196,2,.25);}
+    .mat-card.mc-gold.mc-active::after{background:linear-gradient(90deg,#f1c402,#e6a817);}
+    .mat-icon{font-size:1.5rem;line-height:1;}
+    .mat-name{font-size:.78rem;font-weight:800;color:var(--dark);line-height:1.2;}
+    .mat-check{position:absolute;top:6px;right:7px;width:16px;height:16px;border-radius:50%;
+      background:var(--primary);color:white;font-size:.55rem;font-weight:900;
+      display:none;align-items:center;justify-content:center;}
+    .mat-card.mc-active .mat-check{display:flex;}
+    .mat-card.mc-gold.mc-active .mat-check{background:#e6a817;color:#5a3e00;}
+
+    /* ── Color slots ── */
+    .slots-section-label{font-size:.68rem;font-weight:800;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--gray-text);}
+    .slots-header-row{display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:12px;}
+    .slots-progress{display:flex;align-items:center;gap:6px;}
+    .slot-pip{width:8px;height:8px;border-radius:50%;background:var(--gray-line);
+      transition:background .3s;}
+    .slot-pip.filled{background:var(--primary);}
+    .slots-row{display:flex;gap:14px;flex-wrap:wrap;}
+
+    /* Individual slot wrapper — keeps × badge inside */
+    .slot-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
+    .slot-btn-group{position:relative;display:inline-block;}
+    /* The circle button */
+    .cslot{width:56px;height:56px;border-radius:50%;border:2px dashed var(--gray-line);
+      background:var(--white);cursor:pointer;display:flex;align-items:center;
+      justify-content:center;font-size:1.1rem;color:var(--gray-text);
+      transition:all .25s;font-family:inherit;padding:0;}
+    .cslot:hover{border-color:var(--primary);color:var(--primary);transform:scale(1.07);}
+    .cslot.cs-filled{border-style:solid;border-color:transparent;
+      box-shadow:0 5px 16px rgba(0,0,0,.18);animation:popIn .3s ease;}
+    .cslot.cs-active{outline:3px solid var(--primary);outline-offset:3px;}
+    .cslot.cs-invite{animation:ripple 2s ease-in-out infinite;}
+    /* × remove badge — positioned relative to slot-btn-group, NOT the card */
+    .cslot-x{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;
+      background:var(--dark);color:white;font-size:.58rem;font-weight:900;
+      display:flex;align-items:center;justify-content:center;cursor:pointer;
+      border:2px solid var(--white);transition:background .2s;z-index:2;line-height:1;
+      padding:0;font-family:inherit;}
+    .cslot-x:hover{background:#ef4444;}
+    /* color name label below slot */
+    .slot-name{font-size:.63rem;font-weight:700;color:var(--gray-text);text-align:center;
+      max-width:60px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.2;}
+    .slot-name.filled{color:var(--dark);}
+
+    /* ── Picker panel (inline, flows naturally) ── */
+    .picker-panel{background:var(--white);border:1.5px solid rgba(188,85,109,.22);
+      border-radius:16px;padding:16px;margin-top:6px;
+      animation:slideDown .22s ease;box-shadow:0 6px 28px rgba(0,0,0,.08);}
+    .picker-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+    .picker-title{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--primary);}
+    .picker-close-btn{width:26px;height:26px;border-radius:50%;background:var(--gray-line);
+      border:none;cursor:pointer;font-size:.8rem;color:var(--dark);
+      display:flex;align-items:center;justify-content:center;transition:all .18s;}
+    .picker-close-btn:hover{background:var(--primary-light);color:var(--primary);transform:rotate(90deg);}
+    .picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:7px;}
+    .pick-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 5px;
+      border-radius:12px;cursor:pointer;transition:background .18s,transform .18s;
+      border:2px solid transparent;}
+    .pick-item:hover{background:var(--primary-light);transform:translateY(-2px);}
+    .pick-item.pi-sel{border-color:var(--primary);background:var(--primary-light);}
+    .pick-circle{width:40px;height:40px;border-radius:50%;
+      box-shadow:0 3px 10px rgba(0,0,0,.14);transition:transform .18s;flex-shrink:0;}
+    .pick-item:hover .pick-circle{transform:scale(1.1);}
+    .pick-name{font-size:.62rem;font-weight:700;color:var(--dark);text-align:center;
+      line-height:1.25;word-break:break-word;}
+
+    /* ══════════════════════ RIGHT PANEL ══════════════════════ */
+    .cfg-right{position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));
+      display:flex;flex-direction:column;background:var(--white);
+      border-left:1px solid var(--gray-line);padding:28px 22px;}
+
+    .sum-panel-title{font-size:1rem;font-weight:800;color:var(--dark);
+      letter-spacing:-.02em;margin-bottom:4px;}
+    .sum-panel-sub{font-size:.8rem;color:var(--gray-text);margin-bottom:16px;line-height:1.5;}
+
+    .summary-box{flex:1;overflow-y:auto;background:var(--gray-bg);
+      border:1.5px solid var(--gray-line);border-radius:14px;padding:14px;
+      min-height:100px;}
+    .summary-box::-webkit-scrollbar{width:4px;}
+    .summary-box::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:2px;}
+
+    /* summary project rows */
+    .sum-proj{padding:10px 0;border-bottom:1px solid var(--gray-line);}
+    .sum-proj:last-child{border-bottom:none;padding-bottom:0;}
+    .sum-proj-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+    .sum-num{width:20px;height:20px;border-radius:50%;background:var(--primary);color:white;
+      font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .sum-name{font-weight:800;font-size:.875rem;color:var(--dark);flex:1;min-width:0;
+      overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+    .sum-mat{font-size:.68rem;font-weight:700;color:var(--primary);background:var(--primary-light);
+      padding:2px 9px;border-radius:50px;white-space:nowrap;flex-shrink:0;}
+    .sum-colors{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding-left:28px;}
+    .sum-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}
+    .sum-dot{width:26px;height:26px;border-radius:50%;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);flex-shrink:0;}
+    .sum-dot-name{font-size:.58rem;color:var(--gray-text);text-align:center;
+      max-width:32px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+    .sum-no-colors{font-size:.8rem;color:var(--gray-text);font-style:italic;padding-left:28px;}
+    .sum-empty-msg{text-align:center;padding:24px 12px;color:var(--gray-text);font-size:.875rem;}
+
+    /* share section */
+    .share-divider{height:1px;background:var(--gray-line);margin:16px 0 12px;}
+    .share-heading{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--gray-text);margin-bottom:10px;}
+    .share-col{display:flex;flex-direction:column;gap:8px;}
+    .share-btn{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;
+      border-radius:14px;border:none;font-family:'Outfit',sans-serif;font-size:.875rem;
+      font-weight:800;cursor:pointer;transition:all .26s;position:relative;overflow:hidden;}
+    .share-btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transition:left .5s;}
+    .share-btn:hover::after{left:100%;}
+    .shr-copy{background:var(--gray-line);color:var(--dark);}
+    .shr-copy:hover{background:#ddd;}
+    .shr-wa{background:#25D366;color:white;box-shadow:0 4px 14px rgba(37,211,102,.28);}
+    .shr-wa:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(37,211,102,.46);}
+    .shr-email{background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:white;box-shadow:0 4px 14px rgba(188,85,109,.28);}
+    .shr-email:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(188,85,109,.46);}
+
+    /* ══════════════════════ FOOTER ══════════════════════ */
+    .footer{background:var(--darker);padding:40px 0;border-top:1px solid rgba(188,85,109,.2);}
+    .footer .container{max-width:1200px;margin:0 auto;padding:0 28px;
+      display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
+    .footer p{font-size:.875rem;color:rgba(255,255,255,.42);}
+    .footer a{color:var(--primary);font-weight:600;transition:color .2s;}
+    .footer a:hover{color:#e899ae;}
+    .footer .sep{color:rgba(255,255,255,.2);margin:0 8px;}
+
+    /* ══════════════════════ SCROLLBAR ══════════════════════ */
+    ::-webkit-scrollbar{width:5px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:3px;}
+    ::-webkit-scrollbar-thumb:hover{background:var(--primary);}
+
+    /* ══════════════════════ RESPONSIVE ══════════════════════ */
+    @media(max-width:960px){
+      .cfg-layout{grid-template-columns:1fr;}
+      .cfg-right{position:static;height:auto;border-left:none;
+        border-top:1px solid var(--gray-line);padding:24px 20px 32px;}
+      .summary-box{min-height:70px;max-height:200px;}
+      .share-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+      .share-btn{padding:12px 10px;font-size:.82rem;}
+    }
+    @media(max-width:768px){
+      .hamburger-menu{display:flex;}
+      .navbar-left,.nav-links{display:none;}
+      .navbar-container{justify-content:space-between;}
+      .navbar-center{position:absolute;left:50%;transform:translateX(-50%);}
+      .cfg-left{padding:20px 16px 36px;}
+      .mat-selector{gap:6px;}
+      .mat-card{padding:11px 6px 10px;}
+      .mat-name{font-size:.72rem;}
+      .picker-grid{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));}
+      .pick-circle{width:36px;height:36px;}
+    }
+    @media(max-width:500px){
+      .page-header{padding:36px 16px 30px;}
+      .cfg-left{padding:16px 14px 32px;}
+      .cfg-toolbar{flex-direction:column;align-items:flex-start;gap:10px;}
+      .btn-add{width:100%;justify-content:center;}
+      .slots-row{gap:10px;}
+      .cslot{width:50px;height:50px;}
+      .share-col{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <button class="hamburger-menu" id="hamburgerMenu" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="navbar-left">
+        <a href="/configura-tu-proyecto/" class="btn-presupuesto">✦ Configura tu proyecto</a>
+      </div>
+      <div class="navbar-center">
+        <a href="/">
+          <img src="../img/SILAB-LOGO-lateral-negro-compressed.png" alt="SILAB 3D" class="navbar-logo" width="130" height="130">
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/productos/">Productos</a></li>
+        <li><a href="/materiales/">Materiales</a></li>
+        <li><a href="/resenas/">Reseñas</a></li>
+      </ul>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu-header">
+        <img src="../img/SILAB-LOGO-lateral-negro-compressed.png" alt="SILAB 3D" class="mobile-menu-logo">
+      </div>
+      <nav class="mobile-menu-nav">
+        <a href="/" class="mobile-menu-link"><span class="mobile-menu-icon">🏠</span><span>Inicio</span></a>
+        <a href="/productos/" class="mobile-menu-link"><span class="mobile-menu-icon">🛍️</span><span>Productos</span></a>
+        <a href="/materiales/" class="mobile-menu-link"><span class="mobile-menu-icon">🎨</span><span>Materiales</span></a>
+        <a href="/resenas/" class="mobile-menu-link"><span class="mobile-menu-icon">⭐</span><span>Reseñas</span></a>
+      </nav>
+      <div class="mobile-menu-footer">
+        <a href="/configura-tu-proyecto/" class="btn-presupuesto-mobile">✨ Configura tu proyecto</a>
+      </div>
+    </div>
+  </nav>
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <!-- PAGE -->
+  <div class="page-wrap">
+
+    <header class="page-header">
+      <div class="page-header-inner">
+        <div class="page-header-badge"><span class="badge-dot"></span>Herramienta · SILAB 3D</div>
+        <h1>Configurador de<br>Proyecto</h1>
+        <p>Añade tus figuras, elige <strong>material y hasta 4 colores</strong> del mismo filamento.
+           Cuando termines, comparte el resumen con nosotros.</p>
+      </div>
+    </header>
+
+    <div class="cfg-layout">
+
+      <!-- LEFT: figures -->
+      <div class="cfg-left">
+        <div class="cfg-left-inner">
+          <div class="cfg-toolbar">
+            <div class="cfg-heading">
+              Mis figuras
+              <span class="cfg-count-chip" id="countChip" style="display:none">0</span>
+            </div>
+            <button class="btn-add" id="btnAdd">＋&nbsp; Añadir figura</button>
+          </div>
+          <div class="cfg-empty" id="cfgEmpty">
+            <div class="cfg-empty-icon">🎨</div>
+            <p class="cfg-empty-text">
+              Aún no hay figuras.<br>
+              Pulsa <strong>"Añadir figura"</strong> para comenzar a configurar tu proyecto.
+            </p>
+          </div>
+          <div class="project-list" id="projectList"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: summary + share -->
+      <div class="cfg-right">
+        <div class="sum-panel-title">📋 Resumen</div>
+        <p class="sum-panel-sub">Actualización en tiempo real.</p>
+        <div class="summary-box" id="summaryBox">
+          <p class="sum-empty-msg">Añade figuras para ver el resumen aquí.</p>
+        </div>
+        <div class="share-divider"></div>
+        <div class="share-heading">Enviar a SILAB 3D</div>
+        <div class="share-col">
+          <button class="share-btn shr-copy" id="btnCopy">📋 Copiar</button>
+          <button class="share-btn shr-wa"   id="btnWa">📱 WhatsApp</button>
+          <button class="share-btn shr-email" id="btnEmail">📧 Email</button>
+        </div>
+      </div>
+
+    </div><!-- /cfg-layout -->
+
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; 2026 SILAB 3D. Todos los derechos reservados.</p>
+        <p>📧 silab3d@gmail.com &nbsp;|&nbsp; 📱 +34 644 07 04 87</p>
+        <p>
+          <a href="/terminos/">Términos y Condiciones</a>
+          <span class="sep">|</span>
+          <a href="/privacidad/">Política de Privacidad</a>
+          <span class="sep">|</span>
+          <a href="/aviso-legal/">Aviso Legal</a>
+        </p>
+      </div>
+    </footer>
+
+  </div><!-- /page-wrap -->
+
+  <!-- ══════════════════ BASE JS ══════════════════ -->
+  <script>
+    /* Navbar */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 10), { passive:true });
+    const ham = document.getElementById('hamburgerMenu');
+    const mob = document.getElementById('mobileMenu');
+    const ov  = document.getElementById('menuOverlay');
+    ham.addEventListener('click', () => {
+      const open = mob.classList.toggle('open');
+      ham.classList.toggle('open', open);
+      ov.classList.toggle('show', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+    ov.addEventListener('click', () => {
+      mob.classList.remove('open'); ham.classList.remove('open');
+      ov.classList.remove('show'); document.body.style.overflow = '';
+    });
+  </script>
+
+  <!-- ══════════════════ CONFIGURADOR ══════════════════ -->
+  <script>
+    /* ── Color catalog (defaults, overwritten by sync) ── */
+    let allColors = {
+      pla:[
+        {name:'Black',        color:'#000000', premium:false},
+        {name:'Silver',       color:'#bbbec3', premium:false},
+        {name:'White',        color:'#ffffff', premium:false},
+        {name:'Beige',        color:'#f0e0d6', premium:false},
+        {name:'Matte Red',    color:'#b0181a', premium:false},
+        {name:'Cherry Red',   color:'#f46974', premium:false},
+        {name:'Sakura Pink',  color:'#f2a8b3', premium:false},
+        {name:'Sunny Orange', color:'#ff7a29', premium:false},
+        {name:'Lemon Yellow', color:'#fbf9ac', premium:false},
+        {name:'Wood',         color:'#cdae81', premium:false},
+        {name:'Coffee Brown', color:'#533421', premium:false},
+        {name:'Grass Green',  color:'#0a9077', premium:false},
+        {name:'Olive Green',  color:'#5a6d3d', premium:false},
+        {name:'Mint Green',   color:'#6ed9ce', premium:false},
+        {name:'Sky Blue',     color:'#63c9f0', premium:false},
+        {name:'Lavender',     color:'#7358c3', premium:false},
+        {name:'Dorado Silk',  color:'#f1c402', premium:true },
+        {name:'Mármol',       color:'#d7d4cc', premium:true }
+      ],
+      petg:[
+        {name:'Black', color:'#000000', premium:false},
+        {name:'White', color:'#ffffff', premium:false},
+        {name:'Blue',  color:'#1b49e0', premium:false},
+        {name:'Red',   color:'#ff5454', premium:false}
+      ]
+    };
+
+    function colorsFor(mat) {
+      if (mat === 'pla-basico')  return allColors.pla.filter(c => !c.premium);
+      if (mat === 'pla-premium') return allColors.pla.filter(c =>  c.premium);
+      if (mat === 'petg')        return allColors.petg;
+      return [];
+    }
+    function matLabel(mat) {
+      return {'pla-basico':'PLA Básico','pla-premium':'PLA Premium','petg':'PETG'}[mat] || mat;
+    }
+    function esc(v) {
+      return String(v)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function isLight(hex) {
+      const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      return (r*299 + g*587 + b*114) / 1000 > 200;
+    }
+
+    /* ── State ── */
+    let projects = [];
+    let nextId   = 1;
+    let openPick = null; // { pid, si }
+    const PHONE  = '34644070487';
+    const MAIL   = 'silab3d@gmail.com';
+
+    /* ── Render ── */
+    function render() {
+      const list   = document.getElementById('projectList');
+      const empty  = document.getElementById('cfgEmpty');
+      const chip   = document.getElementById('countChip');
+
+      empty.style.display   = projects.length === 0 ? 'block' : 'none';
+      chip.style.display    = projects.length > 0   ? 'inline-block' : 'none';
+      chip.textContent      = projects.length;
+      list.innerHTML        = '';
+
+      projects.forEach((p, idx) => {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.dataset.pid = p.id;
+
+        /* progress pips */
+        const pips = [0,1,2,3].map(i =>
+          `<div class="slot-pip${i < p.colors.length ? ' filled' : ''}"></div>`
+        ).join('');
+
+        /* slots */
+        const slotsHtml = [0,1,2,3].map(i => {
+          const filled  = i < p.colors.length;
+          const c       = filled ? p.colors[i] : null;
+          const isOpen  = openPick && openPick.pid === p.id && openPick.si === i;
+          /* BUG FIX: always use c.color (includes #) for the background */
+          const borderStyle = filled && isLight(c.color) ? 'border:2px solid #ccc;' : '';
+          const slotStyle   = filled ? `background:${c.color};${borderStyle}` : '';
+          const isInvite    = !filled && i === p.colors.length; // next available slot
+          return `
+            <div class="slot-wrap">
+              <div class="slot-btn-group">
+                <button class="cslot${filled?' cs-filled':''}${isOpen?' cs-active':''}${isInvite&&p.colors.length===0?' cs-invite':''}"
+                  style="${slotStyle}"
+                  data-act="slot" data-pid="${p.id}" data-si="${i}"
+                  title="${filled ? esc(c.name) : (i===p.colors.length ? 'Elegir color' : '')}"
+                  aria-label="Slot de color ${i+1}">
+                  ${filled ? '' : (i === p.colors.length ? '<span style="font-size:.95rem">+</span>' : '<span style="font-size:.6rem;opacity:.3">○</span>')}
+                </button>
+                ${filled ? `<button class="cslot-x" data-act="rmslot" data-pid="${p.id}" data-si="${i}" aria-label="Quitar color">×</button>` : ''}
+              </div>
+              <span class="slot-name${filled?' filled':''}">${filled ? esc(c.name) : ''}</span>
+            </div>`;
+        }).join('');
+
+        /* picker */
+        let pickerHtml = '';
+        if (openPick && openPick.pid === p.id) {
+          const colors = colorsFor(p.material);
+          const emptyNote = colors.length === 0
+            ? '<p style="font-size:.82rem;color:var(--gray-text);padding:4px 0;">Sin colores disponibles para este material.</p>'
+            : '';
+          pickerHtml = `
+            <div class="picker-panel">
+              <div class="picker-header">
+                <span class="picker-title">Elegir color · ${esc(matLabel(p.material))}</span>
+                <button class="picker-close-btn" data-act="closepick" aria-label="Cerrar">✕</button>
+              </div>
+              ${emptyNote}
+              <div class="picker-grid">
+                ${colors.map(c => {
+                  const isW = c.color === '#ffffff';
+                  const alreadyPicked = p.colors.some(pc => pc.color === c.color);
+                  return `<div class="pick-item${alreadyPicked?' pi-sel':''}"
+                    data-act="pickc" data-pid="${p.id}" data-si="${openPick.si}"
+                    data-chex="${esc(c.color)}" data-cname="${esc(c.name)}">
+                    <div class="pick-circle" style="background:${c.color};${isW?'border:1.5px solid #ccc;':''}"></div>
+                    <span class="pick-name">${esc(c.name)}</span>
+                  </div>`;
+                }).join('')}
+              </div>
+            </div>`;
+        }
+
+        card.innerHTML = `
+          <div class="card-strip"></div>
+          <div class="card-header">
+            <div class="pc-num">${idx + 1}</div>
+            <input class="pc-name" type="text" value="${esc(p.name)}"
+              placeholder="Nombre de la figura"
+              data-act="rename" data-pid="${p.id}" maxlength="50">
+            <button class="pc-del" data-act="del" data-pid="${p.id}" title="Eliminar figura" aria-label="Eliminar figura">🗑</button>
+          </div>
+          <div class="card-body">
+            <div>
+              <div class="mat-section-label">Material</div>
+              <div class="mat-selector">
+                ${[['pla-basico','🎨','PLA Básico',''],
+                   ['pla-premium','✦','PLA Premium','mc-gold'],
+                   ['petg','💎','PETG','']].map(([m,icon,label,extra]) => `
+                  <div class="mat-card${p.material===m?' mc-active':''}${extra?' '+extra:''}"
+                    data-act="setmat" data-pid="${p.id}" data-mat="${m}">
+                    <div class="mat-check">✓</div>
+                    <span class="mat-icon">${icon}</span>
+                    <span class="mat-name">${label}</span>
+                  </div>`).join('')}
+              </div>
+            </div>
+            <div>
+              <div class="slots-header-row">
+                <span class="slots-section-label">Colores</span>
+                <div class="slots-progress">${pips}</div>
+              </div>
+              <div class="slots-row">${slotsHtml}</div>
+              ${pickerHtml}
+            </div>
+          </div>`;
+
+        list.appendChild(card);
+      });
+
+      updateSummary();
+    }
+
+    /* ── Summary ── */
+    function updateSummary() {
+      const box = document.getElementById('summaryBox');
+      if (projects.length === 0) {
+        box.innerHTML = '<p class="sum-empty-msg">Añade figuras para ver el resumen aquí.</p>';
+        return;
+      }
+      box.innerHTML = projects.map((p, i) => {
+        const matBadge = `<span class="sum-mat">${esc(matLabel(p.material))}</span>`;
+        const colorsHtml = p.colors.length
+          ? `<div class="sum-colors">
+              ${p.colors.map(c => {
+                const isW = c.color === '#ffffff';
+                return `<div class="sum-dot-wrap">
+                  <div class="sum-dot" style="background:${c.color};${isW?'border:1.5px solid #ccc;':''}" title="${esc(c.name)}"></div>
+                  <span class="sum-dot-name">${esc(c.name)}</span>
+                </div>`;
+              }).join('')}
+             </div>`
+          : `<p class="sum-no-colors">Sin colores asignados</p>`;
+        return `
+          <div class="sum-proj">
+            <div class="sum-proj-top">
+              <div class="sum-num">${i + 1}</div>
+              <span class="sum-name">${esc(p.name)}</span>
+              ${matBadge}
+            </div>
+            ${colorsHtml}
+          </div>`;
+      }).join('');
+    }
+
+    function buildText() {
+      if (!projects.length) return 'Sin figuras configuradas.';
+      return projects.map((p,i) => {
+        const cols = p.colors.length ? p.colors.map(c => c.name).join(', ') : 'Sin colores';
+        return `${i+1}. ${p.name} (${matLabel(p.material)})\n   Colores: ${cols}`;
+      }).join('\n\n');
+    }
+
+    /* ── Events: project list (delegation) ── */
+    document.getElementById('btnAdd').addEventListener('click', () => {
+      projects.push({ id:nextId++, name:`Figura ${projects.length + 1}`, material:'pla-basico', colors:[] });
+      openPick = null;
+      render();
+    });
+
+    document.getElementById('projectList').addEventListener('click', e => {
+      const el = e.target.closest('[data-act]');
+      if (!el) {
+        if (openPick && !e.target.closest('.picker-panel') && !e.target.closest('.cslot')) {
+          openPick = null; render();
+        }
+        return;
+      }
+      const act = el.dataset.act;
+      const pid = parseInt(el.dataset.pid);
+      const proj = projects.find(p => p.id === pid);
+
+      switch (act) {
+        case 'del':
+          projects = projects.filter(p => p.id !== pid);
+          if (openPick?.pid === pid) openPick = null;
+          render();
+          break;
+
+        case 'setmat':
+          if (proj) { proj.material = el.dataset.mat; proj.colors = []; openPick = null; render(); }
+          break;
+
+        case 'slot': {
+          const si = parseInt(el.dataset.si);
+          if (!proj) break;
+          if (si > proj.colors.length) break; // can't skip slots
+          if (proj.colors.length >= 4 && si >= proj.colors.length) break; // full
+          openPick = (openPick?.pid === pid && openPick?.si === si) ? null : { pid, si };
+          render();
+          break;
+        }
+
+        case 'rmslot': {
+          const si = parseInt(el.dataset.si);
+          if (proj) {
+            proj.colors.splice(si, 1);
+            if (openPick?.pid === pid) openPick = null;
+            render();
+          }
+          break;
+        }
+
+        case 'pickc': {
+          const si = parseInt(el.dataset.si);
+          if (!proj || proj.colors.length >= 4) break;
+          const newColor = { name: el.dataset.cname, color: el.dataset.chex };
+          if (si < proj.colors.length) proj.colors[si] = newColor;
+          else proj.colors.push(newColor);
+          openPick = null;
+          render();
+          break;
+        }
+
+        case 'closepick':
+          openPick = null; render();
+          break;
+      }
+    });
+
+    /* Close picker on outside click */
+    document.addEventListener('click', e => {
+      if (!openPick) return;
+      if (!e.target.closest('.project-card') && !e.target.closest('#btnAdd')) {
+        openPick = null; render();
+      }
+    });
+
+    /* Rename (live, no full re-render) */
+    document.getElementById('projectList').addEventListener('input', e => {
+      if (e.target.dataset.act === 'rename') {
+        const pid  = parseInt(e.target.dataset.pid);
+        const proj = projects.find(p => p.id === pid);
+        if (proj) { proj.name = e.target.value; updateSummary(); }
+      }
+    });
+
+    /* ── Share buttons ── */
+    document.getElementById('btnCopy').addEventListener('click', () => {
+      navigator.clipboard.writeText(buildText()).then(() => {
+        const b = document.getElementById('btnCopy');
+        b.textContent = '✅ Copiado';
+        setTimeout(() => b.textContent = '📋 Copiar', 2200);
+      }).catch(() => alert(buildText()));
+    });
+
+    document.getElementById('btnWa').addEventListener('click', () => {
+      const msg = '¡Hola! Mi configuración para el proyecto es la siguiente:\n\n' + buildText()
+                + '\n\n¡Gracias! 🦕';
+      window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+    });
+
+    document.getElementById('btnEmail').addEventListener('click', () => {
+      const sub  = encodeURIComponent('Configuración de proyecto SILAB 3D');
+      const body = encodeURIComponent('¡Hola!\n\nMi configuración es la siguiente:\n\n' + buildText()
+                 );
+      window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${MAIL}&su=${sub}&body=${body}`, '_blank');
+    });
+
+    /* Initial render */
+    render();
+  </script>
+
+  <!-- ══════════════════ CATALOG SYNC ══════════════════ -->
+  <script defer>
+    window.FILAMENTS_SHEET = {
+      id: '1kWsHasAfQa7kAqSKHue72_kV3ZS_7SElBD6R8lmjoPM',
+      sheet: 'Stock de Filamentos'
+    };
+
+    async function fetchFromSheet() {
+      if (!window.FILAMENTS_SHEET) return null;
+      try {
+        const url = `https://opensheet.elk.sh/${window.FILAMENTS_SHEET.id}/${encodeURIComponent(window.FILAMENTS_SHEET.sheet)}`;
+        const res = await fetch(url, { cache:'no-store' });
+        if (!res.ok) return null;
+        const rows = await res.json();
+        const mats = {};
+        rows.forEach(row => {
+          const tipo    = (row.Tipo    || row.tipo    || '').trim();
+          const subtipo = (row.Subtipo || row.subtipo || '').trim();
+          const color   = (row.Color   || row.color   || '').trim();
+          const hexRaw  = (row['Código HEX'] || row['código hex'] || row['Codigo HEX'] || row.hex || '').toString().trim();
+          if (!tipo || /^TOTAL\b/i.test(color)) return;
+          if (!mats[tipo]) mats[tipo] = { nombre:tipo, colores:[] };
+          let hex = hexRaw;
+          if (hex && !hex.startsWith('#')) hex = '#' + hex;
+          mats[tipo].colores.push({ nombre:color, hex:hex||'#cccccc', premium:/premium/i.test(subtipo) });
+        });
+        return { filamentos: Object.values(mats) };
+      } catch(e) { console.warn('Sheet fetch error:', e); return null; }
+    }
+
+    function applyData(data) {
+      if (!data?.filamentos) return;
+      const norm = { pla:[], petg:[] };
+      data.filamentos.forEach(mat => {
+        const key = mat.nombre.toUpperCase() === 'PLA' ? 'pla'
+                  : mat.nombre.toUpperCase() === 'PETG' ? 'petg' : null;
+        if (!key) return;
+        (mat.colores || []).forEach(c => {
+          let hex = Array.isArray(c.hex) ? c.hex[0] : c.hex;
+          if (hex && !hex.startsWith('#')) hex = '#' + hex;
+          const isPrem = Boolean(c.premium) || /(silk|marble|marmol|mármol)/i.test(c.nombre||'');
+          norm[key].push({ name:c.nombre||'Color', color:hex||'#cccccc', premium:isPrem });
+        });
+      });
+      allColors = norm;
+      if (openPick) render(); else updateSummary();
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const data = await fetchFromSheet();
+      if (data) applyData(data);
+    });
+  </script>
+
+</body>
+</html>

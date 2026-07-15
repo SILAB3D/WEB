@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
 
                 if (shouldRedirectToConfigurator(productName)) {
-                    const configuratorURL = new URL('configura-tu-proyecto.html', window.location.href);
+                    const configuratorURL = new URL('/configura-tu-proyecto/', window.location.origin);
 
                     if (productName) {
                         configuratorURL.searchParams.set('producto', productName);
@@ -257,8 +257,9 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
 
     // Popup promocional Palomitera
     const isIndexPage = window.location.pathname === '/' || window.location.pathname.toLowerCase().endsWith('/index.html') || window.location.pathname.toLowerCase().endsWith('/indexv2.html');
-    const inPagesFolder = window.location.pathname.toLowerCase().includes('/pages/');
-    const imagePrefix = inPagesFolder ? '../img/' : 'img/';
+    // Rutas absolutas: con las URLs limpias (sin /pages/ ni .html) funcionan
+    // igual sea cual sea la profundidad de la página actual.
+    const imagePrefix = '/img/';
     let palomiteraFlowReady = false;
     let palomiteraRequestModal = null;
     let palomiteraContactModal = null;
@@ -309,7 +310,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         }
 
         try {
-            const catalogPath = inPagesFolder ? '../data/filamentos.json' : 'data/filamentos.json';
+            const catalogPath = '/data/filamentos.json';
             const response = await fetch(catalogPath, { cache: 'no-store' });
             if (!response.ok) {
                 palomiteraCatalogCache = { 'pla-basico': [], 'pla-premium': [] };
@@ -1179,8 +1180,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
             activePalomiteraPopup.classList.remove('show');
         }
         // Redirigir a la página del formulario de la palomitera
-        const palomiteraFormURL = inPagesFolder ? 'palomitera-formulario.html' : 'pages/palomitera-formulario.html';
-        window.location.href = palomiteraFormURL;
+        window.location.href = '/palomitera-formulario/';
     }
 
     function createPalomiteraPopup() {
