@@ -563,6 +563,59 @@
     .contact-option-card p { font-size: 0.82rem; color: var(--gray-text); }
 
     /* ============================================================
+       PROJECT BLOCKS (paso 2 · secciones)
+    ============================================================ */
+    /* Divisor de grupo compacto (micro-etiqueta) */
+    .field-divider {
+      display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+      margin: 26px 0 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .field-divider-label {
+      font-size: 0.72rem; font-weight: 800; color: var(--primary);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .field-divider-hint {
+      font-size: 0.78rem; color: var(--gray-text); font-weight: 500;
+    }
+    .label-opt { color: var(--gray-text); font-weight: 500; }
+
+    /* Plazo deseado · tarjetas compactas horizontales */
+    .plazo-selector {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .plazo-option {
+      display: flex; align-items: center; gap: 12px; text-align: left;
+      padding: 13px 15px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #FDFCFC;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+    }
+    .plazo-option input {
+      position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+    }
+    .plazo-option:hover {
+      border-color: rgba(188,85,109,0.4);
+      background: var(--primary-light);
+    }
+    .plazo-option.selected,
+    .plazo-option:has(input:checked) {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 4px 14px rgba(188,85,109,0.16);
+    }
+    .plazo-icon { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+    .plazo-text { display: flex; flex-direction: column; gap: 1px; }
+    .plazo-title { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
+    .plazo-option.selected .plazo-title,
+    .plazo-option:has(input:checked) .plazo-title { color: var(--primary-dark); }
+    .plazo-desc { font-size: 0.72rem; color: var(--gray-text); line-height: 1.3; }
+
+    /* ============================================================
        REFERENCE FILES BLOCK (paso 2 · parte B)
     ============================================================ */
     .reference-block {
@@ -670,6 +723,7 @@
       .quote-step-button { width: 100%; }
     }
     @media (max-width: 480px) {
+      .plazo-selector { grid-template-columns: 1fr; }
       .color-material-selector { grid-template-columns: repeat(2, 1fr); }
       .catalog-color-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
       .step-indicator-hero { gap: 0; }
@@ -1006,8 +1060,8 @@
             <span class="step-num">2</span>
             Detalles del proyecto
           </h3>
-          <!-- Parte A · datos del proyecto (compacto) -->
-          <div class="quote-form-grid">
+          <!-- Grupo · información del proyecto -->
+          <div class="quote-form-grid quote-form-grid-2">
             <div class="form-group">
               <label for="projectName">Nombre del proyecto *</label>
               <input type="text" id="projectName" name="projectName"
@@ -1015,33 +1069,59 @@
               <span class="field-error" id="errProjectName">Por favor, indica el nombre del proyecto.</span>
             </div>
             <div class="form-group">
-              <label for="projectDescription">Descripción del proyecto *</label>
-              <textarea id="projectDescription" name="projectDescription"
-                        required rows="5"
-                        placeholder="Cuéntanos toda la información que consideres importante para llevar a cabo tu proyecto"></textarea>
-              <span class="field-error" id="errDescription">Por favor, describe tu proyecto.</span>
-            </div>
-            <div class="form-group">
-              <label for="projectMeasures">Medidas del proyecto</label>
+              <label for="projectMeasures">Medidas <span class="label-opt">(opcional)</span></label>
               <input type="text" id="projectMeasures" name="projectMeasures"
                      placeholder="Algún valor aproximado...">
             </div>
+            <div class="form-group form-group-span-2">
+              <label for="projectDescription">Descripción del proyecto *</label>
+              <textarea id="projectDescription" name="projectDescription"
+                        required rows="3"
+                        placeholder="Cuéntanos toda la información que consideres importante para llevar a cabo tu proyecto"></textarea>
+              <span class="field-error" id="errDescription">Por favor, describe tu proyecto.</span>
+            </div>
           </div>
 
-          <!-- Parte B · proyecto o imágenes de referencia -->
-          <div class="reference-block">
-            <h4 class="reference-block-title">📎 Proyecto o imágenes de referencia</h4>
-            <div class="form-group">
-              <label for="projectReferenceFiles">¿Dispones de archivos para compartir? *</label>
-              <select id="projectReferenceFiles" name="projectReferenceFiles" required>
-                <option value="" selected disabled>Selecciona una opción</option>
-                <option value="si">Sí, quiero adjuntar archivos</option>
-                <option value="no">No, de momento no</option>
-              </select>
-              <span class="field-error" id="errReference">Por favor, selecciona una opción.</span>
-            </div>
+          <!-- Grupo · plazo de tiempo deseado -->
+          <div class="field-divider">
+            <span class="field-divider-label">Plazo deseado *</span>
+            <span class="field-divider-hint">Valoraremos si la petición es viable</span>
+          </div>
+          <div class="plazo-selector">
+            <label class="plazo-option">
+              <input type="radio" name="projectDeadline" value="urgente" required>
+              <span class="plazo-icon">⚡</span>
+              <span class="plazo-text">
+                <span class="plazo-title">Urgente</span>
+                <span class="plazo-desc">Lo antes posible</span>
+              </span>
+            </label>
+            <label class="plazo-option">
+              <input type="radio" name="projectDeadline" value="flexible" required>
+              <span class="plazo-icon">🌿</span>
+              <span class="plazo-text">
+                <span class="plazo-title">Flexible</span>
+                <span class="plazo-desc">Sin prisa, tarifa estándar</span>
+              </span>
+            </label>
+          </div>
+          <span class="field-error" id="errDeadline">Por favor, indica el plazo deseado.</span>
 
-            <div class="reference-upload" id="referenceUpload" hidden>
+          <!-- Grupo · archivos de referencia -->
+          <div class="field-divider">
+            <span class="field-divider-label">Archivos de referencia</span>
+          </div>
+          <div class="form-group">
+            <label for="projectReferenceFiles">¿Dispones de archivos para compartir? *</label>
+            <select id="projectReferenceFiles" name="projectReferenceFiles" required>
+              <option value="" selected disabled>Selecciona una opción</option>
+              <option value="si">Sí, quiero adjuntar archivos</option>
+              <option value="no">No, de momento no</option>
+            </select>
+            <span class="field-error" id="errReference">Por favor, selecciona una opción.</span>
+          </div>
+
+          <div class="reference-upload" id="referenceUpload" hidden>
               <label class="reference-dropzone" id="referenceDropzone" for="projectFiles">
                 <input type="file" id="projectFiles" name="projectFiles" multiple
                        accept="image/*,.stl,.step,.stp,.obj,.3mf,.ply,.gltf,.glb,.fbx,.amf,.igs,.iges,.scad,.zip,.rar,.7z"
@@ -1056,7 +1136,6 @@
               </div>
               <span class="field-error" id="errFiles">Adjunta al menos un archivo o selecciona “No”.</span>
             </div>
-          </div>
           <div class="quote-step-actions">
             <button type="button" class="quote-step-button quote-step-button-secondary" id="projectBackToDetails">
               ← Anterior

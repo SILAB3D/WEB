@@ -64,6 +64,18 @@ document.addEventListener('DOMContentLoaded', function () {
         applyPieceTypeFilter();
     });
 
+    const deadlineOptions = Array.from(document.querySelectorAll('.plazo-option'));
+    deadlineOptions.forEach(function (option) {
+        const input = option.querySelector('input[type="radio"]');
+        if (!input) return;
+        input.addEventListener('change', function () {
+            deadlineOptions.forEach(function (opt) {
+                const radio = opt.querySelector('input[type="radio"]');
+                opt.classList.toggle('selected', !!(radio && radio.checked));
+            });
+        });
+    });
+
     colorCatalogSections.addEventListener('change', function (event) {
         if (event.target && event.target.matches('input[name="projectColorChoices"]')) {
             const label = event.target.closest('.catalog-color-item');
@@ -289,6 +301,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const projectName = document.getElementById('projectName').value.trim();
         const projectDescription = document.getElementById('projectDescription').value.trim();
         const projectMeasures = document.getElementById('projectMeasures').value.trim();
+        const deadlineInput = document.querySelector('input[name="projectDeadline"]:checked');
+        const projectDeadline = deadlineInput
+            ? (deadlineInput.value === 'urgente' ? 'Urgente' : 'Flexible')
+            : 'No especificado';
         const projectReferenceFiles = document.getElementById('projectReferenceFiles').value;
         const pieceType = getPieceTypeLabel();
 
@@ -319,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '- *Nombre del Proyecto:*\n' + projectName + '\n\n' +
             '- *Descripcion del proyecto:*\n' + projectDescription + '\n\n' +
             '- *Medidas del proyecto:*\n' + (projectMeasures || 'No especificadas') + '\n\n' +
+            '- *Plazo de tiempo deseado:*\n' + projectDeadline + '\n\n' +
             '- *Tipo de pieza:*\n' + pieceType + '\n\n' +
             '- *Colores del proyecto:*\n' + colorsSummary + '\n\n' +
             '- *Proyecto o imagenes de referencia:*\n' + referenceSummary + filesBlock + '\n\n' +
@@ -333,6 +350,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '- NOMBRE DEL PROYECTO:\n' + projectName + '\n\n' +
             '- DESCRIPCION DEL PROYECTO:\n' + projectDescription + '\n\n' +
             '- MEDIDAS DEL PROYECTO:\n' + (projectMeasures || 'No especificadas') + '\n\n' +
+            '- PLAZO DE TIEMPO DESEADO:\n' + projectDeadline + '\n\n' +
             '- TIPO DE PIEZA:\n' + pieceType + '\n\n' +
             '- COLORES DEL PROYECTO:\n' + colorsSummary + '\n\n' +
             '- PROYECTO O IMAGENES DE REFERENCIA:\n' + referenceSummary + filesBlock + '\n\n' +
@@ -353,6 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 proyecto: projectName,
                 descripcion: projectDescription,
                 medidas: projectMeasures || 'No especificadas',
+                plazo: projectDeadline,
                 tipoPieza: pieceType,
                 colores: colorsSummary,
                 referencia: referenceSummary,
@@ -904,4 +923,3 @@ document.addEventListener('DOMContentLoaded', function () {
         if (btn) btn.addEventListener('click', function () { solicitudNotificada = false; });
     });
 });
-
