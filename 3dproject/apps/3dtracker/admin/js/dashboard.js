@@ -226,12 +226,6 @@ document.getElementById('search-input').addEventListener('input', (e) => {
   renderTable(filterOrders(searchTerm));
 });
 
-// ── Logout ────────────────────────────────────
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  try { await window.DPCloud.logout(); } catch (e) {}
-  if (window.parent !== window) { try { window.parent.postMessage({ __dp3:true, type:'home' }, '*'); } catch(e){} }
-  else { window.location.href = '../../../index.html'; }
-});
 
 // ── Cerrar modal al hacer clic fuera ─────────
 document.getElementById('new-order-modal').addEventListener('click', (e) => {

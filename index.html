@@ -139,7 +139,6 @@
       transition: background 0.2s;
       z-index: 10;
     }
-    .hamburger-menu:hover { background: var(--primary-light); }
     .hamburger-menu span {
       display: block;
       width: 22px; height: 2px;
@@ -147,9 +146,12 @@
       border-radius: 2px;
       transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
     }
-    .hamburger-menu.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .hamburger-menu.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .hamburger-menu.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    /* Sin botón de cierre: la hamburguesa no se transforma en X (se cierra tocando fuera) */
+    .hamburger-menu.open span,
+    .hamburger-menu.active span {
+      transform: none !important;
+      opacity: 1 !important;
+    }
 
     /* CTA left */
     .navbar-left .btn-presupuesto {
@@ -209,86 +211,152 @@
     }
 
     /* ============================================================
-       MOBILE MENU OVERLAY
+       MOBILE MENU · OVERLAY + DRAWER (rediseño)
     ============================================================ */
     .menu-overlay {
-      display: none;
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(3px);
+      background: rgba(26,26,26,0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
       z-index: 950;
     }
-    .menu-overlay.show { display: block; }
+    .menu-overlay.show { opacity: 1; visibility: visible; }
+    /* Con el menú abierto: navbar opaco y sin línea inferior para una transición continua */
+    .navbar:has(.mobile-menu.open) {
+      background: var(--white);
+      border-bottom-color: transparent;
+      box-shadow: none;
+    }
 
-    /* Mobile drawer */
     .mobile-menu {
       position: fixed;
-      top: 0; left: 0;
-      width: 290px; height: 100vh; height: 100dvh; overflow-y: auto;
+      top: var(--nav-h); left: 0; right: 0;
+      width: 100%;
+      padding: 0;
+      height: fit-content;
+      max-height: min(66dvh, calc(100dvh - var(--nav-h)));
       background: var(--white);
       z-index: 960;
-      transform: translateX(-100%);
-      transition: transform 0.38s cubic-bezier(0.4,0,0.2,1);
+      transform: translateY(-105%);
+      visibility: hidden;
+      /* Cierre: curva ease-in rápida para que se repliegue sin engancharse arriba */
+      transition: transform 0.3s cubic-bezier(0.5,0,0.9,0.4), visibility 0s linear 0.3s;
       display: flex;
       flex-direction: column;
-      box-shadow: 6px 0 40px rgba(0,0,0,0.14);
-    }
-    .mobile-menu.open { transform: translateX(0); }
-
-    .mobile-menu-header {
-      padding: 20px 22px;
-      border-bottom: 1px solid var(--primary-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    /* Match desktop navbar logo size and center inside header */
-    .mobile-menu-logo { height: 48px; width: auto; }
-
-    .mobile-menu-nav {
-      flex: 1;
-      padding: 14px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      border-radius: 0 0 26px 26px;
+      box-shadow: 0 26px 54px -14px rgba(43,26,32,0.32);
       overflow-y: auto;
     }
-    .mobile-menu-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1rem;
-      transition: all 0.2s;
-      color: var(--dark);
+    .mobile-menu.open {
+      transform: translateY(0);
+      visibility: visible;
+      /* Apertura: curva ease-out suave */
+      transition: transform 0.42s cubic-bezier(0.22,1,0.36,1), visibility 0s;
     }
-    .mobile-menu-link:hover,
-    .mobile-menu-link.active {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-    .mobile-menu-icon { font-size: 1.15rem; }
+    /* Neutraliza el sistema antiguo (script.js/custom.css añaden .active):
+       solo .open controla el menú, evitando el cuadro blanco atrapado al cerrar */
+    .mobile-menu.active { animation: none !important; display: flex !important; }
 
-    .mobile-menu-footer {
-      padding: 18px 20px 24px;
-      border-top: 1px solid var(--primary-light);
+    /* Navegación */
+    .mobile-menu-nav {
+      flex: 0 0 auto;
+      padding: clamp(12px,2.2vh,20px) clamp(14px,5vw,22px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: clamp(3px,0.9vh,8px);
     }
-    .btn-presupuesto-mobile {
-      display: block;
-      background: var(--primary);
-      color: white;
-      text-align: center;
-      padding: 14px;
+    .mobile-menu-link {
+      position: relative;
+      display: flex; align-items: center;
+      gap: clamp(11px,3vw,14px);
+      padding: clamp(7px,1.1vh,10px) clamp(11px,3vw,14px);
       border-radius: 14px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      transition: background 0.2s, transform 0.2s;
+      color: var(--dark);
+      transition: background 0.25s, color 0.25s, transform 0.15s;
     }
-    .btn-presupuesto-mobile:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
+    .mobile-menu-link:active { transform: scale(0.98); }
+    .mobile-menu-icon {
+      width: clamp(32px,4.4vh,38px); height: clamp(32px,4.4vh,38px);
+      border-radius: 11px;
+      background: rgba(188,85,109,0.09); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.25s, color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .mobile-menu-icon svg {
+      width: clamp(17px,2.3vh,20px); height: clamp(17px,2.3vh,20px);
+      fill: none; stroke: currentColor; stroke-width: 1.9;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .mobile-menu-label {
+      font-weight: 650; font-size: clamp(0.9rem,2.2vh,1rem);
+      letter-spacing: -0.01em; flex: 1;
+    }
+    .mobile-menu-arrow {
+      color: var(--gray-text); flex-shrink: 0;
+      opacity: 0; transform: translateX(-6px);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .mobile-menu-arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .mobile-menu-link:hover { background: rgba(188,85,109,0.06); }
+    .mobile-menu-link:hover .mobile-menu-icon { transform: translateY(-1px); }
+    .mobile-menu-link:hover .mobile-menu-arrow { opacity: 0.55; transform: translateX(0); }
+    .mobile-menu-link.active {
+      background: linear-gradient(100deg, var(--primary-light) 0%, rgba(242,214,220,0.35) 100%);
+      color: var(--primary-dark);
+    }
+    .mobile-menu-link.active .mobile-menu-icon {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; box-shadow: 0 6px 16px rgba(188,85,109,0.4);
+    }
+    .mobile-menu-link.active .mobile-menu-label { font-weight: 750; }
+    .mobile-menu-link.active .mobile-menu-arrow { opacity: 0.9; transform: translateX(0); color: var(--primary); }
+    .mobile-menu-link.active::before {
+      content: ''; position: absolute; left: calc(-1 * clamp(14px,5vw,22px)); top: 50%;
+      transform: translateY(-50%);
+      width: 4px; height: 62%; border-radius: 0 4px 4px 0;
+      background: linear-gradient(var(--primary), var(--primary-dark));
+    }
+
+    /* Entrada escalonada de los enlaces (deslizan desde arriba) */
+    .mobile-menu-nav .mobile-menu-link { opacity: 0; transform: translateY(-12px); }
+    .mobile-menu.open .mobile-menu-nav .mobile-menu-link {
+      animation: drawerLinkIn 0.42s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .mobile-menu.open .mobile-menu-link:nth-of-type(1) { animation-delay: 0.06s; }
+    .mobile-menu.open .mobile-menu-link:nth-of-type(2) { animation-delay: 0.11s; }
+    .mobile-menu.open .mobile-menu-link:nth-of-type(3) { animation-delay: 0.16s; }
+    .mobile-menu.open .mobile-menu-link:nth-of-type(4) { animation-delay: 0.21s; }
+    .mobile-menu.open .mobile-menu-link:nth-of-type(5) { animation-delay: 0.26s; }
+    @keyframes drawerLinkIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Ítem destacado: Configura tu proyecto (mismo espaciado que el resto) */
+    .mobile-menu-link--cta .mobile-menu-icon {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; box-shadow: 0 5px 14px rgba(188,85,109,0.38);
+    }
+    .mobile-menu-link--cta .mobile-menu-icon svg { fill: currentColor; stroke: none; }
+    .mobile-menu-link--cta .mobile-menu-label { color: var(--primary-dark); font-weight: 750; }
+
+    /* Alturas muy reducidas (móvil apaisado): permite scroll y compacta */
+    @media (max-height: 480px) {
+      .mobile-menu-nav { justify-content: flex-start; gap: 4px; }
+      .mobile-menu-link { padding: 8px 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mobile-menu, .menu-overlay, .mobile-menu-link { transition: none; }
+      .mobile-menu.open .mobile-menu-nav .mobile-menu-link { animation: none; opacity: 1; transform: none; }
+    }
+
+    /* El menú lateral es exclusivo de la versión móvil */
+    @media (min-width: 769px) {
+      .mobile-menu, .menu-overlay, .hamburger-menu { display: none !important; }
     }
 
     /* ============================================================
@@ -1296,34 +1364,45 @@
       </ul>
     </div>
 
-    <div class="mobile-menu" id="mobileMenu">
-      <div class="mobile-menu-header">
-        <img src="img/SILAB-LOGO-lateral-negro-compressed.png" alt="SILAB 3D" class="mobile-menu-logo" width="130" height="130">
-      </div>
-      <nav class="mobile-menu-nav">
-        <a href="/" class="mobile-menu-link active">
-          <span class="mobile-menu-icon">🏠</span>
+    <aside class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menú de navegación" aria-hidden="true">
+      <nav class="mobile-menu-nav" aria-label="Principal">
+        <a href="/" class="mobile-menu-link active" aria-current="page">
+          <span class="mobile-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 9.6 12 3l9 6.6"/><path d="M5 10.5V20h14v-9.5"/><path d="M9.5 20v-5.5h5V20"/></svg>
+          </span>
           <span class="mobile-menu-label">Inicio</span>
+          <span class="mobile-menu-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span>
         </a>
         <a href="/productos/" class="mobile-menu-link">
-          <span class="mobile-menu-icon">🛍️</span>
+          <span class="mobile-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M6 2 3 6.5V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V6.5L18 2z"/><path d="M3 6.5h18"/><path d="M16 10.5a4 4 0 0 1-8 0"/></svg>
+          </span>
           <span class="mobile-menu-label">Productos</span>
+          <span class="mobile-menu-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span>
         </a>
         <a href="/materiales/" class="mobile-menu-link">
-          <span class="mobile-menu-icon">🎨</span>
+          <span class="mobile-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2.5 2.5 7 12 11.5 21.5 7z"/><path d="m2.5 12 9.5 4.5L21.5 12"/><path d="m2.5 17 9.5 4.5L21.5 17"/></svg>
+          </span>
           <span class="mobile-menu-label">Materiales</span>
+          <span class="mobile-menu-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span>
         </a>
         <a href="/resenas/" class="mobile-menu-link">
-          <span class="mobile-menu-icon">⭐</span>
+          <span class="mobile-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3.2l2.75 5.57 6.15.9-4.45 4.34 1.05 6.12L12 17.35 6.5 20.13l1.05-6.12L3.1 9.67l6.15-.9z"/></svg>
+          </span>
           <span class="mobile-menu-label">Reseñas</span>
+          <span class="mobile-menu-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span>
+        </a>
+        <a href="/configura-tu-proyecto/" class="mobile-menu-link mobile-menu-link--cta">
+          <span class="mobile-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2l1.7 5.1a3 3 0 0 0 1.9 1.9L20.7 10.7l-5.1 1.7a3 3 0 0 0-1.9 1.9L12 19.4l-1.7-5.1a3 3 0 0 0-1.9-1.9L3.3 10.7l5.1-1.7a3 3 0 0 0 1.9-1.9z"/></svg>
+          </span>
+          <span class="mobile-menu-label">Configura tu proyecto</span>
+          <span class="mobile-menu-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span>
         </a>
       </nav>
-      <div class="mobile-menu-footer">
-        <a href="/configura-tu-proyecto/" class="btn-presupuesto-mobile" id="btnPresupuestoMobile">
-          ✨ Configura tu proyecto
-        </a>
-      </div>
-    </div>
+    </aside>
   </nav>
 
   <div class="menu-overlay" id="menuOverlay"></div>
@@ -1614,18 +1693,28 @@
       mobileMenu.classList.add('open');
       hamburger.classList.add('open');
       overlay.classList.add('show');
+      hamburger.setAttribute('aria-expanded', 'true');
+      mobileMenu.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
     }
     function closeMenu() {
       mobileMenu.classList.remove('open');
       hamburger.classList.remove('open');
       overlay.classList.remove('show');
+      hamburger.setAttribute('aria-expanded', 'false');
+      mobileMenu.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
     }
+    hamburger.setAttribute('aria-expanded', 'false');
     hamburger.addEventListener('click', () =>
       mobileMenu.classList.contains('open') ? closeMenu() : openMenu()
     );
     overlay.addEventListener('click', closeMenu);
+    mobileMenu.querySelectorAll('.mobile-menu-link')
+      .forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu();
+    });
 
     const revealEls = document.querySelectorAll('.reveal');
     const revealObs = new IntersectionObserver(entries => {

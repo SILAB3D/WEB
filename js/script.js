@@ -1327,32 +1327,6 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         }
     }
 
-    // Menú Hamburguesa para móvil
-    const hamburgerMenu = document.getElementById('hamburgerMenu');
-    const mobileMenu = document.getElementById('mobileMenu');
-
-    if (hamburgerMenu && mobileMenu) {
-        hamburgerMenu.addEventListener('click', function() {
-            hamburgerMenu.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-        });
-
-        // Cerrar menú al hacer clic en un enlace
-        const mobileLinks = mobileMenu.querySelectorAll('a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                hamburgerMenu.classList.remove('active');
-                mobileMenu.classList.remove('active');
-            });
-        });
-
-        // Cerrar menú al hacer clic fuera de él
-        document.addEventListener('click', function(event) {
-            const isClickInside = hamburgerMenu.contains(event.target) || mobileMenu.contains(event.target);
-            if (!isClickInside && mobileMenu.classList.contains('active')) {
-                hamburgerMenu.classList.remove('active');
-                mobileMenu.classList.remove('active');
-            }
-        });
-    }
+    // Menú móvil: gestionado por el script en línea de cada página (clase .open).
+    // Se elimina el antiguo manejador basado en .active para evitar conflictos.
 });

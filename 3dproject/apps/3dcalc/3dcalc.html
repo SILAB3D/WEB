@@ -657,7 +657,7 @@ function setOrd(id,f,v){ var o=S.orders.filter(function(x){return x.id===id;})[0
 function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
 var ordQ='';
 function ordSearch(v){ ordQ=(v||'').toLowerCase(); renderOrders(); }
-function activeOrders(){ return S.orders.filter(function(o){return !o.archived && ordState(o)!=='Finalizado';}); }
+function activeOrders(){ return S.orders.filter(function(o){return !o.archived && ordState(o)==='Activo';}); }
 function updateOrdBadge(){ var b=document.getElementById('ordBadge'); if(b){var n=activeOrders().length; b.innerHTML=n?'<span class="badge-amber">'+n+'</span>':'';} }
 var ordSort='fecha';
 function setOrdSort(v){ ordSort=v||'fecha'; renderOrders(); }
@@ -718,7 +718,7 @@ function renderOrders(){
   var all=S.orders.filter(function(o){return !o.archived;});
   var totales=all.length;
   var finalizados=all.filter(function(o){return ordState(o)==='Finalizado';}).length;
-  var activos=all.filter(function(o){return ordState(o)!=='Finalizado';}).length;
+  var activos=all.filter(function(o){return ordState(o)==='Activo';}).length;
   var pendientes=all.filter(function(o){return ordState(o)==='Pendiente';}).length;
   var list=ordVisible();
   var nArch=S.orders.filter(function(o){return o.archived;}).length;
@@ -740,7 +740,7 @@ function renderOrders(){
   document.getElementById('view').innerHTML=
     '<div class="h1">Pedidos</div><div class="h-sub">Clasifica cada pedido con su botón de estado. Pulsa un pedido para ver y editar todos sus parámetros.</div>'
     +notif
-    +'<div class="kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">'
+    +'<div class="kpis" style="margin-bottom:14px">'
       +kpi('Pedidos totales', totales)
       +kpi('Pedidos activos', activos,'#4D9FFF')
       +kpi('Pedidos pendientes', pendientes,'#F4B740')
@@ -794,7 +794,7 @@ function renderStats(){
   acc.forEach(function(o){var d=statParse(o.fecha); if(!d||statMonth(d)!==nowM)return; var m=o.payment_method||'Otro'; pmCur[m]=(pmCur[m]||0)+num(o.importe_pagado);});
   var pmList=Object.keys(pmCur).map(function(k){return [k,pmCur[k]];}).sort(function(a,b){return b[1]-a[1];});
   function kpi(lbl,val,clr){return '<div class="kpi" style="text-align:center"><div class="k-l" style="color:'+(clr||'var(--t2)')+'">'+lbl+'</div><div class="k-v" style="font-size:19px'+(clr?(';color:'+clr):'')+'">'+val+'</div></div>';}
-  var kpis='<div class="kpis" style="grid-template-columns:repeat(4,1fr)">'
+  var kpis='<div class="kpis">'
     +kpi('Pedidos', acc.length+' <span style="font-size:12px;color:var(--t2)">/ '+os.length+'</span>')
     +kpi('Facturado', f(facturado), '#4D9FFF')
     +kpi('Cobrado', f(cobrado), '#34D399')
@@ -1358,7 +1358,7 @@ function _pdfRich(doc,tx,x,y,maxW,lineH){
   doc.setFont('helvetica','normal');
   return cy;
 }
-var CONFIG_URL='https://silab3d.com/configurador-color/';
+var CONFIG_URL='https://silab3d.com/pages/configurador-color.html';
 function renderTicketPage(doc,o,kind){
   var internal=(kind==='empresa'); var ac=[22,127,111];
   var br=pdfBrand(); var M=16, W=210;

@@ -240,6 +240,27 @@ table.lines td.imp{font-weight:700;color:#111;text-align:right;font-size:13.5px;
 </style>
 <style>
 @media(max-width:760px){.side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:80vw;max-width:300px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 12px}.sheet{padding:24px 18px}}
+@media(max-width:600px){
+  .doc-head{flex-direction:column;gap:12px}
+  .dh-meta{text-align:left;min-width:0}
+  .doc-client{flex-direction:column;gap:12px;margin:14px 0 4px}
+  table.lines{table-layout:auto;margin-top:14px}
+  table.lines thead{display:none}
+  table.lines,table.lines tbody,table.lines tr,table.lines td{display:block;width:auto}
+  table.lines tr{position:relative;border:1px solid #E8E8E8;border-radius:12px;padding:8px 12px 10px;margin-bottom:12px;background:#fff}
+  table.lines td{display:flex;align-items:center;gap:10px;width:auto!important;text-align:left;padding:7px 0;border-bottom:1px solid #F2F2F2}
+  table.lines td.imp{border-bottom:none}
+  table.lines td::before{content:attr(data-label);flex:0 0 92px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#999}
+  table.lines td.cell-name,table.lines td.cell-sub{flex-direction:column;align-items:stretch;gap:3px}
+  table.lines td.cell-name::before,table.lines td.cell-sub::before{flex:none}
+  table.lines td.cell-name{padding-right:26px}
+  table.lines td textarea{flex:1;width:100%;text-align:left!important;font-size:16px;font-weight:400}
+  table.lines td.num textarea{font-weight:600}
+  table.lines td.imp{font-size:15px;font-weight:700;color:#111}
+  table.lines td.x{position:absolute;top:8px;right:10px;padding:0;border:none;width:auto!important}
+  table.lines td.x::before{display:none}
+  .add-line{width:100%;justify-content:center;margin-top:6px}
+}
 </style>
 </head>
 <body>
@@ -378,12 +399,12 @@ function renderSheet(){
   if(!Array.isArray(r.notes)){ r.notes=[{id:uid(),text:DEFAULT_TERMS,on:true}]; save(); }
   var rows=r.lines.map(function(l,i){
     return '<tr>'
-      +'<td class="cell-name"><textarea rows="1" class="gr" placeholder="Nombre del pedido" oninput="grow(this);updLine('+i+',\'name\',this.value)">'+esc(l.name)+'</textarea></td>'
-      +'<td class="cell-sub"><textarea rows="1" class="gr" placeholder="Descripción" oninput="grow(this);updLine('+i+',\'desc\',this.value)">'+esc(l.desc)+'</textarea></td>'
-      +'<td class="cell-sub"><textarea rows="1" class="gr" placeholder="Material / color" oninput="grow(this);updLine('+i+',\'materials\',this.value)">'+esc(l.materials)+'</textarea></td>'
-      +'<td class="u"><textarea rows="1" class="gr" oninput="grow(this);updLine('+i+',\'units\',this.value)">'+esc(l.units)+'</textarea></td>'
-      +'<td class="num"><textarea rows="1" class="gr" inputmode="decimal" placeholder="0,00" oninput="grow(this);updLine('+i+',\'amount\',this.value.replace(\',\',\'.\'))">'+esc(l.amount)+'</textarea></td>'
-      +'<td class="num imp" id="imp-'+i+'">'+eur(lineImporte(l))+'</td>'
+      +'<td class="cell-name" data-label="Pedido"><textarea rows="1" class="gr" placeholder="Nombre del pedido" oninput="grow(this);updLine('+i+',\'name\',this.value)">'+esc(l.name)+'</textarea></td>'
+      +'<td class="cell-sub" data-label="Descripción"><textarea rows="1" class="gr" placeholder="Descripción" oninput="grow(this);updLine('+i+',\'desc\',this.value)">'+esc(l.desc)+'</textarea></td>'
+      +'<td class="cell-sub" data-label="Material / color"><textarea rows="1" class="gr" placeholder="Material / color" oninput="grow(this);updLine('+i+',\'materials\',this.value)">'+esc(l.materials)+'</textarea></td>'
+      +'<td class="u" data-label="Uds."><textarea rows="1" class="gr" oninput="grow(this);updLine('+i+',\'units\',this.value)">'+esc(l.units)+'</textarea></td>'
+      +'<td class="num" data-label="P. unit."><textarea rows="1" class="gr" inputmode="decimal" placeholder="0,00" oninput="grow(this);updLine('+i+',\'amount\',this.value.replace(\',\',\'.\'))">'+esc(l.amount)+'</textarea></td>'
+      +'<td class="num imp" id="imp-'+i+'" data-label="Importe">'+eur(lineImporte(l))+'</td>'
       +'<td class="x"><button class="row-del" onclick="removeLine('+i+')" title="Quitar">✕</button></td></tr>';
   }).join('');
   main.innerHTML='<div class="sheet">'

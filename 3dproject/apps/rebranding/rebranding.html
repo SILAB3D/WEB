@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rebranding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#121215; --bg2:#17171b; --panel:#1d1d23; --panel2:#26262e; --line:#2d2d37; --line2:#3b3b47;
@@ -11,7 +13,7 @@
     --accent:#f472b6; --accent-dim:#b84c86; --ok:#8fd0a8; --warn:#e6b36a;
     --sidebar-w:220px;
     --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,monospace;
-    --sans:'Avenir Next','Segoe UI',system-ui,sans-serif;
+    --sans:'Outfit',system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100%}
@@ -241,35 +243,34 @@
     #sidebar{transform:translateX(-100%)} #sidebar.open{transform:none}}
 </style>
 <style>
-/* ==== tema claro (chrome) ==== */
 [data-theme=light]{ --bg:#F5F6FA; --bg2:#FFFFFF; --panel:#FFFFFF; --panel2:#EEF0F6; --line:#E3E5ED; --line2:#D3D6E1; --text:#1A1C24; --muted:#5A6172; --faint:#9AA0B0; }
-/* ==== estructura tipo 3DBilling: appbar + barra lateral + main ==== */
 .appbar{position:fixed;top:0;left:0;right:0;height:52px;z-index:9500;display:flex;align-items:center;gap:9px;padding:0 14px;background:rgba(18,18,21,.85);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 [data-theme=light] .appbar{background:rgba(255,255,255,.9);border-bottom:1px solid var(--line)}
+.ab-ic-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line2);background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.ab-ic-btn:hover{background:var(--panel2)}
+#burger{width:34px;height:34px;border-radius:9px;flex-direction:row}
 .ab-app{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .ab-appic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(244,114,182,.16);border:1px solid rgba(244,114,182,.34);flex-shrink:0}
 .ab-name{font-weight:700;font-size:15px;letter-spacing:-.2px;color:var(--text)}
 .ab-back{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 9px;border-radius:9px;border:1px solid var(--line2);background:transparent;color:var(--text);font:500 12.5px var(--sans);flex-shrink:0;cursor:pointer}
 .ab-back:hover{background:var(--panel2)}
 .ab-sp{flex:1}
-.appbar .crumb{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
-.appbar .off{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.appbar .off::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.appbar .crumb,.appbar .off{display:none}
 .ab-theme{width:34px;height:34px;border-radius:9px;border:1px solid var(--line2);background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
 .ab-theme:hover{background:var(--panel2)}
-#burger{display:none;width:36px;height:36px;border-radius:9px}
-/* barra lateral persistente en escritorio */
+#scrim{display:none!important}
 #sidebar{position:fixed;top:52px;left:0;bottom:0;width:var(--sidebar-w);transform:none;z-index:40;border-right:1px solid var(--line);background:var(--bg2);overflow-y:auto;transition:none}
 #sidebar .title{display:none}
 main{max-width:none;margin:52px 0 0 var(--sidebar-w);padding:22px 28px 60px}
+@media(min-width:821px){ body.side-off #sidebar{display:none} body.side-off main{margin-left:0} }
 @media(max-width:820px){
-  #burger{display:flex}
   #sidebar{transform:translateX(-100%);transition:transform .22s ease;z-index:60;box-shadow:20px 0 60px -20px #000c}
-  #sidebar.open{transform:none}
+  body:not(.side-off) #sidebar{transform:none}
   main{margin-left:0;padding:18px 16px 60px}
-  .ab-bktx{display:none} .ab-back{padding:0 9px}
+  .ab-bktx{display:none} .ab-back{padding:0 9px} .ab-name{display:none}
 }
 </style>
+<style>h2.sec{font-family:'DM Serif Display',serif;font-style:italic;font-weight:400}</style>
 </head>
 <body>
 
@@ -281,7 +282,7 @@ main{max-width:none;margin:52px 0 0 var(--sidebar-w);padding:22px 28px 60px}
 <div id="scrim"></div>
 
 <div class="appbar">
-  <button id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+  <button id="burger" class="ab-ic-btn" onclick="toggleSide()" aria-label="Menú" title="Mostrar u ocultar el menú"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
   <span class="ab-app"><span class="ab-appic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.7 4.6 4.8 1.8-4.8 1.8L12 16l-1.7-4.8L5.5 9.4l4.8-1.8z"/><path d="M18.5 14.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg></span><span class="ab-name">Rebranding</span></span>
   <button class="ab-back" onclick="dpHome()" title="Volver a 3DProject"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> <span class="ab-bktx">3DProject</span></button>
   <span class="ab-sp"></span>
@@ -1872,7 +1873,9 @@ setStep(1);
   window.applyTheme=function(t){ t=(t==='light')?'light':'dark'; document.documentElement.setAttribute('data-theme',t); try{localStorage.setItem('dp3-theme',t);}catch(e){} var b=document.getElementById('dpTheme'); if(b)b.innerHTML=ic(t); if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'theme',theme:t},'*');}catch(e){}} };
   window.dpToggleTheme=function(){ applyTheme((document.documentElement.getAttribute('data-theme')||'dark')==='dark'?'light':'dark'); };
   window.dpHome=function(){ if(window.self!==window.top){try{window.parent.postMessage({__dp3:true,type:'home'},'*');}catch(e){}}else{window.location.href='../../index.html';} };
+  window.toggleSide=function(){ document.body.classList.toggle('side-off'); };
   window.addEventListener('message',function(e){ var d=e.data; if(d&&d.__dp3&&d.type==='theme'&&d.theme){applyTheme(d.theme);} });
+  try{ if(window.matchMedia && window.matchMedia('(max-width:820px)').matches) document.body.classList.add('side-off'); }catch(e){}
   var p=null; try{p=new URLSearchParams(location.search).get('dptheme');}catch(e){} var s=null; try{s=localStorage.getItem('dp3-theme');}catch(e){} applyTheme(p||s||'dark');
 })();
 </script>

@@ -261,12 +261,6 @@ async function goBack() {
   await window.electronAPI.navigate('dashboard');
 }
 
-// ── Logout ────────────────────────────────────
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  try { await window.DPCloud.logout(); } catch (e) {}
-  if (window.parent !== window) { try { window.parent.postMessage({ __dp3:true, type:'home' }, '*'); } catch(e){} }
-  else { window.location.href = '../../../index.html'; }
-});
 
 // ── Cerrar modales al clic fuera ──────────────
 document.getElementById('add-step-modal').addEventListener('click', (e) => {
