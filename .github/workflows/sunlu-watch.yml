@@ -1,0 +1,32 @@
+name: Sunlu stock watch
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/sunlu-watch.yml'
+      - '.github/scripts/sunlu-track.mjs'
+permissions:
+  contents: write
+concurrency:
+  group: sunlu-watch
+  cancel-in-progress: false
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Capturar stock de Sunlu
+        run: node .github/scripts/sunlu-track.mjs
+      - name: Publicar datos si hay cambios
+        run: |
+          git config user.name "sunlu-watch-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git pull --rebase
+          git add 3dproject/data/sunlu
+          git diff --cached --quiet || git commit -m "3DStock: actualización de stock Sunlu"
+          git push

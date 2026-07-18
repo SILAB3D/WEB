@@ -177,6 +177,7 @@ body::after {
 .card.f::before { background: var(--amber); }
 .card.g::before { background: #8B7CFF; }
 .card.h::before { background: #F472B6; }
+.card.i::before { background: #22D3EE; }
 
 .card:hover {
   transform: translateY(-6px);
@@ -190,6 +191,7 @@ body::after {
 .card.f:hover { border-color: rgba(244,183,64,.35);  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(244,183,64,.1); }
 .card.g:hover { border-color: rgba(139,124,255,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(139,124,255,.1); }
 .card.h:hover { border-color: rgba(244,114,182,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(244,114,182,.1); }
+.card.i:hover { border-color: rgba(34,211,238,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 20px 50px rgba(34,211,238,.1); }
 
 .card:hover::before { opacity: .2; transform: scale(1); }
 .card:active { transform: translateY(-3px) scale(.99); }
@@ -237,6 +239,7 @@ body::after {
 .icon.if { background: rgba(244,183,64,.12);  border: 1px solid rgba(244,183,64,.2); }
 .icon.ig { background: rgba(139,124,255,.12); border: 1px solid rgba(139,124,255,.22); }
 .icon.ih { background: rgba(244,114,182,.12); border: 1px solid rgba(244,114,182,.22); }
+.icon.ii { background: rgba(34,211,238,.12); border: 1px solid rgba(34,211,238,.22); }
 
 .arrow {
   width: 30px; height: 30px;
@@ -283,6 +286,7 @@ body::after {
 .card.e .card-line { background: var(--green); }
 .card.f .card-line { background: var(--amber); }
 .card.h .card-line { background: #F472B6; }
+.card.i .card-line { background: #22D3EE; }
 .card:hover .card-line { width: 100%; }
 
 /* ── Footer ── */
@@ -933,6 +937,23 @@ body.dp-authed #authGate{display:none}
       <div class="card-line"></div>
     </div>
 
+    <!-- 3DStock -->
+    <div class="card i" onclick="launchApp('stock')">
+      <div class="card-top">
+        <div class="icon ii">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="1.6"><circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="3.1"/><path d="M20.6 12c0 4.6-8.6 4.6-8.6 0" stroke-linecap="round"/></svg>
+        </div>
+        <div class="arrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="app-name">3DStock</div>
+        <p class="app-desc">Vigila el stock de filamentos Sunlu con envío a Europa: registro completo de reposiciones, agotamientos y precios, con avisos personalizables por filamento.</p>
+      </div>
+      <div class="card-line"></div>
+    </div>
+
   </div>
 
   <p class="footer" id="dpFooter">3DProject Suite &nbsp;·&nbsp; v3.0</p>
@@ -1084,13 +1105,21 @@ const APPS = {
     color: '#F472B6', bg: 'rgba(244,114,182,.1)', border: 'rgba(244,114,182,.2)',
     cls: 'mh',
     svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F472B6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.7 4.6 4.8 1.8-4.8 1.8L12 16l-1.7-4.8L5.5 9.4l4.8-1.8z"/><path d="M18.5 14.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>`
+  },
+  stock: {
+    name: '3DStock',
+    desc: 'Vigila el stock de filamentos Sunlu con envío a Europa: registro completo de reposiciones, agotamientos y cambios de precio, capturado cada 6 horas, con avisos personalizables por filamento.',
+    url: 'apps/3dstock/3dstock.html',
+    color: '#22D3EE', bg: 'rgba(34,211,238,.1)', border: 'rgba(34,211,238,.2)',
+    cls: 'mi',
+    svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="1.5"><circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="3.1"/><path d="M20.6 12c0 4.6-8.6 4.6-8.6 0" stroke-linecap="round"/></svg>`
   }
 };
 
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260703-0230';
+const APP_VER = '20260703-0315';
 
 function launchApp(id) {
   const a = APPS[id];

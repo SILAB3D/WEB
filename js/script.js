@@ -287,7 +287,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
     function suppressPalomiteraPopupForMinutes(minutes) {
         try {
             const until = Date.now() + (minutes || 20) * 60 * 1000;
-            localStorage.setItem('palomitera_popup_suppress_until', String(until));
+            localStorage.setItem('got_popup_suppress_until', String(until));
         } catch (e) {
             // ignore storage errors
         }
@@ -298,7 +298,7 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         if (!isIndexPage) return false;
         
         try {
-            const suppressUntil = Number(localStorage.getItem('palomitera_popup_suppress_until') || 0);
+            const suppressUntil = Number(localStorage.getItem('got_popup_suppress_until') || 0);
             if (Date.now() < suppressUntil) return false;
         } catch (e) {}
         return true; // show on index page when not suppressed
@@ -1179,8 +1179,8 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         if (activePalomiteraPopup) {
             activePalomiteraPopup.classList.remove('show');
         }
-        // Redirigir a la página del formulario de la palomitera
-        window.location.href = '/palomitera-formulario/';
+        // Redirigir a la página del formulario de los cuadros de Juego de Tronos
+        window.location.href = '/cuadros-juego-de-tronos/';
     }
 
     function createPalomiteraPopup() {
@@ -1196,13 +1196,15 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
                 <button type="button" class="palomitera-popup-close" id="palomiteraPopupClose" aria-label="Cerrar ventana">&times;</button>
                 <div class="palomitera-popup-head">
                     <span class="palomitera-popup-chip">Novedad</span>
-                    <h2 id="palomiteraPopupTitle" class="palomitera-popup-title">Palomitera de Yoshi</h2>
+                    <h2 id="palomiteraPopupTitle" class="palomitera-popup-title">Cuadros bicolor Juego de Tronos</h2>
                 </div>
                 <div class="palomitera-carousel" id="palomiteraCarousel">
-                    <img src="${imagePrefix}Palomitera-frontal.webp" alt="Palomitera de Yoshi vista frontal" class="palomitera-slide active" loading="eager" decoding="async">
-                    <img src="${imagePrefix}Palomitera-trasera.webp" alt="Palomitera de Yoshi vista trasera" class="palomitera-slide" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-1.jpg" alt="Cuadros bicolor de Juego de Tronos" class="palomitera-slide active" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-2.jpg" alt="Colección de cuadros de las casas de Juego de Tronos" class="palomitera-slide" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-3.jpg" alt="Detalle de los emblemas impresos en 3D" class="palomitera-slide" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-4.jpg" alt="Detalle de los cuadros Tully y Targaryen" class="palomitera-slide" loading="eager" decoding="async">
                 </div>
-                <p class="palomitera-popup-description">Encarga tu unidad personalizada con los <strong>colores</strong> de nuestro catálogo. ¡Disponible en varios <strong>tamaños</strong>!</p>
+                <p class="palomitera-popup-description">Hazte con los emblemas de las <strong>grandes casas de Poniente</strong>. ¡Elige tus <strong>casas favoritas</strong> y colecciónalos!</p>
                 <button type="button" class="palomitera-popup-cta" id="palomiteraPopupCTA">Lo quiero</button>
             </div>
         `;
@@ -1220,14 +1222,15 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
         return wrapper;
     }
 
-    if (shouldShowPalomiteraPopup()) {
+    if (isIndexPage) {
+        const palomiteraAutoShow = shouldShowPalomiteraPopup();
         const palomiteraPopup = createPalomiteraPopup();
         const palomiteraCloseBtn = document.getElementById('palomiteraPopupClose');
         const palomiteraCTA = document.getElementById('palomiteraPopupCTA');
         const palomiteraSlides = palomiteraPopup.querySelectorAll('.palomitera-slide');
         let palomiteraSlideIndex = 0;
         let palomiteraIntervalId = null;
-        const palomiteraProductName = 'Palomitera de Yoshi';
+        const palomiteraProductName = 'Cuadros bicolor Juego de Tronos';
         const palomiteraWhatsAppURL = `https://wa.me/34644070487?text=${encodeURIComponent(`¡Hola! Me gustaría encargar una ${palomiteraProductName} personalizada. ¿Podéis darme más información?`)}`;
         const palomiteraEmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=silab3d@gmail.com&su=${encodeURIComponent(`Consulta sobre ${palomiteraProductName}`)}&body=${encodeURIComponent(`¡Hola!\n\nMe gustaría encargar una ${palomiteraProductName} personalizada. ¿Podéis darme más información?\n\nGracias.`)}`;
 
@@ -1243,18 +1246,62 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
                 clearInterval(palomiteraIntervalId);
                 palomiteraIntervalId = null;
             }
+            // Se cierre como se cierre (×, clic fuera, Escape), queda minimizado en el icono
+            showPalomiteraMinIcon();
         }
 
-        if (palomiteraSlides.length > 1) {
-            palomiteraIntervalId = setInterval(() => {
-                palomiteraSlideIndex = (palomiteraSlideIndex + 1) % palomiteraSlides.length;
-                showPalomiteraSlide(palomiteraSlideIndex);
-            }, 2000);
+        function startPalomiteraCarousel() {
+            if (palomiteraSlides.length > 1 && !palomiteraIntervalId) {
+                palomiteraIntervalId = setInterval(() => {
+                    palomiteraSlideIndex = (palomiteraSlideIndex + 1) % palomiteraSlides.length;
+                    showPalomiteraSlide(palomiteraSlideIndex);
+                }, 2000);
+            }
         }
 
-        setTimeout(() => {
-            palomiteraPopup.classList.add('show');
-        }, 5000);
+        // ── Icono minimizado (cara de Yoshi) en la esquina inferior derecha ──
+        let palomiteraMinIcon = null;
+
+        function showPalomiteraMinIcon() {
+            if (!palomiteraMinIcon) {
+                palomiteraMinIcon = document.createElement('button');
+                palomiteraMinIcon.type = 'button';
+                palomiteraMinIcon.id = 'palomiteraMinIcon';
+                palomiteraMinIcon.className = 'palomitera-min-icon';
+                palomiteraMinIcon.title = 'Cuadros bicolor Juego de Tronos';
+                palomiteraMinIcon.setAttribute('aria-label', 'Ver novedad: Cuadros bicolor Juego de Tronos');
+                palomiteraMinIcon.innerHTML = `
+                    <svg viewBox="0 0 64 64" aria-hidden="true">
+                        <path d="M10 44 L14 22 L24 33 L32 16 L40 33 L50 22 L54 44 Z" fill="#e8b93c" stroke="#8a6712" stroke-width="1.4" stroke-linejoin="round"/>
+                        <rect x="10" y="44" width="44" height="6" rx="2" fill="#e8b93c" stroke="#8a6712" stroke-width="1.4"/>
+                        <circle cx="14" cy="20" r="2.6" fill="#e8b93c" stroke="#8a6712" stroke-width="1.2"/>
+                        <circle cx="32" cy="14" r="2.8" fill="#e8b93c" stroke="#8a6712" stroke-width="1.2"/>
+                        <circle cx="50" cy="20" r="2.6" fill="#e8b93c" stroke="#8a6712" stroke-width="1.2"/>
+                        <circle cx="32" cy="40" r="2.4" fill="#a5262d"/>
+                    </svg>`;
+                palomiteraMinIcon.addEventListener('click', function() {
+                    hidePalomiteraMinIcon();
+                    palomiteraPopup.classList.add('show');
+                    startPalomiteraCarousel();
+                });
+                document.body.appendChild(palomiteraMinIcon);
+            }
+            palomiteraMinIcon.classList.add('visible');
+        }
+
+        function hidePalomiteraMinIcon() {
+            if (palomiteraMinIcon) palomiteraMinIcon.classList.remove('visible');
+        }
+
+        if (palomiteraAutoShow) {
+            startPalomiteraCarousel();
+            setTimeout(() => {
+                palomiteraPopup.classList.add('show');
+            }, 5000);
+        } else {
+            // Popup suprimido (cerrado hace poco): queda minimizado en el icono
+            showPalomiteraMinIcon();
+        }
 
         if (palomiteraCloseBtn) {
             palomiteraCloseBtn.addEventListener('click', function() {
