@@ -256,22 +256,22 @@ function liveSnapshot(products){ var items=[];
   return items;
 }
 function runLiveSondeo(){ if(liveBusy)return;
-  if(S.ghToken){ runDispatch(); return; }
   liveBusy=true; renderBody(); setStatus('Sondeando la tienda en vivo…');
-  liveFetchAll().then(function(prods){
+  liveFetchAll().catch(function(){ setStatus('Proxies lentos: reintentando con páginas más pequeñas…'); return liveFetchAll(1,[],20); })
+  .then(function(prods){
     var items=liveSnapshot(prods);
     if(!items.length)throw new Error('Sondeo vacío');
     DATA={ fetched_at:new Date().toISOString(), products:items };
     LIVE=true; SOND=true; liveBusy=false; render();
   }).catch(function(e){
     liveBusy=false; renderBody();
-    setStatus('No se pudo sondear en vivo: los proxies CORS públicos no respondieron (la tienda a veces los bloquea). Reintenta en unos segundos, o pulsa ⚙ y configura un token de GitHub para lanzar la captura oficial, que es fiable y además actualiza el Registro.');
+    setStatus('No se pudo sondear en vivo: ninguno de los 5 proxies CORS respondió. Suele ser temporal — reintenta en 30–60 segundos.');
   });
 }
 var GH_REPO='SILAB3D/WEB';
 function ghHeaders(){ return {'Authorization':'Bearer '+S.ghToken,'Accept':'application/vnd.github+json'}; }
 function cfgGh(){
-  var msg='Token de GitHub (fine-grained) con permiso Actions: write sobre '+GH_REPO+'.\n\nCon él, el sondeo manual lanza la captura oficial (el workflow), que también actualiza el Registro de cambios.\n\nDeja el campo vacío y acepta para borrarlo.';
+  var msg='Token de GitHub (fine-grained) con permiso Actions: write sobre '+GH_REPO+'.\n\nCon él se habilita el botón ⇪ Captura oficial: lanza el workflow de GitHub, que también actualiza el Registro de cambios (el sondeo en vivo no lo necesita).\n\nDeja el campo vacío y acepta para borrarlo.';
   var v=prompt(msg, S.ghToken||''); if(v==null)return; v=v.trim();
   if(v)S.ghToken=v; else delete S.ghToken;
   save(); renderBody();
@@ -301,8 +301,10 @@ function waitNew(prev,n){ if(n>=14)return Promise.resolve(false);
     return waitNew(prev,n+1);
   });
 }
-function liveBtnHTML(){ return '<button class="btn'+(hasData()?'':' pri')+'" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runLiveSondeo()" title="'+(S.ghToken?'Lanza la captura oficial (workflow de GitHub)':'Consulta la tienda de Sunlu ahora mismo vía proxy')+'">'+(liveBusy?'Sondeando…':('▶ Sondeo manual '+(S.ghToken?'(oficial)':'(en vivo)')))+'</button>'
-  +'<button class="btn" style="padding:0 12px" onclick="cfgGh()" title="Configurar token de GitHub para el sondeo oficial">⚙</button>'; }
+function liveBtnHTML(){ var h='<button class="btn'+(hasData()?'':' pri')+'" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runLiveSondeo()" title="Consulta la tienda ahora mismo y muestra disponibles y agotados al instante">'+(liveBusy?'Sondeando…':'▶ Sondeo en vivo (ahora)')+'</button>';
+  if(S.ghToken)h+='<button class="btn" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runDispatch()" title="Lanza el workflow de GitHub: tarda unos minutos y actualiza también el Registro de cambios">⇪ Captura oficial</button>';
+  h+='<button class="btn" style="padding:0 12px" onclick="cfgGh()" title="Configurar token de GitHub para la captura oficial">⚙</button>';
+  return h; }
 function matCat(t){ t=String(t||'').toLowerCase();
   if(/mystery|blind box|bundle|box –|box -/.test(t))return 'Packs y cajas';
   if(/petg/.test(t))return 'PETG';
