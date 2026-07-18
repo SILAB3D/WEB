@@ -200,7 +200,7 @@ function renderBody(){ var el=document.getElementById('vbody'); if(!el)return;
   else el.innerHTML=aviHTML();
 }
 function catHTML(){
-  if(!hasData())return '<div class="toolrow">'+liveBtnHTML()+'</div>'+noData();
+  if(!hasData())return '<div class="toolrow">'+liveBtnHTML()+'</div><div class="note" id="liveStatus" style="margin:0 0 10px"></div>'+noData();
   var vs=allVariants();
   var nAv=vs.filter(function(v){return v.av;}).length;
   var q=Q.trim().toLowerCase();
@@ -209,25 +209,37 @@ function catHTML(){
     +'<div class="kpi"><div class="v" style="color:#34D399">'+nAv+'</div><div class="l">Disponibles</div></div>'
     +'<div class="kpi"><div class="v" style="color:#FF6B6B">'+(vs.length-nAv)+'</div><div class="l">Agotadas</div></div></div>';
   h+='<div class="toolrow"><input class="inp" placeholder="Buscar filamento, color o SKU…" value="'+esc(Q)+'" oninput="setQ(this.value)">'
-    +'<button class="btn'+(SOND?'':' pri')+'" onclick="toggleSondeo()">'+(SOND?'Ver listado simple':'⟲ Sondeo por categorías')+'</button>'+liveBtnHTML()+'</div>';
+    +'<button class="btn'+(SOND?'':' pri')+'" onclick="toggleSondeo()">'+(SOND?'Ver listado simple':'⟲ Sondeo por categorías')+'</button>'+liveBtnHTML()+'</div>'+'<div class="note" id="liveStatus" style="margin:0 0 10px"></div>';
   if(SOND){ h+=sondeoHTML(list); return h; }
   h+='<div class="card">'+(list.length?list.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados para esa búsqueda.</div>')+'</div>';
   return h;
 }
 function toggleSondeo(){ if(!SOND){ SOND=true; fetchData().then(function(){ renderBody(); }); } else { SOND=false; renderBody(); } }
 var PROXIES=[
-  function(u){return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u);},
-  function(u){return 'https://corsproxy.io/?url='+encodeURIComponent(u);},
-  function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}
+  {wrap:true, u:function(u){return 'https://api.allorigins.win/get?url='+encodeURIComponent(u);}},
+  {u:function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}},
+  {u:function(u){return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u);}},
+  {u:function(u){return 'https://corsproxy.io/?url='+encodeURIComponent(u);}},
+  {u:function(u){return 'https://r.jina.ai/'+u;}}
 ];
-function pfetchJSON(url,pi){ pi=pi||0; if(pi>=PROXIES.length)return Promise.reject(new Error('Sin respuesta de los proxies'));
-  return fetch(PROXIES[pi](url)).then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(j){ if(!j||typeof j!=='object')throw 0; return j; }).catch(function(){ return pfetchJSON(url,pi+1); });
+function setStatus(m){ var el=document.getElementById('liveStatus'); if(el)el.textContent=m||''; }
+function fetchTO(url,ms){ var ac=(typeof AbortController!=='undefined')?new AbortController():null; var tm=ac?setTimeout(function(){try{ac.abort();}catch(e){}},ms):null;
+  return fetch(url,ac?{signal:ac.signal}:{}).then(function(r){ if(tm)clearTimeout(tm); return r; },function(e){ if(tm)clearTimeout(tm); throw e; }); }
+function pfetchJSON(url,pi){ pi=pi||0; if(pi>=PROXIES.length)return Promise.reject(new Error('Ningún proxy respondió'));
+  var P=PROXIES[pi];
+  return fetchTO(P.u(url),20000).then(function(r){ if(!r.ok)throw 0; return r.text(); }).then(function(tx){
+    if(P.wrap){ var w=JSON.parse(tx); tx=(w&&w.contents)||''; }
+    var j=JSON.parse(tx);
+    if(!j||typeof j!=='object'||!j.products)throw 0;
+    return j;
+  }).catch(function(){ return pfetchJSON(url,pi+1); });
 }
-function liveFetchAll(page,acc){ page=page||1; acc=acc||[];
-  return pfetchJSON('https://store.sunlu.com/products.json?limit=250&page='+page).then(function(j){
+function liveFetchAll(page,acc,lim){ page=page||1; acc=acc||[]; lim=lim||60;
+  setStatus('Sondeando la tienda… (página '+page+')');
+  return pfetchJSON('https://store.sunlu.com/products.json?limit='+lim+'&page='+page).then(function(j){
     var arr=(j&&j.products)||[]; acc=acc.concat(arr);
-    if(arr.length<250||page>=8)return acc;
-    return liveFetchAll(page+1,acc);
+    if(arr.length<lim||page>=12)return acc;
+    return liveFetchAll(page+1,acc,lim);
   });
 }
 function cleanVt(t){ return String(t||'').replace(/ship to europe\s*\/?\s*/i,'').replace(/^\s*\/\s*/,'').trim()||'Único'; }
@@ -243,15 +255,48 @@ function liveSnapshot(products){ var items=[];
   items.sort(function(a,b){ return a.id-b.id; });
   return items;
 }
-function runLiveSondeo(){ if(liveBusy)return; liveBusy=true; renderBody();
+function runLiveSondeo(){ if(liveBusy)return;
+  if(S.ghToken){ runDispatch(); return; }
+  liveBusy=true; renderBody(); setStatus('Sondeando la tienda en vivo…');
   liveFetchAll().then(function(prods){
     var items=liveSnapshot(prods);
     if(!items.length)throw new Error('Sondeo vacío');
     DATA={ fetched_at:new Date().toISOString(), products:items };
     LIVE=true; SOND=true; liveBusy=false; render();
-  }).catch(function(e){ liveBusy=false; renderBody(); alert('No se pudo completar el sondeo en vivo: los proxies CORS no respondieron. Vuelve a intentarlo en unos segundos.'); });
+  }).catch(function(e){
+    liveBusy=false; renderBody();
+    setStatus('No se pudo sondear en vivo: los proxies CORS públicos no respondieron (la tienda a veces los bloquea). Reintenta en unos segundos, o pulsa ⚙ y configura un token de GitHub para lanzar la captura oficial, que es fiable y además actualiza el Registro.');
+  });
 }
-function liveBtnHTML(){ return '<button class="btn'+(hasData()?'':' pri')+'" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runLiveSondeo()" title="Consulta la tienda de Sunlu ahora mismo">'+(liveBusy?'Sondeando…':'▶ Sondeo manual (en vivo)')+'</button>'; }
+var GH_REPO='SILAB3D/WEB';
+function ghHeaders(){ return {'Authorization':'Bearer '+S.ghToken,'Accept':'application/vnd.github+json'}; }
+function cfgGh(){
+  var msg='Token de GitHub (fine-grained) con permiso Actions: write sobre '+GH_REPO+'.\n\nCon él, el sondeo manual lanza la captura oficial (el workflow), que también actualiza el Registro de cambios.\n\nDeja el campo vacío y acepta para borrarlo.';
+  var v=prompt(msg, S.ghToken||''); if(v==null)return; v=v.trim();
+  if(v)S.ghToken=v; else delete S.ghToken;
+  save(); renderBody();
+}
+function runDispatch(){ if(liveBusy)return; liveBusy=true; renderBody(); setStatus('Lanzando la captura oficial en GitHub…');
+  var prev=(DATA&&DATA.fetched_at)||null;
+  fetch('https://api.github.com/repos/'+GH_REPO,{headers:ghHeaders()})
+    .then(function(r){ if(!r.ok)throw new Error('Token o repositorio no válidos (HTTP '+r.status+')'); return r.json(); })
+    .then(function(repo){ return fetch('https://api.github.com/repos/'+GH_REPO+'/actions/workflows/sunlu-watch.yml/dispatches',{method:'POST',headers:ghHeaders(),body:JSON.stringify({ref:(repo&&repo.default_branch)||'main'})}); })
+    .then(function(r){ if(r.status!==204)throw new Error('No se pudo lanzar el workflow (HTTP '+r.status+')');
+      setStatus('Captura lanzada. Esperando datos nuevos (1–3 min)…'); return waitNew(prev,0); })
+    .then(function(okk){ liveBusy=false;
+      if(okk){ LIVE=false; SOND=true; render(); setStatus('Datos actualizados con la captura oficial.'); }
+      else { renderBody(); setStatus('La captura se lanzó correctamente, pero aún no llegan datos nuevos aquí. Si trabajas en local, haz git pull; en la web espera un par de minutos y recarga.'); } })
+    .catch(function(e){ liveBusy=false; renderBody(); setStatus('Error: '+((e&&e.message)||e)); });
+}
+function waitNew(prev,n){ if(n>=14)return Promise.resolve(false);
+  return new Promise(function(res){ setTimeout(res,15000); }).then(function(){ return fetchData(); }).then(function(){
+    if(DATA&&DATA.fetched_at&&DATA.fetched_at!==prev)return true;
+    setStatus('Esperando datos nuevos… ('+((n+1)*15)+' s)');
+    return waitNew(prev,n+1);
+  });
+}
+function liveBtnHTML(){ return '<button class="btn'+(hasData()?'':' pri')+'" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runLiveSondeo()" title="'+(S.ghToken?'Lanza la captura oficial (workflow de GitHub)':'Consulta la tienda de Sunlu ahora mismo vía proxy')+'">'+(liveBusy?'Sondeando…':('▶ Sondeo manual '+(S.ghToken?'(oficial)':'(en vivo)')))+'</button>'
+  +'<button class="btn" style="padding:0 12px" onclick="cfgGh()" title="Configurar token de GitHub para el sondeo oficial">⚙</button>'; }
 function matCat(t){ t=String(t||'').toLowerCase();
   if(/mystery|blind box|bundle|box –|box -/.test(t))return 'Packs y cajas';
   if(/petg/.test(t))return 'PETG';
