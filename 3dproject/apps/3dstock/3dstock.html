@@ -133,7 +133,7 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
 var S={watch:{},lastSeen:0};
 var view='cat', Q='', LQ='', LT='all', AQ='';
 var SOND=false;
-var LIVE=false, liveBusy=false;
+var LIVE=false, liveBusy=false, showDiag=false;
 var DATA=null, CH=[];
 var loaded=false, saveT=null, myTs=0;
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -143,10 +143,11 @@ function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.currentUser&&window
 
 /* ===== datos ===== */
 function fetchData(){ var v=Date.now();
+  var _log=function(){ try{ console.log('[3DStock] datos automáticos:', (DATA&&DATA.products?DATA.products.length:0),'productos ·', (DATA&&DATA.fetched_at)||'sin capturar','·', (CH&&CH.length)||0,'cambios'); }catch(e){} };
   return Promise.all([
     fetch('../../data/sunlu/latest.json?v='+v).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}),
     fetch('../../data/sunlu/changes.json?v='+v).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
-  ]).then(function(res){ DATA=res[0]; CH=Array.isArray(res[1])?res[1]:[]; updChip(); });
+  ]).then(function(res){ DATA=res[0]; CH=Array.isArray(res[1])?res[1]:[]; updChip(); _log(); });
 }
 function hasData(){ return DATA && Array.isArray(DATA.products) && DATA.products.length>0; }
 function allVariants(){ var out=[]; if(!hasData())return out;
@@ -200,7 +201,7 @@ function renderBody(){ var el=document.getElementById('vbody'); if(!el)return;
   else el.innerHTML=aviHTML();
 }
 function catHTML(){
-  if(!hasData())return '<div class="toolrow">'+liveBtnHTML()+'</div><div class="note" id="liveStatus" style="margin:0 0 10px"></div>'+noData();
+  if(!hasData())return '<div class="toolrow">'+liveBtnHTML()+'</div>'+liveExtraHTML()+noData();
   var vs=allVariants();
   var nAv=vs.filter(function(v){return v.av;}).length;
   var q=Q.trim().toLowerCase();
@@ -209,37 +210,49 @@ function catHTML(){
     +'<div class="kpi"><div class="v" style="color:#34D399">'+nAv+'</div><div class="l">Disponibles</div></div>'
     +'<div class="kpi"><div class="v" style="color:#FF6B6B">'+(vs.length-nAv)+'</div><div class="l">Agotadas</div></div></div>';
   h+='<div class="toolrow"><input class="inp" placeholder="Buscar filamento, color o SKU…" value="'+esc(Q)+'" oninput="setQ(this.value)">'
-    +'<button class="btn'+(SOND?'':' pri')+'" onclick="toggleSondeo()">'+(SOND?'Ver listado simple':'⟲ Sondeo por categorías')+'</button>'+liveBtnHTML()+'</div>'+'<div class="note" id="liveStatus" style="margin:0 0 10px"></div>';
+    +'<button class="btn'+(SOND?'':' pri')+'" onclick="toggleSondeo()">'+(SOND?'Ver listado simple':'⟲ Sondeo por categorías')+'</button>'+liveBtnHTML()+'</div>'+liveExtraHTML();
   if(SOND){ h+=sondeoHTML(list); return h; }
   h+='<div class="card">'+(list.length?list.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados para esa búsqueda.</div>')+'</div>';
   return h;
 }
 function toggleSondeo(){ if(!SOND){ SOND=true; fetchData().then(function(){ renderBody(); }); } else { SOND=false; renderBody(); } }
-var PROXIES=[
-  {wrap:true, u:function(u){return 'https://api.allorigins.win/get?url='+encodeURIComponent(u);}},
-  {u:function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}},
-  {u:function(u){return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u);}},
-  {u:function(u){return 'https://corsproxy.io/?url='+encodeURIComponent(u);}},
-  {u:function(u){return 'https://r.jina.ai/'+u;}}
+var SOURCES=[
+  {n:'directo', u:function(u){return u;}, p:function(tx){return JSON.parse(tx);}},
+  {n:'allorigins/raw', u:function(u){return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u);}, p:function(tx){return JSON.parse(tx);}},
+  {n:'codetabs', u:function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}, p:function(tx){return JSON.parse(tx);}},
+  {n:'corsproxy.io', u:function(u){return 'https://corsproxy.io/?url='+encodeURIComponent(u);}, p:function(tx){return JSON.parse(tx);}},
+  {n:'thingproxy', u:function(u){return 'https://thingproxy.freeboard.io/fetch/'+u;}, p:function(tx){return JSON.parse(tx);}},
+  {n:'allorigins/get', u:function(u){return 'https://api.allorigins.win/get?url='+encodeURIComponent(u);}, p:function(tx){var w=JSON.parse(tx);return JSON.parse(w.contents);}}
 ];
+var DIAG=[];
+function diag(msg){ var line='['+new Date().toLocaleTimeString('es-ES')+'] '+msg; DIAG.unshift(line); if(DIAG.length>80)DIAG.pop(); try{console.log('[3DStock]',msg);}catch(e){} var el=document.getElementById('diagBox'); if(el)el.textContent=DIAG.join('\n'); }
+function toggleDiag(){ showDiag=!showDiag; renderBody(); }
+function liveExtraHTML(){ return '<div class="note" id="liveStatus" style="margin:0 0 6px"></div>'
+  +'<div style="margin:0 0 10px"><button class="btn" style="height:auto;padding:5px 11px;font-size:11px" onclick="toggleDiag()">'+(showDiag?'\u25BE Ocultar diagnóstico':'\u25B8 Ver diagnóstico')+'</button></div>'
+  +(showDiag?'<pre id="diagBox" style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow:auto;margin:0 0 12px;color:var(--t2)">'+esc(DIAG.length?DIAG.join('\n'):'Aún no se ha ejecutado ningún sondeo. Pulsa «Sondeo en vivo».')+'</pre>':''); }
 function setStatus(m){ var el=document.getElementById('liveStatus'); if(el)el.textContent=m||''; }
 function fetchTO(url,ms){ var ac=(typeof AbortController!=='undefined')?new AbortController():null; var tm=ac?setTimeout(function(){try{ac.abort();}catch(e){}},ms):null;
   return fetch(url,ac?{signal:ac.signal}:{}).then(function(r){ if(tm)clearTimeout(tm); return r; },function(e){ if(tm)clearTimeout(tm); throw e; }); }
-function pfetchJSON(url,pi){ pi=pi||0; if(pi>=PROXIES.length)return Promise.reject(new Error('Ningún proxy respondió'));
-  var P=PROXIES[pi];
-  return fetchTO(P.u(url),20000).then(function(r){ if(!r.ok)throw 0; return r.text(); }).then(function(tx){
-    if(P.wrap){ var w=JSON.parse(tx); tx=(w&&w.contents)||''; }
-    var j=JSON.parse(tx);
-    if(!j||typeof j!=='object'||!j.products)throw 0;
-    return j;
-  }).catch(function(){ return pfetchJSON(url,pi+1); });
+function trySource(src,url,ms){ var t0=Date.now();
+  return fetchTO(src.u(url),ms).then(function(r){ if(!r.ok)throw {e:'HTTP '+r.status}; return r.text(); })
+    .then(function(tx){ var j=src.p(tx); if(!j||typeof j!=='object'||!j.products)throw {e:'respuesta sin products'}; diag('OK '+src.n+' \u2014 '+j.products.length+' productos ('+(Date.now()-t0)+' ms)'); return {src:src,json:j}; })
+    .catch(function(err){ var e=(err&&err.e)||((err&&err.name==='AbortError')?('timeout '+ms+' ms'):((err&&err.message)||'error/CORS')); diag('FALLO '+src.n+' \u2014 '+e); throw err; });
 }
-function liveFetchAll(page,acc,lim){ page=page||1; acc=acc||[]; lim=lim||60;
-  setStatus('Sondeando la tienda… (página '+page+')');
-  return pfetchJSON('https://store.sunlu.com/products.json?limit='+lim+'&page='+page).then(function(j){
-    var arr=(j&&j.products)||[]; acc=acc.concat(arr);
-    if(arr.length<lim||page>=12)return acc;
-    return liveFetchAll(page+1,acc,lim);
+function raceSources(url,ms){ return new Promise(function(res,rej){ var pend=SOURCES.length, won=false;
+  SOURCES.forEach(function(src){ trySource(src,url,ms).then(function(r){ if(!won){won=true;res(r);} },function(){ pend--; if(pend===0&&!won)rej(new Error('ninguna fuente respondió')); }); });
+}); }
+function liveFetchAll(){ DIAG=[]; diag('Iniciando sondeo en vivo\u2026'); setStatus('Probando '+SOURCES.length+' fuentes en paralelo\u2026');
+  return raceSources('https://store.sunlu.com/products.json?limit=250&page=1',9000).then(function(win){
+    var src=win.src, all=(win.json.products||[]).slice(); diag('Fuente elegida: '+src.n);
+    function next(page){ setStatus('Descargando catálogo\u2026 (página '+page+', vía '+src.n+')');
+      return trySource(src,'https://store.sunlu.com/products.json?limit=250&page='+page,12000).then(function(r){
+        var arr=r.json.products||[]; all=all.concat(arr);
+        if(arr.length<250||page>=12){ diag('Fin: '+all.length+' productos'); return all; }
+        return next(page+1);
+      },function(){ diag('Fin anticipado en página '+page+' ('+all.length+' productos)'); return all; });
+    }
+    if((win.json.products||[]).length<250){ diag('Fin: '+all.length+' productos (1 página)'); return all; }
+    return next(2);
   });
 }
 function cleanVt(t){ return String(t||'').replace(/ship to europe\s*\/?\s*/i,'').replace(/^\s*\/\s*/,'').trim()||'Único'; }
@@ -256,16 +269,20 @@ function liveSnapshot(products){ var items=[];
   return items;
 }
 function runLiveSondeo(){ if(liveBusy)return;
-  liveBusy=true; renderBody(); setStatus('Sondeando la tienda en vivo…');
-  liveFetchAll().catch(function(){ setStatus('Proxies lentos: reintentando con páginas más pequeñas…'); return liveFetchAll(1,[],20); })
-  .then(function(prods){
+  liveBusy=true; showDiag=true; renderBody();
+  liveFetchAll().then(function(prods){
+    diag('Filtrando filamentos con envío a Europa\u2026');
     var items=liveSnapshot(prods);
-    if(!items.length)throw new Error('Sondeo vacío');
+    diag('Resultado: '+items.length+' referencias EU tras filtrar.');
+    if(!items.length)throw {e:'0 referencias tras filtrar'};
     DATA={ fetched_at:new Date().toISOString(), products:items };
     LIVE=true; SOND=true; liveBusy=false; render();
+    setStatus('Sondeo en vivo completado: '+items.length+' referencias.');
   }).catch(function(e){
     liveBusy=false; renderBody();
-    setStatus('No se pudo sondear en vivo: ninguno de los 5 proxies CORS respondió. Suele ser temporal — reintenta en 30–60 segundos.');
+    var m=(e&&e.e)||(e&&e.message)||'error';
+    diag('SONDEO FALLIDO: '+m);
+    setStatus('No se pudo sondear en vivo ('+m+'). Ninguna fuente CORS respondió (suele ser temporal). Mira el diagnóstico y reintenta; en la web publicada usa \u21EA Captura oficial, que es fiable.');
   });
 }
 var GH_REPO='SILAB3D/WEB';
