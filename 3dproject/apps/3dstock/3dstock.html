@@ -41,15 +41,24 @@ body.side-off .side{margin-left:-231px}
 .main{flex:1;overflow:auto}
 .wrap{max-width:980px;margin:0 auto;padding:24px 22px 60px}
 .h1{font-family:'DM Serif Display',serif;font-style:italic;font-size:26px;margin-bottom:4px}
-.h-sub{color:var(--t2);font-size:13px;margin-bottom:18px}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.kpi{background:var(--glass);border:1px solid var(--border);border-radius:13px;padding:13px 15px;text-align:center}
-.kpi .v{font-size:20px;font-weight:800}
+.h-sub{color:var(--t2);font-size:13px;margin-bottom:16px}
+.topcard{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px}
+.tc-r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tc-r+.tc-r{margin-top:10px}
+.tc-meta{font-size:11.5px;color:var(--t2)}
+.tc-sp{flex:1}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;flex-shrink:0}
+.seg button{border:none;background:transparent;height:36px;padding:0 14px;color:var(--t2);font:600 12.5px 'Outfit',sans-serif}
+.seg button.on{background:rgba(34,211,238,.13);color:var(--ac)}
+.seg button+button{border-left:1px solid var(--border)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:var(--glass);border:1px solid var(--border);border-radius:13px;padding:12px 15px;text-align:center}
+.kpi .v{font-size:19px;font-weight:800}
 .kpi .l{font-size:11px;color:var(--t2)}
 .toolrow{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.inp{flex:1;min-width:160px;background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13.5px;color:var(--t1);outline:none}
+.inp{flex:1;min-width:170px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13.5px;color:var(--t1);outline:none}
 .inp:focus{border-color:var(--ac)}
-.selx{background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--t1);outline:none}
+.selx{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--t1);outline:none}
 select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
 [data-theme=light] option{background:#fff;color:#1A1C24}
 .card{background:var(--glass);border:1px solid var(--border);border-radius:14px;overflow:hidden}
@@ -63,7 +72,7 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
 .rname{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rsub{font-size:11.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rprice{font-size:13.5px;font-weight:700;flex-shrink:0}
-.rprice s{color:var(--t3);font-weight:400;font-size:11px;margin-right:5px}
+.rprice .ravg{display:block;font-size:10px;color:var(--t3);font-weight:500;text-align:right}
 .star{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
 .star:hover{border-color:#F4B740;color:#F4B740}
 .star.on{background:rgba(244,183,64,.14);border-color:rgba(244,183,64,.4);color:#F4B740}
@@ -82,18 +91,31 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
 .btn:hover{background:var(--glass)}
 .btn.pri{border:none;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#06272e}
 .sec-h{font-size:14px;font-weight:700;margin:22px 0 10px}
-.note{font-size:12px;color:var(--t3);line-height:1.55;margin-top:10px}
+.note{font-size:12px;color:var(--t3);line-height:1.55;margin-top:8px}
 .cat-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:15px;font-weight:800;margin:18px 2px 8px}
 .cat-h .cat-n{font-size:11.5px;color:var(--t2);font-weight:500}
 .sub-h{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
 .sub-h.ok{color:#34D399}.sub-h.ko{color:#FF6B6B}
+/* monitor */
+.mtable{width:100%;border-collapse:collapse;font-size:12.5px;min-width:720px}
+.mtable th{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+.mtable td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.mtable tr:last-child td{border-bottom:none}
+.mtable .mprod{max-width:280px}
+.mtable .mdate{font-size:11.5px;color:var(--t2);white-space:nowrap}
+.mtable .mprice{font-weight:700;white-space:nowrap;text-align:right}
+.mtable .mprice .ravg{display:block;font-size:10px;color:var(--t3);font-weight:500}
+.mtable .macts{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.buy{display:inline-flex;align-items:center;height:30px;padding:0 13px;border-radius:9px;border:none;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#06272e;font:700 11.5px 'Outfit',sans-serif;text-decoration:none;flex-shrink:0}
+.buy:hover{filter:brightness(1.08)}
+.diagbox{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin-top:10px;color:var(--t2);font-family:ui-monospace,Consolas,monospace}
 @media(max-width:760px){
   .side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
   body.side-off .side{transform:translateX(-101%);margin-left:0}
   .wrap{padding:16px 12px 50px}
-  .kpis{grid-template-columns:repeat(3,1fr);gap:8px}
   .ab-name{display:none}.ab-bktx{display:none}.ab-back{padding:0 9px}.ab-upd{display:none}
   .row{flex-wrap:wrap}.rmain{flex:1 1 55%}
+  .seg button{padding:0 11px}
 }
 </style>
 </head>
@@ -111,10 +133,11 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
     <div class="nav-h">Navegación</div>
     <nav class="nav" id="nav">
       <a data-v="cat" onclick="go('cat')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7.8"/><circle cx="11" cy="11" r="2.8"/><path d="M18.8 11c0 4.2-7.8 4.2-7.8 0" stroke-linecap="round"/></svg> Catálogo EU</a>
+      <a data-v="mon" onclick="go('mon')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="16" height="14" rx="2"/><path d="M3 9h16M8.5 9v9M14 9v9"/></svg> Monitor</a>
       <a data-v="log" onclick="go('log')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h14M4 11h14M4 17h9"/><circle cx="18.2" cy="17" r="1.2" fill="currentColor" stroke="none"/></svg> Registro</a>
       <a data-v="avi" onclick="go('avi')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3a5.5 5.5 0 0 0-5.5 5.5c0 4.2-1.6 5.5-1.6 5.5h14.2s-1.6-1.3-1.6-5.5A5.5 5.5 0 0 0 11 3z"/><path d="M9.3 17.5a1.9 1.9 0 0 0 3.4 0"/></svg> Avisos <span id="aviBadge"></span></a>
     </nav>
-    <div class="side-note">Datos de <b>store.sunlu.com</b> (filamentos con envío a Europa). Se capturan automáticamente cada 6 horas mediante GitHub Actions.</div>
+    <div class="side-note">Datos de <b>store.sunlu.com</b> (filamentos con envío a Europa). Captura automática cada 6 h; el registro conserva los últimos <b>6 meses</b>.</div>
   </aside>
   <main class="main"><div class="wrap" id="view"></div></main>
 </div>
@@ -132,90 +155,258 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
 /* ===== estado ===== */
 var S={watch:{},lastSeen:0};
 var view='cat', Q='', LQ='', LT='all', AQ='';
-var SOND=false;
-var LIVE=false, liveBusy=false, showDiag=false;
+var SOND=true, ONLYAV=false, showDiag=false;
+var LIVE=false, liveBusy=false;
 var DATA=null, CH=[];
 var loaded=false, saveT=null, myTs=0;
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function eurF(p){ var n=Number(String(p==null?'':p).replace(',','.')); if(isNaN(n))return ''; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 function norm(){ if(!S||typeof S!=='object')S={}; if(!S.watch||typeof S.watch!=='object')S.watch={}; if(typeof S.lastSeen!=='number')S.lastSeen=0; }
 function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,600); }
 function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ myTs=Date.now(); window.DPCloud.saveState('3dstock',S,myTs).catch(function(e){console.warn('[3DStock] guardado falló:',e&&(e.message||e));}); } }catch(e){} }
 
+/* ===== diagnóstico ===== */
+var DIAG=[];
+function diag(msg){ var line='['+new Date().toLocaleTimeString('es-ES')+'] '+msg; DIAG.unshift(line); if(DIAG.length>80)DIAG.pop(); try{console.log('[3DStock]',msg);}catch(e){} var el=document.getElementById('diagBox'); if(el)el.textContent=DIAG.join('\n'); }
+function toggleDiag(){ showDiag=!showDiag; renderBody(); }
+function setStatus(m){ var el=document.getElementById('liveStatus'); if(el)el.textContent=m||''; }
+
 /* ===== datos ===== */
 function fetchData(){ var v=Date.now();
-  var _log=function(){ try{ console.log('[3DStock] datos automáticos:', (DATA&&DATA.products?DATA.products.length:0),'productos ·', (DATA&&DATA.fetched_at)||'sin capturar','·', (CH&&CH.length)||0,'cambios'); }catch(e){} };
   return Promise.all([
     fetch('../../data/sunlu/latest.json?v='+v).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}),
     fetch('../../data/sunlu/changes.json?v='+v).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
-  ]).then(function(res){ DATA=res[0]; CH=Array.isArray(res[1])?res[1]:[]; updChip(); _log(); });
+  ]).then(function(res){ if(!LIVE)DATA=res[0]; CH=Array.isArray(res[1])?res[1]:[]; updChip();
+    try{ console.log('[3DStock] datos automáticos:', (res[0]&&res[0].products?res[0].products.length:0),'productos ·', (res[0]&&res[0].fetched_at)||'sin capturar','·', CH.length,'cambios'); }catch(e){} });
 }
 function hasData(){ return DATA && Array.isArray(DATA.products) && DATA.products.length>0; }
 function allVariants(){ var out=[]; if(!hasData())return out;
-  DATA.products.forEach(function(p){ (p.variants||[]).forEach(function(v){ out.push({pid:p.id,handle:p.handle,ptitle:p.title,img:p.img,vid:String(v.id),sku:v.sku,vt:v.vt,price:v.price,cap:v.cap,av:v.av}); }); });
+  DATA.products.forEach(function(p){ (p.variants||[]).forEach(function(v){ out.push({pid:p.id,handle:p.handle,ptitle:p.title,img:p.img,vid:String(v.id),sku:v.sku,vt:v.vt,price:v.price,cap:v.cap,avg:v.avg,av:v.av}); }); });
   return out;
 }
 function fmtD(ts){ try{ var d=new Date(ts); return d.toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
-function updChip(){ var el=document.getElementById('updChip'); if(!el)return; el.textContent = (DATA&&DATA.fetched_at)?((LIVE?'En vivo: ':'Actualizado: ')+fmtD(DATA.fetched_at)):''; }
+function updChip(){ var el=document.getElementById('updChip'); if(el)el.textContent=(DATA&&DATA.fetched_at)?((LIVE?'En vivo: ':'Actualizado: ')+fmtD(DATA.fetched_at)):'';
+  var m=document.getElementById('tcMeta'); if(m){ var vs=allVariants(); m.textContent=(DATA&&DATA.fetched_at)?((LIVE?'Datos en vivo · ':'Captura automática · ')+fmtD(DATA.fetched_at)+' · '+vs.length+' referencias'):'Sin datos todavía'; } }
 function unseenWatched(){ return CH.filter(function(c){ return S.watch[String(c.vid)] && c.ts>S.lastSeen; }); }
 function aviBadge(){ var el=document.getElementById('aviBadge'); if(!el)return; var n=unseenWatched().length; el.innerHTML=n?'<span class="badge">'+(n>99?'99+':n)+'</span>':''; }
 
+/* ===== categorización (analizada de la web de Sunlu) ===== */
+function _firstIdx(t,res){ var best=-1,cat=null; for(var i=0;i<res.length;i++){ var m=res[i][1].exec(t); if(m&&(best<0||m.index<best)){ best=m.index; cat=res[i][0]; } } return cat; }
+function matCat(txt){ var t=String(txt||'').toLowerCase();
+  if(/mystery|blind box|bundle/.test(t))return 'Packs y cajas';
+  if(/resin/.test(t))return 'Resinas (no FDM)';
+  var cf=/carbon|(\-|\s)cf\b/.test(t);
+  if(cf){ if(/petg/.test(t))return 'PETG-CF'; if(/nylon|polyamide|\bpa6|\bpa12|\bpa\b/.test(t))return 'PA-CF'; if(/pla/.test(t))return 'PLA-CF'; return 'Fibra de carbono'; }
+  if(/rainbow/.test(t))return 'PLA Rainbow';
+  if(/silk/.test(t))return 'PLA Silk';
+  if(/matte/.test(t)||/\bmate\b/.test(t))return 'PLA Mate';
+  if(/high[\s-]?speed/.test(t))return 'PLA Alta velocidad';
+  if(/\bmeta\b/.test(t))return 'PLA Meta';
+  if(/luminous|glow/.test(t))return 'PLA Luminoso';
+  if(/wood/.test(t))return 'PLA Madera';
+  if(/marble/.test(t))return 'PLA Mármol';
+  if(/galaxy|sparkle|glitter/.test(t))return 'PLA Especial';
+  var base=_firstIdx(t,[
+    ['PLA+',/pla\s*\+|pla\s*plus|pla\s*2\.0/],
+    ['PLA',/\bpla\b/],
+    ['PETG',/petg/],
+    ['TPU',/tpu/],
+    ['ASA',/\basa\b/],
+    ['ABS',/\babs\b/],
+    ['Soporte (PVA/HIPS)',/pva|hips|\bsupport\b/],
+    ['Nylon / PA',/nylon|polyamide|\bpa6\b|\bpa12\b|\bpa\b/],
+    ['PC',/polycarbonate|\bpc\b/],
+    ['PP',/polypropylene|\bpp\b/]
+  ]);
+  return base||'Otros';
+}
+function catOf(v){ return matCat(v.vt+' | '+v.ptitle); }
+
 /* ===== acciones ===== */
 function go(v){ view=v; document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
-function toggleWatch(vid){ vid=String(vid); if(S.watch[vid])delete S.watch[vid]; else S.watch[vid]=true; save(); render(); }
+function toggleWatch(vid){ vid=String(vid); if(S.watch[vid])delete S.watch[vid]; else S.watch[vid]=true; save(); refreshLists(); }
 function markSeen(){ S.lastSeen=Date.now(); save(); render(); }
-function setQ(v){ Q=v; renderBody(); } function setLQ(v){ LQ=v; renderBody(); } function setLT(v){ LT=v; renderBody(); } function setAQ(v){ AQ=v; renderBody(); }
+function setQ(v){ Q=v; var el=document.getElementById('catList'); if(el)el.innerHTML=catListHTML(); }
+function setLQ(v){ LQ=v; var el=document.getElementById('logList'); if(el)el.innerHTML=logListHTML(); }
+function setLT(v){ LT=v; var el=document.getElementById('logList'); if(el)el.innerHTML=logListHTML(); }
+function setAQ(v){ AQ=v; var el=document.getElementById('aviList'); if(el)el.innerHTML=aviListHTML(); }
+function setSond(v){ SOND=v; renderBody(); }
+function setOnlyAv(v){ ONLYAV=v; renderBody(); }
+function refreshLists(){ aviBadge(); var c=document.getElementById('catList'); if(c)c.innerHTML=catListHTML(); var a=document.getElementById('aviTop'); if(a)a.innerHTML=aviTopHTML(); var l=document.getElementById('aviList'); if(l)l.innerHTML=aviListHTML(); var mt=document.getElementById('monTable'); if(mt)mt.innerHTML=monTableHTML(); var ma=document.getElementById('monAdd'); if(ma)ma.innerHTML=monAddHTML(); }
 
-/* ===== render ===== */
+/* ===== render base ===== */
 var TYPES={repuesto:'Repuesto',agotado:'Agotado',precio:'Precio',nuevo:'Nuevo',retirado:'Retirado'};
 function starBtn(vid){ var on=!!S.watch[String(vid)]; return '<button class="star'+(on?' on':'')+'" title="'+(on?'Quitar aviso':'Avisarme de cambios')+'" onclick="toggleWatch(\''+vid+'\')">'+(on?'★':'☆')+'</button>'; }
 function prodRow(v,withStar){
-  var price=v.price?('$'+v.price):''; var capHtml=(v.cap&&v.cap!==v.price&&Number(v.cap)>Number(v.price))?('<s>$'+esc(v.cap)+'</s>'):'';
+  var price=eurF(v.price); var avgHtml=(v.avg&&Number(v.avg)>0)?('<span class="ravg">prom. '+eurF(v.avg)+'</span>'):'';
   return '<div class="row"><span class="dot '+(v.av?'av':'no')+'" title="'+(v.av?'Disponible':'Agotado')+'"></span>'
     +(v.img?'<img class="thumb" src="'+esc(v.img)+'" loading="lazy" alt="">':'')
     +'<div class="rmain"><div class="rname">'+esc(v.vt)+'</div><div class="rsub">'+esc(v.ptitle)+(v.sku?(' · '+esc(v.sku)):'')+'</div></div>'
-    +'<span class="rprice">'+capHtml+esc(price)+'</span>'
+    +'<span class="rprice">'+esc(price)+avgHtml+'</span>'
     +(withStar?starBtn(v.vid):'')
     +'<a class="lnk" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'" target="_blank" rel="noopener" title="Ver en la tienda"><svg width="12" height="12" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a></div>';
 }
 function chRow(c,unseen){
   var det='';
-  if(c.type==='precio')det='de $'+esc(c.from)+' a $'+esc(c.to);
-  else if(c.price)det='$'+esc(c.price);
+  if(c.type==='precio')det='de '+eurF(c.from)+' a '+eurF(c.to);
+  else if(c.price)det=eurF(c.price);
   return '<div class="row'+(unseen?' unseen':'')+'"><span class="chip c-'+esc(c.type)+'">'+(TYPES[c.type]||esc(c.type))+'</span>'
     +'<div class="rmain"><div class="rname">'+esc(c.variant)+'</div><div class="rsub">'+esc(c.product)+(det?(' · '+det):'')+'</div></div>'
     +'<span class="rdate">'+fmtD(c.ts)+'</span></div>';
 }
-function noData(){ return '<div class="card"><div class="empty">Aún no hay datos capturados.<br>La GitHub Action se ejecuta al hacer <b>push</b> del repositorio y después cada 6 horas.<br>Tras la primera ejecución verás aquí el catálogo completo.</div></div>'; }
-function render(){ if(!loaded)return; aviBadge(); updChip();
+function noData(){ return '<div class="card"><div class="empty">Aún no hay datos capturados.<br>Pulsa <b>⟲ Actualizar ahora</b> para un sondeo en vivo, o espera a la captura automática (cada 6 h tras publicar el repositorio).</div></div>'; }
+function render(){ if(!loaded)return; aviBadge();
   var h='';
-  if(view==='cat'){ h='<div class="h1">Catálogo EU</div><div class="h-sub">Filamentos de Sunlu con envío a Europa y su disponibilidad actual. Usa el <b>sondeo</b> para verlos por categorías (disponibles y agotados) y marca ★ para recibir avisos.</div>'; }
-  else if(view==='log'){ h='<div class="h1">Registro de cambios</div><div class="h-sub">Absolutamente todos los cambios detectados: reposiciones, agotamientos, precios, altas y retiradas.</div>'; }
+  if(view==='cat'){ h='<div class="h1">Catálogo EU</div><div class="h-sub">Filamentos de Sunlu con envío a Europa. Marca ★ en cualquier fila para recibir sus cambios en Avisos.</div>'; }
+  else if(view==='mon'){ h='<div class="h1">Monitor</div><div class="h-sub">Tabla de los productos que monitorizas: disponibilidad, última reposición, último agotamiento, precio y enlace de compra.</div>'; }
+  else if(view==='log'){ h='<div class="h1">Registro de cambios</div><div class="h-sub">Todos los cambios de los últimos 6 meses: reposiciones, agotamientos, precios, altas y retiradas.</div>'; }
   else { h='<div class="h1">Avisos</div><div class="h-sub">Cambios en tus filamentos vigilados y configuración de qué vigilar.</div>'; }
   h+='<div id="vbody"></div>';
   document.getElementById('view').innerHTML=h;
   renderBody();
 }
 function renderBody(){ var el=document.getElementById('vbody'); if(!el)return;
-  if(view==='cat')el.innerHTML=catHTML();
-  else if(view==='log')el.innerHTML=logHTML();
-  else el.innerHTML=aviHTML();
+  if(view==='cat')el.innerHTML=catBodyHTML();
+  else if(view==='mon')el.innerHTML=monBodyHTML();
+  else if(view==='log')el.innerHTML=logBodyHTML();
+  else el.innerHTML=aviBodyHTML();
+  updChip();
 }
-function catHTML(){
-  if(!hasData())return '<div class="toolrow">'+liveBtnHTML()+'</div>'+liveExtraHTML()+noData();
-  var vs=allVariants();
-  var nAv=vs.filter(function(v){return v.av;}).length;
-  var q=Q.trim().toLowerCase();
-  var list=q?vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; }):vs;
-  var h='<div class="kpis"><div class="kpi"><div class="v">'+vs.length+'</div><div class="l">Referencias</div></div>'
-    +'<div class="kpi"><div class="v" style="color:#34D399">'+nAv+'</div><div class="l">Disponibles</div></div>'
-    +'<div class="kpi"><div class="v" style="color:#FF6B6B">'+(vs.length-nAv)+'</div><div class="l">Agotadas</div></div></div>';
-  h+='<div class="toolrow"><input class="inp" placeholder="Buscar filamento, color o SKU…" value="'+esc(Q)+'" oninput="setQ(this.value)">'
-    +'<button class="btn'+(SOND?'':' pri')+'" onclick="toggleSondeo()">'+(SOND?'Ver listado simple':'⟲ Sondeo por categorías')+'</button>'+liveBtnHTML()+'</div>'+liveExtraHTML();
-  if(SOND){ h+=sondeoHTML(list); return h; }
-  h+='<div class="card">'+(list.length?list.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados para esa búsqueda.</div>')+'</div>';
+
+/* ===== catálogo ===== */
+function topcardHTML(){
+  return '<div class="topcard">'
+    +'<div class="tc-r">'
+      +'<input class="inp" placeholder="Buscar filamento, color o SKU…" value="'+esc(Q)+'" oninput="setQ(this.value)">'
+      +'<div class="seg"><button class="'+(SOND?'':'on')+'" onclick="setSond(false)">Lista</button><button class="'+(SOND?'on':'')+'" onclick="setSond(true)">Categorías</button></div>'
+      +'<div class="seg"><button class="'+(ONLYAV?'':'on')+'" onclick="setOnlyAv(false)">Todo</button><button class="'+(ONLYAV?'on':'')+'" onclick="setOnlyAv(true)">Solo disponibles</button></div>'
+    +'</div>'
+    +'<div class="tc-r">'
+      +'<button class="btn pri" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runUpdate()" title="Consulta la tienda ahora mismo'+(S.ghToken?' y lanza además la captura oficial en segundo plano':'')+'">'+(liveBusy?'Actualizando…':'⟲ Actualizar ahora')+'</button>'
+      +'<button class="btn" style="padding:0 12px" onclick="cfgGh()" title="Token de GitHub (opcional): permite lanzar también la captura oficial, que alimenta el Registro">⚙</button>'
+      +'<span class="tc-meta" id="tcMeta"></span><span class="tc-sp"></span>'
+      +'<button class="btn" style="height:auto;padding:5px 11px;font-size:11px" onclick="toggleDiag()">'+(showDiag?'▾ Diagnóstico':'▸ Diagnóstico')+'</button>'
+    +'</div>'
+    +'<div class="note" id="liveStatus"></div>'
+    +(showDiag?'<div class="diagbox" id="diagBox">'+esc(DIAG.length?DIAG.join('\n'):'Sin eventos aún. Pulsa «Actualizar ahora» para generar checkpoints.')+'</div>':'')
+  +'</div>';
+}
+function kpisHTML(){ if(!hasData())return ''; var vs=allVariants(); var nAv=vs.filter(function(v){return v.av;}).length;
+  return '<div class="kpis"><div class="kpi"><div class="v">'+vs.length+'</div><div class="l">Referencias</div></div>'
+  +'<div class="kpi"><div class="v" style="color:#34D399">'+nAv+'</div><div class="l">Disponibles</div></div>'
+  +'<div class="kpi"><div class="v" style="color:#FF6B6B">'+(vs.length-nAv)+'</div><div class="l">Agotadas</div></div></div>'; }
+function filteredVariants(q){ var vs=allVariants(); if(ONLYAV)vs=vs.filter(function(v){return v.av;});
+  q=(q||'').trim().toLowerCase();
+  if(q)vs=vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; });
+  return vs; }
+function byName(a,b){ return a.vt.localeCompare(b.vt,'es')||a.ptitle.localeCompare(b.ptitle,'es'); }
+function catListHTML(){
+  if(!hasData())return noData();
+  var list=filteredVariants(Q);
+  if(!list.length)return '<div class="card"><div class="empty">Sin resultados.</div></div>';
+  if(!SOND){ return '<div class="card">'+list.slice().sort(byName).map(function(v){return prodRow(v,true);}).join('')+'</div>'; }
+  var groups={};
+  list.forEach(function(v){ var c=catOf(v); (groups[c]=groups[c]||[]).push(v); });
+  var last=['Resinas (no FDM)','Packs y cajas','Otros'];
+  var names=Object.keys(groups).sort(function(a,b){ var la=last.indexOf(a),lb=last.indexOf(b); if(la>=0||lb>=0)return (la<0?-1:la)-(lb<0?-1:lb)||a.localeCompare(b,'es'); return a.localeCompare(b,'es'); });
+  var h='';
+  names.forEach(function(cn){
+    var arr=groups[cn]; var av=arr.filter(function(v){return v.av;}).sort(byName); var no=arr.filter(function(v){return !v.av;}).sort(byName);
+    h+='<div class="cat-h">'+esc(cn)+' <span class="cat-n"><b style="color:#34D399">'+av.length+' disponible'+(av.length===1?'':'s')+'</b>'+(ONLYAV?'':' · <b style="color:#FF6B6B">'+no.length+' agotado'+(no.length===1?'':'s')+'</b>')+'</span></div>';
+    h+='<div class="card" style="margin-bottom:4px">';
+    if(av.length)h+='<div class="sub-h ok">Disponibles ('+av.length+')</div>'+av.map(function(v){return prodRow(v,true);}).join('');
+    if(!ONLYAV&&no.length)h+='<div class="sub-h ko">Agotados ('+no.length+')</div>'+no.map(function(v){return prodRow(v,true);}).join('');
+    h+='</div>';
+  });
   return h;
 }
-function toggleSondeo(){ if(!SOND){ SOND=true; fetchData().then(function(){ renderBody(); }); } else { SOND=false; renderBody(); } }
+function catBodyHTML(){ return topcardHTML()+kpisHTML()+'<div id="catList">'+catListHTML()+'</div>'; }
+
+/* ===== registro ===== */
+function logListHTML(){
+  if(!CH.length)return '<div class="card"><div class="empty">Todavía no hay cambios registrados.<br>El registro lo alimenta la captura automática (cada 6 h) y conserva 6 meses.</div></div>';
+  var q=LQ.trim().toLowerCase();
+  var list=CH.filter(function(c){ if(LT!=='all'&&c.type!==LT)return false; if(q&&(String(c.product)+' '+String(c.variant)+' '+String(c.sku)).toLowerCase().indexOf(q)<0)return false; return true; });
+  return '<div class="card">'+(list.length?list.map(function(c){return chRow(c,false);}).join(''):'<div class="empty">Sin cambios que coincidan con el filtro.</div>')+'</div>';
+}
+function logBodyHTML(){
+  return '<div class="toolrow"><input class="inp" placeholder="Buscar en el registro…" value="'+esc(LQ)+'" oninput="setLQ(this.value)">'
+    +'<select class="selx" onchange="setLT(this.value)"><option value="all"'+(LT==='all'?' selected':'')+'>Todos los tipos</option>'
+    +Object.keys(TYPES).map(function(k){return '<option value="'+k+'"'+(LT===k?' selected':'')+'>'+TYPES[k]+'</option>';}).join('')
+    +'</select></div>'
+    +'<div id="logList">'+logListHTML()+'</div>'
+    +'<div class="note">El registro conserva los cambios de los últimos 6 meses (los más antiguos se eliminan automáticamente para ahorrar espacio).</div>';
+}
+
+/* ===== avisos ===== */
+function aviTopHTML(){
+  var watched=CH.filter(function(c){return S.watch[String(c.vid)];});
+  var unseen=unseenWatched();
+  var h='<div class="sec-h" style="margin-top:0">Cambios en tus filamentos vigilados'+(unseen.length?(' <span class="badge">'+unseen.length+'</span>'):'')+'</div>';
+  if(!Object.keys(S.watch).length){ h+='<div class="card"><div class="empty">No vigilas ningún filamento todavía.<br>Actívalos abajo o con la ★ del catálogo.</div></div>'; }
+  else if(!watched.length){ h+='<div class="card"><div class="empty">Sin cambios registrados en tus filamentos vigilados (últimos 6 meses).</div></div>'; }
+  else {
+    if(unseen.length)h+='<div class="toolrow"><button class="btn pri" onclick="markSeen()">Marcar todo como visto</button></div>';
+    h+='<div class="card">'+watched.slice(0,300).map(function(c){return chRow(c,c.ts>S.lastSeen);}).join('')+'</div>';
+  }
+  return h;
+}
+function aviListHTML(){
+  if(!hasData())return noData();
+  var vs=allVariants(); var q=AQ.trim().toLowerCase();
+  if(q)vs=vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; });
+  vs=vs.slice().sort(byName);
+  return '<div class="card">'+(vs.length?vs.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados.</div>')+'</div>';
+}
+function aviBodyHTML(){
+  var nW=Object.keys(S.watch).length;
+  return '<div id="aviTop">'+aviTopHTML()+'</div>'
+    +'<div class="sec-h">Configurar avisos</div>'
+    +'<div class="h-sub" style="margin-bottom:10px">Marca con ★ los filamentos que quieres vigilar ('+nW+' vigilado'+(nW===1?'':'s')+').</div>'
+    +'<div class="toolrow"><input class="inp" placeholder="Buscar para configurar…" value="'+esc(AQ)+'" oninput="setAQ(this.value)"></div>'
+    +'<div id="aviList">'+aviListHTML()+'</div>';
+}
+
+/* ===== monitor ===== */
+var MQ='';
+function setMQ(v){ MQ=v; var el=document.getElementById('monAdd'); if(el)el.innerHTML=monAddHTML(); }
+function lastEv(vid,type){ for(var i=0;i<CH.length;i++){ var c=CH[i]; if(String(c.vid)===String(vid)&&c.type===type)return c.ts; } return null; }
+function shopLink(v){ return 'https://shop.app/products/'+v.pid+'?variantId='+v.vid; }
+function monTableHTML(){
+  if(!hasData())return noData();
+  var ws=allVariants().filter(function(v){return S.watch[v.vid];}).sort(byName);
+  if(!ws.length)return '<div class="card"><div class="empty">Aún no monitorizas ningún producto.<br>Añádelos con la ★ desde el buscador de abajo o desde el Catálogo.</div></div>';
+  var rows=ws.map(function(v){
+    var rep=lastEv(v.vid,'repuesto'), out=lastEv(v.vid,'agotado');
+    var avgHtml=(v.avg&&Number(v.avg)>0)?('<span class="ravg">prom. '+eurF(v.avg)+'</span>'):'';
+    return '<tr><td class="mprod"><div class="rname">'+esc(v.vt)+'</div><div class="rsub">'+esc(v.ptitle)+'</div></td>'
+      +'<td>'+(v.av?'<span class="chip c-repuesto">Disponible</span>':'<span class="chip c-agotado">Agotado</span>')+'</td>'
+      +'<td class="mdate">'+(rep?fmtD(rep):'—')+'</td>'
+      +'<td class="mdate">'+(out?fmtD(out):'—')+'</td>'
+      +'<td class="mprice">'+eurF(v.price)+avgHtml+'</td>'
+      +'<td class="macts"><a class="buy" href="'+esc(shopLink(v))+'" target="_blank" rel="noopener" title="Comprar en shop.app">Comprar</a>'
+      +'<a class="lnk" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="12" height="12" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a>'
+      +starBtn(v.vid)+'</td></tr>';
+  }).join('');
+  return '<div class="card" style="overflow:auto"><table class="mtable"><thead><tr><th>Producto</th><th>Disponibilidad</th><th>Últ. reposición</th><th>Últ. agotamiento</th><th class="mprice">Precio</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div class="note">Las fechas provienen del registro (últimos 6 meses); «—» significa que no hay eventos registrados en ese periodo. «Comprar» abre el producto en shop.app.</div>';
+}
+function monAddHTML(){
+  if(!hasData())return '';
+  var vs=allVariants().filter(function(v){return !S.watch[v.vid];}); var q=MQ.trim().toLowerCase();
+  if(q)vs=vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; });
+  vs=vs.slice().sort(byName);
+  if(!q)vs=vs.slice(0,25);
+  return '<div class="card">'+(vs.length?vs.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados.</div>')+'</div>';
+}
+function monBodyHTML(){
+  return '<div id="monTable">'+monTableHTML()+'</div>'
+    +'<div class="sec-h">Añadir productos al monitor</div>'
+    +'<div class="toolrow"><input class="inp" placeholder="Buscar producto para añadir…" value="'+esc(MQ)+'" oninput="setMQ(this.value)"></div>'
+    +'<div id="monAdd">'+monAddHTML()+'</div>';
+}
+
+/* ===== sondeo en vivo (fuentes en paralelo) ===== */
 var SOURCES=[
   {n:'directo', u:function(u){return u;}, p:function(tx){return JSON.parse(tx);}},
   {n:'allorigins/raw', u:function(u){return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u);}, p:function(tx){return JSON.parse(tx);}},
@@ -224,27 +415,20 @@ var SOURCES=[
   {n:'thingproxy', u:function(u){return 'https://thingproxy.freeboard.io/fetch/'+u;}, p:function(tx){return JSON.parse(tx);}},
   {n:'allorigins/get', u:function(u){return 'https://api.allorigins.win/get?url='+encodeURIComponent(u);}, p:function(tx){var w=JSON.parse(tx);return JSON.parse(w.contents);}}
 ];
-var DIAG=[];
-function diag(msg){ var line='['+new Date().toLocaleTimeString('es-ES')+'] '+msg; DIAG.unshift(line); if(DIAG.length>80)DIAG.pop(); try{console.log('[3DStock]',msg);}catch(e){} var el=document.getElementById('diagBox'); if(el)el.textContent=DIAG.join('\n'); }
-function toggleDiag(){ showDiag=!showDiag; renderBody(); }
-function liveExtraHTML(){ return '<div class="note" id="liveStatus" style="margin:0 0 6px"></div>'
-  +'<div style="margin:0 0 10px"><button class="btn" style="height:auto;padding:5px 11px;font-size:11px" onclick="toggleDiag()">'+(showDiag?'\u25BE Ocultar diagnóstico':'\u25B8 Ver diagnóstico')+'</button></div>'
-  +(showDiag?'<pre id="diagBox" style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow:auto;margin:0 0 12px;color:var(--t2)">'+esc(DIAG.length?DIAG.join('\n'):'Aún no se ha ejecutado ningún sondeo. Pulsa «Sondeo en vivo».')+'</pre>':''); }
-function setStatus(m){ var el=document.getElementById('liveStatus'); if(el)el.textContent=m||''; }
 function fetchTO(url,ms){ var ac=(typeof AbortController!=='undefined')?new AbortController():null; var tm=ac?setTimeout(function(){try{ac.abort();}catch(e){}},ms):null;
   return fetch(url,ac?{signal:ac.signal}:{}).then(function(r){ if(tm)clearTimeout(tm); return r; },function(e){ if(tm)clearTimeout(tm); throw e; }); }
 function trySource(src,url,ms){ var t0=Date.now();
   return fetchTO(src.u(url),ms).then(function(r){ if(!r.ok)throw {e:'HTTP '+r.status}; return r.text(); })
-    .then(function(tx){ var j=src.p(tx); if(!j||typeof j!=='object'||!j.products)throw {e:'respuesta sin products'}; diag('OK '+src.n+' \u2014 '+j.products.length+' productos ('+(Date.now()-t0)+' ms)'); return {src:src,json:j}; })
-    .catch(function(err){ var e=(err&&err.e)||((err&&err.name==='AbortError')?('timeout '+ms+' ms'):((err&&err.message)||'error/CORS')); diag('FALLO '+src.n+' \u2014 '+e); throw err; });
+    .then(function(tx){ var j=src.p(tx); if(!j||typeof j!=='object'||!j.products)throw {e:'respuesta sin products'}; diag('OK '+src.n+' — '+j.products.length+' productos ('+(Date.now()-t0)+' ms)'); return {src:src,json:j}; })
+    .catch(function(err){ var e=(err&&err.e)||((err&&err.name==='AbortError')?('timeout '+ms+' ms'):((err&&err.message)||'error/CORS')); diag('FALLO '+src.n+' — '+e); throw err; });
 }
 function raceSources(url,ms){ return new Promise(function(res,rej){ var pend=SOURCES.length, won=false;
   SOURCES.forEach(function(src){ trySource(src,url,ms).then(function(r){ if(!won){won=true;res(r);} },function(){ pend--; if(pend===0&&!won)rej(new Error('ninguna fuente respondió')); }); });
 }); }
-function liveFetchAll(){ DIAG=[]; diag('Iniciando sondeo en vivo\u2026'); setStatus('Probando '+SOURCES.length+' fuentes en paralelo\u2026');
+function liveFetchAll(){ DIAG=[]; diag('Iniciando sondeo en vivo…'); setStatus('Probando '+SOURCES.length+' fuentes en paralelo…');
   return raceSources('https://store.sunlu.com/products.json?limit=250&page=1',9000).then(function(win){
     var src=win.src, all=(win.json.products||[]).slice(); diag('Fuente elegida: '+src.n);
-    function next(page){ setStatus('Descargando catálogo\u2026 (página '+page+', vía '+src.n+')');
+    function next(page){ setStatus('Descargando catálogo… (página '+page+', vía '+src.n+')');
       return trySource(src,'https://store.sunlu.com/products.json?limit=250&page='+page,12000).then(function(r){
         var arr=r.json.products||[]; all=all.concat(arr);
         if(arr.length<250||page>=12){ diag('Fin: '+all.length+' productos'); return all; }
@@ -256,10 +440,16 @@ function liveFetchAll(){ DIAG=[]; diag('Iniciando sondeo en vivo\u2026'); setSta
   });
 }
 function cleanVt(t){ return String(t||'').replace(/ship to europe\s*\/?\s*/i,'').replace(/^\s*\/\s*/,'').trim()||'Único'; }
+function isFilament(p){ var ty=String(p.product_type||'').toLowerCase(); var tg=(p.tags||[]).map(String).join(' | ').toLowerCase();
+  if(!(/filament/.test(ty)||tg.indexOf('3d printer filament')>=0))return false;
+  var ti=String(p.title||'').toLowerCase();
+  if(/\b(australia|usa|us|canada|au|ca)\s*only\b/.test(ti)&&!/europe/.test(ti))return false;
+  return true; }
 function liveSnapshot(products){ var items=[];
-  products.forEach(function(p){ if(String(p.product_type||'')!=='3D Printer Filaments')return;
+  products.forEach(function(p){ if(!isFilament(p))return;
     var opts=p.options||[]; var idx=-1;
-    for(var i=0;i<opts.length&&idx<0;i++){ var vals=opts[i].values||[]; for(var j=0;j<vals.length;j++){ if(/europe/i.test(String(vals[j]))){ idx=i; break; } } }
+    for(var i=0;i<opts.length&&idx<0;i++){ var vals=(opts[i].values||[]).map(String); if(/ship/i.test(String(opts[i].name||''))||vals.some(function(v){return /ship to/i.test(v);}))idx=i; }
+    if(idx<0){ for(var k=0;k<opts.length&&idx<0;k++){ if((opts[k].values||[]).some(function(v){return /europe/i.test(String(v));}))idx=k; } }
     var vars=p.variants||[]; var evs=(idx<0)?vars:vars.filter(function(v){ return /europe/i.test(String(v['option'+(idx+1)]||'')); });
     if(!evs.length)return;
     items.push({ id:p.id, handle:p.handle, title:p.title, img:(p.images&&p.images[0]&&p.images[0].src)||'',
@@ -268,128 +458,43 @@ function liveSnapshot(products){ var items=[];
   items.sort(function(a,b){ return a.id-b.id; });
   return items;
 }
-function runLiveSondeo(){ if(liveBusy)return;
+function runUpdate(){ if(liveBusy)return;
   liveBusy=true; showDiag=true; renderBody();
+  if(S.ghToken)fireOfficial();
   liveFetchAll().then(function(prods){
-    diag('Filtrando filamentos con envío a Europa\u2026');
+    diag('Filtrando filamentos con envío a Europa…');
     var items=liveSnapshot(prods);
     diag('Resultado: '+items.length+' referencias EU tras filtrar.');
     if(!items.length)throw {e:'0 referencias tras filtrar'};
     DATA={ fetched_at:new Date().toISOString(), products:items };
-    LIVE=true; SOND=true; liveBusy=false; render();
-    setStatus('Sondeo en vivo completado: '+items.length+' referencias.');
+    LIVE=true; liveBusy=false; render();
+    setStatus('Actualizado en vivo: '+items.length+' referencias.'+(S.ghToken?' La captura oficial sigue en segundo plano.':''));
   }).catch(function(e){
     liveBusy=false; renderBody();
     var m=(e&&e.e)||(e&&e.message)||'error';
     diag('SONDEO FALLIDO: '+m);
-    setStatus('No se pudo sondear en vivo ('+m+'). Ninguna fuente CORS respondió (suele ser temporal). Mira el diagnóstico y reintenta; en la web publicada usa \u21EA Captura oficial, que es fiable.');
+    setStatus('No se pudo actualizar en vivo ('+m+'). Suele ser temporal: reintenta en 30–60 s. La captura automática cada 6 h no depende de esto.');
   });
 }
+/* ===== captura oficial (GitHub, opcional, en segundo plano) ===== */
 var GH_REPO='SILAB3D/WEB';
 function ghHeaders(){ return {'Authorization':'Bearer '+S.ghToken,'Accept':'application/vnd.github+json'}; }
 function cfgGh(){
-  var msg='Token de GitHub (fine-grained) con permiso Actions: write sobre '+GH_REPO+'.\n\nCon él se habilita el botón ⇪ Captura oficial: lanza el workflow de GitHub, que también actualiza el Registro de cambios (el sondeo en vivo no lo necesita).\n\nDeja el campo vacío y acepta para borrarlo.';
+  var msg='Token de GitHub (fine-grained, Resource owner: SILAB3D, permiso Actions: Read and write sobre '+GH_REPO+').\n\nSi lo configuras, al pulsar «Actualizar ahora» se lanza además la captura oficial (workflow) en segundo plano, que alimenta el Registro de cambios.\n\nDeja el campo vacío y acepta para borrarlo.';
   var v=prompt(msg, S.ghToken||''); if(v==null)return; v=v.trim();
   if(v)S.ghToken=v; else delete S.ghToken;
   save(); renderBody();
 }
-function runDispatch(){ if(liveBusy)return; liveBusy=true; renderBody(); setStatus('Lanzando la captura oficial en GitHub…');
-  var prev=(DATA&&DATA.fetched_at)||null;
+function fireOfficial(){
+  diag('Lanzando captura oficial en GitHub (segundo plano)…');
   fetch('https://api.github.com/repos/'+GH_REPO,{headers:ghHeaders()})
-    .then(function(r){ if(!r.ok)throw new Error('Token o repositorio no válidos (HTTP '+r.status+')'); return r.json(); })
+    .then(function(r){ if(!r.ok)throw new Error('token/repo HTTP '+r.status); return r.json(); })
     .then(function(repo){ return fetch('https://api.github.com/repos/'+GH_REPO+'/actions/workflows/sunlu-watch.yml/dispatches',{method:'POST',headers:ghHeaders(),body:JSON.stringify({ref:(repo&&repo.default_branch)||'main'})}); })
-    .then(function(r){ if(r.status!==204){
-        var hint='';
-        if(r.status===403)hint=' — el token no tiene permiso: crea uno fine-grained con Resource owner = SILAB3D, acceso al repo WEB y permiso Actions: Read and write (o un token clásico con scopes repo + workflow).';
-        else if(r.status===404)hint=' — el workflow sunlu-watch.yml aún no existe en la rama principal del repo: haz push primero.';
-        else if(r.status===401)hint=' — token inválido o caducado.';
-        throw new Error('No se pudo lanzar el workflow (HTTP '+r.status+')'+hint);
-      }
-      setStatus('Captura lanzada. Esperando datos nuevos (1–3 min)…'); return waitNew(prev,0); })
-    .then(function(okk){ liveBusy=false;
-      if(okk){ LIVE=false; SOND=true; render(); setStatus('Datos actualizados con la captura oficial.'); }
-      else { renderBody(); setStatus('La captura se lanzó correctamente, pero aún no llegan datos nuevos aquí. Si trabajas en local, haz git pull; en la web espera un par de minutos y recarga.'); } })
-    .catch(function(e){ liveBusy=false; renderBody(); setStatus('Error: '+((e&&e.message)||e)); });
-}
-function waitNew(prev,n){ if(n>=14)return Promise.resolve(false);
-  return new Promise(function(res){ setTimeout(res,15000); }).then(function(){ return fetchData(); }).then(function(){
-    if(DATA&&DATA.fetched_at&&DATA.fetched_at!==prev)return true;
-    setStatus('Esperando datos nuevos… ('+((n+1)*15)+' s)');
-    return waitNew(prev,n+1);
-  });
-}
-function liveBtnHTML(){ var h='<button class="btn'+(hasData()?'':' pri')+'" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runLiveSondeo()" title="Consulta la tienda ahora mismo y muestra disponibles y agotados al instante">'+(liveBusy?'Sondeando…':'▶ Sondeo en vivo (ahora)')+'</button>';
-  if(S.ghToken)h+='<button class="btn" '+(liveBusy?'disabled style="opacity:.6"':'')+' onclick="runDispatch()" title="Lanza el workflow de GitHub: tarda unos minutos y actualiza también el Registro de cambios">⇪ Captura oficial</button>';
-  h+='<button class="btn" style="padding:0 12px" onclick="cfgGh()" title="Configurar token de GitHub para la captura oficial">⚙</button>';
-  return h; }
-function matCat(t){ t=String(t||'').toLowerCase();
-  if(/mystery|blind box|bundle|box –|box -/.test(t))return 'Packs y cajas';
-  if(/petg/.test(t))return 'PETG';
-  if(/tpu/.test(t))return 'TPU';
-  if(/\basa\b/.test(t))return 'ASA';
-  if(/\babs\b/.test(t))return 'ABS';
-  if(/nylon|polyamide|\bpa6|\bpa12|\bpa\b/.test(t))return 'Nylon / PA';
-  if(/polycarbonate|\bpc\b/.test(t))return 'PC';
-  if(/polypropylene|\bpp\b/.test(t))return 'PP';
-  if(/pva|hips|support/.test(t))return 'Soporte (PVA/HIPS)';
-  if(/carbon/.test(t))return 'Fibra de carbono';
-  if(/silk/.test(t))return 'PLA Silk';
-  if(/matte|mate\b/.test(t))return 'PLA Mate';
-  if(/marble|wood|glow|rainbow|galaxy|sparkle|luminous/.test(t))return 'PLA especial';
-  if(/high[ -]?speed|meta\b/.test(t))return 'PLA alta velocidad';
-  if(/pla\+|pla plus|pla 2\.0/.test(t))return 'PLA+';
-  if(/pla/.test(t))return 'PLA';
-  return 'Otros';
-}
-function sondeoHTML(list){
-  var groups={};
-  list.forEach(function(v){ var c=matCat(v.ptitle+' '+v.vt); (groups[c]=groups[c]||[]).push(v); });
-  var last=['Packs y cajas','Otros'];
-  var names=Object.keys(groups).sort(function(a,b){ var la=last.indexOf(a),lb=last.indexOf(b); if(la>=0||lb>=0)return (la<0?-1:la)-(lb<0?-1:lb)||a.localeCompare(b); return a.localeCompare(b); });
-  var h='<div class="h-sub" style="margin:2px 0 6px">'+(LIVE?'<b style="color:var(--ac)">Datos en vivo consultados ahora mismo.</b> El registro de cambios sigue aliment\u00e1ndose de la captura autom\u00e1tica. ':'')+'Sondeo completo: '+list.length+' referencias agrupadas por categoría, separando <b style="color:#34D399">disponibles</b> y <b style="color:#FF6B6B">agotadas</b>. Marca ★ en cualquier fila para vigilarla y recibir sus cambios en <b>Avisos</b>.</div>';
-  if(!names.length)return h+'<div class="card"><div class="empty">Sin resultados.</div></div>';
-  names.forEach(function(cn){
-    var arr=groups[cn]; var av=arr.filter(function(v){return v.av;}); var no=arr.filter(function(v){return !v.av;});
-    h+='<div class="cat-h">'+esc(cn)+' <span class="cat-n"><b style="color:#34D399">'+av.length+' disponible'+(av.length===1?'':'s')+'</b> · <b style="color:#FF6B6B">'+no.length+' agotado'+(no.length===1?'':'s')+'</b></span></div>';
-    h+='<div class="card" style="margin-bottom:4px">';
-    if(av.length)h+='<div class="sub-h ok">Disponibles ('+av.length+')</div>'+av.map(function(v){return prodRow(v,true);}).join('');
-    if(no.length)h+='<div class="sub-h ko">Agotados ('+no.length+')</div>'+no.map(function(v){return prodRow(v,true);}).join('');
-    h+='</div>';
-  });
-  return h;
-}
-function logHTML(){
-  if(!CH.length)return '<div class="card"><div class="empty">Todavía no se ha registrado ningún cambio.<br>Aparecerán aquí en cuanto la captura periódica detecte diferencias.</div></div>';
-  var q=LQ.trim().toLowerCase();
-  var list=CH.filter(function(c){ if(LT!=='all'&&c.type!==LT)return false; if(q&&(String(c.product)+' '+String(c.variant)+' '+String(c.sku)).toLowerCase().indexOf(q)<0)return false; return true; });
-  var h='<div class="toolrow"><input class="inp" placeholder="Buscar en el registro…" value="'+esc(LQ)+'" oninput="setLQ(this.value)">'
-    +'<select class="selx" onchange="setLT(this.value)">'
-    +'<option value="all"'+(LT==='all'?' selected':'')+'>Todos los tipos</option>'
-    +Object.keys(TYPES).map(function(k){return '<option value="'+k+'"'+(LT===k?' selected':'')+'>'+TYPES[k]+'</option>';}).join('')
-    +'</select></div>';
-  h+='<div class="card">'+(list.length?list.map(function(c){return chRow(c,false);}).join(''):'<div class="empty">Sin cambios que coincidan con el filtro.</div>')+'</div>';
-  h+='<div class="note">Se conservan los últimos 4000 cambios. Cada comprobación se hace cada 6 horas, así que los cambios se registran con esa resolución.</div>';
-  return h;
-}
-function aviHTML(){
-  var watched=CH.filter(function(c){return S.watch[String(c.vid)];});
-  var unseen=unseenWatched();
-  var h='<div class="sec-h" style="margin-top:0">Cambios en tus filamentos vigilados'+(unseen.length?(' <span class="badge">'+unseen.length+'</span>'):'')+'</div>';
-  if(!Object.keys(S.watch).length){ h+='<div class="card"><div class="empty">No vigilas ningún filamento todavía.<br>Actívalos abajo o con la ★ del catálogo.</div></div>'; }
-  else if(!watched.length){ h+='<div class="card"><div class="empty">Sin cambios registrados en tus filamentos vigilados, de momento.</div></div>'; }
-  else {
-    if(unseen.length)h+='<div class="toolrow"><button class="btn pri" onclick="markSeen()">Marcar todo como visto</button></div>';
-    h+='<div class="card">'+watched.slice(0,300).map(function(c){return chRow(c,c.ts>S.lastSeen);}).join('')+'</div>';
-  }
-  h+='<div class="sec-h">Configurar avisos</div>';
-  if(!hasData())return h+noData();
-  var vs=allVariants(); var q=AQ.trim().toLowerCase();
-  var list=q?vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; }):vs;
-  var nW=Object.keys(S.watch).length;
-  h+='<div class="h-sub" style="margin-bottom:10px">Marca con ★ los filamentos de los que quieres recibir aviso ('+nW+' vigilado'+(nW===1?'':'s')+').</div>';
-  h+='<div class="toolrow"><input class="inp" placeholder="Buscar para configurar…" value="'+esc(AQ)+'" oninput="setAQ(this.value)"></div>';
-  h+='<div class="card">'+(list.length?list.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados.</div>')+'</div>';
-  return h;
+    .then(function(r){ if(r.status===204)diag('Captura oficial lanzada: el Registro se actualizará en la web en unos minutos (en local: git pull).');
+      else if(r.status===403)diag('Captura oficial: 403 — el token no tiene permiso Actions:write (o Resource owner incorrecto).');
+      else if(r.status===404)diag('Captura oficial: 404 — el workflow aún no está en la rama principal (haz push).');
+      else diag('Captura oficial: HTTP '+r.status); })
+    .catch(function(e){ diag('Captura oficial: '+((e&&e.message)||e)); });
 }
 
 /* ===== nube ===== */
@@ -402,12 +507,12 @@ function aviHTML(){
       if(d&&d.data&&typeof d.data==='object')S=d.data;
       norm(); loaded=true;
       fetchData().then(function(){ go(view); });
-      setInterval(function(){ fetchData().then(function(){ if(loaded)render(); }); }, 600000);
+      setInterval(function(){ fetchData().then(function(){ if(loaded&&!liveBusy)refreshLists(); }); }, 600000);
       return;
     }
     if(!d||!d.data||typeof d.data!=='object')return;
     if((d.updated||0)<=myTs)return;
-    S=d.data; norm(); render();
+    S=d.data; norm(); refreshLists();
   }
   function startCloud(){
     try{ window.DPCloud.onAuth(function(_u){ if(!_u||_sub)return; _sub=true;

@@ -1,5 +1,5 @@
 // Sunlu stock watch — captura filamentos con envío a Europa y registra cambios.
-// Se ejecuta en GitHub Actions (node 20+, fetch global). No requiere dependencias.
+// GitHub Actions (node 20+). Sin dependencias.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -7,7 +7,9 @@ const BASE = 'https://store.sunlu.com/products.json';
 const OUTDIR = path.join('3dproject', 'data', 'sunlu');
 const LATEST = path.join(OUTDIR, 'latest.json');
 const CHANGES = path.join(OUTDIR, 'changes.json');
+const PRICES = path.join(OUTDIR, 'prices.json');
 const MAX_CHANGES = 4000;
+const RETENTION_MS = 183 * 864e5; // ~6 meses
 
 async function fetchAll() {
   const out = [];
@@ -24,13 +26,30 @@ async function fetchAll() {
   return out;
 }
 
+// Un producto es filamento si su tipo contiene "filament" O lleva la etiqueta "3D Printer filament".
+// (Muchos filamentos de Sunlu tienen type "3D Printers", así que el tipo solo no basta.)
+function isFilament(p) {
+  const ty = String(p.product_type || '').toLowerCase();
+  const tg = (p.tags || []).map(String).join(' | ').toLowerCase();
+  if (!(/filament/.test(ty) || tg.indexOf('3d printer filament') >= 0)) return false;
+  const ti = String(p.title || '').toLowerCase();
+  if (/\b(australia|usa|us|canada|au|ca)\s*only\b/.test(ti) && !/europe/.test(ti)) return false;
+  return true;
+}
+
 function euVariants(p) {
   const opts = p.options || [];
-  const idx = opts.findIndex(o => (o.values || []).some(v => /europe/i.test(String(v))));
-  const vars = p.variants || [];
-  if (idx < 0) return vars; // sin opción de envío: todas
+  let idx = -1;
+  for (let i = 0; i < opts.length; i++) {
+    const vals = (opts[i].values || []).map(String);
+    if (/ship/i.test(String(opts[i].name || '')) || vals.some(v => /ship to/i.test(v))) { idx = i; break; }
+  }
+  if (idx < 0) {
+    for (let i = 0; i < opts.length; i++) { if ((opts[i].values || []).some(v => /europe/i.test(String(v)))) { idx = i; break; } }
+    if (idx < 0) return p.variants || []; // sin opción de región: incluir todas
+  }
   const key = 'option' + (idx + 1);
-  return vars.filter(v => /europe/i.test(String(v[key] || '')));
+  return (p.variants || []).filter(v => /europe/i.test(String(v[key] || '')));
 }
 
 function cleanVt(t) { return String(t || '').replace(/ship to europe\s*\/?\s*/i, '').replace(/^\s*\/\s*/, '').trim() || 'Único'; }
@@ -38,7 +57,7 @@ function cleanVt(t) { return String(t || '').replace(/ship to europe\s*\/?\s*/i,
 function snapshot(products) {
   const items = [];
   for (const p of products) {
-    if (String(p.product_type || '') !== '3D Printer Filaments') continue;
+    if (!isFilament(p)) continue;
     const vs = euVariants(p);
     if (!vs.length) continue;
     const img = (p.images && p.images[0] && p.images[0].src) || '';
@@ -59,7 +78,7 @@ function readJson(f, fallback) { try { return JSON.parse(fs.readFileSync(f, 'utf
 
 function diff(prevProducts, nextProducts, ts) {
   const ev = [];
-  const pv = new Map(); // vid -> {p, v}
+  const pv = new Map();
   for (const p of prevProducts) for (const v of p.variants) pv.set(String(v.id), { p, v });
   const seen = new Set();
   for (const p of nextProducts) {
@@ -89,15 +108,29 @@ async function main() {
   if (!Array.isArray(changes)) changes = [];
   if (prev && Array.isArray(prev.products) && prev.products.length) {
     const ev = diff(prev.products, products, ts);
-    if (ev.length) changes = ev.concat(changes).slice(0, MAX_CHANGES);
+    if (ev.length) changes = ev.concat(changes);
     console.log('Cambios detectados:', ev.length);
   } else {
     console.log('Primera captura: sin diff.');
   }
+  // Retención: solo los últimos 30 días (y tope de seguridad)
+  changes = changes.filter(c => (ts - (c.ts || 0)) <= RETENTION_MS).slice(0, MAX_CHANGES);
+  // Media de precios: acumula una muestra por captura y la incrusta en cada variante
+  let stats = readJson(PRICES, {});
+  if (!stats || typeof stats !== 'object') stats = {};
+  for (const p of products) for (const v of p.variants) {
+    const n = Number(String(v.price).replace(',', '.'));
+    if (!isNaN(n) && n > 0) {
+      const st = stats[String(v.id)] || { s: 0, n: 0 };
+      st.s += n; st.n += 1; stats[String(v.id)] = st;
+      v.avg = Math.round((st.s / st.n) * 100) / 100;
+    }
+  }
+  fs.writeFileSync(PRICES, JSON.stringify(stats), 'utf8');
   fs.writeFileSync(LATEST, JSON.stringify({ fetched_at: new Date(ts).toISOString(), products }), 'utf8');
   fs.writeFileSync(CHANGES, JSON.stringify(changes), 'utf8');
   const nv = products.reduce((a, p) => a + p.variants.length, 0);
-  console.log('Snapshot OK:', products.length, 'productos /', nv, 'variantes EU.');
+  console.log('Snapshot OK:', products.length, 'productos /', nv, 'variantes EU. Registro:', changes.length, 'eventos (≤6 meses).');
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
