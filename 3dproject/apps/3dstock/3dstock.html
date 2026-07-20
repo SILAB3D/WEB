@@ -161,6 +161,9 @@ var DATA=null, CH=[];
 var loaded=false, saveT=null, myTs=0;
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function eurF(p){ var n=Number(String(p==null?'':p).replace(',','.')); if(isNaN(n))return ''; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+function normTxt(s){ var x=String(s==null?'':s).toLowerCase(); try{ x=x.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch(e){} return x; }
+function kwMatch(q,txt){ var toks=normTxt(q).split(/\s+/).filter(Boolean); if(!toks.length)return true; var h=normTxt(txt); for(var i=0;i<toks.length;i++){ if(h.indexOf(toks[i])<0)return false; } return true; }
+function vHay(v){ return v.vt+' '+v.ptitle+' '+v.sku+' '+catOf(v); }
 function norm(){ if(!S||typeof S!=='object')S={}; if(!S.watch||typeof S.watch!=='object')S.watch={}; if(typeof S.lastSeen!=='number')S.lastSeen=0; }
 function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,600); }
 function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ myTs=Date.now(); window.DPCloud.saveState('3dstock',S,myTs).catch(function(e){console.warn('[3DStock] guardado falló:',e&&(e.message||e));}); } }catch(e){} }
@@ -277,7 +280,7 @@ function renderBody(){ var el=document.getElementById('vbody'); if(!el)return;
 function topcardHTML(){
   return '<div class="topcard">'
     +'<div class="tc-r">'
-      +'<input class="inp" placeholder="Buscar filamento, color o SKU…" value="'+esc(Q)+'" oninput="setQ(this.value)">'
+      +'<input class="inp" placeholder="Palabras clave: p. ej. «silk negro 1kg»…" value="'+esc(Q)+'" oninput="setQ(this.value)">'
       +'<div class="seg"><button class="'+(SOND?'':'on')+'" onclick="setSond(false)">Lista</button><button class="'+(SOND?'on':'')+'" onclick="setSond(true)">Categorías</button></div>'
       +'<div class="seg"><button class="'+(ONLYAV?'':'on')+'" onclick="setOnlyAv(false)">Todo</button><button class="'+(ONLYAV?'on':'')+'" onclick="setOnlyAv(true)">Solo disponibles</button></div>'
     +'</div>'
@@ -296,8 +299,7 @@ function kpisHTML(){ if(!hasData())return ''; var vs=allVariants(); var nAv=vs.f
   +'<div class="kpi"><div class="v" style="color:#34D399">'+nAv+'</div><div class="l">Disponibles</div></div>'
   +'<div class="kpi"><div class="v" style="color:#FF6B6B">'+(vs.length-nAv)+'</div><div class="l">Agotadas</div></div></div>'; }
 function filteredVariants(q){ var vs=allVariants(); if(ONLYAV)vs=vs.filter(function(v){return v.av;});
-  q=(q||'').trim().toLowerCase();
-  if(q)vs=vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; });
+  if(q&&q.trim())vs=vs.filter(function(v){ return kwMatch(q,vHay(v)); });
   return vs; }
 function byName(a,b){ return a.vt.localeCompare(b.vt,'es')||a.ptitle.localeCompare(b.ptitle,'es'); }
 function catListHTML(){
@@ -325,12 +327,11 @@ function catBodyHTML(){ return topcardHTML()+kpisHTML()+'<div id="catList">'+cat
 /* ===== registro ===== */
 function logListHTML(){
   if(!CH.length)return '<div class="card"><div class="empty">Todavía no hay cambios registrados.<br>El registro lo alimenta la captura automática (cada 6 h) y conserva 6 meses.</div></div>';
-  var q=LQ.trim().toLowerCase();
-  var list=CH.filter(function(c){ if(LT!=='all'&&c.type!==LT)return false; if(q&&(String(c.product)+' '+String(c.variant)+' '+String(c.sku)).toLowerCase().indexOf(q)<0)return false; return true; });
+  var list=CH.filter(function(c){ if(LT!=='all'&&c.type!==LT)return false; if(LQ.trim()&&!kwMatch(LQ,String(c.product)+' '+String(c.variant)+' '+String(c.sku)+' '+(TYPES[c.type]||c.type)))return false; return true; });
   return '<div class="card">'+(list.length?list.map(function(c){return chRow(c,false);}).join(''):'<div class="empty">Sin cambios que coincidan con el filtro.</div>')+'</div>';
 }
 function logBodyHTML(){
-  return '<div class="toolrow"><input class="inp" placeholder="Buscar en el registro…" value="'+esc(LQ)+'" oninput="setLQ(this.value)">'
+  return '<div class="toolrow"><input class="inp" placeholder="Palabras clave en el registro…" value="'+esc(LQ)+'" oninput="setLQ(this.value)">'
     +'<select class="selx" onchange="setLT(this.value)"><option value="all"'+(LT==='all'?' selected':'')+'>Todos los tipos</option>'
     +Object.keys(TYPES).map(function(k){return '<option value="'+k+'"'+(LT===k?' selected':'')+'>'+TYPES[k]+'</option>';}).join('')
     +'</select></div>'
@@ -353,8 +354,8 @@ function aviTopHTML(){
 }
 function aviListHTML(){
   if(!hasData())return noData();
-  var vs=allVariants(); var q=AQ.trim().toLowerCase();
-  if(q)vs=vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; });
+  var vs=allVariants();
+  if(AQ.trim())vs=vs.filter(function(v){ return kwMatch(AQ,vHay(v)); });
   vs=vs.slice().sort(byName);
   return '<div class="card">'+(vs.length?vs.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados.</div>')+'</div>';
 }
@@ -363,7 +364,7 @@ function aviBodyHTML(){
   return '<div id="aviTop">'+aviTopHTML()+'</div>'
     +'<div class="sec-h">Configurar avisos</div>'
     +'<div class="h-sub" style="margin-bottom:10px">Marca con ★ los filamentos que quieres vigilar ('+nW+' vigilado'+(nW===1?'':'s')+').</div>'
-    +'<div class="toolrow"><input class="inp" placeholder="Buscar para configurar…" value="'+esc(AQ)+'" oninput="setAQ(this.value)"></div>'
+    +'<div class="toolrow"><input class="inp" placeholder="Palabras clave para configurar…" value="'+esc(AQ)+'" oninput="setAQ(this.value)"></div>'
     +'<div id="aviList">'+aviListHTML()+'</div>';
 }
 
@@ -393,16 +394,16 @@ function monTableHTML(){
 }
 function monAddHTML(){
   if(!hasData())return '';
-  var vs=allVariants().filter(function(v){return !S.watch[v.vid];}); var q=MQ.trim().toLowerCase();
-  if(q)vs=vs.filter(function(v){ return (v.vt+' '+v.ptitle+' '+v.sku).toLowerCase().indexOf(q)>=0; });
+  var vs=allVariants().filter(function(v){return !S.watch[v.vid];});
+  if(MQ.trim())vs=vs.filter(function(v){ return kwMatch(MQ,vHay(v)); });
   vs=vs.slice().sort(byName);
-  if(!q)vs=vs.slice(0,25);
+  if(!MQ.trim())vs=vs.slice(0,25);
   return '<div class="card">'+(vs.length?vs.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados.</div>')+'</div>';
 }
 function monBodyHTML(){
   return '<div id="monTable">'+monTableHTML()+'</div>'
     +'<div class="sec-h">Añadir productos al monitor</div>'
-    +'<div class="toolrow"><input class="inp" placeholder="Buscar producto para añadir…" value="'+esc(MQ)+'" oninput="setMQ(this.value)"></div>'
+    +'<div class="toolrow"><input class="inp" placeholder="Palabras clave del producto a añadir…" value="'+esc(MQ)+'" oninput="setMQ(this.value)"></div>'
     +'<div id="monAdd">'+monAddHTML()+'</div>';
 }
 
