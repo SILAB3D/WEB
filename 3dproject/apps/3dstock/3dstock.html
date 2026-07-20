@@ -94,6 +94,10 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
 .note{font-size:12px;color:var(--t3);line-height:1.55;margin-top:8px}
 .cat-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:15px;font-weight:800;margin:18px 2px 8px}
 .cat-h .cat-n{font-size:11.5px;color:var(--t2);font-weight:500}
+.cat-toggle{cursor:pointer;user-select:none}
+.cat-toggle:hover{color:var(--ac)}
+.cat-car{display:inline-block;font-size:11px;color:var(--t3);transition:transform .15s}
+.cat-toggle.open .cat-car{transform:rotate(90deg)}
 .sub-h{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
 .sub-h.ok{color:#34D399}.sub-h.ko{color:#FF6B6B}
 /* monitor */
@@ -163,7 +167,8 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 function eurF(p){ var n=Number(String(p==null?'':p).replace(',','.')); if(isNaN(n))return ''; return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 function normTxt(s){ var x=String(s==null?'':s).toLowerCase(); try{ x=x.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch(e){} return x; }
 function kwMatch(q,txt){ var toks=normTxt(q).split(/\s+/).filter(Boolean); if(!toks.length)return true; var h=normTxt(txt); for(var i=0;i<toks.length;i++){ if(h.indexOf(toks[i])<0)return false; } return true; }
-function vHay(v){ return v.vt+' '+v.ptitle+' '+v.sku+' '+catOf(v); }
+function vHay(v){ return v.vt; }
+function jsq(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function norm(){ if(!S||typeof S!=='object')S={}; if(!S.watch||typeof S.watch!=='object')S.watch={}; if(typeof S.lastSeen!=='number')S.lastSeen=0; }
 function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,600); }
 function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ myTs=Date.now(); window.DPCloud.saveState('3dstock',S,myTs).catch(function(e){console.warn('[3DStock] guardado falló:',e&&(e.message||e));}); } }catch(e){} }
@@ -183,8 +188,16 @@ function fetchData(){ var v=Date.now();
     try{ console.log('[3DStock] datos automáticos:', (res[0]&&res[0].products?res[0].products.length:0),'productos ·', (res[0]&&res[0].fetched_at)||'sin capturar','·', CH.length,'cambios'); }catch(e){} });
 }
 function hasData(){ return DATA && Array.isArray(DATA.products) && DATA.products.length>0; }
-function allVariants(){ var out=[]; if(!hasData())return out;
-  DATA.products.forEach(function(p){ (p.variants||[]).forEach(function(v){ out.push({pid:p.id,handle:p.handle,ptitle:p.title,img:p.img,vid:String(v.id),sku:v.sku,vt:v.vt,price:v.price,cap:v.cap,avg:v.avg,av:v.av}); }); });
+function allVariants(){ if(!hasData())return []; var out=[],pos={};
+  DATA.products.forEach(function(p){ (p.variants||[]).forEach(function(v){
+    var row={pid:p.id,handle:p.handle,ptitle:p.title,img:p.img,vid:String(v.id),sku:v.sku,vt:v.vt,price:v.price,cap:v.cap,avg:v.avg,av:v.av};
+    var sku=(v.sku==null?'':String(v.sku)).trim().toLowerCase();
+    var key=sku?('s:'+sku):('v:'+row.vid);
+    if(pos[key]===undefined){ pos[key]=out.length; out.push(row); return; }
+    var cur=out[pos[key]];
+    var better=(!!S.watch[row.vid]&&!S.watch[cur.vid]) || (!S.watch[cur.vid]&&!cur.av&&row.av);
+    if(better)out[pos[key]]=row;
+  }); });
   return out;
 }
 function fmtD(ts){ try{ var d=new Date(ts); return d.toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
@@ -247,7 +260,7 @@ function prodRow(v,withStar){
     +'<div class="rmain"><div class="rname">'+esc(v.vt)+'</div><div class="rsub">'+esc(v.ptitle)+(v.sku?(' · '+esc(v.sku)):'')+'</div></div>'
     +'<span class="rprice">'+esc(price)+avgHtml+'</span>'
     +(withStar?starBtn(v.vid):'')
-    +'<a class="lnk" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'" target="_blank" rel="noopener" title="Ver en la tienda"><svg width="12" height="12" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a></div>';
+    +'<a class="lnk" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en la tienda"><svg width="12" height="12" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a></div>';
 }
 function chRow(c,unseen){
   var det='';
@@ -314,20 +327,23 @@ function catListHTML(){
   var h='';
   names.forEach(function(cn){
     var arr=groups[cn]; var av=arr.filter(function(v){return v.av;}).sort(byName); var no=arr.filter(function(v){return !v.av;}).sort(byName);
-    h+='<div class="cat-h">'+esc(cn)+' <span class="cat-n"><b style="color:#34D399">'+av.length+' disponible'+(av.length===1?'':'s')+'</b>'+(ONLYAV?'':' · <b style="color:#FF6B6B">'+no.length+' agotado'+(no.length===1?'':'s')+'</b>')+'</span></div>';
-    h+='<div class="card" style="margin-bottom:4px">';
-    if(av.length)h+='<div class="sub-h ok">Disponibles ('+av.length+')</div>'+av.map(function(v){return prodRow(v,true);}).join('');
-    if(!ONLYAV&&no.length)h+='<div class="sub-h ko">Agotados ('+no.length+')</div>'+no.map(function(v){return prodRow(v,true);}).join('');
-    h+='</div>';
+    var open=!!catOpen[cn]||(Q.trim()!=='');
+    h+='<div class="cat-h cat-toggle'+(open?' open':'')+'" onclick="toggleCat(\''+jsq(cn)+'\')"><span class="cat-car">\u25B8</span>'+esc(cn)+' <span class="cat-n"><b style="color:#34D399">'+av.length+' disponible'+(av.length===1?'':'s')+'</b>'+(ONLYAV?'':' \u00b7 <b style="color:#FF6B6B">'+no.length+' agotado'+(no.length===1?'':'s')+'</b>')+'</span></div>';
+    if(open){ h+='<div class="card" style="margin-bottom:4px">';
+      if(av.length)h+='<div class="sub-h ok">Disponibles ('+av.length+')</div>'+av.map(function(v){return prodRow(v,true);}).join('');
+      if(!ONLYAV&&no.length)h+='<div class="sub-h ko">Agotados ('+no.length+')</div>'+no.map(function(v){return prodRow(v,true);}).join('');
+      h+='</div>'; }
   });
   return h;
 }
+var catOpen={};
+function toggleCat(name){ catOpen[name]=!catOpen[name]; var el=document.getElementById('catList'); if(el)el.innerHTML=catListHTML(); }
 function catBodyHTML(){ return topcardHTML()+kpisHTML()+'<div id="catList">'+catListHTML()+'</div>'; }
 
 /* ===== registro ===== */
 function logListHTML(){
   if(!CH.length)return '<div class="card"><div class="empty">Todavía no hay cambios registrados.<br>El registro lo alimenta la captura automática (cada 6 h) y conserva 6 meses.</div></div>';
-  var list=CH.filter(function(c){ if(LT!=='all'&&c.type!==LT)return false; if(LQ.trim()&&!kwMatch(LQ,String(c.product)+' '+String(c.variant)+' '+String(c.sku)+' '+(TYPES[c.type]||c.type)))return false; return true; });
+  var list=CH.filter(function(c){ if(LT!=='all'&&c.type!==LT)return false; if(LQ.trim()&&!kwMatch(LQ,String(c.variant)))return false; return true; });
   return '<div class="card">'+(list.length?list.map(function(c){return chRow(c,false);}).join(''):'<div class="empty">Sin cambios que coincidan con el filtro.</div>')+'</div>';
 }
 function logBodyHTML(){
@@ -386,7 +402,7 @@ function monTableHTML(){
       +'<td class="mdate">'+(out?fmtD(out):'—')+'</td>'
       +'<td class="mprice">'+eurF(v.price)+avgHtml+'</td>'
       +'<td class="macts"><a class="buy" href="'+esc(shopLink(v))+'" target="_blank" rel="noopener" title="Comprar en shop.app">Comprar</a>'
-      +'<a class="lnk" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="12" height="12" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a>'
+      +'<a class="lnk" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="12" height="12" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a>'
       +starBtn(v.vid)+'</td></tr>';
   }).join('');
   return '<div class="card" style="overflow:auto"><table class="mtable"><thead><tr><th>Producto</th><th>Disponibilidad</th><th>Últ. reposición</th><th>Últ. agotamiento</th><th class="mprice">Precio</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
