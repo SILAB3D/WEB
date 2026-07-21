@@ -262,6 +262,7 @@ table.lines td.imp{font-weight:700;color:#111;text-align:right;font-size:13.5px;
   .add-line{width:100%;justify-content:center;margin-top:6px}
 }
 </style>
+<style>@media(max-width:600px){.appbar{gap:5px;padding:0 8px}.appbar .tbtn{padding:0 9px}}</style>
 </head>
 <body>
 <div class="appbar">
@@ -272,6 +273,7 @@ table.lines td.imp{font-weight:700;color:#111;text-align:right;font-size:13.5px;
   <button class="tbtn dock-toggle" onclick="toggleDock()" title="Cabecera y frases (presets)">Presets</button>
   <button class="tbtn" onclick="duplicateReceipt()" id="btn-dup" title="Duplicar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> <span class="ablbl">Duplicar</span></button>
   <button class="tbtn primary" onclick="printPDF()" id="btn-print"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg> <span class="ablbl">Imprimir / PDF</span></button>
+  <button class="ab-theme" onclick="window.DPHelp&&DPHelp.open()" title="Cómo usar esta app" aria-label="Ayuda" style="width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.3"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></svg></button>
   <button class="ab-theme" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
 </div>
 <div class="layout">
@@ -505,5 +507,41 @@ function _purgeLocal(){ try{ localStorage.removeItem(SK); localStorage.removeIte
 })();
 </script>
 <script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
+<script>
+/* Ayuda contextual de la app (icono ? en el banner superior) */
+(function(){
+  if(window.DPHelp) return;
+  var C={"title": "3DBilling", "accent": "#F4B740", "tagline": "Recibos en PDF", "sections": [{"h": "Qué es", "p": "Crea recibos que agrupan varios pedidos, con cabecera y logo, total automático y exportación a PDF."}, {"h": "Primeros pasos", "steps": ["Añade tus datos y tu logo en la cabecera.", "Añade líneas o pedidos con su importe.", "Revisa el total calculado.", "Exporta el recibo a PDF."]}, {"h": "Funciones clave", "defs": [["Cabecera con logo", "Personaliza el encabezado del recibo."], ["Varias líneas", "Agrupa múltiples pedidos en un mismo recibo."], ["Total automático", "Se suma solo al añadir importes."], ["Exportar PDF", "Documento listo para enviar."]]}]};
+  var CSS=".dph-veil{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(6,8,15,.66);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}.dph-veil.open{display:flex}.dph-modal{width:min(660px,96vw);max-height:88vh;overflow:auto;background:#12141d;color:#e7eaf2;border:1px solid rgba(255,255,255,.1);border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.6);font-family:'Outfit',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.55}[data-theme=light] .dph-modal{background:#fff;color:#1b1e27;border-color:rgba(0,0,0,.1)}.dph-hd{position:sticky;top:0;display:flex;align-items:center;gap:11px;padding:15px 18px;background:inherit;border-bottom:1px solid rgba(255,255,255,.09);border-radius:16px 16px 0 0}[data-theme=light] .dph-hd{border-color:rgba(0,0,0,.09)}.dph-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}.dph-ti{font-weight:700;font-size:16px}.dph-tg{font-size:12px;opacity:.7}.dph-x{margin-left:auto;border:none;background:transparent;color:inherit;opacity:.55;font-size:22px;cursor:pointer;line-height:1;padding:0 4px}.dph-x:hover{opacity:1}.dph-bd{padding:4px 18px 20px}.dph-sec{margin-top:15px}.dph-h{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.6;margin-bottom:5px}.dph-p{margin:0 0 3px}.dph-bd ul,.dph-bd ol{margin:4px 0 0;padding-left:20px}.dph-bd li{margin:3px 0}.dph-def{display:flex;gap:10px;margin:5px 0}.dph-def b{flex-shrink:0;min-width:130px}";
+  var HDIC="<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9.3\"/><path d=\"M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4\"/><circle cx=\"12\" cy=\"17.3\" r=\".6\" fill=\"currentColor\"/></svg>";
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function render(){
+    var h='<div class="dph-modal" role="dialog" aria-modal="true" aria-label="Ayuda">';
+    h+='<div class="dph-hd"><span class="dph-ic" style="background:'+(C.accent||'#5b8cff')+'">'+HDIC+'</span><div><div class="dph-ti">'+esc(C.title)+'</div><div class="dph-tg">'+esc(C.tagline||'')+'</div></div><button class="dph-x" aria-label="Cerrar" title="Cerrar">&times;</button></div>';
+    h+='<div class="dph-bd">';
+    (C.sections||[]).forEach(function(s){
+      h+='<div class="dph-sec"><div class="dph-h">'+esc(s.h)+'</div>';
+      if(s.p) h+='<p class="dph-p">'+esc(s.p)+'</p>';
+      if(s.steps){ h+='<ol>'; s.steps.forEach(function(x){ h+='<li>'+esc(x)+'</li>'; }); h+='</ol>'; }
+      if(s.list){ h+='<ul>'; s.list.forEach(function(x){ h+='<li>'+esc(x)+'</li>'; }); h+='</ul>'; }
+      if(s.defs){ s.defs.forEach(function(d){ h+='<div class="dph-def"><b>'+esc(d[0])+'</b><span>'+esc(d[1])+'</span></div>'; }); }
+      h+='</div>';
+    });
+    h+='</div></div>';
+    return h;
+  }
+  var veil=null;
+  function ensure(){ if(veil) return;
+    var st=document.createElement('style'); st.textContent=CSS; document.head.appendChild(st);
+    veil=document.createElement('div'); veil.className='dph-veil';
+    veil.addEventListener('click',function(e){ if(e.target===veil) close(); });
+    document.body.appendChild(veil);
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  }
+  function open(){ ensure(); veil.innerHTML=render(); var x=veil.querySelector('.dph-x'); if(x)x.addEventListener('click',close); veil.classList.add('open'); }
+  function close(){ if(veil) veil.classList.remove('open'); }
+  window.DPHelp={ open:open, close:close };
+})();
+</script>
 </body>
 </html>

@@ -516,7 +516,14 @@
 
     <style>
       .got-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 16px;}
-      .got-gallery img{width:100%;height:74px;object-fit:cover;border-radius:10px;border:1.5px solid #eee;display:block;}
+      .got-gallery img{width:100%;height:74px;object-fit:cover;border-radius:10px;border:1.5px solid #eee;display:block;cursor:zoom-in;transition:transform .15s,box-shadow .15s;}
+      .got-gallery img:hover{transform:scale(1.03);box-shadow:0 4px 14px rgba(0,0,0,.18);}
+      .lbx{position:fixed;inset:0;z-index:9999;background:rgba(10,10,14,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .2s ease;}
+      .lbx.on{display:flex;opacity:1;}
+      .lbx img{max-width:96vw;max-height:92vh;object-fit:contain;border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,.6);cursor:zoom-out;}
+      .lbx-min{position:fixed;top:16px;right:16px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.10);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .15s;}
+      .lbx-min:hover{background:rgba(255,255,255,.22);transform:scale(1.06);}
+      .lbx-min svg{width:20px;height:20px;}
       .houses-note{font-size:.72rem;color:#888;margin:-6px 0 10px;line-height:1.5;}
       #housesGrp .opt-card{padding:12px 6px;}
       #housesGrp .opt-desc{font-size:.6rem;}
@@ -529,11 +536,11 @@
       <!-- ═══ STEP 1: Casas ═══ -->
       <div class="step" id="s1">
 
-        <div class="got-gallery">
-          <img src="/img/Cuadros-GOT-1.jpg" alt="Cuadros bicolor Juego de Tronos" loading="lazy">
-          <img src="/img/Cuadros-GOT-2.jpg" alt="Colección de las 9 casas" loading="lazy">
-          <img src="/img/Cuadros-GOT-3.jpg" alt="Detalle de los emblemas" loading="lazy">
-          <img src="/img/Cuadros-GOT-4.jpg" alt="Detalle Tully y Targaryen" loading="lazy">
+        <div class="got-gallery" id="gotGallery">
+          <img src="/img/Cuadros-GOT-1.jpg" alt="Cuadros bicolor Juego de Tronos" loading="lazy" onclick="openLbx(this)">
+          <img src="/img/Cuadros-GOT-2.jpg" alt="Colección de las 9 casas" loading="lazy" onclick="openLbx(this)">
+          <img src="/img/Cuadros-GOT-3.jpg" alt="Detalle de los emblemas" loading="lazy" onclick="openLbx(this)">
+          <img src="/img/Cuadros-GOT-4.jpg" alt="Detalle Tully y Targaryen" loading="lazy" onclick="openLbx(this)">
         </div>
 
         <p class="slabel">Casas <span class="slabel-sub">· selección múltiple</span></p>
@@ -714,6 +721,18 @@
   };
 
   setProgress(1);
+</script>
+<div class="lbx" id="lbx" onclick="if(event.target===this)closeLbx()">
+  <button class="lbx-min" id="lbxMin" type="button" aria-label="Minimizar imagen" title="Minimizar" onclick="closeLbx()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9L4 4M9 9V5M9 9H5M15 9l5-5M15 9V5M15 9h4M9 15l-5 5M9 15v4M9 15H5M15 15l5 5M15 15v4M15 15h4"/></svg></button>
+  <img id="lbxImg" src="" alt="" onclick="closeLbx()">
+</div>
+<script>
+(function(){
+  var lbx=document.getElementById('lbx'), img=document.getElementById('lbxImg');
+  window.openLbx=function(el){ img.src=el.src; img.alt=el.alt||''; lbx.classList.add('on'); document.body.style.overflow='hidden'; };
+  window.closeLbx=function(){ lbx.classList.remove('on'); document.body.style.overflow=''; setTimeout(function(){ img.src=''; },220); };
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&lbx.classList.contains('on'))closeLbx(); });
+})();
 </script>
 </body>
 </html>

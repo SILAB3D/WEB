@@ -292,6 +292,7 @@ option{background-color:#161922;color:#E8EBF4}
   <span class="ab-name">3DLab</span>
   <button class="ab-back" onclick="dpHome()" title="Volver a 3DProject"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> <span class="ab-bktx">3DProject</span></button>
   <span class="ab-sp"></span>
+  <button class="ab-theme" onclick="window.DPHelp&&DPHelp.open()" title="Cómo usar esta app" aria-label="Ayuda" style="width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.3"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></svg></button>
   <button class="ab-theme" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
 </div>
 <div class="layout">
@@ -680,5 +681,41 @@ function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.configured&&window.
 })();
 </script>
 <script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
+<script>
+/* Ayuda contextual de la app (icono ? en el banner superior) */
+(function(){
+  if(window.DPHelp) return;
+  var C={"title": "3DLab", "accent": "#8B7CFF", "tagline": "Tests de impresión por condiciones", "sections": [{"h": "Qué es", "p": "Organiza tests de impresión bajo distintas condiciones con la jerarquía Modalidad › Proyecto › Test, parámetros y una matriz de estudios."}, {"h": "Primeros pasos", "steps": ["Crea una Modalidad.", "Dentro, crea un Proyecto; dentro, un Test.", "Define los parámetros y la matriz de estudios / impresiones.", "Resalta variables y exporta a CSV o PDF."]}, {"h": "Funciones clave", "defs": [["Jerarquía", "Modalidad › Proyecto › Test para ordenar todo."], ["Matriz de estudios", "Compara impresiones y parámetros en tabla."], ["Resaltado de variables", "Destaca lo que cambia entre pruebas."], ["Exportar", "CSV y PDF de tus resultados."]]}]};
+  var CSS=".dph-veil{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(6,8,15,.66);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}.dph-veil.open{display:flex}.dph-modal{width:min(660px,96vw);max-height:88vh;overflow:auto;background:#12141d;color:#e7eaf2;border:1px solid rgba(255,255,255,.1);border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.6);font-family:'Outfit',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.55}[data-theme=light] .dph-modal{background:#fff;color:#1b1e27;border-color:rgba(0,0,0,.1)}.dph-hd{position:sticky;top:0;display:flex;align-items:center;gap:11px;padding:15px 18px;background:inherit;border-bottom:1px solid rgba(255,255,255,.09);border-radius:16px 16px 0 0}[data-theme=light] .dph-hd{border-color:rgba(0,0,0,.09)}.dph-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}.dph-ti{font-weight:700;font-size:16px}.dph-tg{font-size:12px;opacity:.7}.dph-x{margin-left:auto;border:none;background:transparent;color:inherit;opacity:.55;font-size:22px;cursor:pointer;line-height:1;padding:0 4px}.dph-x:hover{opacity:1}.dph-bd{padding:4px 18px 20px}.dph-sec{margin-top:15px}.dph-h{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.6;margin-bottom:5px}.dph-p{margin:0 0 3px}.dph-bd ul,.dph-bd ol{margin:4px 0 0;padding-left:20px}.dph-bd li{margin:3px 0}.dph-def{display:flex;gap:10px;margin:5px 0}.dph-def b{flex-shrink:0;min-width:130px}";
+  var HDIC="<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9.3\"/><path d=\"M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4\"/><circle cx=\"12\" cy=\"17.3\" r=\".6\" fill=\"currentColor\"/></svg>";
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function render(){
+    var h='<div class="dph-modal" role="dialog" aria-modal="true" aria-label="Ayuda">';
+    h+='<div class="dph-hd"><span class="dph-ic" style="background:'+(C.accent||'#5b8cff')+'">'+HDIC+'</span><div><div class="dph-ti">'+esc(C.title)+'</div><div class="dph-tg">'+esc(C.tagline||'')+'</div></div><button class="dph-x" aria-label="Cerrar" title="Cerrar">&times;</button></div>';
+    h+='<div class="dph-bd">';
+    (C.sections||[]).forEach(function(s){
+      h+='<div class="dph-sec"><div class="dph-h">'+esc(s.h)+'</div>';
+      if(s.p) h+='<p class="dph-p">'+esc(s.p)+'</p>';
+      if(s.steps){ h+='<ol>'; s.steps.forEach(function(x){ h+='<li>'+esc(x)+'</li>'; }); h+='</ol>'; }
+      if(s.list){ h+='<ul>'; s.list.forEach(function(x){ h+='<li>'+esc(x)+'</li>'; }); h+='</ul>'; }
+      if(s.defs){ s.defs.forEach(function(d){ h+='<div class="dph-def"><b>'+esc(d[0])+'</b><span>'+esc(d[1])+'</span></div>'; }); }
+      h+='</div>';
+    });
+    h+='</div></div>';
+    return h;
+  }
+  var veil=null;
+  function ensure(){ if(veil) return;
+    var st=document.createElement('style'); st.textContent=CSS; document.head.appendChild(st);
+    veil=document.createElement('div'); veil.className='dph-veil';
+    veil.addEventListener('click',function(e){ if(e.target===veil) close(); });
+    document.body.appendChild(veil);
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  }
+  function open(){ ensure(); veil.innerHTML=render(); var x=veil.querySelector('.dph-x'); if(x)x.addEventListener('click',close); veil.classList.add('open'); }
+  function close(){ if(veil) veil.classList.remove('open'); }
+  window.DPHelp={ open:open, close:close };
+})();
+</script>
 </body>
 </html>

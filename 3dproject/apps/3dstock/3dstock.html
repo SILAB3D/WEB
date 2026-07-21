@@ -39,7 +39,7 @@ body.side-off .side{margin-left:-231px}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#F4B740;color:#3a2400;font-size:10.5px;font-weight:800;margin-left:auto}
 .side-note{margin-top:auto;font-size:11px;color:var(--t3);line-height:1.5;padding:12px 4px 0;border-top:1px solid var(--border)}
 .main{flex:1;overflow:auto}
-.wrap{max-width:980px;margin:0 auto;padding:24px 22px 60px}
+.wrap{max-width:1360px;margin:0 auto;padding:26px 30px 64px}
 .h1{font-family:'DM Serif Display',serif;font-style:italic;font-size:26px;margin-bottom:4px}
 .h-sub{color:var(--t2);font-size:13px;margin-bottom:16px}
 .topcard{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px}
@@ -101,9 +101,28 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
 .sub-h{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
 .sub-h.ok{color:#34D399}.sub-h.ko{color:#FF6B6B}
 /* monitor */
-.mtable{width:100%;border-collapse:collapse;font-size:12.5px;min-width:720px}
-.mtable th{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
-.mtable td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.mtable{width:100%;border-collapse:collapse;font-size:12.5px;min-width:880px}
+.mtable .mdur{font-size:12px;color:var(--t1);white-space:nowrap;text-align:center}
+.mtable .mav{text-align:center}
+.av-ic{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%}
+.av-ok{color:#34D399;background:rgba(52,211,153,.16)}
+.av-no{color:#FF6B6B;background:rgba(255,107,107,.16)}
+.mtable .mprice .p-lo{color:#34D399}
+.mtable .mprice .p-hi{color:#FF6B6B}
+.mtable .mprice .p-eq{color:var(--t1)}
+.mbtn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;flex-shrink:0;text-decoration:none;transition:background .15s,transform .1s}
+.mbtn:active{transform:scale(.92)}
+.mbtn-shop{color:#B87CFF;background:rgba(184,124,255,.16)}
+.mbtn-shop:hover{background:rgba(184,124,255,.28)}
+.mbtn-sunlu{color:#4D9FFF;background:rgba(77,159,255,.16)}
+.mbtn-sunlu:hover{background:rgba(77,159,255,.28)}
+.mtable .mgrp{white-space:nowrap}
+.mg-main{display:block;font-size:12.5px;color:var(--t1)}
+.mg-sub{display:block;font-size:10.5px;color:var(--t3);margin-top:1px}
+.mtable th{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);text-align:left;padding:12px 15px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+.mtable td{padding:13px 15px;border-bottom:1px solid var(--border);vertical-align:middle}
+.mtable th:first-child,.mtable td:first-child{padding-left:20px}
+.mtable th:last-child,.mtable td:last-child{padding-right:20px}
 .mtable tr:last-child td{border-bottom:none}
 .mtable .mprod{max-width:280px}
 .mtable .mdate{font-size:11.5px;color:var(--t2);white-space:nowrap}
@@ -116,7 +135,7 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
 @media(max-width:760px){
   .side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:78vw;max-width:280px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
   body.side-off .side{transform:translateX(-101%);margin-left:0}
-  .wrap{padding:16px 12px 50px}
+  .wrap{padding:18px 16px 50px}
   .ab-name{display:none}.ab-bktx{display:none}.ab-back{padding:0 9px}.ab-upd{display:none}
   .row{flex-wrap:wrap}.rmain{flex:1 1 55%}
   .seg button{padding:0 11px}
@@ -130,6 +149,7 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
   <button class="ab-back" onclick="dpHome()" title="Volver a 3DProject"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5L8 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> <span class="ab-bktx">3DProject</span></button>
   <span class="ab-sp"></span>
   <span class="ab-upd" id="updChip"></span>
+  <button class="ab-theme" onclick="window.DPHelp&&DPHelp.open()" title="Cómo usar esta app" aria-label="Ayuda" style="width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.3"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></svg></button>
   <button class="ab-theme" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
 </div>
 <div class="layout">
@@ -137,7 +157,7 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
     <div class="nav-h">Navegación</div>
     <nav class="nav" id="nav">
       <a data-v="cat" onclick="go('cat')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7.8"/><circle cx="11" cy="11" r="2.8"/><path d="M18.8 11c0 4.2-7.8 4.2-7.8 0" stroke-linecap="round"/></svg> Catálogo EU</a>
-      <a data-v="mon" onclick="go('mon')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="16" height="14" rx="2"/><path d="M3 9h16M8.5 9v9M14 9v9"/></svg> Monitor</a>
+      <a data-v="mon" onclick="go('mon')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="16" height="14" rx="2"/><path d="M3 9h16M8.5 9v9M14 9v9"/></svg> Mi panel cromático</a>
       <a data-v="log" onclick="go('log')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h14M4 11h14M4 17h9"/><circle cx="18.2" cy="17" r="1.2" fill="currentColor" stroke="none"/></svg> Registro</a>
       <a data-v="avi" onclick="go('avi')"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3a5.5 5.5 0 0 0-5.5 5.5c0 4.2-1.6 5.5-1.6 5.5h14.2s-1.6-1.3-1.6-5.5A5.5 5.5 0 0 0 11 3z"/><path d="M9.3 17.5a1.9 1.9 0 0 0 3.4 0"/></svg> Avisos <span id="aviBadge"></span></a>
     </nav>
@@ -274,7 +294,7 @@ function noData(){ return '<div class="card"><div class="empty">Aún no hay dato
 function render(){ if(!loaded)return; aviBadge();
   var h='';
   if(view==='cat'){ h='<div class="h1">Catálogo EU</div><div class="h-sub">Filamentos de Sunlu con envío a Europa. Marca ★ en cualquier fila para recibir sus cambios en Avisos.</div>'; }
-  else if(view==='mon'){ h='<div class="h1">Monitor</div><div class="h-sub">Tabla de los productos que monitorizas: disponibilidad, última reposición, último agotamiento, precio y enlace de compra.</div>'; }
+  else if(view==='mon'){ h='<div class="h1">Mi panel cromático</div><div class="h-sub">Tus filamentos vigilados: disponibilidad, última reposición y agotamiento, tiempos medios de disponibilidad y ausencia, precio y enlace de compra.</div>'; }
   else if(view==='log'){ h='<div class="h1">Registro de cambios</div><div class="h-sub">Todos los cambios de los últimos 6 meses: reposiciones, agotamientos, precios, altas y retiradas.</div>'; }
   else { h='<div class="h1">Avisos</div><div class="h-sub">Cambios en tus filamentos vigilados y configuración de qué vigilar.</div>'; }
   h+='<div id="vbody"></div>';
@@ -388,25 +408,34 @@ function aviBodyHTML(){
 var MQ='';
 function setMQ(v){ MQ=v; var el=document.getElementById('monAdd'); if(el)el.innerHTML=monAddHTML(); }
 function lastEv(vid,type){ for(var i=0;i<CH.length;i++){ var c=CH[i]; if(String(c.vid)===String(vid)&&c.type===type)return c.ts; } return null; }
+function fmtDur(v){ if(v==null)return '—'; if(v<1)return Math.round(v*24)+' h'; return (Math.round(v*10)/10).toString().replace('.',',')+' d'; }
+function spells(vid){ var evs=CH.filter(function(c){ return String(c.vid)===String(vid)&&(c.type==='repuesto'||c.type==='agotado'); }).slice().sort(function(a,b){ return (a.ts||0)-(b.ts||0); });
+  var av=[],ab=[];
+  for(var i=0;i<evs.length-1;i++){ var d=((evs[i+1].ts||0)-(evs[i].ts||0))/864e5; if(d<0)continue;
+    if(evs[i].type==='repuesto'&&evs[i+1].type==='agotado')av.push(d);
+    else if(evs[i].type==='agotado'&&evs[i+1].type==='repuesto')ab.push(d); }
+  function m(a){ if(!a.length)return null; var s=0; a.forEach(function(x){s+=x;}); return s/a.length; }
+  return { av:m(av), ab:m(ab), nav:av.length, nab:ab.length }; }
 function shopLink(v){ return 'https://shop.app/products/'+v.pid+'?variantId='+v.vid; }
 function monTableHTML(){
   if(!hasData())return noData();
   var ws=allVariants().filter(function(v){return S.watch[v.vid];}).sort(byName);
   if(!ws.length)return '<div class="card"><div class="empty">Aún no monitorizas ningún producto.<br>Añádelos con la ★ desde el buscador de abajo o desde el Catálogo.</div></div>';
   var rows=ws.map(function(v){
-    var rep=lastEv(v.vid,'repuesto'), out=lastEv(v.vid,'agotado');
+    var rep=lastEv(v.vid,'repuesto'), out=lastEv(v.vid,'agotado'), sp=spells(v.vid);
     var avgHtml=(v.avg&&Number(v.avg)>0)?('<span class="ravg">prom. '+eurF(v.avg)+'</span>'):'';
+    var _pr=parseFloat(v.price), _av=parseFloat(v.avg), pcls=(_av>0&&isFinite(_pr))?(_pr<_av-0.005?'p-lo':(_pr>_av+0.005?'p-hi':'p-eq')):'p-eq';
     return '<tr><td class="mprod"><div class="rname">'+esc(v.vt)+'</div><div class="rsub">'+esc(v.ptitle)+'</div></td>'
-      +'<td>'+(v.av?'<span class="chip c-repuesto">Disponible</span>':'<span class="chip c-agotado">Agotado</span>')+'</td>'
-      +'<td class="mdate">'+(rep?fmtD(rep):'—')+'</td>'
-      +'<td class="mdate">'+(out?fmtD(out):'—')+'</td>'
-      +'<td class="mprice">'+eurF(v.price)+avgHtml+'</td>'
-      +'<td class="macts"><a class="buy" href="'+esc(shopLink(v))+'" target="_blank" rel="noopener" title="Comprar en shop.app">Comprar</a>'
-      +'<a class="lnk" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="12" height="12" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4.5M9 2V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a>'
-      +starBtn(v.vid)+'</td></tr>';
+      +'<td class="mav">'+(v.av?'<span class="av-ic av-ok" title="Disponible"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>':'<span class="av-ic av-no" title="Agotado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>')+'</td>'
+      +'<td class="mprice"><span class="'+pcls+'">'+eurF(v.price)+'</span>'+avgHtml+'</td>'
+      +'<td class="macts"><a class="mbtn mbtn-shop" href="'+esc(shopLink(v))+'" target="_blank" rel="noopener" title="Comprar en shop.app"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></a>'
+      +'<a class="mbtn mbtn-sunlu" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M17 7H8M17 7v9"/></svg></a>'
+      +starBtn(v.vid)+'</td>'
+      +'<td class="mgrp" title="'+(sp.nav?('media de '+sp.nav+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.av)+'</span><span class="mg-sub">rep. '+(rep?fmtD(rep):'—')+'</span></td>'
+      +'<td class="mgrp" title="'+(sp.nab?('media de '+sp.nab+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.ab)+'</span><span class="mg-sub">agot. '+(out?fmtD(out):'—')+'</span></td>'+'</tr>';
   }).join('');
-  return '<div class="card" style="overflow:auto"><table class="mtable"><thead><tr><th>Producto</th><th>Disponibilidad</th><th>Últ. reposición</th><th>Últ. agotamiento</th><th class="mprice">Precio</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-    +'<div class="note">Las fechas provienen del registro (últimos 6 meses); «—» significa que no hay eventos registrados en ese periodo. «Comprar» abre el producto en shop.app.</div>';
+  return '<div class="card" style="overflow:auto"><table class="mtable"><thead><tr><th>Producto</th><th class="mav">Estado</th><th class="mprice">Precio</th><th></th><th title="Días medios disponible; debajo, la última reposición">Disp. media</th><th title="Días medios agotado; debajo, el último agotamiento">Ausencia media</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div class="note"><b>Estado</b>: icono verde = disponible, rojo = agotado. <b>Precio</b>: blanco = igual al promedio, verde = por debajo, rojo = por encima. <b>Disp. media</b> y <b>Ausencia media</b>: días medios (de reposición a agotamiento y viceversa); debajo, en gris, la fecha de la última reposición/agotamiento. Cálculos sobre el historial (últimos 6 meses); «—» = aún no hay datos. Iconos de compra: morado abre shop.app, azul abre store.sunlu.com.</div>';
 }
 function monAddHTML(){
   if(!hasData())return '';
@@ -418,7 +447,7 @@ function monAddHTML(){
 }
 function monBodyHTML(){
   return '<div id="monTable">'+monTableHTML()+'</div>'
-    +'<div class="sec-h">Añadir productos al monitor</div>'
+    +'<div class="sec-h">Añadir productos a Mi panel cromático</div>'
     +'<div class="toolrow"><input class="inp" placeholder="Palabras clave del producto a añadir…" value="'+esc(MQ)+'" oninput="setMQ(this.value)"></div>'
     +'<div id="monAdd">'+monAddHTML()+'</div>';
 }
@@ -542,5 +571,41 @@ function fireOfficial(){
 })();
 </script>
 <script>if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)document.body.classList.add('side-off');</script>
+<script>
+/* Ayuda contextual de la app (icono ? en el banner superior) */
+(function(){
+  if(window.DPHelp) return;
+  var C={"title": "3DStock", "accent": "#22D3EE", "tagline": "Vigilancia de stock de filamentos Sunlu", "sections": [{"h": "Qué es", "p": "Vigila el stock de filamentos Sunlu con envío a Europa: registro de reposiciones, agotamientos y precios, capturado cada 6 horas, con avisos por filamento."}, {"h": "Pestañas", "defs": [["Catálogo", "Todos los filamentos por categorías plegables."], ["Registro", "Historial de cambios (nuevo, repuesto, agotado, precio)."], ["Mi panel cromático", "Los que vigilas, con tiempos medios de disponibilidad y ausencia."], ["Avisos", "Novedades de tus filamentos vigilados."]]}, {"h": "Primeros pasos", "steps": ["En el Catálogo, marca con ★ los filamentos a vigilar.", "Revisa «Mi panel cromático» para disponibilidad y tiempos.", "Consulta «Avisos» para las novedades.", "Pulsa «Comprar» para abrir el producto en shop.app."]}, {"h": "Funciones clave", "defs": [["Buscador", "Filtra por palabras del título (texto en amarillo)."], ["Precio promedio", "Media histórica frente al precio actual."], ["Sondeo en vivo", "Consulta el estado ahora mismo."]]}, {"h": "Nota", "p": "Los datos se capturan cada 6 horas mediante una tarea automática."}]};
+  var CSS=".dph-veil{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(6,8,15,.66);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}.dph-veil.open{display:flex}.dph-modal{width:min(660px,96vw);max-height:88vh;overflow:auto;background:#12141d;color:#e7eaf2;border:1px solid rgba(255,255,255,.1);border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.6);font-family:'Outfit',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.55}[data-theme=light] .dph-modal{background:#fff;color:#1b1e27;border-color:rgba(0,0,0,.1)}.dph-hd{position:sticky;top:0;display:flex;align-items:center;gap:11px;padding:15px 18px;background:inherit;border-bottom:1px solid rgba(255,255,255,.09);border-radius:16px 16px 0 0}[data-theme=light] .dph-hd{border-color:rgba(0,0,0,.09)}.dph-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}.dph-ti{font-weight:700;font-size:16px}.dph-tg{font-size:12px;opacity:.7}.dph-x{margin-left:auto;border:none;background:transparent;color:inherit;opacity:.55;font-size:22px;cursor:pointer;line-height:1;padding:0 4px}.dph-x:hover{opacity:1}.dph-bd{padding:4px 18px 20px}.dph-sec{margin-top:15px}.dph-h{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.6;margin-bottom:5px}.dph-p{margin:0 0 3px}.dph-bd ul,.dph-bd ol{margin:4px 0 0;padding-left:20px}.dph-bd li{margin:3px 0}.dph-def{display:flex;gap:10px;margin:5px 0}.dph-def b{flex-shrink:0;min-width:130px}";
+  var HDIC="<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9.3\"/><path d=\"M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4\"/><circle cx=\"12\" cy=\"17.3\" r=\".6\" fill=\"currentColor\"/></svg>";
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function render(){
+    var h='<div class="dph-modal" role="dialog" aria-modal="true" aria-label="Ayuda">';
+    h+='<div class="dph-hd"><span class="dph-ic" style="background:'+(C.accent||'#5b8cff')+'">'+HDIC+'</span><div><div class="dph-ti">'+esc(C.title)+'</div><div class="dph-tg">'+esc(C.tagline||'')+'</div></div><button class="dph-x" aria-label="Cerrar" title="Cerrar">&times;</button></div>';
+    h+='<div class="dph-bd">';
+    (C.sections||[]).forEach(function(s){
+      h+='<div class="dph-sec"><div class="dph-h">'+esc(s.h)+'</div>';
+      if(s.p) h+='<p class="dph-p">'+esc(s.p)+'</p>';
+      if(s.steps){ h+='<ol>'; s.steps.forEach(function(x){ h+='<li>'+esc(x)+'</li>'; }); h+='</ol>'; }
+      if(s.list){ h+='<ul>'; s.list.forEach(function(x){ h+='<li>'+esc(x)+'</li>'; }); h+='</ul>'; }
+      if(s.defs){ s.defs.forEach(function(d){ h+='<div class="dph-def"><b>'+esc(d[0])+'</b><span>'+esc(d[1])+'</span></div>'; }); }
+      h+='</div>';
+    });
+    h+='</div></div>';
+    return h;
+  }
+  var veil=null;
+  function ensure(){ if(veil) return;
+    var st=document.createElement('style'); st.textContent=CSS; document.head.appendChild(st);
+    veil=document.createElement('div'); veil.className='dph-veil';
+    veil.addEventListener('click',function(e){ if(e.target===veil) close(); });
+    document.body.appendChild(veil);
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  }
+  function open(){ ensure(); veil.innerHTML=render(); var x=veil.querySelector('.dph-x'); if(x)x.addEventListener('click',close); veil.classList.add('open'); }
+  function close(){ if(veil) veil.classList.remove('open'); }
+  window.DPHelp={ open:open, close:close };
+})();
+</script>
 </body>
 </html>

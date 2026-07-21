@@ -119,8 +119,6 @@ function renderTable(orders) {
 // ── Actualizar stats ──────────────────────────
 function updateStats(orders) {
   document.getElementById('stat-total').textContent    = orders.length;
-  document.getElementById('topbar-subtitle').textContent =
-    `${orders.length} pedido${orders.length !== 1 ? 's' : ''} en total`;
 
   // Nota: sin datos de steps detallados en listado, stats básicos
   document.getElementById('stat-done').textContent     = '—';

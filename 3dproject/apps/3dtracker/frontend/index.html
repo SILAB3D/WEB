@@ -82,12 +82,12 @@ h1 .grad{background:linear-gradient(120deg,var(--green),var(--green2));-webkit-b
   <div class="card">
     <label for="code">Código de seguimiento</label>
     <div class="rowf">
-      <input id="code" type="text" placeholder="3DP-XXXXXXXXXXXX" autocomplete="off" spellcheck="false">
+      <input id="code" type="text" placeholder="3DP-XXXXXX" autocomplete="off" spellcheck="false">
       <button class="go" onclick="buscar()">Buscar
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
     </div>
-    <p class="hint">Tiene el formato <code>3DP-XXXXXXXXXXXX</code>. Lo encuentras en el correo o enlace que te enviamos.</p>
+    <p class="hint">Tiene el formato <code>3DP-XXXXXX</code>. Lo encuentras en el correo o enlace que te enviamos.</p>
   </div>
   <div class="feats">
     <div class="feat"><div class="fi">⚡</div><h3>En directo</h3><p>El estado se actualiza solo, sin recargar.</p></div>
@@ -108,7 +108,7 @@ input.addEventListener('input',function(){var p=input.selectionStart;input.value
 input.addEventListener('keydown',function(e){if(e.key==='Enter')buscar();});
 function buscar(){
   var code=(input.value||'').trim().toUpperCase();
-  if(!/^3DP-[A-Z0-9]{6,}$/.test(code)){input.classList.add('err');setTimeout(function(){input.classList.remove('err');},400);input.focus();return;}
+  if(!/^3DP-[A-Z0-9]{5,}$/.test(code)){input.classList.add('err');setTimeout(function(){input.classList.remove('err');},400);input.focus();return;}
   window.location.href='track.html?code='+encodeURIComponent(code);
 }
 input.focus();

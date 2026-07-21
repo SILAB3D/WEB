@@ -36,7 +36,7 @@ const ready = new Promise((resolve) => {
 function genCode() {
   const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let s = "";
-  for (let i = 0; i < 12; i++) s += A[Math.floor(Math.random() * A.length)];
+  for (let i = 0; i < 6; i++) s += A[Math.floor(Math.random() * A.length)];
   return "3DP-" + s;
 }
 function ts(v) {
