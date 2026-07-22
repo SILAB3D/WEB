@@ -216,19 +216,7 @@
     }
 }
 
-/* Hide the page scrollbar while preserving scroll behavior. Internal component scrollbars remain visible. */
-html,
-body {
-    -ms-overflow-style: none;
-    scrollbar-width: none !important;
-}
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0 !important;
-    display: none !important;
-}
+/* (Eliminado) La barra de scroll de la página vuelve a mostrarse fina y uniforme en todo el sitio. */
 /* ============================================
    SILAB 3D - SISTEMA DE DISE├æO UNIFICADO
    ============================================ */

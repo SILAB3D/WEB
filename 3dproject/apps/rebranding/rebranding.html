@@ -149,8 +149,8 @@
 
   /* pasos del asistente */
   .step{display:none}
-  .step.act{display:block;animation:stepin .22s ease}
-  @keyframes stepin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .step.act{display:block;animation:stepin .2s ease;backface-visibility:hidden}
+  @keyframes stepin{from{opacity:0}to{opacity:1}}
   #wiznav{display:flex;align-items:center;gap:14px;margin:22px 0 8px}
   #wiznav button{flex:1;max-width:200px}
   #wiznav button:disabled{opacity:.3}

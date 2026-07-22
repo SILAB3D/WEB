@@ -418,6 +418,13 @@ tbody tr:hover { background: var(--bg-card-hover); }
 .step-info .date { font-size: 0.73rem; color: var(--text-muted); margin-top: 0.1rem; }
 
 .drag-handle { color: var(--text-muted); cursor: grab; font-size: 0.9rem; }
+.step-move{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.step-move .mv{width:22px;height:16px;border:1px solid var(--border);background:none;color:var(--text-muted);border-radius:5px;cursor:pointer;font-size:9px;padding:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.step-move .mv:hover:not(:disabled){color:var(--accent-1);border-color:var(--accent-1);background:rgba(52,211,153,.12)}
+.step-move .mv:disabled{opacity:.3;cursor:default}
+.step-act{background:none;border:1px solid transparent;border-radius:7px;cursor:pointer;font-size:0.9rem;padding:0.25rem 0.4rem;flex-shrink:0;opacity:.7;transition:opacity .15s,background .15s}
+.step-act:hover{opacity:1;background:rgba(255,255,255,.05)}
+.step-rename-input{width:100%;font-size:0.875rem;font-weight:500;background:rgba(255,255,255,.06);border:1px solid var(--accent-1);border-radius:6px;color:inherit;padding:2px 6px;outline:none;font-family:inherit}
 
 /* ── Add Step Form ── */
 .add-step-form { display: flex; flex-direction: column; gap: 0.75rem; }

@@ -45,7 +45,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: var(--primary-light) #f5f5f5; }
     body {
       font-family: 'Outfit', sans-serif;
       color: var(--dark);
@@ -1007,6 +1007,7 @@
 }
   </style>
   <link rel="stylesheet" href="../css/enhancements.css">
+<style>/* Logo centrado en el viewport a cualquier ancho */ .navbar-center{position:absolute;left:50%;transform:translateX(-50%)}</style>
 </head>
 <body class="page-configura-tu-proyecto">
 

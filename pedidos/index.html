@@ -24,7 +24,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root{--primary:#BC556D;--primary-dark:#B7516B;--primary-light:#F2D6DC;--dark:#2F2F2F;--darker:#1A1A1A;--white:#FFFFFF;--gray-text:#6B7280;--radius:18px;--nav-h:72px}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:'Outfit',sans-serif;color:var(--dark);background:var(--white);line-height:1.6;overflow-x:hidden}img{max-width:100%;height:auto;display:block}a{text-decoration:none;color:inherit}ul{list-style:none}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:var(--primary-light) #f5f5f5}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:#f5f5f5}::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--primary)}body{font-family:'Outfit',sans-serif;color:var(--dark);background:var(--white);line-height:1.6;overflow-x:hidden}img{max-width:100%;height:auto;display:block}a{text-decoration:none;color:inherit}ul{list-style:none}
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}@keyframes fadeInLeft{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:translateX(0)}}@keyframes fadeInRight{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:translateX(0)}}@keyframes fadeInUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}@keyframes spin-slow{to{transform:rotate(360deg)}}@keyframes badge-pulse{0%,100%{box-shadow:0 0 0 0 rgba(188,85,109,.4)}50%{box-shadow:0 0 0 8px rgba(188,85,109,0)}}
     .container{max-width:1180px;margin:0 auto;padding:0 28px}.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}.reveal.visible{opacity:1;transform:translateY(0)}
     
@@ -366,6 +367,7 @@
   </style>
   <link rel="stylesheet" href="../css/enhancements.css">
   <script type="module" src="../3dproject/firebase/dpcloud.js"></script>
+<style>/* Logo centrado en el viewport a cualquier ancho */ .navbar-center{position:absolute;left:50%;transform:translateX(-50%)}</style>
 </head>
 <body>
   <nav class="navbar" id="navbar">
@@ -378,7 +380,6 @@
         <li><a href="/productos/">Productos</a></li>
         <li><a href="/materiales/">Materiales</a></li>
         <li><a href="/valoraciones/">Valoraciones</a></li>
-        <li><a href="/pedidos/" class="active">Pedidos</a></li>
       </ul>
     </div>
     <aside class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menú de navegación" aria-hidden="true">
@@ -451,7 +452,7 @@
       <div id="trackLoading" class="track-state" style="display:none"><div class="track-spin"></div><p style="margin:0">Cargando tu pedido…</p></div>
       <div id="trackError" class="track-state" style="display:none"><div class="track-state-ic">🔍</div><h3 id="trackErrTitle">Pedido no encontrado</h3><p id="trackErrMsg"></p><button class="btn-secondary" type="button" onclick="resetTrack()">Buscar otro código</button></div>
       <div id="trackResult" class="track-result" style="display:none"></div>
-      <p class="portal-note">¿Aún no tienes código? Lo recibes al confirmar tu pedido. Si lo necesitas, escríbenos por WhatsApp al <strong>+34 644 07 04 87</strong>.</p>
+      <p class="portal-note">¿Aún no tienes código? Lo recibes al confirmar tu pedido. Si lo necesitas, escríbenos por WhatsApp al <strong style="white-space:nowrap">+34 644 07 04 87</strong>.</p>
     </div>
   </section>
   <footer class="footer">
@@ -527,6 +528,7 @@
         var code=(input.value||'').trim().toUpperCase();
         if(!/^3DP-[A-Z0-9]{6,}$/.test(code)){input.classList.add('err');setTimeout(function(){input.classList.remove('err');},400);input.focus();return;}
         setView('loading');
+        try{ var _tz=document.getElementById('trackLoading'); if(_tz) _tz.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
         var waited=0;
         (function go(){ if(window.DPCloud){ fetchOnce(code,true); if(timer)clearInterval(timer); timer=setInterval(function(){fetchOnce(code,false);},5000); } else if(waited<10000){waited+=200;setTimeout(go,200);} else { document.getElementById('trackErrTitle').textContent='Sin conexión'; document.getElementById('trackErrMsg').textContent='No se ha podido cargar el servicio de seguimiento.'; setView('error'); } })();
       };

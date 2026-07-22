@@ -64,49 +64,78 @@ function formatDate(iso) {
 }
 
 // ── Renderizar lista de pasos ─────────────────
+let stepsCache = [];
 function renderSteps(steps) {
   const container = document.getElementById('steps-list');
-
   if (!steps || steps.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">📝</div>
-        <p>No hay etapas todavía.<br>Añade la primera etapa del proyecto.</p>
-      </div>`;
+    stepsCache = [];
+    container.innerHTML = `<div class="empty-state"><div class="icon">📝</div><p>No hay etapas todavía.<br>Añade la primera etapa del proyecto.</p></div>`;
     return;
   }
-
   const sorted = [...steps].sort((a, b) => a.order_index - b.order_index);
-
-  container.innerHTML = sorted.map(step => {
+  stepsCache = sorted;
+  container.innerHTML = sorted.map((step, i) => {
     const isDone = step.status === 'done';
     return `
       <div class="step-row" id="step-row-${step.id}">
-        <button
-          class="step-checkbox ${isDone ? 'done' : ''}"
-          id="check-${step.id}"
-          title="${isDone ? 'Marcar como pendiente' : 'Marcar como completado'}"
-          onclick="toggleStep('${step.id}', '${isDone ? 'pending' : 'done'}')"
-        >
-          ${isDone ? '✓' : ''}
-        </button>
-        <div class="step-info">
-          <div class="name ${isDone ? 'done' : ''}">${escapeHtml(step.step_name)}</div>
-          ${isDone && step.updated_at
-            ? `<div class="date">Completado: ${formatDate(step.updated_at)}</div>`
-            : `<div class="date">Pendiente · Posición ${step.order_index}</div>`
-          }
+        <div class="step-move">
+          <button class="mv" title="Subir" aria-label="Subir etapa" ${i===0?'disabled':''} onclick="moveStep('${step.id}',-1)">&#9650;</button>
+          <button class="mv" title="Bajar" aria-label="Bajar etapa" ${i===sorted.length-1?'disabled':''} onclick="moveStep('${step.id}',1)">&#9660;</button>
         </div>
-        <button 
-          class="btn btn-ghost btn-sm" 
-          style="color: var(--error); padding: 0.25rem 0.5rem; border-color: transparent;" 
-          title="Eliminar etapa" 
-          onclick="deleteStep('${step.id}')"
-        >
-          🗑️
-        </button>
+        <button class="step-checkbox ${isDone ? 'done' : ''}" title="${isDone ? 'Marcar como pendiente' : 'Marcar como completado'}" aria-label="${isDone ? 'Marcar pendiente' : 'Marcar completado'}" onclick="toggleStep('${step.id}', '${isDone ? 'pending' : 'done'}')">${isDone ? '✓' : ''}</button>
+        <div class="step-info">
+          <div class="name ${isDone ? 'done' : ''}" title="Doble clic para renombrar" ondblclick="startRename('${step.id}')">${escapeHtml(step.step_name)}</div>
+          <div class="date">${isDone && step.updated_at ? 'Completado: ' + formatDate(step.updated_at) : 'Pendiente · Etapa ' + (i + 1)}</div>
+        </div>
+        <button class="step-act" title="Renombrar etapa" aria-label="Renombrar etapa" onclick="startRename('${step.id}')">✏️</button>
+        <button class="step-act danger" title="Eliminar etapa" aria-label="Eliminar etapa" onclick="deleteStep('${step.id}')">🗑️</button>
       </div>`;
   }).join('');
+}
+async function moveStep(id, dir) {
+  const arr = stepsCache.slice();
+  const i = arr.findIndex(s => s.id === id);
+  if (i < 0) return;
+  const j = i + Number(dir);
+  if (j < 0 || j >= arr.length) return;
+  const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  try {
+    for (let k = 0; k < arr.length; k++) {
+      if (arr[k].order_index !== k) await window.DPCloud.updateStep(orderId, arr[k].id, { order_index: k });
+    }
+    await loadOrderDetail();
+  } catch (e) { showToast('No se pudo reordenar la etapa.', 'error'); }
+}
+function startRename(id) {
+  const row = document.getElementById('step-row-' + id);
+  if (!row) return;
+  const nameEl = row.querySelector('.name');
+  if (!nameEl || nameEl.querySelector('input')) return;
+  const cur = nameEl.textContent;
+  nameEl.innerHTML = '';
+  const inp = document.createElement('input');
+  inp.className = 'step-rename-input';
+  inp.value = cur;
+  nameEl.appendChild(inp);
+  inp.focus(); inp.select();
+  let done = false;
+  const save = () => {
+    if (done) return; done = true;
+    const v = inp.value.trim();
+    if (v && v !== cur) commitRename(id, v); else loadOrderDetail();
+  };
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+    else if (e.key === 'Escape') { done = true; loadOrderDetail(); }
+  });
+  inp.addEventListener('blur', save);
+}
+async function commitRename(id, name) {
+  try {
+    await window.DPCloud.updateStep(orderId, id, { step_name: name });
+    showToast('Etapa renombrada.', 'success');
+    await loadOrderDetail();
+  } catch (e) { showToast('No se pudo renombrar la etapa.', 'error'); await loadOrderDetail(); }
 }
 
 // ── Renderizar detalle completo ───────────────
@@ -141,7 +170,7 @@ function renderOrder(order) {
   document.getElementById('progress-bar').style.width     = `${pct}%`;
 
   // Tracking URL dinámica (local o producción)
-  const trackUrl = '../frontend/track.html?code=' + order.order_code;
+  const trackUrl = 'https://silab3d.com/pedidos/?code=' + encodeURIComponent(order.order_code);
   document.getElementById('tracking-url').textContent = trackUrl;
 
   // Steps list
@@ -223,7 +252,6 @@ function closeAddStepModal() {
 
 async function addStep() {
   const name  = document.getElementById('step-name-input').value.trim();
-  const index = parseInt(document.getElementById('step-index-input').value, 10);
 
   if (!name) {
     document.getElementById('step-name-input').focus();
@@ -232,7 +260,8 @@ async function addStep() {
   }
 
   try {
-    await window.DPCloud.addStep(orderId, { step_name: name, order_index: isNaN(index) ? 0 : index });
+    const idx = stepsCache.length ? Math.max.apply(null, stepsCache.map(function(s){return s.order_index||0;})) + 1 : 0;
+    await window.DPCloud.addStep(orderId, { step_name: name, order_index: idx });
     closeAddStepModal();
     showToast(`Etapa "${name}" añadida.`, 'success');
     await loadOrderDetail();
@@ -361,6 +390,9 @@ window.openAddStepModal = openAddStepModal;
 window.closeAddStepModal = closeAddStepModal;
 window.addStep          = addStep;
 window.deleteStep       = deleteStep;
+window.moveStep         = moveStep;
+window.startRename      = startRename;
+window.commitRename     = commitRename;
 window.openPresetsModal = openPresetsModal;
 window.closePresetsModal= closePresetsModal;
 window.savePreset       = savePreset;

@@ -82,6 +82,9 @@ async function addStep(code, { step_name, order_index }) {
 async function setStepStatus(code, stepId, status) {
   await updateDoc(doc(db, "orders", code, "steps", stepId), { status, updated_at: serverTimestamp() });
 }
+async function updateStep(code, stepId, fields) {
+  await updateDoc(doc(db, "orders", code, "steps", stepId), { ...fields, updated_at: serverTimestamp() });
+}
 async function deleteStep(code, stepId) {
   await deleteDoc(doc(db, "orders", code, "steps", stepId));
 }
@@ -166,7 +169,7 @@ window.DPCloud = {
   onAuth: (cb) => onAuthStateChanged(auth, cb),
   currentUser: () => auth.currentUser,
   listOrders, createOrder, getOrderById, getOrderByCode,
-  addStep, setStepStatus, deleteStep, deleteOrder,
+  addStep, setStepStatus, updateStep, deleteStep, deleteOrder,
   listFeedback, addFeedback, updateFeedback, deleteFeedback,
   loadState, saveState, watchState, watchOrders, watchFeedback, watchOrderByCode,
   listPresets, createPreset, deletePreset

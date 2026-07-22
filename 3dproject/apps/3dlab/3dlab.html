@@ -394,11 +394,11 @@ function savePreset(){ var t=curTest(); if(!t)return; if(!t.params.length){ aler
 function applyPreset(id){ var t=curTest(); if(!t)return; var pr=(S.paramPresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if(t.params.length && !confirm('Se reemplazarán los parámetros definidos del test por el preset "'+pr.name+'". ¿Continuar?'))return; t.params=pr.params.map(function(pp){return {id:uid(),name:pp.name,val:pp.val};}); presetOpen=false; save(); renderMain(); }
 function delPreset(id){ if(!Array.isArray(S.paramPresets))return; var pr=S.paramPresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('¿Eliminar el preset "'+pr.name+'"?'))return; S.paramPresets=S.paramPresets.filter(function(x){return x.id!==id;}); save(); renderMain(); }
 function addParam(){ var t=curTest(); if(!t)return; t.params.push({id:uid(),name:'Parámetro '+(t.params.length+1),val:''}); save(); renderMain(); }
-function setParamName(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.name=v;save();renderMain();} }
+function setParamName(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.name=v;save();} }
 function setParamVal(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.val=v;save();} }
 function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(function(x){return x.id!==id;}); save(); renderMain(); }
 function addCol(eid){ var est=findEst(curTest(),eid); if(!est)return; if(!Array.isArray(est.cols))est.cols=[]; var c={id:uid(),name:'Parámetro '+(est.cols.length+1)}; est.cols.push(c); (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(pr){ if(pr.vals[c.id]==null)pr.vals[c.id]=''; }); }); save(); renderMain(); }
-function setColName(eid,cid,v){ var est=findEst(curTest(),eid); if(!est)return; var c=(est.cols||[]).filter(function(x){return x.id===cid;})[0]; if(c){c.name=v;save();renderMain();} }
+function setColName(eid,cid,v){ var est=findEst(curTest(),eid); if(!est)return; var c=(est.cols||[]).filter(function(x){return x.id===cid;})[0]; if(c){c.name=v;save();} }
 function delCol(eid,cid){ var est=findEst(curTest(),eid); if(!est)return; est.cols=(est.cols||[]).filter(function(x){return x.id!==cid;}); (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(pr){ delete pr.vals[cid]; }); }); save(); renderMain(); }
 function setTestDesc(v){ var t=curTest(); if(!t)return; t.desc=v; save(); }
 function growLD(el){ try{ el.style.height='auto'; el.style.height=(el.scrollHeight)+'px'; }catch(e){} }
@@ -416,7 +416,7 @@ function setImpName(eid,iid,v){ var imp=findImp(findEst(curTest(),eid),iid); if(
 function addPrint(eid,iid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; if(!Array.isArray(imp.prints))imp.prints=[]; imp.prints.push(newPrint(est)); save(); renderMain(); }
 function delPrint(eid,iid,pid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; imp.prints=(imp.prints||[]).filter(function(x){return x.id!==pid;}); if(!imp.prints.length)est.imps=est.imps.filter(function(x){return x.id!==iid;}); save(); renderMain(); }
 function setPrintIdent(eid,iid,pid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.ident=v;save();} }
-function setPrintVal(eid,iid,pid,cid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.vals[cid]=v;save();renderMain();} }
+function setPrintVal(eid,iid,pid,cid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.vals[cid]=v;save();refreshCondHighlights();} }
 function setPrintComment(eid,iid,pid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.comment=v;save();} }
 
 function varyMap(est){
@@ -522,7 +522,36 @@ function toggleCondExpand(eid){ condExpanded=(condExpanded===eid?null:eid); rend
 var condGrids={};
 function applyCellRaw(eid,r,c,val){ var g=condGrids[eid]; if(!g)return; var row=g.rows[r], col=g.cols[c]; if(!row||!col)return; var est=findEst(curTest(),eid); if(!est)return; var imp=findImp(est,row.iid); if(!imp)return; var pr=findPrint(imp,row.pid); if(!pr)return; if(col.field==='ident')pr.ident=val; else if(col.field==='comment')pr.comment=val; else if(col.field==='param'){ if(!pr.vals||typeof pr.vals!=='object')pr.vals={}; pr.vals[col.cid]=val; } }
 function condPaste(ev,eid,r,c){ var cd=ev.clipboardData||window.clipboardData; if(!cd)return; var txt=cd.getData('text'); if(txt==null)txt=''; ev.preventDefault(); var rows=txt.replace(/\r/g,'').split('\n'); if(rows.length>1 && rows[rows.length-1]==='')rows.pop(); for(var i=0;i<rows.length;i++){ var cells=rows[i].split('\t'); for(var j=0;j<cells.length;j++){ applyCellRaw(eid,r+i,c+j,cells[j]); } } save(); renderMain(); }
-function condKey(ev){ if((ev.ctrlKey||ev.metaKey) && (ev.key==='c'||ev.key==='C'||ev.key==='x'||ev.key==='X')){ var el=ev.target; if(el&&el.selectionStart===el.selectionEnd){ try{ el.select(); }catch(e){} } } }
+function condKey(ev){
+  if((ev.ctrlKey||ev.metaKey) && (ev.key==='c'||ev.key==='C'||ev.key==='x'||ev.key==='X')){ var el0=ev.target; if(el0&&el0.selectionStart===el0.selectionEnd){ try{ el0.select(); }catch(e){} } return; }
+  if(ev.key==='Enter'){ ev.preventDefault(); condMove(ev.target, ev.shiftKey?-1:1, 0); return; }
+  if(ev.key==='Tab'){ ev.preventDefault(); condMove(ev.target, 0, ev.shiftKey?-1:1); return; }
+}
+function condMove(el, dr, dc){
+  if(!el||!el.getAttribute||!el.closest)return;
+  var table=el.closest('table'); if(!table)return;
+  var r=parseInt(el.getAttribute('data-r'),10), c=parseInt(el.getAttribute('data-c'),10);
+  if(isNaN(r)||isNaN(c))return;
+  var t=table.querySelector('input[data-r="'+(r+dr)+'"][data-c="'+(c+dc)+'"]');
+  if(!t && dc>0) t=table.querySelector('input[data-r="'+(r+1)+'"][data-c="0"]');
+  if(!t && dc<0){ var prev=[].slice.call(table.querySelectorAll('input[data-r="'+(r-1)+'"]')); if(prev.length) t=prev.reduce(function(a,b){ return parseInt(b.getAttribute('data-c'),10)>parseInt(a.getAttribute('data-c'),10)?b:a; }); }
+  if(t){ t.focus(); try{ t.select(); }catch(e){} }
+}
+function refreshCondHighlights(){
+  var _t=curTest(); if(!_t)return;
+  [].forEach.call(document.querySelectorAll('table.ctable[data-eid]'), function(table){
+    var eid=table.getAttribute('data-eid'); var est=findEst(_t,eid); if(!est)return;
+    var map=varyMap(est); var g=condGrids[eid]; if(!g)return;
+    [].forEach.call(table.querySelectorAll('tbody input[data-r][data-c]'), function(inp){
+      var R=parseInt(inp.getAttribute('data-r'),10), C=parseInt(inp.getAttribute('data-c'),10);
+      var col=g.cols[C], row=g.rows[R]; if(!col||col.field!=='param'||!row)return;
+      var hl=map[row.iid]&&map[row.iid][col.cid]; var td=inp.parentNode; if(td) td.classList.toggle('cv', !!hl);
+    });
+    var phs=table.querySelectorAll('thead th.ph');
+    (est.cols||[]).forEach(function(pa,i){ if(phs[i]) phs[i].classList.toggle('vh', paramVariesAny(est,map,pa.id)); });
+  });
+}
+document.addEventListener('focusin', function(e){ var el=e.target; if(el&&el.tagName==='INPUT'&&el.hasAttribute('data-r')&&el.closest&&el.closest('.ctable')){ requestAnimationFrame(function(){ if(document.activeElement===el){ try{ el.select(); }catch(_){} } }); } });
 function condTableHTML(est,map){
   var eid=est.id;
   var g={rows:[],cols:[{field:'ident'}]};
@@ -530,7 +559,7 @@ function condTableHTML(est,map){
   g.cols.push({field:'comment'});
   condGrids[eid]=g;
   var K=(est.cols||[]).length;
-  var h='<table class="ctable"><thead><tr><th>Impresión</th><th>Identificador</th><th class="rh">Resultado</th>';
+  var h='<table class="ctable" data-eid="'+eid+'"><thead><tr><th>Impresión</th><th>Identificador</th><th class="rh">Resultado</th>';
   (est.cols||[]).forEach(function(pa){ var vv=paramVariesAny(est,map,pa.id); h+='<th class="ph'+(vv?' vh':'')+'"><div class="ph-row"><input class="phn" value="'+escAttr(pa.name)+'" onchange="setColName(\''+eid+'\',\''+pa.id+'\',this.value)" title="Nombre del parámetro"><button class="thdel" title="Eliminar parámetro" onclick="delCol(\''+eid+'\',\''+pa.id+'\')">&times;</button></div></th>'; });
   h+='<th class="cmh">Comentario</th><th></th></tr></thead><tbody>';
   var R=-1; var imps=est.imps||[];
