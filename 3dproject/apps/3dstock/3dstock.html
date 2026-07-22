@@ -296,7 +296,7 @@ function render(){ if(!loaded)return; aviBadge();
   if(view==='cat'){ h='<div class="h1">Catálogo EU</div><div class="h-sub">Filamentos de Sunlu con envío a Europa. Marca ★ en cualquier fila para recibir sus cambios en Avisos.</div>'; }
   else if(view==='mon'){ h='<div class="h1">Mi panel cromático</div><div class="h-sub">Tus filamentos vigilados: disponibilidad, última reposición y agotamiento, tiempos medios de disponibilidad y ausencia, precio y enlace de compra.</div>'; }
   else if(view==='log'){ h='<div class="h1">Registro de cambios</div><div class="h-sub">Todos los cambios de los últimos 6 meses: reposiciones, agotamientos, precios, altas y retiradas.</div>'; }
-  else { h='<div class="h1">Avisos</div><div class="h-sub">Cambios en tus filamentos vigilados y configuración de qué vigilar.</div>'; }
+  else { h='<div class="h1">Avisos</div><div class="h-sub">Cambios recibidos en tus filamentos vigilados.</div>'; }
   h+='<div id="vbody"></div>';
   document.getElementById('view').innerHTML=h;
   renderBody();
@@ -339,20 +339,17 @@ function catListHTML(){
   if(!hasData())return noData();
   var list=filteredVariants(Q);
   if(!list.length)return '<div class="card"><div class="empty">Sin resultados.</div></div>';
-  if(!SOND){ return '<div class="card">'+list.slice().sort(byName).map(function(v){return prodRow(v,true);}).join('')+'</div>'; }
+  if(!SOND){ return mtableHTML(list.slice().sort(byName)); }
   var groups={};
   list.forEach(function(v){ var c=catOf(v); (groups[c]=groups[c]||[]).push(v); });
   var last=['Resinas (no FDM)','Packs y cajas','Otros'];
   var names=Object.keys(groups).sort(function(a,b){ var la=last.indexOf(a),lb=last.indexOf(b); if(la>=0||lb>=0)return (la<0?-1:la)-(lb<0?-1:lb)||a.localeCompare(b,'es'); return a.localeCompare(b,'es'); });
   var h='';
   names.forEach(function(cn){
-    var arr=groups[cn]; var av=arr.filter(function(v){return v.av;}).sort(byName); var no=arr.filter(function(v){return !v.av;}).sort(byName);
+    var arr=groups[cn]; var av=arr.filter(function(v){return v.av;}).length; var no=arr.length-av;
     var open=!!catOpen[cn]||(Q.trim()!=='');
-    h+='<div class="cat-h cat-toggle'+(open?' open':'')+'" onclick="toggleCat(\''+jsq(cn)+'\')"><span class="cat-car">\u25B8</span>'+esc(cn)+' <span class="cat-n"><b style="color:#34D399">'+av.length+' disponible'+(av.length===1?'':'s')+'</b>'+(ONLYAV?'':' \u00b7 <b style="color:#FF6B6B">'+no.length+' agotado'+(no.length===1?'':'s')+'</b>')+'</span></div>';
-    if(open){ h+='<div class="card" style="margin-bottom:4px">';
-      if(av.length)h+='<div class="sub-h ok">Disponibles ('+av.length+')</div>'+av.map(function(v){return prodRow(v,true);}).join('');
-      if(!ONLYAV&&no.length)h+='<div class="sub-h ko">Agotados ('+no.length+')</div>'+no.map(function(v){return prodRow(v,true);}).join('');
-      h+='</div>'; }
+    h+='<div class="cat-h cat-toggle'+(open?' open':'')+'" onclick="toggleCat(\''+jsq(cn)+'\')"><span class="cat-car">\u25B8</span>'+esc(cn)+' <span class="cat-n"><b style="color:#34D399">'+av+' disponible'+(av===1?'':'s')+'</b>'+(ONLYAV?'':' \u00b7 <b style="color:#FF6B6B">'+no+' agotado'+(no===1?'':'s')+'</b>')+'</span></div>';
+    if(open){ var sorted=arr.slice().sort(function(a,b){ return ((b.av?1:0)-(a.av?1:0))||byName(a,b); }); h+=mtableHTML(sorted); }
   });
   return h;
 }
@@ -396,19 +393,14 @@ function aviListHTML(){
   return '<div class="card">'+(vs.length?vs.map(function(v){return prodRow(v,true);}).join(''):'<div class="empty">Sin resultados.</div>')+'</div>';
 }
 function aviBodyHTML(){
-  var nW=Object.keys(S.watch).length;
-  return '<div id="aviTop">'+aviTopHTML()+'</div>'
-    +'<div class="sec-h">Configurar avisos</div>'
-    +'<div class="h-sub" style="margin-bottom:10px">Marca con ★ los filamentos que quieres vigilar ('+nW+' vigilado'+(nW===1?'':'s')+').</div>'
-    +'<div class="toolrow"><input class="inp" placeholder="Palabras clave para configurar…" value="'+esc(AQ)+'" oninput="setAQ(this.value)"></div>'
-    +'<div id="aviList">'+aviListHTML()+'</div>';
+  return '<div id="aviTop">'+aviTopHTML()+'</div>';
 }
 
 /* ===== monitor ===== */
 var MQ='';
 function setMQ(v){ MQ=v; var el=document.getElementById('monAdd'); if(el)el.innerHTML=monAddHTML(); }
 function lastEv(vid,type){ for(var i=0;i<CH.length;i++){ var c=CH[i]; if(String(c.vid)===String(vid)&&c.type===type)return c.ts; } return null; }
-function fmtDur(v){ if(v==null)return '—'; if(v<1)return Math.round(v*24)+' h'; return (Math.round(v*10)/10).toString().replace('.',',')+' d'; }
+function fmtDur(v){ if(v==null)return '—'; return (Math.round(v*10)/10).toString().replace('.',',')+' d'; }
 function spells(vid){ var evs=CH.filter(function(c){ return String(c.vid)===String(vid)&&(c.type==='repuesto'||c.type==='agotado'); }).slice().sort(function(a,b){ return (a.ts||0)-(b.ts||0); });
   var av=[],ab=[];
   for(var i=0;i<evs.length-1;i++){ var d=((evs[i+1].ts||0)-(evs[i].ts||0))/864e5; if(d<0)continue;
@@ -417,24 +409,27 @@ function spells(vid){ var evs=CH.filter(function(c){ return String(c.vid)===Stri
   function m(a){ if(!a.length)return null; var s=0; a.forEach(function(x){s+=x;}); return s/a.length; }
   return { av:m(av), ab:m(ab), nav:av.length, nab:ab.length }; }
 function shopLink(v){ return 'https://shop.app/products/'+v.pid+'?variantId='+v.vid; }
+function monRowHTML(v){
+  var rep=lastEv(v.vid,'repuesto'), out=lastEv(v.vid,'agotado'), sp=spells(v.vid);
+  var avgHtml=(v.avg&&Number(v.avg)>0)?('<span class="ravg">prom. '+eurF(v.avg)+'</span>'):'';
+  var _pr=parseFloat(v.price), _av=parseFloat(v.avg), pcls=(_av>0&&isFinite(_pr))?(_pr<_av-0.005?'p-lo':(_pr>_av+0.005?'p-hi':'p-eq')):'p-eq';
+  return '<tr><td class="mprod"><div class="rname">'+esc(v.vt)+'</div><div class="rsub">'+esc(v.ptitle)+'</div></td>'
+    +'<td class="mav">'+(v.av?'<span class="av-ic av-ok" title="Disponible"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>':'<span class="av-ic av-no" title="Agotado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>')+'</td>'
+    +'<td class="mprice"><span class="'+pcls+'">'+eurF(v.price)+'</span>'+avgHtml+'</td>'
+    +'<td class="macts"><a class="mbtn mbtn-shop" href="'+esc(shopLink(v))+'" target="_blank" rel="noopener" title="Comprar en shop.app"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></a>'
+    +'<a class="mbtn mbtn-sunlu" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M17 7H8M17 7v9"/></svg></a>'
+    +starBtn(v.vid)+'</td>'
+    +'<td class="mgrp" title="'+(sp.nav?('media de '+sp.nav+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.av)+'</span><span class="mg-sub">rep. '+(rep?fmtD(rep):'—')+'</span></td>'
+    +'<td class="mgrp" title="'+(sp.nab?('media de '+sp.nab+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.ab)+'</span><span class="mg-sub">agot. '+(out?fmtD(out):'—')+'</span></td>'+'</tr>';
+}
+function mtableHTML(list){
+  return '<div class="card" style="overflow:auto"><table class="mtable"><thead><tr><th>Producto</th><th class="mav">Estado</th><th class="mprice">Precio</th><th></th><th title="Días medios disponible; debajo, la última reposición">Disp. media</th><th title="Días medios agotado; debajo, el último agotamiento">Ausencia media</th></tr></thead><tbody>'+list.map(monRowHTML).join('')+'</tbody></table></div>';
+}
 function monTableHTML(){
   if(!hasData())return noData();
   var ws=allVariants().filter(function(v){return S.watch[v.vid];}).sort(byName);
   if(!ws.length)return '<div class="card"><div class="empty">Aún no monitorizas ningún producto.<br>Añádelos con la ★ desde el buscador de abajo o desde el Catálogo.</div></div>';
-  var rows=ws.map(function(v){
-    var rep=lastEv(v.vid,'repuesto'), out=lastEv(v.vid,'agotado'), sp=spells(v.vid);
-    var avgHtml=(v.avg&&Number(v.avg)>0)?('<span class="ravg">prom. '+eurF(v.avg)+'</span>'):'';
-    var _pr=parseFloat(v.price), _av=parseFloat(v.avg), pcls=(_av>0&&isFinite(_pr))?(_pr<_av-0.005?'p-lo':(_pr>_av+0.005?'p-hi':'p-eq')):'p-eq';
-    return '<tr><td class="mprod"><div class="rname">'+esc(v.vt)+'</div><div class="rsub">'+esc(v.ptitle)+'</div></td>'
-      +'<td class="mav">'+(v.av?'<span class="av-ic av-ok" title="Disponible"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>':'<span class="av-ic av-no" title="Agotado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>')+'</td>'
-      +'<td class="mprice"><span class="'+pcls+'">'+eurF(v.price)+'</span>'+avgHtml+'</td>'
-      +'<td class="macts"><a class="mbtn mbtn-shop" href="'+esc(shopLink(v))+'" target="_blank" rel="noopener" title="Comprar en shop.app"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></a>'
-      +'<a class="mbtn mbtn-sunlu" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M17 7H8M17 7v9"/></svg></a>'
-      +starBtn(v.vid)+'</td>'
-      +'<td class="mgrp" title="'+(sp.nav?('media de '+sp.nav+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.av)+'</span><span class="mg-sub">rep. '+(rep?fmtD(rep):'—')+'</span></td>'
-      +'<td class="mgrp" title="'+(sp.nab?('media de '+sp.nab+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.ab)+'</span><span class="mg-sub">agot. '+(out?fmtD(out):'—')+'</span></td>'+'</tr>';
-  }).join('');
-  return '<div class="card" style="overflow:auto"><table class="mtable"><thead><tr><th>Producto</th><th class="mav">Estado</th><th class="mprice">Precio</th><th></th><th title="Días medios disponible; debajo, la última reposición">Disp. media</th><th title="Días medios agotado; debajo, el último agotamiento">Ausencia media</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+  return mtableHTML(ws)
     +'<div class="note"><b>Estado</b>: icono verde = disponible, rojo = agotado. <b>Precio</b>: blanco = igual al promedio, verde = por debajo, rojo = por encima. <b>Disp. media</b> y <b>Ausencia media</b>: días medios (de reposición a agotamiento y viceversa); debajo, en gris, la fecha de la última reposición/agotamiento. Cálculos sobre el historial (últimos 6 meses); «—» = aún no hay datos. Iconos de compra: morado abre shop.app, azul abre store.sunlu.com.</div>';
 }
 function monAddHTML(){
