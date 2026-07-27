@@ -80,6 +80,8 @@ body.side-off .side{margin-left:-249px}
 .dn-row{display:flex;align-items:flex-start;gap:9px}
 .dn-chk{margin-top:3px;flex-shrink:0;accent-color:#F4B740;width:15px;height:15px;cursor:pointer}
 .dn-ta{flex:1;font-size:12px;color:#555;line-height:1.55;border:none;background:transparent;resize:none;outline:none;font-family:'Outfit',sans-serif;padding:0}
+.dn-antres{flex:1;font-size:12px;color:#555;line-height:1.55;align-self:center}
+.dn-off .dn-antres{color:#bbb;text-decoration:line-through}
 .dn-off .dn-ta{color:#bbb;text-decoration:line-through}
 .dn-head{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#999;margin-bottom:2px}
 .dh-num textarea{border:none;text-align:right;font-family:ui-monospace,monospace;font-size:12px;color:#666;background:transparent;width:100%;margin-top:4px}
@@ -328,8 +330,8 @@ function eur(n){ n=Number(n)||0; return n.toLocaleString('es-ES',{minimumFractio
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
 function preset(id){ return S.presets.filter(function(p){return p.id===id;})[0] || S.presets[0] || {company:'SILAB3D',slogan:'',logo:''}; }
 function cur(){ return S.receipts.filter(function(r){return r.id===S.cur;})[0] || null; }
-function lnUnits(l){ var u=l&&l.units; if(u===''||u==null)return 1; var n=Number(String(u).replace(',','.')); return isNaN(n)?1:n; }
-function lnAmount(l){ var a=Number(String((l&&l.amount!=null)?l.amount:'').replace(',','.')); return isNaN(a)?0:a; }
+function lnUnits(l){ var u=l&&l.units; if(u===''||u==null)return 1; var n=Number(String(u).replace(',','.').replace(/[^0-9.\-]/g,'')); return isNaN(n)?1:n; }
+function lnAmount(l){ var a=Number(String((l&&l.amount!=null)?l.amount:'').replace(',','.').replace(/[^0-9.\-]/g,'')); return isNaN(a)?0:a; }
 function lineImporte(l){ return lnAmount(l)*lnUnits(l); }
 function total(r){ var t=0; (r.lines||[]).forEach(function(l){ t+=lineImporte(l); }); return t; }
 function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -384,7 +386,7 @@ function renderBillDash(){
   main.innerHTML=h;
 }
 function upd(field,val){ var r=cur(); if(!r)return; if(field==='client.name')r.client.name=val; else if(field==='client.email')r.client.email=val; else if(field==='date')r.date=val; else if(field==='number')r.number=val; save(); renderSidebar(); }
-function updLine(i,field,val){ var r=cur(); if(!r||!r.lines[i])return; r.lines[i][field]=val; if(field==='amount'||field==='units'){ var ic=document.getElementById('imp-'+i); if(ic)ic.textContent=eur(lineImporte(r.lines[i])); var tv=document.getElementById('docTotal'); if(tv)tv.textContent=eur(total(r)); var _h=eur(total(r)*0.5); document.querySelectorAll('.dn-auto').forEach(function(el){ el.textContent=_h; }); renderSidebar(); } save(); }
+function updLine(i,field,val){ var r=cur(); if(!r||!r.lines[i])return; r.lines[i][field]=val; if(field==='amount'||field==='units'){ var ic=document.getElementById('imp-'+i); if(ic)ic.textContent=eur(lineImporte(r.lines[i])); var tv=document.getElementById('docTotal'); if(tv)tv.textContent=eur(total(r)); var _h=eur(total(r)*0.5); document.querySelectorAll('.dn-auto').forEach(function(el){ el.textContent=_h; }); document.querySelectorAll('.dn-antres').forEach(function(el){ el.textContent=antResText(r); }); renderSidebar(); } save(); }
 function addLine(){ var r=cur(); if(!r)return; r.lines.push({name:'',desc:'',materials:'',units:1,amount:0}); save(); renderSheet(); }
 function removeLine(i){ var r=cur(); if(!r)return; r.lines.splice(i,1); if(!r.lines.length)r.lines.push({name:'',desc:'',materials:'',units:1,amount:0}); save(); renderSheet(); renderSidebar(); }
 function logoHTML(p){
@@ -432,16 +434,20 @@ function phrasesHTML(r){
   var rows=notes.map(function(n){
     return '<div class="dn-row'+(n.on?'':' dn-off')+'">'
       +'<input type="checkbox" class="dn-chk no-print" '+(n.on?'checked':'')+' onchange="togglePhrase(\''+n.id+'\')" title="Incluir esta frase en el documento">'
-      +'<textarea rows="1" class="gr dn-ta" placeholder="Escribe una frase…" oninput="grow(this);setPhraseText(\''+n.id+'\',this.value)">'+esc(n.text)+'</textarea>'
+      +(n.auto==='antres'?'<span class="dn-antres">'+esc(antResText(r))+'</span>':'<textarea rows="1" class="gr dn-ta" placeholder="Escribe una frase…" oninput="grow(this);setPhraseText(\''+n.id+'\',this.value)">'+esc(n.text)+'</textarea>')
       +(n.auto==='pct50'?'<span class="dn-auto" title="50% del total (automático)">'+eur(total(r)*0.5)+'</span>':'')+'<button class="row-del no-print" onclick="delPhrase(\''+n.id+'\')" title="Quitar frase">✕</button></div>';
   }).join('');
-  return '<div class="doc-notes"><div class="dn-head no-print">Frases del documento — marca la casilla para incluir cada frase</div>'+rows+'<div class="dn-addrow no-print"><button class="add-line" onclick="addPhrase()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir frase</button><button class="add-line" onclick="addPhrasePct()" title="Frase con el 50% del total, automático"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> 50% del total</button></div></div>';
+  return '<div class="doc-notes"><div class="dn-head no-print">Frases del documento — marca la casilla para incluir cada frase</div>'+rows+'<div class="dn-addrow no-print"><button class="add-line" onclick="addPhrase()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Añadir frase</button><button class="add-line" onclick="addPhrasePct()" title="Frase con el 50% del total, automático"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> 50% del total</button><button class="add-line" onclick="addPhraseAntRes()" title="Frase de anticipo y resto (como en 3DCalc)"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Anticipo / entrega</button></div></div>';
 }
 function addPhrase(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r.notes=[]; r.notes.push({id:uid(),text:'',on:true}); save(); renderSheet(); }
 function setPhraseText(id,v){ var r=cur(); if(!r||!Array.isArray(r.notes))return; var n=r.notes.filter(function(x){return x.id===id;})[0]; if(n){ n.text=v; save(); } }
 function togglePhrase(id){ var r=cur(); if(!r||!Array.isArray(r.notes))return; var n=r.notes.filter(function(x){return x.id===id;})[0]; if(n){ n.on=!n.on; save(); renderSheet(); } }
 function delPhrase(id){ var r=cur(); if(!r)return; r.notes=(r.notes||[]).filter(function(x){return x.id!==id;}); save(); renderSheet(); }
 function addPhrasePct(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r.notes=[]; r.notes.push({id:uid(),text:'Importe a abonar (50% del total):',on:true,auto:'pct50'}); save(); renderSheet(); }
+var ANTRES_TPL='Se requiere el abono de {anticipo} como anticipo para iniciar la producción; la diferencia de {resto} se abonará como límite en el momento de la entrega.';
+function billAntRes(tt){ tt=Number(tt)||0; var resto=Math.floor((tt/2)/5)*5; if(resto<0)resto=0; var anticipo=Math.round((tt-resto)*100)/100; return {anticipo:anticipo,resto:resto}; }
+function antResText(r){ var ar=billAntRes(total(r)); return 'Se requiere el abono de '+eur(ar.anticipo)+' como anticipo para iniciar la producción; la diferencia de '+eur(ar.resto)+' se abonará como límite en el momento de la entrega.'; }
+function addPhraseAntRes(){ var r=cur(); if(!r)return; if(!Array.isArray(r.notes))r.notes=[]; r.notes.push({id:uid(),text:ANTRES_TPL,on:true,auto:'antres'}); save(); renderSheet(); }
 var phrasePresetOpen=false;
 function togglePhrasePresets(){ phrasePresetOpen=!phrasePresetOpen; renderSheet(); }
 function phrasePresetPanel(){ if(!phrasePresetOpen)return ''; var pr=S.phrasePresets||[]; var x='<div class="dn-pop no-print"><button class="dn-pp-save" onclick="savePhrasePreset()">+ Guardar las frases actuales como preset</button>'; if(pr.length){ x+='<div class="dn-pp-list">'; pr.forEach(function(pp){ x+='<div class="dn-pp-item"><button class="dn-pp-apply" onclick="applyPhrasePreset(\''+pp.id+'\')">'+esc(pp.name)+'<span class="dn-pp-n">'+((pp.notes&&pp.notes.length)||0)+' frases</span></button><button class="dn-pp-del" onclick="delPhrasePreset(\''+pp.id+'\')" title="Eliminar preset">✕</button></div>'; }); x+='</div>'; } else { x+='<div class="dn-pp-empty">No hay presets de frases guardados.</div>'; } x+='</div>'; return x; }
