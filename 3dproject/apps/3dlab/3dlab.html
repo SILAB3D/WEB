@@ -105,6 +105,8 @@ table{border-collapse:collapse;width:100%}
 .ctable td.cv input{background:rgba(139,124,255,.16);font-weight:600;color:var(--t1)}
 [data-theme=light] .ctable td.cv input{background:rgba(108,92,231,.14)}
 .ctable td.cv input:focus{background:rgba(139,124,255,.26)}
+.ctable td.rng input{background:rgba(77,159,255,.20);box-shadow:inset 0 0 0 1px rgba(77,159,255,.55)}
+[data-theme=light] .ctable td.rng input{background:rgba(77,159,255,.16)}
 .lab-hint{font-size:12px;color:var(--t3);margin-top:12px;line-height:1.5}
 .est-block{border:1px solid var(--border);border-radius:12px;padding:12px 12px 14px;margin-bottom:16px;background:rgba(255,255,255,.015)}
 .est-block:last-of-type{margin-bottom:6px}
@@ -416,7 +418,7 @@ function setImpName(eid,iid,v){ var imp=findImp(findEst(curTest(),eid),iid); if(
 function addPrint(eid,iid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; if(!Array.isArray(imp.prints))imp.prints=[]; imp.prints.push(newPrint(est)); save(); renderMain(); }
 function delPrint(eid,iid,pid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; imp.prints=(imp.prints||[]).filter(function(x){return x.id!==pid;}); if(!imp.prints.length)est.imps=est.imps.filter(function(x){return x.id!==iid;}); save(); renderMain(); }
 function setPrintIdent(eid,iid,pid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.ident=v;save();} }
-function setPrintVal(eid,iid,pid,cid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.vals[cid]=v;save();refreshCondHighlights();} }
+function setPrintVal(eid,iid,pid,cid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.vals[cid]=v;save();scheduleHighlights();} }
 function setPrintComment(eid,iid,pid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.comment=v;save();} }
 
 function varyMap(est){
@@ -523,9 +525,15 @@ var condGrids={};
 function applyCellRaw(eid,r,c,val){ var g=condGrids[eid]; if(!g)return; var row=g.rows[r], col=g.cols[c]; if(!row||!col)return; var est=findEst(curTest(),eid); if(!est)return; var imp=findImp(est,row.iid); if(!imp)return; var pr=findPrint(imp,row.pid); if(!pr)return; if(col.field==='ident')pr.ident=val; else if(col.field==='comment')pr.comment=val; else if(col.field==='param'){ if(!pr.vals||typeof pr.vals!=='object')pr.vals={}; pr.vals[col.cid]=val; } }
 function condPaste(ev,eid,r,c){ var cd=ev.clipboardData||window.clipboardData; if(!cd)return; var txt=cd.getData('text'); if(txt==null)txt=''; ev.preventDefault(); var rows=txt.replace(/\r/g,'').split('\n'); if(rows.length>1 && rows[rows.length-1]==='')rows.pop(); for(var i=0;i<rows.length;i++){ var cells=rows[i].split('\t'); for(var j=0;j<cells.length;j++){ applyCellRaw(eid,r+i,c+j,cells[j]); } } save(); renderMain(); }
 function condKey(ev){
-  if((ev.ctrlKey||ev.metaKey) && (ev.key==='c'||ev.key==='C'||ev.key==='x'||ev.key==='X')){ var el0=ev.target; if(el0&&el0.selectionStart===el0.selectionEnd){ try{ el0.select(); }catch(e){} } return; }
-  if(ev.key==='Enter'){ ev.preventDefault(); condMove(ev.target, ev.shiftKey?-1:1, 0); return; }
-  if(ev.key==='Tab'){ ev.preventDefault(); condMove(ev.target, 0, ev.shiftKey?-1:1); return; }
+  var el=ev.target;
+  if((ev.ctrlKey||ev.metaKey) && (ev.key==='c'||ev.key==='C')){ if(condSelActive()){ ev.preventDefault(); copyCondSel(); } else if(el.selectionStart===el.selectionEnd){ try{ el.select(); }catch(e){} } return; }
+  if((ev.ctrlKey||ev.metaKey) && (ev.key==='x'||ev.key==='X')){ if(el.selectionStart===el.selectionEnd){ try{ el.select(); }catch(e){} } return; }
+  if(ev.key==='Enter'){ ev.preventDefault(); condMoveEnter(el, ev.shiftKey?-1:1); return; }
+  if(ev.key==='Tab'){ ev.preventDefault(); _condFromTab=true; condMove(el, 0, ev.shiftKey?-1:1); return; }
+  if(ev.key==='ArrowUp'){ ev.preventDefault(); if(ev.shiftKey)condExtendSel(el,-1,0); else condMove(el,-1,0); return; }
+  if(ev.key==='ArrowDown'){ ev.preventDefault(); if(ev.shiftKey)condExtendSel(el,1,0); else condMove(el,1,0); return; }
+  if(ev.key==='ArrowLeft'){ if(ev.shiftKey){ ev.preventDefault(); condExtendSel(el,0,-1); } else if(el.selectionStart===0&&el.selectionEnd===0){ ev.preventDefault(); condMove(el,0,-1); } return; }
+  if(ev.key==='ArrowRight'){ var L=(el.value||'').length; if(ev.shiftKey){ ev.preventDefault(); condExtendSel(el,0,1); } else if(el.selectionStart===L&&el.selectionEnd===L){ ev.preventDefault(); condMove(el,0,1); } return; }
 }
 function condMove(el, dr, dc){
   if(!el||!el.getAttribute||!el.closest)return;
@@ -535,11 +543,11 @@ function condMove(el, dr, dc){
   var t=table.querySelector('input[data-r="'+(r+dr)+'"][data-c="'+(c+dc)+'"]');
   if(!t && dc>0) t=table.querySelector('input[data-r="'+(r+1)+'"][data-c="0"]');
   if(!t && dc<0){ var prev=[].slice.call(table.querySelectorAll('input[data-r="'+(r-1)+'"]')); if(prev.length) t=prev.reduce(function(a,b){ return parseInt(b.getAttribute('data-c'),10)>parseInt(a.getAttribute('data-c'),10)?b:a; }); }
-  if(t){ t.focus(); try{ t.select(); }catch(e){} }
+  if(t){ try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } try{ t.select(); }catch(e){} }
 }
 function refreshCondHighlights(){
   var _t=curTest(); if(!_t)return;
-  [].forEach.call(document.querySelectorAll('table.ctable[data-eid]'), function(table){
+  [].forEach.call(document.querySelectorAll((condExpanded?'.cond-modal ':'')+'table.ctable[data-eid]'), function(table){
     var eid=table.getAttribute('data-eid'); var est=findEst(_t,eid); if(!est)return;
     var map=varyMap(est); var g=condGrids[eid]; if(!g)return;
     [].forEach.call(table.querySelectorAll('tbody input[data-r][data-c]'), function(inp){
@@ -551,7 +559,19 @@ function refreshCondHighlights(){
     (est.cols||[]).forEach(function(pa,i){ if(phs[i]) phs[i].classList.toggle('vh', paramVariesAny(est,map,pa.id)); });
   });
 }
-document.addEventListener('focusin', function(e){ var el=e.target; if(el&&el.tagName==='INPUT'&&el.hasAttribute('data-r')&&el.closest&&el.closest('.ctable')){ requestAnimationFrame(function(){ if(document.activeElement===el){ try{ el.select(); }catch(_){} } }); } });
+var condSel=null, _condEnterCol=null, _condExtending=false, _condFromTab=false, _rchRAF=false;
+function scheduleHighlights(){ if(_rchRAF)return; _rchRAF=true; requestAnimationFrame(function(){ _rchRAF=false; try{ refreshCondHighlights(); }catch(e){} }); }
+function _condTableOf(el){ return (el&&el.closest)?el.closest('table.ctable'):null; }
+function _condCellAt(table,r,c){ return table?table.querySelector('input[data-r="'+r+'"][data-c="'+c+'"]'):null; }
+function _condFocus(t){ if(!t)return; try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } try{ t.select(); }catch(e){} }
+function condSetAnchor(el){ var table=_condTableOf(el); if(!table)return; var r=parseInt(el.getAttribute('data-r'),10), c=parseInt(el.getAttribute('data-c'),10); if(isNaN(r)||isNaN(c))return; condSel={eid:table.getAttribute('data-eid'),ar:r,ac:c,fr:r,fc:c}; paintCondSel(); }
+function paintCondSel(){ [].forEach.call(document.querySelectorAll('.ctable td.rng'), function(td){ td.classList.remove('rng'); }); if(!condSel||(condSel.ar===condSel.fr&&condSel.ac===condSel.fc))return; var r0=Math.min(condSel.ar,condSel.fr),r1=Math.max(condSel.ar,condSel.fr),c0=Math.min(condSel.ac,condSel.fc),c1=Math.max(condSel.ac,condSel.fc); [].forEach.call(document.querySelectorAll('table.ctable[data-eid="'+condSel.eid+'"]'), function(table){ for(var r=r0;r<=r1;r++)for(var c=c0;c<=c1;c++){ var inp=_condCellAt(table,r,c); if(inp&&inp.parentNode)inp.parentNode.classList.add('rng'); } }); }
+function condExtendSel(el,dr,dc){ if(!condSel)condSetAnchor(el); if(!condSel)return; var table=_condTableOf(el); if(!table)return; var nr=condSel.fr+dr,nc=condSel.fc+dc; var t=_condCellAt(table,nr,nc); if(!t)return; condSel.fr=nr; condSel.fc=nc; _condExtending=true; _condFocus(t); _condExtending=false; paintCondSel(); }
+function condSelActive(){ return !!(condSel&&(condSel.ar!==condSel.fr||condSel.ac!==condSel.fc)); }
+function copyCondSel(){ if(!condSel)return; var g=condGrids[condSel.eid], est=findEst(curTest(),condSel.eid); if(!g||!est)return; var r0=Math.min(condSel.ar,condSel.fr),r1=Math.max(condSel.ar,condSel.fr),c0=Math.min(condSel.ac,condSel.fc),c1=Math.max(condSel.ac,condSel.fc); var lines=[]; for(var r=r0;r<=r1;r++){ var row=g.rows[r]; var cells=[]; for(var c=c0;c<=c1;c++){ var col=g.cols[c],v=''; if(row&&col){ var imp=findImp(est,row.iid), pr=imp&&findPrint(imp,row.pid); if(pr){ if(col.field==='ident')v=pr.ident||''; else if(col.field==='comment')v=pr.comment||''; else if(col.field==='param')v=(pr.vals&&pr.vals[col.cid]!=null)?pr.vals[col.cid]:''; } } cells.push(v==null?'':String(v)); } lines.push(cells.join('\t')); } var tsv=lines.join('\n'); try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(tsv); } else { throw 0; } }catch(e){ var ta=document.createElement('textarea'); ta.value=tsv; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(_){} ta.remove(); } }
+function condMoveEnter(el,dir){ var table=_condTableOf(el); if(!table)return; var r=parseInt(el.getAttribute('data-r'),10); if(isNaN(r))return; var c=(_condEnterCol!=null?_condEnterCol:parseInt(el.getAttribute('data-c'),10)); var t=_condCellAt(table,r+dir,c); if(!t){ condMove(el,dir,0); return; } _condFocus(t); }
+document.addEventListener('mousedown', function(e){ if(!e.shiftKey||!condSel)return; var el=e.target; if(el&&el.tagName==='INPUT'&&el.hasAttribute('data-r')&&el.closest&&el.closest('.ctable')){ var table=el.closest('table.ctable'); if(table&&table.getAttribute('data-eid')===condSel.eid){ e.preventDefault(); condSel.fr=parseInt(el.getAttribute('data-r'),10); condSel.fc=parseInt(el.getAttribute('data-c'),10); _condExtending=true; _condFocus(el); _condExtending=false; paintCondSel(); } } });
+document.addEventListener('focusin', function(e){ var el=e.target; if(el&&el.tagName==='INPUT'&&el.hasAttribute('data-r')&&el.closest&&el.closest('.ctable')){ if(!_condExtending){ condSetAnchor(el); if(!_condFromTab){ var _c=parseInt(el.getAttribute('data-c'),10); if(!isNaN(_c))_condEnterCol=_c; } } _condFromTab=false; requestAnimationFrame(function(){ if(document.activeElement===el){ try{ el.select(); }catch(_){} } }); } });
 function condTableHTML(est,map){
   var eid=est.id;
   var g={rows:[],cols:[{field:'ident'}]};

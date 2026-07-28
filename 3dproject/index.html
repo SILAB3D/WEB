@@ -979,14 +979,19 @@ body.dp-authed #authGate{display:none}
 (function(){
   var META={
     printflow:{ label:'PrintFlow', color:'#FF7A45', onItem:function(it){ if(typeof openPrintflowSample==='function') openPrintflowSample(it.code); else if(typeof launchApp==='function') launchApp('flow'); dpnClose(); } },
-    tracker:{ label:'3DTracker', color:'#34D399', onItem:function(it){ if(typeof openTrackerOrder==='function'&&it.code) openTrackerOrder(it.code); else if(typeof launchApp==='function') launchApp('tracker'); dpnClose(); } }
+    tracker:{ label:'3DTracker', color:'#34D399', onItem:function(it){ if(typeof openTrackerOrder==='function'&&it.code) openTrackerOrder(it.code); else if(typeof launchApp==='function') launchApp('tracker'); dpnClose(); } },
+    stock:{ label:'3DStock', color:'#22D3EE', onItem:function(it){ if(typeof launchApp==='function') launchApp('stock'); dpnClose(); } }
   };
-  var ORDER=['printflow','tracker'], store={};
+  var ORDER=['printflow','tracker','stock'], store={};
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function _dpnFmtDate(ts){ try{ return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}); }catch(e){ return ''; } }
   function total(){ var n=0; ORDER.forEach(function(k){ n+=(store[k]||[]).length; }); return n; }
   function itemHTML(k,it,idx){
     if(k==='printflow'){
       return '<div class="dpn-item" data-k="printflow" data-i="'+idx+'"><div class="dpn-t">'+esc(it.step||'Etapa')+'</div><div class="dpn-m">'+esc(it.proj||'Proyecto')+' · Muestra '+esc(it.code||'—')+'</div></div>';
+    }
+    if(k==='stock'){
+      return '<div class="dpn-item" data-k="stock" data-i="'+idx+'"><div class="dpn-t">'+esc(it.variant||'')+'<span class="dpn-pct" style="color:'+META.stock.color+'">Repuesto</span></div><div class="dpn-m">'+esc(it.product||'')+(it.ts?(' · '+_dpnFmtDate(it.ts)):'')+'</div></div>';
     }
     var pct=it.pct||0;
     return '<div class="dpn-item" data-k="tracker" data-i="'+idx+'"><div class="dpn-t">'+esc(it.code||'')+'<span class="dpn-pct" style="color:'+META.tracker.color+'">'+pct+'%</span></div>'
@@ -1145,7 +1150,7 @@ const APPS = {
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260728-0630';
+const APP_VER = '20260728-0800';
 
 function launchApp(id) {
   const a = APPS[id];
@@ -1463,6 +1468,33 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
       refresh();
       if(window.DPCloud.watchOrders){ try{ window.DPCloud.watchOrders(function(){ refresh(); }); }catch(e){} }
       setInterval(function(){ if(!document.hidden) refresh(); }, 30000);
+    }); }catch(e){}
+  }
+  var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ start(); } else if(w<12000){ w+=200; setTimeout(c,200); } })();
+})();
+/* Agregador de 3DStock: reposiciones de filamentos favoritos (★) en el centro de notificaciones */
+(function(){
+  var CHG=null, ST=null;
+  function compute(){
+    if(!window.DPNotif)return;
+    if(!CHG||!ST){ window.DPNotif.set('stock',[]); return; }
+    var watch=(ST.watch&&typeof ST.watch==='object')?ST.watch:{};
+    var lastSeen=(typeof ST.lastSeen==='number')?ST.lastSeen:0;
+    var best={};
+    CHG.forEach(function(c){ if(!c||c.type!=='repuesto')return; var vid=String(c.vid); if(!watch[vid])return; if((c.ts||0)<=lastSeen)return; if(!best[vid]||(c.ts||0)>(best[vid].ts||0))best[vid]=c; });
+    var items=Object.keys(best).map(function(vid){ var c=best[vid]; return {variant:c.variant||'',product:c.product||'',ts:c.ts||0}; });
+    items.sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+    window.DPNotif.set('stock', items);
+  }
+  function fetchChanges(){ try{ fetch('data/sunlu/changes.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(j){ CHG=Array.isArray(j)?j:[]; compute(); }).catch(function(){ CHG=CHG||[]; compute(); }); }catch(e){ CHG=CHG||[]; compute(); } }
+  fetchChanges();
+  setInterval(fetchChanges, 30*60*1000);
+  function start(){
+    try{ window.DPCloud.onAuth(function(u){
+      if(!u||!u.email)return;
+      if(window.__stkSub)return; window.__stkSub=true;
+      if(window.DPCloud.watchState){ window.DPCloud.watchState('3dstock', function(d){ ST=(d&&d.data&&typeof d.data==='object')?d.data:{watch:{},lastSeen:0}; compute(); }); }
+      else if(window.DPCloud.loadState){ window.DPCloud.loadState('3dstock').then(function(data){ ST=(data&&typeof data==='object')?data:{watch:{},lastSeen:0}; compute(); }).catch(function(){}); }
     }); }catch(e){}
   }
   var w=0;(function c(){ if(window.DPCloud&&window.DPCloud.onAuth){ start(); } else if(w<12000){ w+=200; setTimeout(c,200); } })();
