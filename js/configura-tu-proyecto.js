@@ -1,5 +1,31 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('projectQuoteForm');
+
+    /* ── Blindaje anti-reinicio ─────────────────────────────────────────────
+       El formulario no tiene 'action', así que cualquier envío nativo recarga
+       la página y el usuario vuelve al paso 1 con todo vacío. Esto ocurría al
+       pulsar Intro en un campo si algo más arriba fallaba, o al soltar un
+       archivo de referencia fuera de la zona de subida (el navegador abría el
+       archivo). Se registra ANTES que nada, en fase de captura, para que siga
+       activo aunque falle cualquier inicialización posterior. */
+    if (form) {
+        form.setAttribute('novalidate', 'novalidate');
+        form.addEventListener('submit', function (ev) { ev.preventDefault(); }, true);
+        form.addEventListener('keydown', function (ev) {
+            if (ev.key !== 'Enter') return;
+            var el = ev.target;
+            if (!el || el.tagName === 'TEXTAREA' || el.tagName === 'BUTTON') return;
+            ev.preventDefault();   // Intro nunca envía: avanza el paso desde el manejador normal
+        }, true);
+    }
+    ['dragover', 'drop'].forEach(function (evt) {
+        window.addEventListener(evt, function (ev) {
+            var dz = document.getElementById('referenceDropzone');
+            if (dz && (dz === ev.target || dz.contains(ev.target))) return;  // la zona lo gestiona
+            ev.preventDefault();   // fuera de la zona: no abrir el archivo ni recargar
+        }, false);
+    });
+
     const contactOptions = document.getElementById('projectContactOptions');
     const whatsappLink = document.getElementById('projectWhatsApp');
     const emailLink = document.getElementById('projectEmail');
@@ -922,4 +948,95 @@ document.addEventListener('DOMContentLoaded', function () {
     [backToProjectDetailsButton, backToDetailsButton, backToColorsButton].forEach(function (btn) {
         if (btn) btn.addEventListener('click', function () { solicitudNotificada = false; });
     });
+    /* ── Borrador automático ────────────────────────────────────────────────
+       Guarda lo escrito en el navegador del visitante para que no se pierda si
+       recarga, cierra la pestaña sin querer o el móvil descarta la página.
+       No se guardan archivos adjuntos ni se envía nada: es local. */
+    (function () {
+        var DRAFT_KEY = 'silab3d-configurador-borrador';
+        var DRAFT_TTL = 7 * 24 * 60 * 60 * 1000;   // 7 días
+        var draftTimer = null;
+
+        function draftFields() {
+            if (!form) return [];
+            return Array.prototype.slice.call(form.querySelectorAll('input, select, textarea'))
+                .filter(function (el) { return el.type !== 'file' && (el.id || el.name); });
+        }
+        function saveDraft() {
+            try {
+                var data = {};
+                draftFields().forEach(function (el) {
+                    var key = el.id || el.name;
+                    if (el.type === 'checkbox' || el.type === 'radio') data[key] = !!el.checked;
+                    else if (el.value) data[key] = el.value;
+                });
+                if (!Object.keys(data).length) { localStorage.removeItem(DRAFT_KEY); return; }
+                localStorage.setItem(DRAFT_KEY, JSON.stringify({ ts: Date.now(), v: data }));
+            } catch (e) { /* almacenamiento no disponible: se ignora */ }
+        }
+        function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+        function readDraft() {
+            try {
+                var raw = localStorage.getItem(DRAFT_KEY);
+                if (!raw) return null;
+                var d = JSON.parse(raw);
+                if (!d || !d.v || !d.ts || (Date.now() - d.ts) > DRAFT_TTL) { clearDraft(); return null; }
+                return d;
+            } catch (e) { return null; }
+        }
+        function showRestoredNotice() {
+            if (!form || document.getElementById('draftRestoredNotice')) return;
+            var box = document.createElement('div');
+            box.id = 'draftRestoredNotice';
+            box.setAttribute('role', 'status');
+            box.style.cssText = 'display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1px solid rgba(0,180,150,.35);background:rgba(0,180,150,.08);border-radius:12px;font-size:.92rem;color:#0E7C68';
+            box.innerHTML = '<span style="flex:1;min-width:200px">Hemos recuperado los datos que habías escrito. Revisa que todo sea correcto antes de continuar.</span>';
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = 'Empezar de cero';
+            btn.style.cssText = 'border:1px solid rgba(0,180,150,.45);background:transparent;color:#0E7C68;border-radius:8px;padding:6px 14px;font:600 .85rem inherit;cursor:pointer';
+            btn.addEventListener('click', function () {
+                clearDraft();
+                draftFields().forEach(function (el) {
+                    if (el.type === 'checkbox' || el.type === 'radio') el.checked = false; else el.value = '';
+                });
+                box.remove();
+            });
+            box.appendChild(btn);
+            form.parentNode.insertBefore(box, form);
+        }
+        function restoreDraft() {
+            var d = readDraft();
+            if (!d) return;
+            var restored = 0;
+            draftFields().forEach(function (el) {
+                var key = el.id || el.name;
+                if (!(key in d.v)) return;
+                var val = d.v[key];
+                if (el.type === 'checkbox' || el.type === 'radio') { if (val) { el.checked = true; restored++; } }
+                else if (val && !el.value) {
+                    el.value = val;
+                    if (el.value === val) restored++;   // los <select> ignoran opciones inexistentes
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+            if (restored) showRestoredNotice();
+        }
+
+        if (form) {
+            ['input', 'change'].forEach(function (evt) {
+                form.addEventListener(evt, function () {
+                    clearTimeout(draftTimer);
+                    draftTimer = setTimeout(saveDraft, 400);
+                });
+            });
+            window.addEventListener('pagehide', saveDraft);
+            // Al enviar la solicitud, el borrador deja de hacer falta.
+            [whatsappLink, emailLink].forEach(function (lnk) {
+                if (lnk) lnk.addEventListener('click', function () { setTimeout(clearDraft, 0); });
+            });
+            // Espera un instante a que terminen las inicializaciones asíncronas (catálogo, etc.).
+            setTimeout(restoreDraft, 350);
+        }
+    })();
 });

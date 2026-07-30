@@ -447,6 +447,17 @@ option{background-color:#161922;color:#E8EBF4}
 .cal-cell.cal-today{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}
 .cal-cell[data-dk]{cursor:pointer;user-select:none}
 .cal-cell.cal-sel{outline:2px solid var(--ac);outline-offset:-2px;background:rgba(34,211,238,.14)}
+.cal-chip.ch-urg{box-shadow:inset 0 0 0 1px rgba(244,183,64,.85)}
+.cal-chip.ch-cmp::after{content:'⧗';margin-left:3px;opacity:.85;font-size:9px}
+.cal-chip.ch-del::before{content:'▲';margin-right:2px;color:#FF6B8A;font-size:8px}
+.ui-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow:auto}
+.ui-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:9px;background:var(--sel)}
+.ui-n{flex:1;font-size:12.5px;color:var(--t1);font-weight:600}
+.ui-tag{font:700 10.5px 'Outfit',sans-serif;padding:2px 7px;border-radius:6px}
+.ui-tag.ui-c{background:rgba(77,159,255,.16);color:#4D9FFF}
+.ui-tag.ui-d{background:rgba(244,183,64,.16);color:#F4B740}
+.ui-tag.ui-d.ui-x{background:rgba(255,107,138,.18);color:#FF6B8A}
+.ui-tag.ui-a{background:rgba(52,211,153,.16);color:#34D399}
 .cd-pickgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .cd-pickbtn{justify-content:center}
 .cd-pickbtn.cd-vac{border-color:rgba(255,107,138,.5)}.cd-pickbtn.cd-notec{border-color:rgba(77,159,255,.5)}.cd-pickbtn.cd-noart{border-color:rgba(184,124,255,.5)}.cd-pickbtn.cd-noimp{border-color:rgba(34,211,238,.5)}
@@ -530,7 +541,18 @@ var MARKUP={'Normal (230%)':2.3};
 var URGENCIA={'Normal':0,'Urgente':0.5};
 var URG_OPTS=['Normal','Urgente','Ambos'];
 function computeUrg(cs,lvl){ return compute(Object.assign({},cs,{urgencia_nivel:lvl})); }
-function orderDual(o){ if(o.precio_normal!=null&&o.precio_urgente!=null)return {normal:num(o.precio_normal),urgente:num(o.precio_urgente)}; var cs=orderToCalcState(o); return {normal:roundMoney(computeUrg(cs,'Normal').precio),urgente:roundMoney(computeUrg(cs,'Urgente').precio)}; }
+var URG_PCT_DAY=0.05, URG_PCT_MAX=0.50;
+function urgRate(days){ var d=Math.max(0,Math.round(Number(days)||0)); return Math.min(URG_PCT_MAX, d*URG_PCT_DAY); }
+function urgSurcharge(stdPrice,days){ var r=urgRate(days), p=num(stdPrice); return {rate:r,days:Math.max(0,Math.round(Number(days)||0)),amount:roundMoney(p*r),total:roundUpToNickel(p*(1+r))}; }
+function _daysBetween(a,b){ if(!a||!b)return 0; return Math.round((_md(a)-_md(b))/86400000); }
+function calcDaysGained(){ var c=S.calc_state; if(!c.prod_on||!c.prod)return null; var h=0; try{ h=compute().horas||0; }catch(e){}
+  var fs=_simFinish(c.prod,c.diseno_modelado,h,'Normal'), fu=_simFinish(c.prod,c.diseno_modelado,h,'Urgente');
+  if(!fs||!fu)return null; return Math.max(0,_daysBetween(fs,fu)); }
+function orderDaysGained(o){ if(!o||!o.prod)return null; if(o.urg_days!=null)return num(o.urg_days);
+  var d=null; if(o.id&&getOrder(o.id)){ try{ d=dualFinish(o.id); }catch(e){} }
+  if(!d||!d.std||!d.urg){ try{ d={std:_simFinish(o.prod,o.diseno_modelado,o.horas,'Normal'),urg:_simFinish(o.prod,o.diseno_modelado,o.horas,'Urgente')}; }catch(e){ d=null; } }
+  if(!d||!d.std||!d.urg)return null; return Math.max(0,_daysBetween(d.std,d.urg)); }
+function orderDual(o){ if(o.precio_normal!=null&&o.precio_urgente!=null)return {normal:num(o.precio_normal),urgente:num(o.precio_urgente),days:(o.urg_days!=null?num(o.urg_days):null)}; var cs=orderToCalcState(o); var nrm=roundMoney(computeUrg(cs,'Normal').precio); var dg=orderDaysGained(o); var su=urgSurcharge(nrm,dg||0); return {normal:nrm,urgente:su.total,days:(dg==null?null:su.days),rate:su.rate}; }
 var ORDER_STATES=['Pendiente','Activo','Finalizado'];
 var NOTIF_DAYS=7;
 function defData(){return {
@@ -594,7 +616,7 @@ function compute(c){
   }
   var markup=MARKUP[c.markup]!=null?MARKUP[c.markup]:2.3;
   var errorRate=PROBABILIDAD_ERROR.hasOwnProperty(c.probabilidad_error)?PROBABILIDAD_ERROR[c.probabilidad_error]:0.25;
-  var urg=URGENCIA[c.urgencia_nivel]!=null?URGENCIA[c.urgencia_nivel]:0;
+  var urg=0; /* el recargo urgente ya no es fijo: se calcula por días ganados (urgSurcharge) */
   var labor=num(g.labor_cost_h);
   var filamento=round4(peso*pricekg/1000); if(filOverride!=null)filamento=filOverride;
   var electricidad=round4(horas*num(printer.energy_consumption_kwh)*num(g.energy_cost_kwh));
@@ -748,10 +770,13 @@ function resultHTML(){
   var r=compute(), u=S.global_config.money_unit||'€';
   function fmt(n){return (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+u;}
   function row(l,v){return '<div class="r"><span>'+l+'</span><b>'+fmt(v)+'</b></div>';}
-  var _dual=(S.calc_state.urgencia_nivel==='Ambos'), _ru=_dual?computeUrg(S.calc_state,'Urgente'):null;
+  var _lvl=S.calc_state.urgencia_nivel, _dual=(_lvl==='Ambos'||_lvl==='Urgente');
+  var _dg=_dual?calcDaysGained():null, _su=_dual?urgSurcharge(r.precio,_dg||0):null;
+  var _ru=_su?{precio:_su.total}:null;
+  var _noProd=(_dual&&(!S.calc_state.prod_on||!S.calc_state.prod));
   var _ponF=(_dual&&S.calc_state.prod_on&&S.calc_state.prod), _fS=_ponF?_simFinish(S.calc_state.prod,S.calc_state.diseno_modelado,r.horas,'Normal'):null, _fU=_ponF?_simFinish(S.calc_state.prod,S.calc_state.diseno_modelado,r.horas,'Urgente'):null;
   var html=(_dual
-    ? '<div class="total-lbl">Total a abonar'+(r.cant>1?' ('+r.cant+' uds)':'')+'</div><div class="dual-tot"><div class="dt-box"><span class="dt-l">Tarifa normal</span><span class="dt-v">'+fmt(r.precio)+'</span>'+(_fS?'<span class="dt-d">'+_fmtFin(_fS)+'</span>':'')+'</div><div class="dt-box dt-urg"><span class="dt-l">\u26A1 Urgente</span><span class="dt-v">'+fmt(_ru.precio)+'</span>'+(_fU?'<span class="dt-d dt-d-u">'+_fmtFin(_fU)+'</span>':'')+'</div></div>'
+    ? '<div class="total-lbl">Total a abonar'+(r.cant>1?' ('+r.cant+' uds)':'')+'</div><div class="dual-tot"><div class="dt-box"><span class="dt-l">Tarifa normal</span><span class="dt-v">'+fmt(r.precio)+'</span>'+(_fS?'<span class="dt-d">'+_fmtFin(_fS)+'</span>':'')+'</div><div class="dt-box dt-urg"><span class="dt-l">\u26A1 Urgente'+(_su&&_dg!=null?' (+'+Math.round(_su.rate*100)+'%)':'')+'</span><span class="dt-v">'+fmt(_ru.precio)+'</span>'+(_fU?'<span class="dt-d dt-d-u">'+_fmtFin(_fU)+'</span>':'')+(_dg!=null?'<span class="dt-d dt-d-u">'+(_dg>0?('adelanta '+_dg+' día'+(_dg===1?'':'s')):'no adelanta la entrega')+'</span>':'')+'</div></div>'+(_noProd?'<div class="pill" style="display:block;margin:8px 0 2px;color:#F4B740;border-color:rgba(244,183,64,.4)">Activa «Tiempo de producción» para calcular el recargo urgente (5% por día ganado, máx. 50%).</div>':'')
     : '<div class="total-lbl">Total a abonar'+(r.cant>1?' ('+r.cant+' uds)':'')+'</div><div class="total">'+fmt(r.precio)+'</div><div class="total-u">'+fmt(r.precioUnit)+' / unidad</div>')
     +'<div class="brk">'
     +'<div class="grp">Parámetros básicos</div>'
@@ -781,26 +806,27 @@ function resultHTML(){
 
 /* ===== tiempo de producción + calendario ===== */
 var DESIGN_DAYS_MAP={'No necesario':0,'Chorrada - En Slicer':1,"Fácil - Fusión 30'":1,"Medio - Fusión 60'":2,'Avanzado - AI + Remesh':3};
-var DESIGN_DAYS_URG={'No necesario':0,'Chorrada - En Slicer':1,"Fácil - Fusión 30'":1,"Medio - Fusión 60'":1,'Avanzado - AI + Remesh':2};
+var DESIGN_DAYS_URG={'No necesario':0,'Chorrada - En Slicer':0.5,"Fácil - Fusión 30'":1,"Medio - Fusión 60'":1,'Avanzado - AI + Remesh':2};
+function fmtDays(n){ n=Math.round((Number(n)||0)*10)/10; return (n%1?String(n).replace('.',','):String(n)); }
 function _isUrgOrder(o){ return !!(o&&o.urgencia_nivel==='Urgente'); }
 var TESTDIFF={'Sencillo':1,'Complicado':2};
 var CDLBL={vac:'Vacaciones',noart:'Sin artístico',notec:'Sin técnico',noimp:'Sin impresión'};
-function prodDays(p,hrs,dm,urg){ p=p||{}; var d=(urg?DESIGN_DAYS_URG:DESIGN_DAYS_MAP)[dm]||0; var tests=p.tests||[], testPlan=[], a; if(urg){ var nS=0,nC=0; tests.forEach(function(x){ if(x==='Complicado')nC++; else nS++; }); for(a=0;a<Math.ceil(nS/2);a++)testPlan.push({simple:true}); for(a=0;a<nC;a++)testPlan.push({simple:false}); } else { tests.forEach(function(x){ var dd=(TESTDIFF[x]||1); for(a=0;a<dd;a++)testPlan.push({simple:(x!=='Complicado')}); }); } var ph=num(hrs!=null?hrs:p.printh), pr=ph>0?Math.ceil(ph/12):0; return {diseno:d,testado:testPlan.length,impresion:pr,total:d+testPlan.length+pr,tipo:(p.tipo==='Artístico'?'art':'tec'),urg:!!urg,testPlan:testPlan}; }
+function prodDays(p,hrs,dm,urg){ p=p||{}; var tasks=[],a; var D=(urg?DESIGN_DAYS_URG:DESIGN_DAYS_MAP)[dm]||0; while(D>0.0001){ a=(D>=1?1:0.5); tasks.push({ph:'design',amt:a}); D=Math.round((D-a)*10)/10; } (p.tests||[]).forEach(function(x){ var compl=(x==='Complicado'); var amt=urg?(compl?1:0.5):(compl?2:1); while(amt>0.0001){ var b=(amt>=1?1:0.5); tasks.push({ph:'test',amt:b,simple:!compl}); amt=Math.round((amt-b)*10)/10; } }); var ph=num(hrs!=null?hrs:p.printh), pr=ph>0?Math.ceil(ph/12):0; for(a=0;a<pr;a++)tasks.push({ph:'print',amt:1}); var d=0,te=0,im=0; tasks.forEach(function(x){ if(x.ph==='design')d+=x.amt; else if(x.ph==='test')te+=x.amt; else im+=x.amt; }); return {diseno:d,testado:te,impresion:im,total:Math.round((d+te+im)*10)/10,tipo:(p.tipo==='Artístico'?'art':'tec'),urg:!!urg,tasks:tasks,testPlan:tasks.filter(function(x){return x.ph==='test';})}; }
 function _ensureProd(){ if(!S.calc_state.prod)S.calc_state.prod={tipo:'Técnico',diseno:'Nulo',tests:[],printh:''}; if(!Array.isArray(S.calc_state.prod.tests))S.calc_state.prod.tests=[]; return S.calc_state.prod; }
 function setProd(f,v){ _ensureProd()[f]=v; save(); renderCalc(); }
 function setProdTest(i,v){ var p=_ensureProd(); p.tests[i]=v; save(); renderCalc(); }
 function setProdN(v){ var n=Math.max(0,Math.min(60,parseInt(v,10)||0)); var p=_ensureProd(); while(p.tests.length<n)p.tests.push('Sencillo'); p.tests.length=n; save(); renderCalc(); }
 function _fmtFin(d){ if(!d)return '—'; var dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado']; var mn=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']; return dias[d.getDay()]+', '+d.getDate()+' '+mn[d.getMonth()]+' '+d.getFullYear(); }
-function _deliveryText(fin){ if(!fin)return null; var dow=fin.getDay(); var mon=new Date(fin.getTime()); mon.setDate(fin.getDate()-((dow+6)%7)); var _mn=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; var pref=(dow>=1&&dow<=2)?'Inicios':((dow<=4)?'Mediados':'Finales'); return pref+' de la semana del '+mon.getDate()+' de '+_mn[mon.getMonth()]; }
+function _deliveryText(fin){ if(!fin)return null; var dow=fin.getDay(); var mon=new Date(fin.getTime()); mon.setDate(fin.getDate()-((dow+6)%7)); var _mn=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; var pref=(dow>=1&&dow<=2)?'Inicios (L-M)':((dow<=4)?'Mediados (X-J)':'Finales (V-S)'); return pref+' de la semana del '+mon.getDate()+' de '+_mn[mon.getMonth()]; }
 function _finFromSched(s){ if(!s)return null; var last=(s.print&&s.print.length)?s.print[s.print.length-1]:s.end; if(!last)return null; var d=_addD(_md(last),1); while(_isSun(d))d=_addD(d,1); return d; }
 function _simFinish(prod,dm,horas,urgLevel){ var _ul=(urgLevel||'Normal'); var pd=prodDays(prod,horas,dm,_ul==='Urgente'); if(!pd||pd.total<=0)return null; var temp={id:'__SIM__',number:'__SIM__',created_at:new Date().toISOString(),archived:false,prod:prod,diseno_modelado:dm,horas:String(horas),urgencia_nivel:_ul,cal_at:8640000000000}; var orig=S.orders; S.orders=(orig||[]).concat([temp]); var sched; try{ sched=scheduleOrders(); }catch(e){ sched={}; } S.orders=orig; return _finFromSched(sched['__SIM__']); }
 function _simStartDay(prod,dm,horas,urgLevel){ var _ul=(urgLevel||'Normal'); if(prod&&prod.startDay)return prod.startDay; var pd=prodDays(prod,horas,dm,_ul==='Urgente'); if(!pd||pd.total<=0)return null; var temp={id:'__SIM__',number:'__SIM__',created_at:new Date().toISOString(),archived:false,prod:prod,diseno_modelado:dm,horas:String(horas),urgencia_nivel:_ul,cal_at:8640000000000}; var orig=S.orders; S.orders=(orig||[]).concat([temp]); var sched; try{ sched=scheduleOrders(); }catch(e){ sched={}; } S.orders=orig; var _e=sched['__SIM__']; return _e?_e.start:null; }
 function _prodSumHTML(pd,finDate,sim,finUrg){
   function seg(d,cls){ return d>0?('<i style="flex:'+d+'" class="'+cls+'"></i>'):''; }
   var finRow = finUrg ? ('<div class="ps-fin"><span class="ps-fin-i">🏁</span><div><div class="ps-fin-l">Entrega estimada'+(sim?' · si lo guardas ahora':'')+'</div><div class="ps-fin-d">Estándar · '+_fmtFin(finDate)+'</div><div class="ps-fin-d" style="color:#F4B740">Urgente · '+_fmtFin(finUrg)+'</div></div></div>') : (finDate ? ('<div class="ps-fin"><span class="ps-fin-i">🏁</span><div><div class="ps-fin-l">Entrega estimada'+(sim?' · si lo guardas ahora':'')+'</div><div class="ps-fin-d">'+_fmtFin(finDate)+'</div></div></div>') : '');
-  return '<div class="ps-head"><span class="ps-num">'+pd.total+'</span><span class="ps-lbl">día'+(pd.total===1?'':'s')+' de producción</span></div>'
+  return '<div class="ps-head"><span class="ps-num">'+fmtDays(pd.total)+'</span><span class="ps-lbl">día'+(pd.total===1?'':'s')+' de producción</span></div>'
     +'<div class="ps-bar">'+(pd.total>0?(seg(pd.diseno,'psb-d')+seg(pd.testado,'psb-t')+seg(pd.impresion,'psb-i')):'<i class="psb-e"></i>')+'</div>'
-    +'<div class="ps-legend"><span class="ps-seg"><i class="pdot pd-d"></i>Diseño <b>'+pd.diseno+' d</b></span><span class="ps-seg"><i class="pdot pd-t"></i>Testado <b>'+pd.testado+' d</b></span><span class="ps-seg"><i class="pdot pd-i"></i>Impresión <b>'+pd.impresion+' d</b></span></div>'
+    +'<div class="ps-legend"><span class="ps-seg"><i class="pdot pd-d"></i>Diseño <b>'+fmtDays(pd.diseno)+' d</b></span><span class="ps-seg"><i class="pdot pd-t"></i>Testado <b>'+fmtDays(pd.testado)+' d</b></span><span class="ps-seg"><i class="pdot pd-i"></i>Impresión <b>'+fmtDays(pd.impresion)+' d</b></span></div>'
     +finRow;
 }
 function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
@@ -809,7 +835,7 @@ function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
   var tests=Array.isArray(p.tests)?p.tests:[];
   var dDays=(urg?DESIGN_DAYS_URG:DESIGN_DAYS_MAP)[dm]||0, hh=num(hrs), iDays=hh>0?Math.ceil(hh/12):0;
   var h='<div class="fg"><label class="lbl">Tipo de proyecto</label><select class="selx" onchange="EPSET(\'tipo\',this.value)">'+typeOpts+'</select></div>';
-  h+='<div class="fg prod-dz"><label class="lbl">Diseño <em class="prod-src">de «Diseño / modelado»</em></label><div class="suffix"><input class="inp ro" readonly tabindex="-1" value="'+esc(dm||'No necesario')+'"><span class="u">'+dDays+' d</span></div></div>';
+  h+='<div class="fg prod-dz"><label class="lbl">Diseño <em class="prod-src">de «Diseño / modelado»</em></label><div class="suffix"><input class="inp ro" readonly tabindex="-1" value="'+esc(dm||'No necesario')+'"><span class="u">'+fmtDays(dDays)+' d</span></div></div>';
   h+='<div class="fg"><label class="lbl">Nº de tests diferentes</label><input class="inp" type="number" min="0" step="1" value="'+tests.length+'" onchange="EPSETN(this.value)"></div>';
   if(tests.length){ h+='<div class="fg"><label class="lbl">Dificultad de cada test</label><div class="prod-tests">';
     tests.forEach(function(diff,i){ var opts=Object.keys(TESTDIFF).map(function(x){return '<option value="'+x+'"'+((diff||'Sencillo')===x?' selected':'')+'>'+x+' (×'+TESTDIFF[x]+')</option>';}).join('');
@@ -845,48 +871,112 @@ function _dk(d){ d=_md(d); var m=d.getMonth()+1, day=d.getDate(); return d.getFu
 function _fmtDk(k){ if(!k)return ''; var p=String(k).split('-'); return p[2]+'/'+p[1]; }
 function _forbidden(type,cat,dk){ var sp=S.calDays||[]; for(var i=0;i<sp.length;i++){ var s=sp[i]; if(!s||!s.start||!s.end)continue; if(!(dk>=s.start&&dk<=s.end))continue; if(s.type==='vac')return true; if(s.type==='noart'&&type==='art'&&cat!=='print')return true; if(s.type==='notec'&&type==='tec'&&cat!=='print')return true; if(s.type==='noimp'&&cat==='print')return true; } return false; }
 function _daySpecial(dk){ var out=[]; (S.calDays||[]).forEach(function(s){ if(s&&dk>=s.start&&dk<=s.end&&out.indexOf(s.type)<0)out.push(s.type); }); return out; }
+var SCHED_INFO={compressed:[],delayed:{},overdue:[]};
+function _capW(C,dk,mod){ var d=C.w[dk]; if(!d){ d=C.w[dk]={tec:1,art:1}; } return d[mod]; }
+function _capP(C,dk){ if(C.p[dk]==null)C.p[dk]=1; return C.p[dk]; }
+function _okOwn(task,dk,own){ if(!own)return true; if(task.ph==='print')return !own.dt[dk]; return !own.pr[dk]; }
+function _fits(C,task,dk,mod){ var e=1e-9; if(task.ph==='design')return _capW(C,dk,mod)+e>=task.amt; if(task.ph==='test')return _capW(C,dk,mod)+e>=task.amt && _capP(C,dk)+e>=task.amt; return _capP(C,dk)+e>=1; }
+function _take(C,task,dk,mod){ if(task.ph==='design'){ C.w[dk][mod]-=task.amt; } else if(task.ph==='test'){ C.w[dk][mod]-=task.amt; C.p[dk]-=task.amt; } else { C.p[dk]-=1; } }
+function _cloneCaps(C){ return {w:JSON.parse(JSON.stringify(C.w)),p:JSON.parse(JSON.stringify(C.p))}; }
+function _placeOrder(C,o,urg,useUrgDur,startOverride){
+  var pd=prodDays(o.prod,o.horas,o.diseno_modelado,useUrgDur); if(!pd||pd.total<=0)return null;
+  var mod=pd.tipo, tasks=pd.tasks;
+  var anchor=_md(startOverride||(o.prod&&o.prod.startDay)||o.created_at||o.fecha||Date.now());
+  if(isNaN(anchor.getTime()))anchor=_md(Date.now());
+  var tf=_md(Date.now()); if(anchor<tf)anchor=tf;
+  var start=anchor;
+  for(var guard=0;guard<2000;guard++){
+    var cur=_md(start), ok=true, placed=[], tmp=_cloneCaps(C), own={dt:{},pr:{}};
+    for(var i=0;i<tasks.length;i++){
+      var tk=tasks[i], cat=(tk.ph==='print'?'print':'dt'), g=0;
+      while(g<4000 && ((!urg&&_isSun(cur))||_forbidden(mod,cat,_dk(cur)))){ cur=_addD(cur,1); g++; }
+      var dk=_dk(cur);
+      if(_fits(tmp,tk,dk,mod)&&_okOwn(tk,dk,own)){ _take(tmp,tk,dk,mod); placed.push({dk:dk,ph:tk.ph,amt:tk.amt}); if(tk.ph==='print')own.pr[dk]=1; else own.dt[dk]=1; }
+      else if(!placed.length){ cur=_addD(cur,1); i--; continue; }
+      else { var nx=_addD(cur,1), g2=0; while(g2<4000 && ((!urg&&_isSun(nx))||_forbidden(mod,cat,_dk(nx)))){ nx=_addD(nx,1); g2++; } var dk2=_dk(nx);
+        if(_fits(tmp,tk,dk2,mod)&&_okOwn(tk,dk2,own)){ _take(tmp,tk,dk2,mod); placed.push({dk:dk2,ph:tk.ph,amt:tk.amt}); if(tk.ph==='print')own.pr[dk2]=1; else own.dt[dk2]=1; cur=nx; } else { ok=false; break; } }
+    }
+    if(ok&&placed.length){ C.w=tmp.w; C.p=tmp.p; return {placed:placed,pd:pd,mod:mod}; }
+    var ns=_addD(start,1),g3=0; while(g3<4000&&((!urg&&_isSun(ns))||_forbidden(mod,'dt',_dk(ns)))){ ns=_addD(ns,1); g3++; }
+    start=ns;
+  }
+  return null;
+}
+function _finDate(res){ if(!res||!res.placed.length)return null; var last=res.placed[res.placed.length-1].dk; return _addD(_md(last),1); }
+function _overDays(o,res){ if(!o.promised||!res)return 0; var b=_md(o.promised), f=_finDate(res); if(!f||isNaN(b.getTime()))return 0; return Math.round((f-b)/86400000); }
+function _commitSched(sched,o,res,compressed){
+  var des=[],tst=[],prt=[];
+  res.placed.forEach(function(x){ if(x.ph==='design')des.push(x.dk); else if(x.ph==='test')tst.push(x.dk); else prt.push(x.dk); });
+  function uniq(a){ var s={},r=[]; a.forEach(function(k){ if(!s[k]){s[k]=1;r.push(k);} }); return r; }
+  sched[o.id]={design:uniq(des),test:uniq(tst),print:uniq(prt),start:res.placed[0].dk,end:res.placed[res.placed.length-1].dk,tipo:res.mod,pd:res.pd,compressed:!!compressed};
+}
+function _fitStandards(C,stds,sched,info,write){
+  for(var i=0;i<stds.length;i++){
+    var so=stds[i];
+    var snap=_cloneCaps(C);
+    var r=_placeOrder(C,so,false,false); var ov=_overDays(so,r);
+    if(r&&ov>2){ C.w=snap.w; C.p=snap.p; var r2=_placeOrder(C,so,false,true); var ov2=_overDays(so,r2);
+      if(r2){ if(write){ _commitSched(sched,so,r2,true); info.compressed.push(so.id); if(ov2>0)info.delayed[so.id]=ov2; if(ov2>2)info.overdue.push({id:so.id,days:ov2}); } if(ov2>2&&!write)return false; continue; }
+      if(!write)return false;
+    }
+    if(r){ if(write){ _commitSched(sched,so,r,false); if(ov>0)info.delayed[so.id]=ov; } }
+  }
+  return true;
+}
 function scheduleOrders(){
   var list=(S.orders||[]).filter(function(o){return o&&o.prod&&!o.archived&&!o.cal_off;});
-  list.sort(function(a,b){ return ((a.cal_at||toTs(a.created_at))||0)-((b.cal_at||toTs(b.created_at))||0); });
-  var designSlot={}, testSlot={}, printSlot={}, sched={};
-  list.forEach(function(o){
-    var urg=_isUrgOrder(o);
-    var pd=prodDays(o.prod,o.horas,o.diseno_modelado,urg); if(!pd||pd.total<=0)return;
-    var type=pd.tipo, plan=[], a;
-    for(a=0;a<pd.diseno;a++)plan.push({ph:'design'});
-    pd.testPlan.forEach(function(td){ plan.push({ph:'test',simple:td.simple}); });
-    for(a=0;a<pd.impresion;a++)plan.push({ph:'print'});
-    var anchor=_md(o.created_at||o.fecha||Date.now());
-    if(o.prod&&o.prod.startDay){ var ms=_md(o.prod.startDay); if(!isNaN(ms.getTime()))anchor=ms; }
-    var tf=_md(Date.now()); if(anchor<tf)anchor=tf;
-    var start=anchor, placed=null;
-    function canPlace(ph,sm,dk){
-      if(ph==='design'){ var ds=designSlot[dk]; if(ds&&ds[type])return false; var ts=testSlot[dk]; if(ts){ for(var i=0;i<ts.length;i++)if(ts[i].mod===type)return false; } return true; }
-      if(ph==='print'){ if(printSlot[dk])return false; if(testSlot[dk]&&testSlot[dk].length)return false; return true; }
-      if(printSlot[dk])return false;
-      var ds2=designSlot[dk]; if(ds2&&ds2[type])return false;
-      var ex=testSlot[dk];
-      if(ex&&ex.length){ if(!(urg&&sm))return false; for(var j=0;j<ex.length;j++)if(!ex[j].simple)return false; }
-      return true;
+  function byCal(a,b){ return ((a.cal_at||toTs(a.created_at))||0)-((b.cal_at||toTs(b.created_at))||0); }
+  var urgs=list.filter(function(o){return o.urgencia_nivel==='Urgente';}).sort(byCal);
+  var stds=list.filter(function(o){return o.urgencia_nivel!=='Urgente';}).sort(byCal);
+  var C={w:{},p:{}}, sched={}, info={compressed:[],delayed:{},overdue:[]};
+  urgs.forEach(function(o){
+    var base=_md((o.prod&&o.prod.startDay)||o.created_at||Date.now()); var tf=_md(Date.now()); if(base<tf)base=tf;
+    var chosen=null, first=null;
+    for(var shift=0; shift<40; shift++){
+      var Ct=_cloneCaps(C);
+      var r=_placeOrder(Ct,o,true,true,_dk(_addD(base,shift))); if(!r)continue;
+      if(!first)first={C:Ct,r:r};
+      var Cs=_cloneCaps(Ct);
+      if(_fitStandards(Cs,stds,{},{compressed:[],delayed:{},overdue:[]},false)){ chosen={C:Ct,r:r}; break; }
     }
-    for(var guard=0; guard<8000 && !placed; guard++){
-      var cur=_md(start), block=[], ok=true, gg=0;
-      for(var si=0; si<plan.length; si++){
-        var ph=plan[si].ph, sm=!!plan[si].simple, fcat=(ph==='print'?'print':'dt');
-        while(gg<20000 && (_isSun(cur)||_forbidden(type,fcat,_dk(cur)))){ cur=_addD(cur,1); gg++; }
-        var dk=_dk(cur);
-        if(!canPlace(ph,sm,dk)){ ok=false; break; }
-        block.push({dk:dk,ph:ph,simple:sm}); cur=_addD(cur,1);
-      }
-      if(ok){ placed=block; break; }
-      var ns=_addD(start,1),g2=0; while(g2<20000&&(_isSun(ns)||_forbidden(type,'dt',_dk(ns)))){ ns=_addD(ns,1); g2++; } start=ns;
-    }
-    if(placed&&placed.length){ var des=[],tst=[],prt=[];
-      placed.forEach(function(x){ if(x.ph==='design'){(designSlot[x.dk]=designSlot[x.dk]||{})[type]=o.id;des.push(x.dk);} else if(x.ph==='test'){(testSlot[x.dk]=testSlot[x.dk]||[]).push({id:o.id,mod:type,simple:x.simple});tst.push(x.dk);} else {printSlot[x.dk]=o.id;prt.push(x.dk);} });
-      sched[o.id]={design:des,test:tst,print:prt,start:placed[0].dk,end:placed[placed.length-1].dk,tipo:type,pd:pd};
-    }
+    var pick=chosen||first;
+    if(pick){ C.w=pick.C.w; C.p=pick.C.p; _commitSched(sched,o,pick.r,false); if(!chosen)info.overdue.push({id:o.id,days:0,urgent:true}); }
   });
+  _fitStandards(C,stds,sched,info,true);
+  SCHED_INFO=info;
   return sched;
+}
+function _ensurePromised(){ var sc=scheduleOrders(), ch=false;
+  (S.orders||[]).forEach(function(o){ if(o&&o.prod&&!o.cal_off&&!o.archived&&!o.promised){ var s=sc[o.id]; if(s){ var f=_finFromSched(s); if(f){ o.promised=_dk(f); ch=true; } } } });
+  if(ch)save(); return ch; }
+function _finForTariff(id,lvl){ var o=getOrder(id); if(!o||!o.prod)return null; var prev=o.urgencia_nivel; o.urgencia_nivel=lvl; var f=null; try{ var sc=scheduleOrders(); f=_finFromSched(sc[id]); }catch(e){} o.urgencia_nivel=prev; return f; }
+function dualFinish(id){ return {std:_finForTariff(id,'Normal'), urg:_finForTariff(id,'Urgente')}; }
+function applyTariff(id,lvl){ var o=getOrder(id); if(!o)return; var d=orderDual(o); o.urgencia_nivel=lvl; o.precio_final=roundMoney(lvl==='Urgente'?d.urgente:d.normal); o.urg_days=(lvl==='Urgente'?(d.days!=null?d.days:orderDaysGained(o)):null); o.precio_normal=null; o.precio_urgente=null; o.promised=null; save(); try{ _ensurePromised(); }catch(e){} closeModal(); if(view==='cal')renderCalendar(); else renderOrders(); toast3('Tarifa '+lvl.toLowerCase()+' aplicada','#34D399'); }
+function _schedSnapshot(){ var sc=scheduleOrders(), out={}; (S.orders||[]).forEach(function(o){ var s=sc[o.id]; if(s){ var f=_finFromSched(s); out[o.id]={fin:f?_dk(f):null,compressed:!!s.compressed}; } }); return out; }
+function urgentImpactHTML(before,after,urgId){
+  var rows=[], u=getOrder(urgId), uf=after[urgId]?after[urgId].fin:null;
+  (S.orders||[]).forEach(function(o){ if(!o||o.id===urgId)return; var b=before[o.id], a=after[o.id]; if(!b||!a)return;
+    var d=(b.fin&&a.fin)?Math.round((_md(a.fin)-_md(b.fin))/86400000):0;
+    var comp=(!b.compressed&&a.compressed);
+    if(d!==0||comp)rows.push({name:(o.cliente||o.number||'Pedido'),d:d,comp:comp,over:(o.promised&&a.fin)?Math.round((_md(a.fin)-_md(o.promised))/86400000):0}); });
+  var _df=dualFinish(urgId); var _g=(_df.std&&_df.urg)?Math.round((_md(_dk(_df.std))-_md(_dk(_df.urg)))/86400000):0;
+  var h='<div class="mtit">Pedido urgente guardado</div>'
+    +'<div class="h-sub" style="margin-top:-4px">Compara la entrega con cada tarifa según la cola actual y elige cuál aplicar:</div>'
+    +'<div class="urg-choose" style="margin-top:12px">'
+      +'<button class="urg-opt" onclick="applyTariff(\''+urgId+'\',\'Normal\')"><span class="uo-l">Tarifa estándar</span><span class="uo-v" style="font-size:15px">'+(_df.std?_fmtFin(_df.std):'—')+'</span><span class="uo-d">Aplicar esta tarifa</span></button>'
+      +'<button class="urg-opt urg-opt-u" onclick="closeModal()"><span class="uo-l">⚡ Tarifa urgente</span><span class="uo-v" style="font-size:15px">'+(_df.urg?_fmtFin(_df.urg):'—')+'</span><span class="uo-d">'+(_g>0?('Entrega '+_g+' día'+(_g===1?'':'s')+' antes'):'No adelanta la entrega')+'</span></button>'
+    +'</div>';
+  if(!rows.length){ h+='<div class="note" style="margin-top:12px">Ningún otro pedido se ve afectado.</div>'; }
+  else { h+='<div class="note" style="margin:12px 0 8px">Efecto sobre los demás pedidos:</div><div class="ui-list">'
+      +rows.map(function(r){ return '<div class="ui-row"><span class="ui-n">'+esc(r.name)+'</span>'
+        +(r.comp?'<span class="ui-tag ui-c">tiempos optimizados</span>':'')
+        +(r.d>0?'<span class="ui-tag ui-d'+(r.over>2?' ui-x':'')+'">+'+r.d+' d</span>':(r.d<0?'<span class="ui-tag ui-a">'+r.d+' d</span>':''))+'</div>'; }).join('')
+      +'</div>';
+    var bad=rows.filter(function(r){return r.over>2;});
+    if(bad.length)h+='<div class="note" style="margin-top:8px;color:#FF6B8A"><b>Atención:</b> '+bad.length+' pedido(s) superan el margen de 2 días sobre su plazo comprometido.</div>';
+  }
+  h+='<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn ghost" onclick="closeModal();go(\'cal\')">Ver calendario</button><button class="btn" onclick="closeModal()">Mantener urgente</button></div>';
+  return h;
 }
 var CAL_PAL=['#4D9FFF','#B87CFF','#34D399','#F4B740','#FF6B8A','#22D3EE','#F472B6','#8B7CFF','#FF9F45','#00DDB8'];
 function orderColor(o){ var s=String((o&&(o.id||o.number))||''); var h=0; for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0; return CAL_PAL[h%CAL_PAL.length]; }
@@ -917,7 +1007,7 @@ function calInfo(){
       +'<div class="note" style="font-size:11.5px;line-height:1.7"><b>Diseño</b>: No necesario 0 · Chorrada/Fácil 1 · Medio 2 · Avanzado 3 días.<br><b>Testado</b>: Sencillo 1 día · Complicado 2 días (por test).<br><b>Impresión</b>: 1 día por cada 12 h.</div></div>'
     +'<div class="card" style="margin:0;border-color:rgba(244,183,64,.4)"><div class="card-h" style="color:#F4B740">Tarifa urgente</div>'
       +'<div class="note" style="font-size:11.5px;line-height:1.7"><b>Diseño</b>: No necesario 0 · Chorrada/Fácil/Medio 1 · Avanzado 2 días.<br><b>Testado</b>: simples agrupados 2 por día · complicados 1 día c/u.<br><b>Impresión</b>: 1 día por cada 12 h.</div></div></div>';
-  var gen='<div class="note" style="margin-top:12px;font-size:11.5px">Los bloques van siempre en orden <b>diseño → testado → impresión</b> sin huecos; se saltan domingos y días especiales (vacaciones, sin técnico/artístico/impresión); nunca se programan fechas anteriores a hoy; y la prioridad sigue el <b>orden de activación</b> del calendario.</div>';
+  var gen='<div class="note" style="margin-top:12px;font-size:11.5px">Los bloques van siempre en orden <b>diseño → testado → impresión</b> sin huecos y la impresión de un pedido nunca comparte día con sus propias fases de diseño o testado; se saltan domingos y días especiales (vacaciones, sin técnico/artístico/impresión); nunca se programan fechas anteriores a hoy; y la prioridad sigue el <b>orden de activación</b> del calendario.</div>';
   var _pcell=function(ok){ return '<td style="text-align:center;padding:7px 6px;background:'+(ok?SI:NO)+';color:#fff;font-weight:700;font-size:12px;border-radius:6px">'+(ok?'✓':'✗')+'</td>'; };
   var per='<table style="width:100%;border-collapse:separate;border-spacing:4px;margin-top:6px"><tr><th style="font-size:11px;color:var(--t2);text-align:left;padding-right:6px">Periodo</th><th style="font-size:10.5px;color:var(--t2)">Dis./test. téc.</th><th style="font-size:10.5px;color:var(--t2)">Dis./test. art.</th><th style="font-size:10.5px;color:var(--t2)">Impresión</th></tr>'
     +'<tr><th style="font-size:11px;color:#FF6B8A;text-align:left;padding-right:6px">Vacaciones</th>'+_pcell(false)+_pcell(false)+_pcell(false)+'</tr>'
@@ -941,7 +1031,7 @@ function calMatrixCard(){
     +'<tr>'+_rh('Impresión')+cell('Sí',SI)+cell('No',NO)+cell('No',NO)+'</tr></table>';
   return '<div class="card" style="margin-top:14px"><div class="card-h" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">Compatibilidad de fases · técnico vs artístico<button class="btn ghost" style="font-size:12px;padding:4px 12px" onclick="calInfo()">Ver todas las reglas</button></div>'
     +'<div class="h-sub" style="margin:-2px 0 4px">Un pedido técnico y uno artístico el mismo día:</div>'+mtx
-    +'<div class="note" style="margin-top:8px;font-size:11px"><b>Columnas</b> = fases del pedido <b style="color:#4D9FFF">técnico</b>; <b>filas</b> = fases del pedido <b style="color:#B87CFF">artístico</b>. <b>No*</b>: dos testados no coinciden, salvo en tarifa urgente (tests simples entre sí). La impresión no coincide con testado, sí con diseño.</div></div>';
+    +'<div class="note" style="margin-top:8px;font-size:11px"><b>Columnas</b> = fases del pedido <b style="color:#4D9FFF">técnico</b>; <b>filas</b> = fases del pedido <b style="color:#B87CFF">artístico</b>. <b>No*</b>: dos testados no coinciden, salvo en tarifa urgente (tests simples entre sí). La impresión no coincide con testado, sí con diseño de <b>otro</b> pedido — nunca con otras fases del <b>mismo</b> pedido.</div></div>';
 }
 function renderCalendar(){
   _calInit();
@@ -959,14 +1049,14 @@ function renderCalendar(){
   h+='<div class="cal-top"><div class="cal-nav"><button class="btn ghost" onclick="calShift(-1)">‹</button>'
     +'<div class="cal-title">'+MON[m].charAt(0).toUpperCase()+MON[m].slice(1)+' '+y+'</div>'
     +'<button class="btn ghost" onclick="calShift(1)">›</button><button class="btn ghost" onclick="calToday()">Hoy</button></div>'
-    +'<div class="cal-legend"><span><i class="pdot pd-d"></i>Diseño</span><span><i class="pdot pd-t"></i>Testado</span><span><i class="pdot pd-i"></i>Impresión</span></div></div>';
+    +'<div class="cal-legend"><span><i class="pdot pd-d"></i>Diseño</span><span><i class="pdot pd-t"></i>Testado</span><span><i class="pdot pd-i"></i>Impresión</span><span title="Pedido urgente">⚡ Urgente</span><span title="Con tiempos optimizados por un urgente">⧗ Optimizado</span><span title="Retrasado respecto a su plazo comprometido">▲ Retrasado</span></div></div>';
   h+='<div class="cal-grid"><div class="cal-wd">Lun</div><div class="cal-wd">Mar</div><div class="cal-wd">Mié</div><div class="cal-wd">Jue</div><div class="cal-wd">Vie</div><div class="cal-wd">Sáb</div><div class="cal-wd cal-sun">Dom</div>';
   for(var bb=0;bb<startW;bb++)h+='<div class="cal-cell cal-out"></div>';
   for(var day=1;day<=dim;day++){
     var dd=new Date(y,m,day), k=_dk(dd), sun=_isSun(dd), spd=_daySpecial(k);
     var badges=spd.map(function(ty){return '<span class="cd-mini cd-'+ty+'" title="'+CDLBL[ty]+'">'+({vac:'V',noart:'A',notec:'T',noimp:'I'}[ty])+'</span>';}).join('');
-    var chips=(dayMap[k]||[]).map(function(x){ var col=orderColor(x.o), lbl=(x.ph==='d'?'Diseño':(x.ph==='t'?'Testado':'Impresión'));
-      return '<div class="cal-chip cph-'+x.ph+'" style="--oc:'+col+'" title="'+esc((x.o.cliente||x.o.number||'Pedido'))+' — '+lbl+'" onmousedown="event.stopPropagation()" onclick="openOrder(\''+x.o.id+'\')"><i></i><span>'+esc(x.o.cliente||x.o.number||'Pedido')+'</span></div>'; }).join('');
+    var chips=(dayMap[k]||[]).map(function(x){ var col=orderColor(x.o), lbl=(x.ph==='d'?'Diseño':(x.ph==='t'?'Testado':'Impresión')); var _s=sched[x.o.id]||{}; var _mk=(x.o.urgencia_nivel==='Urgente'?' ch-urg':'')+(_s.compressed?' ch-cmp':'')+((SCHED_INFO&&SCHED_INFO.delayed&&SCHED_INFO.delayed[x.o.id])?' ch-del':'');
+      return '<div class="cal-chip cph-'+x.ph+_mk+'" style="--oc:'+col+'" title="'+esc((x.o.cliente||x.o.number||'Pedido'))+' — '+lbl+(x.o.urgencia_nivel==='Urgente'?' · URGENTE':'')+(_s.compressed?' · tiempos optimizados':'')+((SCHED_INFO&&SCHED_INFO.delayed&&SCHED_INFO.delayed[x.o.id])?(' · +'+SCHED_INFO.delayed[x.o.id]+' d sobre lo comprometido'):'')+'" onmousedown="event.stopPropagation()" onclick="openOrder(\''+x.o.id+'\')"><i></i><span>'+esc(x.o.cliente||x.o.number||'Pedido')+'</span></div>'; }).join('');
     h+='<div class="cal-cell'+(sun?' cal-sun':'')+(spd.length?' cal-hassp':'')+(k===todayK?' cal-today':'')+'" data-dk="'+k+'" onmousedown="calDragStart(event,\''+k+'\')" onmouseenter="calDragOver(\''+k+'\')"><div class="cal-drow"><span class="cal-dn">'+day+'</span>'+badges+'</div>'+chips+'</div>';
   }
   h+='</div>';
@@ -1004,7 +1094,7 @@ function closeEP(){ save(); closeModal(); if(view==='cal')renderCalendar(); else
 function clearEP(){ var o=_epO(); if(!o)return; o.prod=null; save(); closeModal(); if(view==='cal')renderCalendar(); else if(view==='ord')renderOrders(); toast3('Producción quitada','#FF6B8A'); }
 function toggleCalOrder(id){ var o=getOrder(id); if(!o)return;
   if(o.prod&&!o.cal_off){ o.cal_off=true; save(); if(view==='ord')renderOrders(); else if(view==='cal')renderCalendar(); toast3('Pedido retirado del calendario','#FF6B8A'); return; }
-  if(o.prod&&o.cal_off){ o.cal_off=false; o.cal_at=Date.now(); save(); if(view==='ord')renderOrders(); else if(view==='cal')renderCalendar(); toast3('Pedido añadido al calendario','#34D399'); return; }
+  if(o.prod&&o.cal_off){ o.cal_off=false; o.cal_at=Date.now(); o.promised=null; save(); try{ _ensurePromised(); }catch(e){} if(view==='ord')renderOrders(); else if(view==='cal')renderCalendar(); toast3('Pedido añadido al calendario','#34D399'); return; }
   o.cal_off=false; o.cal_at=Date.now(); editProd(id); }
 
 /* ===== pedidos ===== */
@@ -1031,9 +1121,13 @@ function saveAsOrder(){ var c=S.calc_state; var dup=_findDupOrder(c.cliente,c.de
     +'<button class="btn ghost" onclick="closeModal()">Cancelar</button></div>'); return; }
   _doSaveOrder();
 }
-function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:(c.urgencia_nivel==='Ambos'?roundMoney(computeUrg(c,'Urgente').precio):r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?roundMoney(computeUrg(c,'Normal').precio):null),precio_urgente:(c.urgencia_nivel==='Ambos'?roundMoney(computeUrg(c,'Urgente').precio):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); save(); closeModal(); go('ord'); toast3('Pedido guardado','#34D399'); }
+function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0).total:r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?r.precio:null),precio_urgente:(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0).total:null),urg_days:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),promised:null,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); var _new=S.orders[0]; var _wasUrg=(_new.urgencia_nivel==='Urgente'&&_new.prod&&!_new.cal_off);
+  var _before=null; if(_wasUrg){ try{ var _tmp=S.orders; S.orders=_tmp.filter(function(x){return x.id!==_new.id;}); _before=_schedSnapshot(); S.orders=_tmp; }catch(e){} }
+  save(); try{ _ensurePromised(); }catch(e){}
+  if(_wasUrg&&_before){ try{ var _after=_schedSnapshot(); closeModal(); go('ord'); openModal(urgentImpactHTML(_before,_after,_new.id)); toast3('Pedido urgente guardado','#F4B740'); return; }catch(e){} }
+  closeModal(); go('ord'); toast3('Pedido guardado','#34D399'); }
 function _saveOrderNewName(){ var c=S.calc_state; var base=String(c.descripcion||''); var nd=prompt('Nueva descripción para diferenciar este pedido:', base?(base+' (2)'):''); if(nd==null)return; nd=nd.trim(); if(!nd){ toast3('La descripción no puede estar vacía','#FF6B8A'); return; } _doSaveOrder(nd); }
-function _overwriteOrder(id){ var o=getOrder(id); if(!o){ closeModal(); return; } var r=compute(),c=S.calc_state; o.fecha=(c.fecha||o.fecha||todayISO()); o.empresa=c.empresa; o.cliente=c.cliente; o.cliente_email=c.cliente_email||''; o.descripcion=c.descripcion; o.impresora=(r.printer.name||''); o.filamento=r.filName; o.filamento_color=r.filColor; o.peso_g=String(r.peso); o.horas=String(r.horas); o.cantidad=r.cant; o.precio_final=(c.urgencia_nivel==='Ambos'?roundMoney(computeUrg(c,'Urgente').precio):r.precio); o.precio_normal=(c.urgencia_nivel==='Ambos'?roundMoney(computeUrg(c,'Normal').precio):null); o.precio_urgente=(c.urgencia_nivel==='Ambos'?roundMoney(computeUrg(c,'Urgente').precio):null); o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); o.diseno_modelado=c.diseno_modelado; o.busqueda_modelos=c.busqueda_modelos; o.eliminacion_soportes=c.eliminacion_soportes; o.postprocesado=c.postprocesado; o.probabilidad_error=c.probabilidad_error; o.markup=c.markup; o.urgencia_nivel=c.urgencia_nivel; o.gasto_misc=num(c.gasto_misc); o.is_multimaterial=!!c.is_multimaterial; o.material_breakdown=JSON.parse(JSON.stringify(c.material_breakdown||[])); o.util=JSON.parse(JSON.stringify(c.util||{})); o.is_shared=!!c.is_shared; o.shared_split=c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null; o.status_updated_at=Date.now(); o.material_contabilizado=false; ensureClient(o); save(); closeModal(); go('ord'); toast3('Pedido sobrescrito','#34D399'); }
+function _overwriteOrder(id){ var o=getOrder(id); if(!o){ closeModal(); return; } var r=compute(),c=S.calc_state; o.fecha=(c.fecha||o.fecha||todayISO()); o.empresa=c.empresa; o.cliente=c.cliente; o.cliente_email=c.cliente_email||''; o.descripcion=c.descripcion; o.impresora=(r.printer.name||''); o.filamento=r.filName; o.filamento_color=r.filColor; o.peso_g=String(r.peso); o.horas=String(r.horas); o.cantidad=r.cant; o.precio_final=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0).total:r.precio); o.precio_normal=(c.urgencia_nivel==='Ambos'?r.precio:null); o.precio_urgente=(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0).total:null); o.urg_days=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null); o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); o.diseno_modelado=c.diseno_modelado; o.busqueda_modelos=c.busqueda_modelos; o.eliminacion_soportes=c.eliminacion_soportes; o.postprocesado=c.postprocesado; o.probabilidad_error=c.probabilidad_error; o.markup=c.markup; o.urgencia_nivel=c.urgencia_nivel; o.gasto_misc=num(c.gasto_misc); o.is_multimaterial=!!c.is_multimaterial; o.material_breakdown=JSON.parse(JSON.stringify(c.material_breakdown||[])); o.util=JSON.parse(JSON.stringify(c.util||{})); o.is_shared=!!c.is_shared; o.shared_split=c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null; o.status_updated_at=Date.now(); o.material_contabilizado=false; ensureClient(o); save(); closeModal(); go('ord'); toast3('Pedido sobrescrito','#34D399'); }
 function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:''}); save(); renderOrders(); }
 function setOrd(id,f,v){ var o=S.orders.filter(function(x){return x.id===id;})[0]; if(!o)return; if(f==='precio_final'||f==='importe_pagado')v=num(v); o[f]=v; if(f==='cliente'||f==='cliente_email')ensureClient(o); if(f==='importe_pagado'||f==='precio_final')autoArchive(o); save(); updateOrdBadge(); var pe=document.getElementById('pend-'+id); if(pe){var p=num(o.precio_final)-num(o.importe_pagado); pe.innerHTML=p>0.005?'<span class="pend">'+eur(p)+'</span>':'<span class="paid">Pagado</span>';} }
 function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
@@ -1352,7 +1446,7 @@ function internalPdfCard(){ var t=pdfTpl().internal;
     +'</div></div>';
 }
 function tokensRefCard(){
-  var toks=[['{cliente}','Nombre del cliente'],['{fecha}','Fecha'],['{numero}','Nº de pedido'],['{descripcion}','Descripción'],['{empresa}','Empresa'],['{lema}','Lema'],['{precio}','Precio final'],['{cantidad}','Unidades'],['{material}','Material'],['{peso}','Peso'],['{tiempo}','Tiempo'],['{anticipo50}','50% exacto del total'],['{anticipo}','Anticipo redondeado (resto múltiplo de 5)'],['{resto}','Diferencia en la entrega (múltiplo de 5)'],['{plazo}','Plazo de entrega (Inicios/Mediados/Finales de la semana del…)']];
+  var toks=[['{cliente}','Nombre del cliente'],['{fecha}','Fecha'],['{numero}','Nº de pedido'],['{descripcion}','Descripción'],['{empresa}','Empresa'],['{lema}','Lema'],['{precio}','Precio final'],['{cantidad}','Unidades'],['{material}','Material'],['{peso}','Peso'],['{tiempo}','Tiempo'],['{anticipo50}','50% exacto del total'],['{anticipo}','Anticipo redondeado (resto múltiplo de 5)'],['{resto}','Diferencia en la entrega (múltiplo de 5)'],['{plazo}','Plazo de entrega (Inicios (L-M)/Mediados (X-J)/Finales (V-S) de la semana del…)']];
   var chips=toks.map(function(t){ return '<button class="tpl-chip" title="'+esc(t[1])+'" onclick="insertTokenCond(\''+t[0]+'\')">'+esc(t[0])+'</button>'; }).join('');
   var ex=''; try{ var r=compute(); var p=r.precio; var resto=Math.floor((p/2)/5)*5; var ant=roundMoney(p-resto); ex='<div class="note" style="margin-top:10px">Con el presupuesto actual ('+eur(p)+'): <b>{anticipo50}</b> = '+eur(roundMoney(p/2))+' · <b>{anticipo}</b> = '+eur(ant)+' · <b>{resto}</b> = '+eur(resto)+'</div>'; }catch(e){}
   return '<div class="card"><div class="card-h">Tokens y fórmulas <span class="cfg-ro-tag">solo cliente</span></div><div class="h-sub" style="margin:-4px 0 10px">Haz clic en una frase de arriba y luego en un token para insertarlo; se calcula al generar cada PDF. <b>{anticipo}</b> pide un anticipo ≥50% cuyo resto en la entrega es un múltiplo de 5 exacto.</div><div class="tpl-chips">'+chips+'</div>'+ex+'</div>';
@@ -1562,7 +1656,7 @@ function activateInTracker(id){ var o=getOrder(id); if(!o)return; if(!(window.DP
   if(window.DPCloud.getOrderByCode){ window.DPCloud.getOrderByCode(code).then(function(ex){ if(ex) markAndGo(); else create(); }).catch(create); } else create(); }
 function openOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); }
 function reopenOrder(id){ var o=getOrder(id); if(o) openModal(orderModalHTML(o)); renderOrders(); }
-function setOrdParam(id,f,v){ var o=getOrder(id); if(!o)return; if(['peso_g','horas','cantidad','gasto_misc'].indexOf(f)>=0)v=num(v); o[f]=v; if(f==='filamento')o.is_multimaterial=false; try{ var r=compute(orderToCalcState(o)); var _cs2=orderToCalcState(o); o.precio_final=(o.urgencia_nivel==='Ambos'?roundMoney(computeUrg(_cs2,'Urgente').precio):r.precio); o.precio_normal=(o.urgencia_nivel==='Ambos'?roundMoney(computeUrg(_cs2,'Normal').precio):null); o.precio_urgente=(o.urgencia_nivel==='Ambos'?roundMoney(computeUrg(_cs2,'Urgente').precio):null); o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); }catch(e){} save(); reopenOrder(id); }
+function setOrdParam(id,f,v){ var o=getOrder(id); if(!o)return; if(['peso_g','horas','cantidad','gasto_misc'].indexOf(f)>=0)v=num(v); o[f]=v; if(f==='filamento')o.is_multimaterial=false; try{ var r=compute(orderToCalcState(o)); var _dd3=orderDual(o); o.precio_final=(o.urgencia_nivel==='Urgente'?_dd3.urgente:(o.urgencia_nivel==='Ambos'?_dd3.urgente:r.precio)); o.precio_normal=(o.urgencia_nivel==='Ambos'?_dd3.normal:null); o.precio_urgente=(o.urgencia_nivel==='Ambos'?_dd3.urgente:null); o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); }catch(e){} save(); reopenOrder(id); }
 function setOrdParamTime(id,el){ var d=hmToDec(el.value); setOrdParam(id,'horas',String(d)); }
 function setOrdMeta(id,f,v){ var o=getOrder(id); if(!o)return; o[f]=v; if(f==='cliente'||f==='cliente_email')ensureClient(o); save(); }
 function _odBrk(r){
@@ -1614,9 +1708,8 @@ function orderModalHTML(o){
       +'<div><label class="lbl">Gastos extra / misc. (€)</label><input class="inp" type="number" step="0.01" value="'+esc(o.gasto_misc||0)+'" onchange="setOrdParam(\''+I+'\',\'gasto_misc\',this.value)"></div></div>'
     +'<div class="od-price-card"><div class="odb-h">Desglose de precio</div>'+(r?_odBrk(r):'')+'<div class="odb-total"><span>PVP final</span><b>'+eur(o.precio_final)+'</b></div></div>'
     +'<div class="od-actions">'
-      +'<button class="btn ghost" onclick="orderPDF(\''+I+'\',\'cliente\')">⬇ PDF cliente</button>'
-      +'<button class="btn ghost" onclick="orderPDF(\''+I+'\',\'empresa\')">⬇ PDF interno</button>'
-      +'<button class="btn ghost" onclick="exportBothPdf(\''+I+'\')">⬇ Cliente + interno</button>'
+      +'<div class="pdf-actions" style="width:100%;margin-top:0">'+'<div class="pdf-card"><div class="pdf-card-t">PDF cliente</div><div class="pdf-card-b"><button onclick="orderViewPDF(\''+I+'\',\'cliente\')" title="Ver en el navegador"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>Ver</button><button onclick="orderPDF(\''+I+'\',\'cliente\')" title="Descargar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar</button></div></div>'+'<div class="pdf-card"><div class="pdf-card-t">PDF interno</div><div class="pdf-card-b"><button onclick="orderViewPDF(\''+I+'\',\'empresa\')" title="Ver en el navegador"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>Ver</button><button onclick="orderPDF(\''+I+'\',\'empresa\')" title="Descargar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar</button></div></div>'+'</div>'
+      +'<button class="btn ghost pdf-both" style="margin-top:0" onclick="exportBothPdf(\''+I+'\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Descargar ambos PDF</button>'
       +'<button class="btn ghost" onclick="loadOrderToCalc(\''+I+'\')">↺ Abrir en calculadora</button>'
       +'<button class="btn ghost" onclick="dupOrder(\''+I+'\')">⧉ Duplicar</button>'
       +'<button class="btn ghost" onclick="editProd(\''+I+'\')">🗓 Producción / calendario</button>'
@@ -1628,18 +1721,20 @@ function orderModalHTML(o){
 }
 
 function delOrderM(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); closeModal(); renderOrders(); }
-function chooseUrg(id){ var o=getOrder(id); if(!o)return; var d=orderDual(o); var fin=null; try{ if(o.prod){ var sc=scheduleOrders(); fin=_finFromSched(sc[o.id]); } }catch(e){}
-  var finR=fin?('<span class="uo-d">Entrega estimada: '+_fmtFin(fin)+'</span>'):'';
+function chooseUrg(id){ var o=getOrder(id); if(!o)return; var d=orderDual(o); var _df=(o.prod?dualFinish(id):{std:null,urg:null});
+  var finN=_df.std?('<span class="uo-d">Entrega: '+_fmtFin(_df.std)+'</span>'):'';
+  var finU=_df.urg?('<span class="uo-d">Entrega: '+_fmtFin(_df.urg)+'</span>'):'';
+  var _gain=(_df.std&&_df.urg)?Math.round((_md(_dk(_df.std))-_md(_dk(_df.urg)))/86400000):0;
   var html='<div class="mtit">Elegir tarifa — '+esc(o.cliente||o.number||'Pedido')+'</div>'
-    +'<div class="h-sub" style="margin-top:-4px">Este pedido tiene doble tarifa. Elige cuál fijar como precio final.</div>'
+    +'<div class="h-sub" style="margin-top:-4px">Este pedido tiene doble tarifa. Elige cuál fijar como precio final.'+((_df.std&&_df.urg)?(_gain>0?(' Con tarifa urgente entregas <b>'+_gain+' día'+(_gain===1?'':'s')+' antes</b>.'):' <b>Con la cola actual, la tarifa urgente no adelanta la entrega.</b>'):'')+'</div>'
     +'<div class="urg-choose">'
-      +'<button class="urg-opt" onclick="setUrgChoice(\''+id+'\',\'Normal\')"><span class="uo-l">Tarifa normal</span><span class="uo-v">'+eur(d.normal)+'</span>'+finR+'</button>'
-      +'<button class="urg-opt urg-opt-u" onclick="setUrgChoice(\''+id+'\',\'Urgente\')"><span class="uo-l">⚡ Tarifa urgente</span><span class="uo-v">'+eur(d.urgente)+'</span>'+finR+'</button>'
+      +'<button class="urg-opt" onclick="setUrgChoice(\''+id+'\',\'Normal\')"><span class="uo-l">Tarifa normal</span><span class="uo-v">'+eur(d.normal)+'</span>'+finN+'</button>'
+      +'<button class="urg-opt urg-opt-u" onclick="setUrgChoice(\''+id+'\',\'Urgente\')"><span class="uo-l">⚡ Tarifa urgente'+((d.days!=null)?' (+'+Math.round(urgRate(d.days)*100)+'%)':'')+'</span><span class="uo-v">'+eur(d.urgente)+'</span>'+finU+'</button>'
     +'</div>'
     +'<div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>';
   openModal(html);
 }
-function setUrgChoice(id,lvl){ var o=getOrder(id); if(!o)return; var d=orderDual(o); o.urgencia_nivel=lvl; o.precio_final=roundMoney(lvl==='Urgente'?d.urgente:d.normal); o.precio_normal=null; o.precio_urgente=null; save(); renderOrders(); toast3('Tarifa '+lvl.toLowerCase()+' aplicada','#34D399');
+function setUrgChoice(id,lvl){ var o=getOrder(id); if(!o)return; var d=orderDual(o); o.urgencia_nivel=lvl; o.precio_final=roundMoney(lvl==='Urgente'?d.urgente:d.normal); o.urg_days=(lvl==='Urgente'?(d.days!=null?d.days:orderDaysGained(o)):null); o.precio_normal=null; o.precio_urgente=null; save(); renderOrders(); toast3('Tarifa '+lvl.toLowerCase()+' aplicada','#34D399');
   var html='<div class="mtit">Tarifa aplicada ✓</div><div class="h-sub" style="margin-top:-4px">Se ha fijado la tarifa <b>'+esc(lvl.toLowerCase())+'</b>: <b>'+eur(o.precio_final)+'</b>. Descarga el PDF actualizado del pedido:</div>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn" onclick="orderPDF(\''+id+'\',\'cliente\')">⬇ PDF cliente</button><button class="btn ghost" onclick="orderPDF(\''+id+'\',\'empresa\')">⬇ PDF interno</button><button class="btn ghost" onclick="closeModal()">Cerrar</button></div>';
   var m=document.getElementById('modal'); if(m&&m.firstChild)m.firstChild.innerHTML=html; else openModal(html);
@@ -1671,7 +1766,7 @@ function computeOrder(o){
   } else { var ft0=S.filament_types.filter(function(f){return f.name===o.filamento;})[0]; pricekg=ft0?num(ft0.price_per_kg):0; }
   var markup=MARKUP[o.markup]!=null?MARKUP[o.markup]:(num(o.markup)||2.3);
   var errorRate=PROBABILIDAD_ERROR.hasOwnProperty(o.probabilidad_error)?PROBABILIDAD_ERROR[o.probabilidad_error]:(num(o.error_rate)||0.25);
-  var urg=URGENCIA[o.urgencia_nivel]!=null?URGENCIA[o.urgencia_nivel]:0;
+  var urg=0; /* recargo urgente variable por días ganados */
   var labor=num(g.labor_cost_h);
   var filamento=round4(peso*pricekg/1000); if(filOverride!=null)filamento=filOverride;
   var electricidad=round4(horas*num(printer.energy_consumption_kwh)*num(g.energy_cost_kwh));
@@ -1770,7 +1865,12 @@ function renderTicketPage(doc,o,kind){
   var br=pdfBrand(); var M=16, W=210;
   var cliente=o.cliente||'—', desc=o.descripcion||'—', fecha=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
   var r=null; try{ r=compute(orderToCalcState(o)); }catch(e){}
-  var _ordLvl=(o.urgencia_nivel==='Urgente'?'Urgente':'Normal'); var _finD=null; try{ if(o.id&&o.prod&&o.urgencia_nivel!=='Ambos'){ _finD=_finFromSched(scheduleOrders()[o.id]); } else if(o.prod){ _finD=_simFinish(o.prod,o.diseno_modelado,o.horas,_ordLvl); } }catch(e){} var _delivStd=null,_delivUrg=null; try{ if(o.prod){ _delivStd=_deliveryText(_simFinish(o.prod,o.diseno_modelado,o.horas,'Normal')); _delivUrg=_deliveryText(_simFinish(o.prod,o.diseno_modelado,o.horas,'Urgente')); } }catch(e){}
+  var _ordLvl=(o.urgencia_nivel==='Urgente'?'Urgente':'Normal'); var _finD=null; try{ if(o.id&&o.prod&&o.urgencia_nivel!=='Ambos'){ _finD=_finFromSched(scheduleOrders()[o.id]); } else if(o.prod){ _finD=_simFinish(o.prod,o.diseno_modelado,o.horas,_ordLvl); } }catch(e){} var _dvBox=(o.urgencia_nivel==='Ambos')?!!(_delivStd||_delivUrg):!!((o.urgencia_nivel==='Urgente')?(_delivUrg||_deliv):(_delivStd||_deliv));
+  var _stdPrice=(r?roundMoney(r.precio):0);
+  var _urgExtra=(o.urgencia_nivel==='Urgente')?roundMoney(Math.max(0,precio-_stdPrice)):0;
+  var _urgD=(o.urg_days!=null?num(o.urg_days):null);
+  var _urgPct=(_urgExtra>0&&_stdPrice>0)?Math.round((_urgExtra/_stdPrice)*100):0;
+  var _delivStd=null,_delivUrg=null; try{ if(o.prod){ _delivStd=_deliveryText(_simFinish(o.prod,o.diseno_modelado,o.horas,'Normal')); _delivUrg=_deliveryText(_simFinish(o.prod,o.diseno_modelado,o.horas,'Urgente')); } }catch(e){}
   var _deliv=_deliveryText(_finD);
   var tiempo=decToHM(o.horas)+' h';
   var pendingColor=(o.filamento_color==='Pendiente de configurar');
@@ -1791,7 +1891,7 @@ function renderTicketPage(doc,o,kind){
   var _datos=[
     ['Cliente',cliente,'Descripción',desc],
     ['Material',material,'Peso estimado',(o.peso_g||0)+' g'],
-    ['Tiempo de impresora',tiempo,'Entrega',(_deliv||((o.urgencia_nivel==='Urgente')?'Urgente':'Plazo estándar'))]
+    ['Tiempo de impresora',tiempo,'Unidades',((o.cantidad||1)+' ud.')]
   ];
   if(pendingColor)_datos.push(['Color',{v:'Pendiente de configurar',url:CONFIG_URL},null,null]);
   y=_dataCard(doc,M,y+2,W-2*M,_datos);
@@ -1808,11 +1908,13 @@ function renderTicketPage(doc,o,kind){
     _pbox(M+bw2+gap2, 'Tarifa urgente', _dd.urgente, true, _delivUrg);
     y=py+bh+11;
   } else {
-  var py=y+9, bw=W-2*M, bh=22;
+  var _dv1=(o.urgencia_nivel==='Urgente')?(_delivUrg||_deliv):(_delivStd||_deliv);
+  var py=y+9, bw=W-2*M, bh=(_dv1?30:22);
   doc.setFillColor(245,247,250); doc.rect(M,py,bw,bh,'F'); doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(M,py,2.6,bh,'F');
-  doc.setTextColor(120,124,134); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.text(TT(CS.t_precio),M+9,py+8);
+  doc.setTextColor(120,124,134); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.text(TT(CS.t_precio)+((o.urgencia_nivel==='Urgente')?'  ·  TARIFA URGENTE':''),M+9,py+8);
   doc.setTextColor(20,22,28); doc.setFont('helvetica','bold'); doc.setFontSize(23); doc.text(precio.toFixed(2)+' €',M+9,py+18);
   if(r&&r.cant>1){ doc.setTextColor(120,124,134); doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(r.precioUnit.toFixed(2)+' € / ud  ·  '+r.cant+' uds',W-M-4,py+18,{align:'right'}); }
+  if(_dv1){ doc.setTextColor(112,116,126); doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.text('Entrega: '+_dv1,M+9,py+26); }
   y=py+bh+11;
   }
   if(internal){
@@ -1823,7 +1925,8 @@ function renderTicketPage(doc,o,kind){
       ['Diseño / modelado',o.diseno_modelado||'—','Búsqueda modelos',o.busqueda_modelos||'—'],
       ['Elim. soportes',o.eliminacion_soportes||'—','Postprocesado',o.postprocesado||'—'],
       ['Probabilidad error',o.probabilidad_error||'—','Markup',(o.markup||'—')+(r?'  (×'+r.markup.toFixed(1)+')':'')],
-      ['Urgencia',o.urgencia_nivel||'Normal','Cantidad',(o.cantidad||1)+' ud.']
+      ['Urgencia',(o.urgencia_nivel||'Normal')+((_urgD!=null&&o.urgencia_nivel==='Urgente')?('  (+'+_urgPct+'% · '+_urgD+' d)'):''),'Cantidad',(o.cantidad||1)+' ud.'],
+      ['Entrega estándar',(_delivStd||'—'),'Entrega urgente',(_delivUrg||'—')]
     ]);
     // ===== Resumen de costes (1ª hoja): 3 cuadros + totales =====
     var _rBas=(r?r.bruto:0), _rComp=(r?r.resto:0), _rUtil=(r?r.accesorios:0), _rTot=(o.urgencia_nivel==='Ambos'?(r?r.precio:0):precio);
@@ -1834,11 +1937,12 @@ function renderTicketPage(doc,o,kind){
     _sbox(M,'PARÁM. BÁSICOS',_rBas);
     _sbox(M+_bw3+_bg,'PARÁM. COMPLEMENTARIOS',_rComp);
     _sbox(M+2*(_bw3+_bg),'UTILITARIOS',_rUtil);
-    var _pw=W-2*M, _py=_by+_bh3+8, _rowh=9, _pnlH=_rowh*2+5;
+    var _trows=[['Subtotal bruto + complementos',_rBas+_rComp],['Beneficio neto',(r?r.beneficioNeto:0)]];
+    if(_urgExtra>0)_trows.push(['Recargo urgencia'+((_urgD!=null)?(' ('+_urgD+' día'+(_urgD===1?'':'s')+' · +'+_urgPct+'%)'):''),_urgExtra]);
+    var _pw=W-2*M, _py=_by+_bh3+8, _rowh=9, _pnlH=_rowh*_trows.length+5;
     doc.setFillColor(248,249,251); doc.roundedRect(M,_py,_pw,_pnlH,2,2,'F');
     var _tr=function(yy,lbl,val){ doc.setTextColor(96,100,110); doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.text(lbl,M+9,yy); doc.setTextColor(34,37,44); doc.setFont('helvetica','bold'); doc.text((val||0).toFixed(2)+' €',W-M-9,yy,{align:'right'}); };
-    _tr(_py+9,'Subtotal bruto + complementos',_rBas+_rComp);
-    _tr(_py+9+_rowh,'Beneficio neto',(r?r.beneficioNeto:0));
+    _trows.forEach(function(rw,ri){ _tr(_py+9+ri*_rowh,rw[0],rw[1]); });
     var _ty=_py+_pnlH+6, _tbh=15;
     doc.setFillColor(ac[0],ac[1],ac[2]); doc.roundedRect(M,_ty,_pw,_tbh,2,2,'F');
     doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.text('IMPORTE TOTAL',M+9,_ty+9.6);
@@ -1855,6 +1959,7 @@ function renderTicketPage(doc,o,kind){
       push('Markup (×'+r.markup.toFixed(1)+')',r.markupVal);
       if(r.errorVal>0) push('Fondo error ('+(o.probabilidad_error||'')+')',r.errorVal);
       if(r.recargo>0) push('Plus urgencia',r.recargo);
+      if(_urgExtra>0) push('Recargo urgencia'+((_urgD!=null)?(' ('+_urgD+' día'+(_urgD===1?'':'s')+' · +'+_urgPct+'%)'):(' (+'+_urgPct+'%)')),_urgExtra);
       if(r.gastoMisc>0) push('Extras / misc.',r.gastoMisc);
       if(r.accesorios>0) push('Utilitarios (accesorios)',r.accesorios);
     }
@@ -1905,6 +2010,7 @@ function _pdfBothFallback(files){ files.forEach(function(f){ _pdfTriggerDL(f.blo
 function _pdfSaveBoth(files){ if(window.showDirectoryPicker){ window.showDirectoryPicker({mode:'readwrite',id:'silab3dpdf'}).then(function(dir){ var chain=Promise.resolve(); files.forEach(function(f){ chain=chain.then(function(){ return dir.getFileHandle(f.name,{create:true}).then(function(fh){ return fh.createWritable().then(function(w){ return Promise.resolve(w.write(f.blob)).then(function(){ return w.close(); }); }); }); }); }); chain.then(function(){ toast3('2 PDF guardados en la carpeta elegida','#34D399'); }).catch(function(e){ _pdfBothFallback(files); }); }).catch(function(e){ if(e&&e.name==='AbortError'){ return; } _pdfBothFallback(files); }); } else { _pdfBothFallback(files); } }
 function calcViewPDF(kind){ if(!_pdfOk())return; var o=calcStateToOrder(); var k=(kind==='empresa'?'empresa':'cliente'); var blob=_pdfDoc(o,k).output('blob'); window.open(URL.createObjectURL(blob),'_blank'); }
 function calcPDF(kind){ if(!_pdfOk())return; var o=calcStateToOrder(); var k=(kind==='empresa'?'empresa':'cliente'); var doc=_pdfDoc(o,k); var name=pdfFileName(o,k); var blob=doc.output('blob'); _pdfTriggerDL(blob,name); toast3('PDF descargado','#34D399'); }
+function orderViewPDF(id,kind){ var o=getOrder(id); if(!o)return; if(!_pdfOk())return; var k=(kind==='empresa'?'empresa':'cliente'); var blob=_pdfDoc(o,k).output('blob'); window.open(URL.createObjectURL(blob),'_blank'); }
 function orderPDF(id,kind){ var o=getOrder(id); if(!o)return; if(!_pdfOk())return; var k=(kind==='empresa'?'empresa':'cliente'); var doc=_pdfDoc(o,k); var name=pdfFileName(o,k); var blob=doc.output('blob'); _pdfTriggerDL(blob,name); toast3('PDF descargado','#34D399'); }
 function exportBothPdf(id){ var o=getOrder(id); if(!o)return; if(!_pdfOk())return; var f=[{name:pdfFileName(o,'cliente'),blob:_pdfDoc(o,'cliente').output('blob'),label:'PDF cliente'},{name:pdfFileName(o,'empresa'),blob:_pdfDoc(o,'empresa').output('blob'),label:'PDF interno'}]; _pdfSaveBoth(f); }
 function calcBothPdf(){ if(!_pdfOk())return; var o=calcStateToOrder(); var f=[{name:pdfFileName(o,'cliente'),blob:_pdfDoc(o,'cliente').output('blob'),label:'PDF cliente'},{name:pdfFileName(o,'empresa'),blob:_pdfDoc(o,'empresa').output('blob'),label:'PDF interno'}]; _pdfSaveBoth(f); }
