@@ -171,29 +171,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (whatsappLink) {
-        whatsappLink.addEventListener('click', function (event) {
-            if (!whatsappLink.href || whatsappLink.href === '#') {
-                event.preventDefault();
-                return;
-            }
-
-            event.preventDefault();
-            window.open(whatsappLink.href, '_blank', 'noopener,noreferrer');
-        });
+    /* Un <a href="#"> devuelve en .href la URL absoluta de la página, así que la
+       comprobación antigua (href === '#') nunca se cumplía y se abría una copia de
+       la propia página en otra pestaña: el usuario veía el formulario reiniciado. */
+    function linkReady(el) {
+        var raw = el ? (el.getAttribute('href') || '') : '';
+        return /^(https?:|mailto:)/i.test(raw);
     }
-
-    if (emailLink) {
-        emailLink.addEventListener('click', function (event) {
-            if (!emailLink.href || emailLink.href === '#') {
-                event.preventDefault();
-                return;
-            }
-
-            event.preventDefault();
-            window.open(emailLink.href, '_blank', 'noopener,noreferrer');
+    /* Los enlaces se abren de forma NATIVA (target="_blank"): así nunca los bloquea el
+       antipopups y, si el mensaje aún no se hubiera generado, el HTML ya apunta a
+       WhatsApp y al correo. Solo nos aseguramos de que la URL sea válida. */
+    [whatsappLink, emailLink].forEach(function (lnk) {
+        if (!lnk) return;
+        lnk.addEventListener('click', function (event) {
+            if (linkReady(lnk)) return;              // destino correcto: deja navegar
+            event.preventDefault();                  // destino no válido: no abrir nada
+            goToNextStep(3);
         });
-    }
+    });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -256,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function showStep(stepNumber) {
         activeStep = stepNumber;
+        if (typeof window.setStep === 'function') { try { window.setStep(stepNumber); } catch (e) {} }
 
         formSteps.forEach((step) => {
             const stepValue = Number(step.getAttribute('data-form-step'));

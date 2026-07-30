@@ -1337,12 +1337,12 @@
           Escoge tu método de contacto preferido
         </p>
         <div class="contact-options-grid">
-          <a id="projectWhatsApp" href="#" target="_blank" class="contact-option-card">
+          <a id="projectWhatsApp" href="https://wa.me/34644070487" target="_blank" rel="noopener" class="contact-option-card">
             <div class="contact-option-icon">📱</div>
             <h3>WhatsApp</h3>
             <p>Respuesta inmediata</p>
           </a>
-          <a id="projectEmail" href="#" target="_blank" class="contact-option-card">
+          <a id="projectEmail" href="mailto:silab3d@gmail.com" target="_blank" rel="noopener" class="contact-option-card">
             <div class="contact-option-icon">📧</div>
             <h3>Email</h3>
             <p>Comunicación formal</p>
@@ -1389,23 +1389,12 @@
         if (i < n)  { dot.classList.add('done'); if (conn) conn.classList.add('done'); }
         if (i === n) dot.classList.add('active');
       }
-      // scroll hero into view smoothly
-      document.querySelector('.hero-main').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    /* ============================================================
-       STEP NAVIGATION
-    ============================================================ */
-    function showStep(stepNum) {
-      // Hide all form steps
-      document.querySelectorAll('[data-form-step]').forEach(el => {
-        el.hidden = true;
-      });
-      // Show the target
-      const target = document.querySelector(`[data-form-step="${stepNum}"]`);
-      if (target) target.hidden = false;
-      setStep(stepNum);
-    }
+    /* La navegación de pasos la gestiona js/configura-tu-proyecto.js (valida los
+       campos y genera los enlaces de WhatsApp/email). Aquí solo queda el
+       indicador visual: se expone setStep() para que aquel lo actualice. */
+    window.setStep = setStep;
 
     /* ---- Inline validation helpers ---- */
     function validateField(inputId, errorId) {
@@ -1440,35 +1429,8 @@
       });
     });
 
-    /* ---- Step 1 → 2 ---- */
-    document.getElementById('projectNextToDetails').addEventListener('click', () => {
-      const ok1 = validateField('projectCustomerName',    'errName');
-      const ok2 = validateField('projectCustomerContact', 'errContact');
-      if (ok1 && ok2) showStep(2);
-    });
-
-    /* ---- Step 2 → 1 ---- */
-    document.getElementById('projectBackToDetails').addEventListener('click', () => showStep(1));
-
-    /* ---- Step 2 → 3 ---- */
-    document.getElementById('projectNextToColors').addEventListener('click', () => {
-      const ok1 = validateField('projectName',           'errProjectName');
-      const ok2 = validateField('projectDescription',    'errDescription');
-      const ok3 = validateField('projectReferenceFiles', 'errReference');
-      if (ok1 && ok2 && ok3) showStep(3);
-    });
-
-    /* ---- Step 3 → 2 ---- */
-    document.getElementById('projectBackToProjectDetails').addEventListener('click', () => showStep(2));
-
-    /* ---- Step 3 → 4 ---- */
-    document.getElementById('projectShowContactOptions').addEventListener('click', () => showStep(4));
-
-    /* ---- Step 4 → 3 ---- */
-    document.getElementById('projectBackToColors').addEventListener('click', () => showStep(3));
-
-    /* Initialise step 1 visible */
-    showStep(1);
+    /* Indicador en el paso 1 al cargar */
+    setStep(1);
   </script>
 
   <!-- Supabase (subida de archivos de referencia a Storage) -->
@@ -1487,7 +1449,7 @@
 
   <!-- Existing project logic (color catalog, WhatsApp/email generation, etc.) -->
   <script defer src="../js/script.js"></script>
-  <script defer src="../js/configura-tu-proyecto.js?v=20260728a"></script>
+  <script defer src="../js/configura-tu-proyecto.js?v=20260728c"></script>
 
   <script>
     const navbar=document.getElementById('navbar');
