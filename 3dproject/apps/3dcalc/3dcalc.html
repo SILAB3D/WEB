@@ -1378,10 +1378,17 @@ function resetCfg(){ if(!confirm('¿Restablecer la configuración a los valores 
 function gcField(label,f,suf){ return '<div class="fg"><label class="lbl">'+label+'</label><div class="suffix"><input class="inp" type="number" step="0.01" value="'+esc(S.global_config[f])+'" oninput="setGC(\''+f+'\',this.value)"><span class="u">'+(suf||'')+'</span></div></div>'; }
 var UTIL_DEFAULTS={simple:0.30,caja_m:1,caja_l:2,bolsa_s:0.15,bolsa_m:0.80,bolsa_l:1.50};
 function utilPrice(k){ var up=(S.global_config&&S.global_config.util_prices)||{}; var v=up[k]; return (v==null||isNaN(Number(v)))?UTIL_DEFAULTS[k]:Number(v); }
-function setUtilPrice(k,v){ if(!S.global_config.util_prices||typeof S.global_config.util_prices!=='object')S.global_config.util_prices=Object.assign({},UTIL_DEFAULTS); S.global_config.util_prices[k]=num(v); save(); }
+function setUtilPrice(k,v){ if(!S.global_config.util_prices||typeof S.global_config.util_prices!=='object')S.global_config.util_prices=Object.assign({},UTIL_DEFAULTS); S.global_config.util_prices[k]=num(v); save(); _utilRefresh(); }
 var UTIL_NAMES_DEF={g_simple:'Accesorios simples',g_caja:'Caja',g_bolsa:'Bolsa',simple:'Arandelas/NFC',caja_m:'Caja M',caja_l:'Caja L',bolsa_s:'Bolsa S',bolsa_m:'Bolsa M',bolsa_l:'Bolsa L'};
 function utilName(k){ var un=(S.global_config&&S.global_config.util_names)||{}; return (un[k]!=null&&String(un[k]).trim()!=='')?String(un[k]):(UTIL_NAMES_DEF[k]||''); }
-function setUtilName(k,v){ if(!S.global_config.util_names||typeof S.global_config.util_names!=='object')S.global_config.util_names={}; S.global_config.util_names[k]=v; save(); }
+function setUtilName(k,v){ if(!S.global_config.util_names||typeof S.global_config.util_names!=='object')S.global_config.util_names={}; S.global_config.util_names[k]=v; save(); _utilRefresh(); }
+/* Los utilitarios de la calculadora (nombres, títulos y precios) se leen en vivo de
+   Configuración; esto refresca al vuelo lo que ya esté pintado en pantalla. */
+function _utilRefresh(){ try{
+  if(view==='calc'){ renderCalc(); return; }
+  var box=document.querySelector('.card .ut-row'); if(box){ try{ renderCalc(); }catch(e){} }
+  if(typeof _epId!=='undefined' && _epId){ try{ _rerenderEP(); }catch(e){} }
+}catch(e){} }
 function gcUtilName(k,lbl){ return '<div class="fg"><label class="lbl">'+lbl+'</label><input class="inp" value="'+esc(utilName(k))+'" oninput="setUtilName(\''+k+'\',this.value)"></div>'; }
 function eurUd(n){ n=Number(n)||0; return (n%1===0? String(n) : n.toFixed(2).replace('.',','))+' €/ud'; }
 function gcUtilField(k){ return '<div class="fg"><input class="inp" style="margin-bottom:6px;font-weight:600" value="'+esc(utilName(k))+'" oninput="setUtilName(\''+k+'\',this.value)" placeholder="Nombre del utilitario"><div class="suffix"><input class="inp" type="number" step="0.01" min="0" value="'+esc(utilPrice(k))+'" oninput="setUtilPrice(\''+k+'\',this.value)"><span class="u">€/ud</span></div></div>'; }
