@@ -115,6 +115,10 @@ select.selx{color:var(--t1)}option{background:#161922;color:#E8EBF4}
 .mbtn-shop{color:#B87CFF;background:rgba(184,124,255,.16)}
 .mbtn-shop:hover{background:rgba(184,124,255,.28)}
 .mbtn-sunlu{color:#4D9FFF;background:rgba(77,159,255,.16)}
+.mbtn-amz{color:#FF9900;background:rgba(255,153,0,.16);border:none;cursor:pointer}
+.mbtn-amz:hover{background:rgba(255,153,0,.30)}
+.mbtn-amz.off{color:var(--t3);background:rgba(255,255,255,.05);opacity:.55}
+.mbtn-amz.off:hover{opacity:.85;background:rgba(255,153,0,.14);color:#FF9900}
 .mbtn-sunlu:hover{background:rgba(77,159,255,.28)}
 .mtable .mgrp{white-space:nowrap}
 .mg-main{display:block;font-size:12.5px;color:var(--t1)}
@@ -177,7 +181,7 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
 (function(){var p=null;try{p=new URLSearchParams(location.search).get('dptheme');}catch(e){}var s=null;try{s=localStorage.getItem('dp3-theme');}catch(e){}applyTheme(p||s||'dark');})();
 
 /* ===== estado ===== */
-var S={watch:{},lastSeen:0};
+var S={watch:{},lastSeen:0,amazon:{}};
 var view='cat', Q='', LQ='', LT='all', AQ='';
 var SOND=true, ONLYAV=false, showDiag=false;
 var LIVE=false, liveBusy=false;
@@ -189,7 +193,7 @@ function normTxt(s){ var x=String(s==null?'':s).toLowerCase(); try{ x=x.normaliz
 function kwMatch(q,txt){ var toks=normTxt(q).split(/\s+/).filter(Boolean); if(!toks.length)return true; var h=normTxt(txt); for(var i=0;i<toks.length;i++){ if(h.indexOf(toks[i])<0)return false; } return true; }
 function vHay(v){ return v.vt; }
 function jsq(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-function norm(){ if(!S||typeof S!=='object')S={}; if(!S.watch||typeof S.watch!=='object')S.watch={}; if(typeof S.lastSeen!=='number')S.lastSeen=0; }
+function norm(){ if(!S||typeof S!=='object')S={}; if(!S.watch||typeof S.watch!=='object')S.watch={}; if(typeof S.lastSeen!=='number')S.lastSeen=0; if(!S.amazon||typeof S.amazon!=='object')S.amazon={}; }
 function save(){ if(!loaded)return; clearTimeout(saveT); saveT=setTimeout(cloudPush,600); }
 function cloudPush(){ try{ if(window.DPCloud&&window.DPCloud.currentUser&&window.DPCloud.currentUser()){ myTs=Date.now(); window.DPCloud.saveState('3dstock',S,myTs).catch(function(e){console.warn('[3DStock] guardado falló:',e&&(e.message||e));}); } }catch(e){} }
 
@@ -409,6 +413,18 @@ function spells(vid){ var evs=CH.filter(function(c){ return String(c.vid)===Stri
   function m(a){ if(!a.length)return null; var s=0; a.forEach(function(x){s+=x;}); return s/a.length; }
   return { av:m(av), ab:m(ab), nav:av.length, nab:ab.length }; }
 function shopLink(v){ return 'https://shop.app/products/'+v.pid+'?variantId='+v.vid; }
+/* Amazon no permite localizar la ficha exacta desde el navegador (su API de afiliados
+   exige credenciales de servidor), así que el enlace se guarda una vez por filamento. */
+function amazonLink(v){ var u=(S.amazon||{})[String(v.vid)]; return (typeof u==='string'&&/^https?:\/\//i.test(u))?u:''; }
+function setAmazonLink(vid,url){ if(!S.amazon||typeof S.amazon!=='object')S.amazon={}; url=String(url||'').trim();
+  if(!url){ delete S.amazon[String(vid)]; } else { if(!/^https?:\/\//i.test(url))url='https://'+url.replace(/^\/+/,''); S.amazon[String(vid)]=url; }
+  save(); render(); }
+function askAmazonLink(vid,name){ var cur=(S.amazon||{})[String(vid)]||'';
+  var u=prompt('Enlace de Amazon para «'+(name||'este filamento')+'»:\n\nPega la URL del producto (o déjalo vacío para quitarlo).',cur);
+  if(u===null)return; setAmazonLink(vid,u); try{ setStatus(u.trim()?'Enlace de Amazon guardado':'Enlace de Amazon eliminado'); setTimeout(function(){ setStatus(''); },2500); }catch(e){} }
+function amazonBtn(v){ var u=amazonLink(v); var ic='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5c3.2 2.1 7 3.2 11 3.2 2.6 0 5.1-.5 7.4-1.4"/><path d="M19.6 20.4c.5-1.2.7-2.4.5-2.8-.2-.4-1.4-.5-2.6-.2"/><path d="M7 10.5V8.8C7 6.7 8.7 5 10.8 5h2.4C15.3 5 17 6.7 17 8.8v3.4c0 .8.3 1.6.9 2.2"/></svg>';
+  if(u) return '<a class="mbtn mbtn-amz" href="'+esc(u)+'" target="_blank" rel="noopener" title="Comprar en Amazon — clic derecho para cambiar el enlace" oncontextmenu="event.preventDefault();askAmazonLink(\''+v.vid+'\',\''+jsq(v.ptitle||'')+'\');return false;">'+ic+'</a>';
+  return '<button class="mbtn mbtn-amz off" title="Sin enlace de Amazon — clic para añadirlo" onclick="askAmazonLink(\''+v.vid+'\',\''+jsq(v.ptitle||'')+'\')">'+ic+'</button>'; }
 function monRowHTML(v){
   var rep=lastEv(v.vid,'repuesto'), out=lastEv(v.vid,'agotado'), sp=spells(v.vid);
   var avgHtml=(v.avg&&Number(v.avg)>0)?('<span class="ravg">prom. '+eurF(v.avg)+'</span>'):'';
@@ -417,7 +433,7 @@ function monRowHTML(v){
     +'<td class="mav">'+(v.av?'<span class="av-ic av-ok" title="Disponible"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>':'<span class="av-ic av-no" title="Agotado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>')+'</td>'
     +'<td class="mprice"><span class="'+pcls+'">'+eurF(v.price)+'</span>'+avgHtml+'</td>'
     +'<td class="macts"><a class="mbtn mbtn-shop" href="'+esc(shopLink(v))+'" target="_blank" rel="noopener" title="Comprar en shop.app"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></a>'
-    +'<a class="mbtn mbtn-sunlu" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M17 7H8M17 7v9"/></svg></a>'
+    +'<a class="mbtn mbtn-sunlu" href="https://store.sunlu.com/es-es/products/'+esc(v.handle)+'?variant='+v.vid+'" target="_blank" rel="noopener" title="Ver en store.sunlu.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M17 7H8M17 7v9"/></svg></a>'+amazonBtn(v)
     +starBtn(v.vid)+'</td>'
     +'<td class="mgrp" title="'+(sp.nav?('media de '+sp.nav+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.av)+'</span><span class="mg-sub">rep. '+(rep?fmtD(rep):'—')+'</span></td>'
     +'<td class="mgrp" title="'+(sp.nab?('media de '+sp.nab+' ciclo(s) completo(s)'):'sin ciclos completos aun')+'"><span class="mg-main">'+fmtDur(sp.ab)+'</span><span class="mg-sub">agot. '+(out?fmtD(out):'—')+'</span></td>'+'</tr>';
@@ -430,7 +446,7 @@ function monTableHTML(){
   var ws=allVariants().filter(function(v){return S.watch[v.vid];}).sort(byName);
   if(!ws.length)return '<div class="card"><div class="empty">Aún no monitorizas ningún producto.<br>Añádelos con la ★ desde el buscador de abajo o desde el Catálogo.</div></div>';
   return mtableHTML(ws)
-    +'<div class="note"><b>Estado</b>: icono verde = disponible, rojo = agotado. <b>Precio</b>: blanco = igual al promedio, verde = por debajo, rojo = por encima. <b>Disp. media</b> y <b>Ausencia media</b>: días medios (de reposición a agotamiento y viceversa); debajo, en gris, la fecha de la última reposición/agotamiento. Cálculos sobre el historial (últimos 6 meses); «—» = aún no hay datos. Iconos de compra: morado abre shop.app, azul abre store.sunlu.com.</div>';
+    +'<div class="note"><b>Estado</b>: icono verde = disponible, rojo = agotado. <b>Precio</b>: blanco = igual al promedio, verde = por debajo, rojo = por encima. <b>Disp. media</b> y <b>Ausencia media</b>: días medios (de reposición a agotamiento y viceversa); debajo, en gris, la fecha de la última reposición/agotamiento. Cálculos sobre el historial (últimos 6 meses); «—» = aún no hay datos. Iconos de compra: morado abre shop.app, azul abre store.sunlu.com, naranja abre Amazon (clic en el icono apagado para pegar el enlace del producto; clic derecho sobre uno activo para cambiarlo).</div>';
 }
 function monAddHTML(){
   if(!hasData())return '';

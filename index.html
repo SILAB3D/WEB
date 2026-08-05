@@ -1259,12 +1259,10 @@
       .hamburger-menu { display: flex; }
       .navbar-left,
       .nav-links       { display: none; }
-      .navbar-container { justify-content: center; }
-      .navbar-center {
-        position: absolute;
-        left: 50%; top: 50%;
-        transform: translate(-50%, -50%);
-      }
+      /* Igual que en /productos/: la hamburguesa queda a la izquierda en el flujo y
+         el logo se centra en el viewport; con justify-content:center se solapaban. */
+      .navbar-container { justify-content: space-between; }
+      .navbar-center { position: absolute; left: 50%; transform: translateX(-50%); }
 
       .hero-main-container {
         grid-template-columns: 1fr;
@@ -1334,7 +1332,19 @@
       .section-title  { font-size: 1.9rem; }
     }
   </style>
-<style>/* Logo centrado en el viewport a cualquier ancho */ .navbar-center{position:absolute;left:50%;transform:translateX(-50%)}</style>
+<style>
+/* ── Banner idéntico al de /productos/ ──────────────────────────────────────
+   index.html carga css/custom.css (productos no), que convierte el contenedor en
+   grid y fuerza el logo a width:max(300px,12vw): en móvil desbordaba y la
+   hamburguesa se montaba sobre el logo. Aquí se replica la geometría de
+   /productos/ y se neutralizan esas reglas heredadas. */
+.navbar-container{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;grid-template-columns:none!important;align-items:center!important;justify-content:space-between!important;text-align:start;max-width:1180px;margin:0 auto;padding:0 20px;gap:16px;height:100%}
+.navbar-logo{height:48px!important;width:auto!important;max-width:none}
+.navbar-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center}
+.hamburger-menu{z-index:2;margin:0!important;position:static;order:0}
+@media (max-width:1300px){ .navbar-logo{height:48px!important;width:auto!important} }
+@media (max-width:768px){ .navbar-left,.nav-links{display:none!important} .hamburger-menu{display:flex} .navbar-container{padding:0 28px} .navbar-logo{height:48px!important} }
+</style>
 </head>
 
 <body>

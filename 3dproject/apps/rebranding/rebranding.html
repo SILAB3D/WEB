@@ -394,6 +394,17 @@ main{max-width:none;margin:52px 0 0 var(--sidebar-w);padding:22px 28px 60px}
       <div class="chipstrip" id="refbar"></div>
     </div>
 
+    <h2 class="sec">Imágenes de resultado <span class="hint">se muestran alrededor de la imagen en edición</span></h2>
+    <div class="cfgcard">
+      <p>Añade aquí las imágenes que quieras tener a la vista como referencia visual mientras editas
+      (por ejemplo, publicaciones ya publicadas). Se guardan en este navegador, reducidas para no ocupar espacio.</p>
+      <div class="dz compact" id="dropResImg" tabindex="0" role="button">
+        Añadir imágenes de resultado — <em>.jpg / .png / .webp</em>
+        <input type="file" id="fileResImg" accept="image/*" multiple hidden>
+      </div>
+      <div class="chipstrip" id="resimgbar"></div>
+    </div>
+
     <h2 class="sec">Procesado y exportación</h2>
     <div class="cfgcard">
       <div class="cfgrow">
@@ -1031,7 +1042,21 @@ document.querySelectorAll('.navitem').forEach(it=>it.addEventListener('click',()
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('act',v.id==='view-'+it.dataset.view));
   $('#crumb').textContent=it.dataset.view==='config'?'configuración':'inicio';
   toggleSidebar(false);
+  /* En móvil el panel se controla con body.side-off (shell de 3DProject): sin esto,
+     al entrar en Configuración el menú se quedaba abierto tapando el contenido. */
+  try{ if(window.innerWidth<=820) document.body.classList.add('side-off'); }catch(e){}
 }));
+(function(){
+  const dz=$('#dropResImg'), inp=$('#fileResImg');
+  if(!dz||!inp)return;
+  dz.addEventListener('click',()=>inp.click());
+  dz.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); inp.click(); } });
+  inp.addEventListener('change',()=>{ addResImgs(inp.files); inp.value=''; });
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{ e.preventDefault(); dz.classList.add('over'); }));
+  ['dragleave','dragend','drop'].forEach(ev=>dz.addEventListener(ev,()=>dz.classList.remove('over')));
+  dz.addEventListener('drop',e=>{ e.preventDefault(); if(e.dataTransfer&&e.dataTransfer.files) addResImgs(e.dataTransfer.files); });
+  buildResImgBar();
+})();
 function syncBadges(){
   $('#bFotos').textContent=state.files.length;
   $('#bRutas').textContent=ROUTES.length;
@@ -1064,21 +1089,53 @@ function buildRefbar(){
   syncBadges();
 }
 
-/* --- imágenes de resultado (derivadas de los DNG de cada ruta) --- */
+/* --- imágenes de resultado --- */
+/* Añadidas a mano desde Configuración (se guardan en este navegador, reducidas). */
+const RESIMG_KEY='rb-resimgs';
+let resImgs=[];
+try{ resImgs=JSON.parse(localStorage.getItem(RESIMG_KEY)||'[]')||[]; }catch(e){ resImgs=[]; }
+function saveResImgs(){ try{ localStorage.setItem(RESIMG_KEY,JSON.stringify(resImgs)); }catch(e){ alert('No se pudieron guardar las imágenes: el almacenamiento del navegador está lleno. Elimina alguna.'); } }
+function shrinkImage(file,max){ return new Promise(function(res,rej){
+  const fr=new FileReader();
+  fr.onload=function(){ const im=new Image();
+    im.onload=function(){ const s=Math.min(1,max/Math.max(im.width,im.height));
+      const c=document.createElement('canvas'); c.width=Math.round(im.width*s); c.height=Math.round(im.height*s);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      try{ res(c.toDataURL('image/jpeg',0.82)); }catch(e){ rej(e); } };
+    im.onerror=rej; im.src=fr.result; };
+  fr.onerror=rej; fr.readAsDataURL(file); }); }
+async function addResImgs(list){
+  const files=Array.from(list||[]).filter(f=>/^image\//.test(f.type));
+  for(const f of files){
+    try{ const url=await shrinkImage(f,640); resImgs.push({id:'ri'+Date.now()+Math.random().toString(36).slice(2,7),name:f.name.replace(/\.[^.]+$/,''),url:url}); }
+    catch(e){ console.warn('No se pudo procesar',f.name,e); }
+  }
+  saveResImgs(); buildResImgBar(); buildResbar();
+}
+function delResImg(id){ resImgs=resImgs.filter(x=>x.id!==id); saveResImgs(); buildResImgBar(); buildResbar(); }
+function buildResImgBar(){
+  const bar=$('#resimgbar'); if(!bar)return; bar.innerHTML='';
+  if(!resImgs.length){ bar.innerHTML='<div class="emptybox" style="width:100%">sin imágenes añadidas</div>'; return; }
+  resImgs.forEach(r=>{ const el=document.createElement('div'); el.className='fchip';
+    el.innerHTML='<img src="'+r.url+'"><span>'+(r.name.length>18?r.name.slice(0,16)+'…':r.name)+'</span><span class="rb" title="Quitar" style="cursor:pointer">✕</span>';
+    el.querySelector('.rb').addEventListener('click',()=>delResImg(r.id));
+    bar.appendChild(el); });
+}
 function resultRefs(){
-  return ROUTES.map((r,i)=>r.resURL?{name:r.name,url:r.resURL,route:i}:null).filter(Boolean);
+  const mine=resImgs.map(r=>({name:r.name,url:r.url,route:null}));
+  return mine.concat(ROUTES.map((r,i)=>r.resURL?{name:r.name,url:r.resURL,route:i}:null).filter(Boolean));
 }
 function buildResbar(){
   const bar=$('#resbar');bar.innerHTML='';
   const refs=resultRefs();
   if(!refs.length){
-    bar.innerHTML='<div class="emptybox" style="width:100%">añade un .dng de referencia para generar imágenes de resultado</div>';
+    bar.innerHTML='<div class="emptybox" style="width:100%">añade imágenes de resultado en Configuración</div>';
     return;
   }
   refs.forEach(r=>{
     const el=document.createElement('div');el.className='fchip';
     el.innerHTML=`<img src="${r.url}"><span>${r.name.length>18?r.name.slice(0,16)+'…':r.name}</span>
-      <span class="rb">${r.route+1}</span>`;
+      ${r.route==null?'':'<span class="rb">'+(r.route+1)+'</span>'}`;
     bar.appendChild(el);
   });
 }
