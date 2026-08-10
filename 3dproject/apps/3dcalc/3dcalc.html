@@ -426,6 +426,9 @@ option{background-color:#161922;color:#E8EBF4}
 .ps-fin{display:flex;align-items:center;gap:11px;margin-top:13px;padding-top:12px;border-top:1px solid var(--border)}
 .ps-fin-i{font-size:20px;line-height:1}
 .ps-fin-l{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px}
+.ps-start{display:flex;flex-direction:column;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--t2)}
+.ps-start b{color:var(--t1)}
+.ps-wait{font-size:11px;color:var(--t3);line-height:1.45}
 .ps-fin-d{font-size:14.5px;font-weight:700;color:var(--t1);text-transform:capitalize}
 .prod-auto{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 11px;margin-top:8px;border:1px dashed var(--border);border-radius:9px;font-size:12px}
 .prod-auto span{color:var(--t2)}.prod-auto em{color:var(--t3);font-style:normal;font-size:11px}
@@ -821,13 +824,22 @@ function _deliveryText(fin){ if(!fin)return null; var dow=fin.getDay(); var mon=
 function _finFromSched(s){ if(!s)return null; var last=(s.print&&s.print.length)?s.print[s.print.length-1]:s.end; if(!last)return null; var d=_addD(_md(last),1); while(_isSun(d))d=_addD(d,1); return d; }
 function _simFinish(prod,dm,horas,urgLevel){ var _ul=(urgLevel||'Normal'); var pd=prodDays(prod,horas,dm,_ul==='Urgente'); if(!pd||pd.total<=0)return null; var temp={id:'__SIM__',number:'__SIM__',created_at:new Date().toISOString(),archived:false,prod:prod,diseno_modelado:dm,horas:String(horas),urgencia_nivel:_ul,cal_at:8640000000000}; var orig=S.orders; S.orders=(orig||[]).concat([temp]); var sched; try{ sched=scheduleOrders(); }catch(e){ sched={}; } S.orders=orig; return _finFromSched(sched['__SIM__']); }
 function _simStartDay(prod,dm,horas,urgLevel){ var _ul=(urgLevel||'Normal'); if(prod&&prod.startDay)return prod.startDay; var pd=prodDays(prod,horas,dm,_ul==='Urgente'); if(!pd||pd.total<=0)return null; var temp={id:'__SIM__',number:'__SIM__',created_at:new Date().toISOString(),archived:false,prod:prod,diseno_modelado:dm,horas:String(horas),urgencia_nivel:_ul,cal_at:8640000000000}; var orig=S.orders; S.orders=(orig||[]).concat([temp]); var sched; try{ sched=scheduleOrders(); }catch(e){ sched={}; } S.orders=orig; var _e=sched['__SIM__']; return _e?_e.start:null; }
-function _prodSumHTML(pd,finDate,sim,finUrg){
+function _prodSumHTML(pd,finDate,sim,finUrg,startDk){
   function seg(d,cls){ return d>0?('<i style="flex:'+d+'" class="'+cls+'"></i>'):''; }
+  var _stTxt='';
+  if(startDk&&finDate){
+    var _st=_md(startDk), _fi=_md(finDate);
+    var _span=Math.round((_fi-_st)/86400000);           // días naturales de inicio a entrega
+    var _espera=(_span>(pd.total+1));                    // hay huecos de espera dentro del bloque
+    _stTxt='<div class="ps-start">▶ Empieza el <b>'+_fmtFin(_st)+'</b>'
+      +(_espera?'<span class="ps-wait">La impresora está ocupada antes: el diseño y el testado se hacen durante esa espera, así que añadir días no siempre retrasa la entrega.</span>':'')
+      +'</div>';
+  }
   var finRow = finUrg ? ('<div class="ps-fin"><span class="ps-fin-i">🏁</span><div><div class="ps-fin-l">Entrega estimada'+(sim?' · si lo guardas ahora':'')+'</div><div class="ps-fin-d">Estándar · '+_fmtFin(finDate)+'</div><div class="ps-fin-d" style="color:#F4B740">Urgente · '+_fmtFin(finUrg)+'</div></div></div>') : (finDate ? ('<div class="ps-fin"><span class="ps-fin-i">🏁</span><div><div class="ps-fin-l">Entrega estimada'+(sim?' · si lo guardas ahora':'')+'</div><div class="ps-fin-d">'+_fmtFin(finDate)+'</div></div></div>') : '');
   return '<div class="ps-head"><span class="ps-num">'+fmtDays(pd.total)+'</span><span class="ps-lbl">día'+(pd.total===1?'':'s')+' de producción</span></div>'
     +'<div class="ps-bar">'+(pd.total>0?(seg(pd.diseno,'psb-d')+seg(pd.testado,'psb-t')+seg(pd.impresion,'psb-i')):'<i class="psb-e"></i>')+'</div>'
     +'<div class="ps-legend"><span class="ps-seg"><i class="pdot pd-d"></i>Diseño <b>'+fmtDays(pd.diseno)+' d</b></span><span class="ps-seg"><i class="pdot pd-t"></i>Testado <b>'+fmtDays(pd.testado)+' d</b></span><span class="ps-seg"><i class="pdot pd-i"></i>Impresión <b>'+fmtDays(pd.impresion)+' d</b></span></div>'
-    +finRow;
+    +_stTxt+finRow;
 }
 function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
   if(!on) return '<div class="h-sub" style="margin:0">Actívalo para calcular el tiempo de producción del pedido y programarlo automáticamente en el Calendario.</div>';
@@ -844,7 +856,7 @@ function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
   h+='<div class="fg prod-im"><label class="lbl">Tiempo de impresión <em class="prod-src">de «Tiempo» (hh:mm)</em></label><div class="suffix"><input class="inp ro" readonly tabindex="-1" value="'+decToHM(hh)+'"><span class="u">'+iDays+' d</span></div></div>';
   var _autoSt=_simStartDay(p,dm,hrs,urg?'Urgente':'Normal'); var _stVal=(p.startDay||_autoSt||'');
   h+='<div class="fg prod-st"><label class="lbl">Primer día de inicio <em class="prod-src">'+(p.startDay?'fijado manualmente':'primer día disponible (auto)')+'</em></label><div class="date-row"><input class="inp" type="date" min="'+esc(_autoSt||'')+'" value="'+esc(_stVal)+'" onchange="EPSET(\'startDay\',(this.value&&this.value<this.min)?\'\':this.value)"><button type="button" class="btn ghost date-hoy'+(p.startDay?'':' date-hoy-on')+'" title="Poner automáticamente el primer día disponible" onclick="EPSET(\'startDay\',\'\')">Auto</button></div></div>';
-  h+='<div class="prod-sum-box">'+_prodSumHTML(prodDays(p,hrs,dm,urg),finDate,sim,finUrg)+'</div>';
+  h+='<div class="prod-sum-box">'+_prodSumHTML(prodDays(p,hrs,dm,urg),finDate,sim,finUrg,(p.startDay||_autoSt||null))+'</div>';
   return h;
 }
 function prodFormHTML(c){
@@ -862,7 +874,7 @@ function refreshProdCard(){
   var dzu=card.querySelector('.prod-dz .u'); if(dzu)dzu.textContent=dDays+' d';
   var im=card.querySelector('.prod-im .inp'); if(im)im.value=decToHM(hh);
   var imu=card.querySelector('.prod-im .u'); if(imu)imu.textContent=iDays+' d';
-  var box=card.querySelector('.prod-sum-box'); if(box)box.innerHTML=_prodSumHTML(prodDays(p,hrs,dm,_urgn),_simFinish(p,dm,hrs,_urgn?'Urgente':'Normal'),true,_urgAmb?_simFinish(p,dm,hrs,'Urgente'):null);
+  var box=card.querySelector('.prod-sum-box'); if(box)box.innerHTML=_prodSumHTML(prodDays(p,hrs,dm,_urgn),_simFinish(p,dm,hrs,_urgn?'Urgente':'Normal'),true,_urgAmb?_simFinish(p,dm,hrs,'Urgente'):null,(p.startDay||_simStartDay(p,dm,hrs,_urgn?'Urgente':'Normal')||null));
 }
 function _md(d){ var x=new Date(d); if(isNaN(x))x=new Date(); x.setHours(0,0,0,0); return x; }
 function _isSun(d){ return d.getDay()===0; }
