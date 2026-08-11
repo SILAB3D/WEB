@@ -9,6 +9,7 @@
 <script type="module" src="../../firebase/dpcloud.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -47,6 +48,8 @@ input,textarea{font-family:inherit}
 .dash-btn.on{background:rgba(139,124,255,.14);border-color:rgba(139,124,255,.34);color:var(--ac)}
 .dash-btn svg{flex-shrink:0}
 .side .cta{margin:4px 14px 8px;height:38px;border:none;border-radius:11px;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;font:600 13px 'Outfit';display:flex;align-items:center;justify-content:center;gap:7px}
+.side-toggle{margin-left:auto;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:7px;width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer}
+.side-toggle:hover{color:var(--accent);border-color:var(--accent)}
 .side-h{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t2);padding:8px 18px 4px}
 .tree{flex:1;overflow:auto;padding:4px 8px 18px}
 .tree-empty,.tempty{color:var(--t2);font-size:12.5px;padding:10px 14px}
@@ -302,7 +305,7 @@ option{background-color:#161922;color:#E8EBF4}
     <button class="dash-btn" id="dashBtn" onclick="goDashboard()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg> Panel</button>
     <button class="dash-btn" id="purgeBtn" onclick="openPurge()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Matriz de purga</button>
     <button class="cta" onclick="addMod()"><svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg> Nueva modalidad</button>
-    <div class="side-h">Modalidades</div>
+    <div class="side-h">Modalidades<button class="side-toggle" id="treeToggle" onclick="toggleAllTree()" title="Desplegar o contraer todas las categorías">⇕</button></div>
     <div class="tree" id="tree"></div>
   </aside>
   <main class="main" id="main"></main>
@@ -366,6 +369,14 @@ function curTest(){return findTest(curProj(),S.sel.t);}
 
 /* ===== expandir ===== */
 function toggle(id){expanded[id]=!expanded[id];renderTree();}
+/* Despliega o contrae de golpe todas las modalidades y proyectos del menú. */
+function toggleAllTree(){
+  var ids=[]; (S.mods||[]).forEach(function(m){ ids.push(m.id); (m.projs||[]).forEach(function(p){ ids.push(p.id); }); });
+  var anyOpen=ids.some(function(id){ return !!expanded[id]; });
+  ids.forEach(function(id){ expanded[id]=!anyOpen; });
+  renderTree();
+  var b=document.getElementById('treeToggle'); if(b)b.title=anyOpen?'Desplegar todas las categorías':'Contraer todas las categorías';
+}
 function toggleP(mId,pId){expanded[pId]=!expanded[pId];renderTree();}
 
 /* ===== CRUD árbol ===== */
@@ -394,6 +405,30 @@ function togglePresets(){ presetOpen=!presetOpen; renderMain(); }
 function presetPanel(){ if(!presetOpen)return ''; var pr=S.paramPresets||[]; var x='<div class="preset-pop"><button class="pp-save" onclick="savePreset()">+ Guardar parámetros actuales como preset</button>'; if(pr.length){ x+='<div class="pp-list">'; pr.forEach(function(pp){ x+='<div class="pp-item"><button class="pp-apply" onclick="applyPreset(\''+pp.id+'\')" title="Aplicar este preset al test"><span class="pp-ic">&#9656;</span>'+esc(pp.name)+'<span class="pp-n">'+pp.params.length+' parám.</span></button><button class="pp-del" title="Eliminar preset" onclick="delPreset(\''+pp.id+'\')">&times;</button></div>'; }); x+='</div>'; } else { x+='<div class="pp-empty">No hay presets guardados todavía.</div>'; } x+='</div>'; return x; }
 function savePreset(){ var t=curTest(); if(!t)return; if(!t.params.length){ alert('Este test no tiene parámetros que guardar.'); return; } var n=prompt('Nombre del preset de parámetros:'); if(n==null)return; n=n.trim(); if(!n)return; if(!Array.isArray(S.paramPresets))S.paramPresets=[]; S.paramPresets.push({id:uid(),name:n,params:t.params.map(function(pp){return {name:pp.name,val:pp.val};})}); presetOpen=true; save(); renderMain(); }
 function applyPreset(id){ var t=curTest(); if(!t)return; var pr=(S.paramPresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if(t.params.length && !confirm('Se reemplazarán los parámetros definidos del test por el preset "'+pr.name+'". ¿Continuar?'))return; t.params=pr.params.map(function(pp){return {id:uid(),name:pp.name,val:pp.val};}); presetOpen=false; save(); renderMain(); }
+/* Presets de parámetros de estudio (las columnas de cada tabla) */
+function colPresets(){ if(!Array.isArray(S.colPresets))S.colPresets=[]; return S.colPresets; }
+function saveColPreset(eid){ var est=findEst(curTest(),eid); if(!est)return;
+  if(!(est.cols||[]).length){ alert('Este estudio no tiene parámetros que guardar.'); return; }
+  var n=prompt('Nombre del preset de parámetros de estudio:'); if(n==null)return; n=n.trim(); if(!n)return;
+  colPresets().push({id:uid(),name:n,cols:est.cols.map(function(c){return {name:c.name};})}); save(); renderMain(); }
+function applyColPreset(eid,pid){ var est=findEst(curTest(),eid); var pr=colPresets().filter(function(x){return x.id===pid;})[0]; if(!est||!pr)return;
+  if((est.cols||[]).length && !confirm('Se reemplazarán los parámetros de «'+(est.name||'')+'» por el preset "'+pr.name+'". ¿Continuar?'))return;
+  est.cols=(pr.cols||[]).map(function(c){ return {id:uid(),name:c.name}; });
+  (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(p){ var nv={}; est.cols.forEach(function(c){ nv[c.id]=''; }); p.vals=nv; }); });
+  save(); renderMain(); }
+function delColPreset(pid){ var pr=colPresets().filter(function(x){return x.id===pid;})[0]; if(!pr)return;
+  if(!confirm('¿Eliminar el preset "'+pr.name+'"?'))return; S.colPresets=colPresets().filter(function(x){return x.id!==pid;}); save(); renderMain(); }
+function colPresetMenu(eid){
+  var list=colPresets();
+  var txt='PRESETS DE PARÁMETROS DE ESTUDIO\n\n';
+  if(!list.length) txt+='(todavía no has guardado ninguno)\n';
+  else list.forEach(function(p,i){ txt+=(i+1)+') '+p.name+'  ['+(p.cols||[]).length+' parámetros]\n'; });
+  txt+='\nEscribe el número del preset que quieres aplicar,\n«G» para guardar los parámetros actuales como preset,\no «-» seguido del número para eliminarlo (p. ej. -2).';
+  var r=prompt(txt,''); if(r==null)return; r=String(r).trim(); if(!r)return;
+  if(/^g$/i.test(r)){ saveColPreset(eid); return; }
+  if(/^-\d+$/.test(r)){ var d=list[parseInt(r.slice(1),10)-1]; if(d)delColPreset(d.id); return; }
+  var p=list[parseInt(r,10)-1]; if(p)applyColPreset(eid,p.id); else alert('No hay ningún preset con ese número.');
+}
 function delPreset(id){ if(!Array.isArray(S.paramPresets))return; var pr=S.paramPresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('¿Eliminar el preset "'+pr.name+'"?'))return; S.paramPresets=S.paramPresets.filter(function(x){return x.id!==id;}); save(); renderMain(); }
 function addParam(){ var t=curTest(); if(!t)return; t.params.push({id:uid(),name:'Parámetro '+(t.params.length+1),val:''}); save(); renderMain(); }
 function setParamName(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.name=v;save();} }
@@ -615,7 +650,7 @@ function renderMain(){
   var h='<div class="lab-bar"><div class="lab-bc">'+esc(m?m.name:'')+' <span>/</span> '+esc(p?p.name:'')+'</div>'
     +'<input class="lab-tname" value="'+escAttr(t.name)+'" onchange="renTestInline(this.value)">'
     +'<span class="sp"></span>'
-    +'<button class="tbtn" onclick="exportCSV()" title="Exportar a CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> CSV</button>'
+    +'<button class="tbtn" onclick="exportCSV()" title="Exportar a hoja de cálculo (.xlsx)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> XLSX</button>'
     +'<button class="tbtn" onclick="exportPDF()" title="Exportar a PDF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg> PDF</button>'
     +'<button class="tbtn danger" onclick="delTest(\''+m.id+'\',\''+p.id+'\',\''+t.id+'\')">Eliminar</button></div>';
   h+='<div class="lab-body">';
@@ -639,7 +674,7 @@ function renderMain(){
         +'<button class="rmv" title="Subir estudio" onclick="moveEstudio(\''+est.id+'\',-1)">▲</button>'
         +'<button class="rmv" title="Bajar estudio" onclick="moveEstudio(\''+est.id+'\',1)">▼</button>'
         +'<button class="mini ghost" onclick="toggleCondExpand(\''+est.id+'\')" title="Ver la tabla en grande">⤢ Expandir</button>'
-        +'<button class="mini" onclick="addCol(\''+est.id+'\')">+ Parámetro</button>'
+        +'<button class="mini ghost" onclick="colPresetMenu(\''+est.id+'\')" title="Presets de parámetros de estudio">Presets'+((S.colPresets&&S.colPresets.length)?(' ('+S.colPresets.length+')'):'')+'</button>'+'<button class="mini" onclick="addCol(\''+est.id+'\')">+ Parámetro</button>'
         +'<button class="mini" onclick="addImp(\''+est.id+'\')">+ Impresión</button>'
         +'<button class="del" title="Eliminar estudio" onclick="delEstudio(\''+est.id+'\')">&times;</button>'
         +'</div></div><div class="lab-scroll">'+condTableHTML(est,emap)+'</div></div>';
@@ -668,7 +703,16 @@ function exportCSV(){
     rows.push(['Impresión','Identificador','Resultado'].concat((est.cols||[]).map(function(pa){return pa.name;})).concat(['Comentario']));
     (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(pr,pi){ rows.push([(pi===0?imp.name:''),pr.ident,RES[pr.result||0]].concat((est.cols||[]).map(function(pa){return pr.vals[pa.id]!=null?pr.vals[pa.id]:'';})).concat([pr.comment||''])); }); });
   });
-  var csv=rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');
+  if(window.XLSX){
+    var wb=XLSX.utils.book_new();
+    var ws=XLSX.utils.aoa_to_sheet(rows.map(function(r){ return (r||[]).map(function(c){ return (c==null?'':c); }); }));
+    var w=[]; rows.forEach(function(r){ (r||[]).forEach(function(c,i){ var L=String(c==null?'':c).length; w[i]=Math.max(w[i]||10,Math.min(46,L+2)); }); });
+    ws['!cols']=w.map(function(x){ return {wch:x}; });
+    XLSX.utils.book_append_sheet(wb,ws,'Test');
+    XLSX.writeFile(wb, safeName(t.name)+'.xlsx');
+    return;
+  }
+  var csv=rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');   // respaldo
   download(safeName(t.name)+'.csv', csv, 'text/csv');
 }
 function exportPDF(){
@@ -699,7 +743,12 @@ function exportPDF(){
       theme:'grid', headStyles:{fillColor:[124,108,231],textColor:255}, styles:{fontSize:9,cellPadding:2.5}, margin:{left:14,right:14},
       didParseCell:function(data){ if(data.section!=='body')return; var mt=meta[data.row.index]; if(!mt)return; if(data.column.index===2){ var rc=[null,[255,107,107],[244,183,64],[52,211,153]][mt.pr.result||0]; if(rc){ data.cell.styles.fillColor=rc; data.cell.styles.textColor=[255,255,255]; data.cell.styles.fontStyle='bold'; } } var col=data.column.index-3; if(col>=0 && col<cols.length && emap[mt.iid] && emap[mt.iid][cols[col].id]){ data.cell.styles.fillColor=[238,234,255]; data.cell.styles.textColor=[70,40,150]; data.cell.styles.fontStyle='bold'; } } });
   });
-  doc.save(safeName(t.name)+'.pdf');
+  try{
+    var _b=doc.output('blob'), _u=URL.createObjectURL(_b);
+    var _w=window.open(_u,'_blank');
+    if(!_w){ doc.save(safeName(t.name)+'.pdf'); }        // si el navegador bloquea la pestaña
+    setTimeout(function(){ try{ URL.revokeObjectURL(_u); }catch(e){} }, 60000);
+  }catch(e){ alert('No se pudo generar el PDF: '+(e&&e.message||e)); }
 }
 
 /* ===== solo-nube (Firebase) ===== */

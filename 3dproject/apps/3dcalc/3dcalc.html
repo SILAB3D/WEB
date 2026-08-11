@@ -350,8 +350,12 @@ option{background-color:#161922;color:#E8EBF4}
 .od-flag{font-size:12px;color:#34D399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:8px;padding:6px 10px;margin-top:4px}
 .od-payform{display:flex;gap:8px;flex-wrap:wrap}
 .od-payform .inp{flex:1;min-width:110px}
-.od-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.od-actions .btn{padding:8px 11px;font-size:12.5px}
+.od-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin-top:14px}
+.od-actions>*{margin:0!important}
+.od-actions .btn{padding:9px 14px;font-size:12.5px;line-height:1.2;white-space:nowrap;flex:0 1 auto}
+.od-actions .pdf-actions{margin:0!important;gap:10px}
+.od-actions .pdf-both{margin:0!important}
+@media(max-width:560px){ .od-actions{gap:8px} .od-actions .btn{flex:1 1 46%;justify-content:center;text-align:center} }
 .od-err{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--t2);margin-left:auto}
 .od-step{width:24px;height:24px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--t1);font-size:14px;cursor:pointer}
 .od-img{max-width:100%;border-radius:10px;margin-top:12px;border:1px solid var(--border)}
@@ -464,7 +468,7 @@ option{background-color:#161922;color:#E8EBF4}
 .cd-pickgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .cd-pickbtn{justify-content:center}
 .cd-pickbtn.cd-vac{border-color:rgba(255,107,138,.5)}.cd-pickbtn.cd-notec{border-color:rgba(77,159,255,.5)}.cd-pickbtn.cd-noart{border-color:rgba(184,124,255,.5)}.cd-pickbtn.cd-noimp{border-color:rgba(34,211,238,.5)}
-.cal-drow{display:flex;align-items:center;gap:3px}
+.cal-drow{display:flex;align-items:center;flex-wrap:wrap;gap:3px;row-gap:2px}
 .cal-dn{font-size:11px;font-weight:700;color:var(--t3);margin-left:auto;line-height:1;order:9}
 .cal-chip{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:var(--t1);background:color-mix(in srgb, var(--oc) 15%, transparent);border-left:3px solid var(--oc);border-radius:4px;padding:2px 5px;cursor:pointer;overflow:hidden}
 .cal-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -472,7 +476,7 @@ option{background-color:#161922;color:#E8EBF4}
 .cal-chip.cph-d i{background:#4D9FFF;border-radius:2px}
 .cal-chip.cph-t i{background:#F4B740;border-radius:50%}
 .cal-chip.cph-i i{background:#34D399;transform:rotate(45deg)}
-.cd-mini{font-size:9px;font-weight:800;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;color:#fff}
+.cd-mini{font-size:9px;font-weight:800;width:14px;height:14px;min-width:14px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;color:#fff}
 .cd-mini.cd-vac{background:#FF6B8A}.cd-mini.cd-noart{background:#B87CFF}.cd-mini.cd-notec{background:#4D9FFF}.cd-mini.cd-noimp{background:#22D3EE}.cd-noimp{background:#22D3EE}
 .cal-orders,.cal-special{margin-top:18px}
 .cal-ord-list{display:flex;flex-direction:column;gap:6px}
@@ -707,7 +711,8 @@ function setShare(v){ v=Math.max(0,Math.min(100,num(v))); S.calc_state.shared_pe
 
 /* ===== navegación ===== */
 function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',cal:'Calendario',cli:'Clientes',plantillas:'Plantillas',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
-function render(){ if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='cal')renderCalendar(); else if(view==='plantillas')renderPlantillas(); else renderCfg(); }
+function render(){ try{ if(!window.__purgedTrk){ window.__purgedTrk=1; setTimeout(purgeOldTracking,4000); } }catch(e){}
+  if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='cal')renderCalendar(); else if(view==='plantillas')renderPlantillas(); else renderCfg(); }
 function updateResult(){ var el=document.getElementById('resultBox'); if(el)el.innerHTML=resultHTML(); try{refreshProdCard();}catch(e){} }
 
 /* ===== calculadora ===== */
@@ -741,6 +746,7 @@ function renderCalc(){
    +'<div class="card"><div class="card-h">Información del proyecto</div>'
      +'<div class="fg row"><div><label class="lbl">Empresa</label><select class="selx" onchange="setCalc(\'empresa\',this.value)">'+empresaOpts+'</select></div>'
        +'<div><label class="lbl">Información del cliente</label><input class="inp" value="'+esc(c.cliente)+'" oninput="setCalc(\'cliente\',this.value)"></div></div>'
+     +'<div class="fg"><label class="lbl">Información de contacto <em class="prod-src">teléfono, email o lo que prefieras</em></label><input class="inp" value="'+esc(c.cliente_email||'')+'" placeholder="Ej. 600 123 456 · cliente@correo.com" oninput="setCalc(\'cliente_email\',this.value)"></div>'
      +'<div class="fg"><label class="lbl">Fecha</label><div class="date-row"><input class="inp" type="date" value="'+esc(c.fecha)+'" onchange="setCalc(\'fecha\',this.value)"><button type="button" class="btn ghost date-hoy" title="Actualizar a la fecha de hoy" onclick="calcFechaHoy()">Hoy</button></div></div>'
      +'<div class="fg"><label class="lbl">Descripción / proyecto</label><input class="inp" value="'+esc(c.descripcion)+'" oninput="setCalc(\'descripcion\',this.value)"></div>'
    +'</div>'
@@ -1666,7 +1672,45 @@ function consumeStock(o){
   o.material_contabilizado=true;
   if(low.length) toast3('Stock bajo → '+low.join(' · '),'#F4B740'); else toast3('Material descontado del inventario','#34D399');
 }
-function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; o.status_updated_at=Date.now(); o.notif_snooze_until=0; if(estado==='Activo' && !o.material_contabilizado) consumeStock(o); save(); updateOrdBadge(); }
+function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; o.status_updated_at=Date.now(); o.notif_snooze_until=0; if(estado==='Activo' && !o.material_contabilizado) consumeStock(o); save(); updateOrdBadge(); syncTracker(o); }
+/* ── Sincronización con 3DTracker ────────────────────────────────────────────
+   Los pedidos con seguimiento activado (o.tracked) replican su clasificación
+   de 3DCalc en 3DTracker: activo / finalizado / archivado. */
+function trackerStateOf(o){
+  if(!o)return null;
+  if(o.archived)return 'archivado';
+  var e=ordState(o);
+  if(e==='Finalizado')return 'finalizado';
+  if(e==='Activo')return 'activo';
+  return 'pendiente';
+}
+function syncTracker(o){
+  try{
+    if(!o||!o.tracked)return;
+    var code=o.order_code||o.number; if(!code)return;
+    if(!(window.DPCloud&&window.DPCloud.updateOrder))return;
+    var st=trackerStateOf(o);
+    var campos={ calc_status:st, calc_synced_at:Date.now(), archived:!!o.archived };
+    if(st==='activo'&&!o.tracker_activated_at){ o.tracker_activated_at=Date.now(); campos.activated_at=new Date().toISOString(); }
+    if(st==='archivado'){ campos.archived_at=(o.archived_at||Date.now()); }
+    window.DPCloud.updateOrder(code,campos).catch(function(){});
+  }catch(e){}
+}
+/* Los pedidos archivados pierden el seguimiento a los 3 meses de archivarse. */
+function purgeOldTracking(){
+  try{
+    if(!(window.DPCloud&&window.DPCloud.deleteOrder))return;
+    var LIM=90*24*60*60*1000, ahora=Date.now(), ch=false;
+    (S.orders||[]).forEach(function(o){
+      if(!o||!o.tracked||!o.archived||!o.archived_at)return;
+      if((ahora-num(o.archived_at))<LIM)return;
+      var code=o.order_code||o.number; if(!code)return;
+      window.DPCloud.deleteOrder(code).catch(function(){});
+      o.tracked=false; o.tracker_purged_at=ahora; ch=true;
+    });
+    if(ch)save();
+  }catch(e){}
+}
 function activateInTracker(id){ var o=getOrder(id); if(!o)return; if(!(window.DPCloud&&window.DPCloud.createOrder)){ toast3('3DTracker no disponible ahora','#FF6B8A'); return; }
   var code=o.number; toast3('Activando en 3DTracker\u2026','#4D9FFF');
   function nav(){ try{ window.parent.postMessage({__dp3:true,type:'openTrackerOrder',code:code},'*'); }catch(e){} closeModal(); }
@@ -1705,7 +1749,7 @@ function orderModalHTML(o){
       +(o.archived?'<span class="od-arch">archivado</span>':'')+'</div>'+'<button class="btn" style="width:100%;margin:2px 0 4px;background:linear-gradient(120deg,#2FBF71,#1F9E5A);color:#fff;border:none;font-weight:600" onclick="activateInTracker(\''+I+'\')">'+(o.tracked?'\u2197 Ver en 3DTracker':'\u2197 Activar en 3DTracker')+'</button>'
     +'<div class="od-sec">Información del proyecto</div>'
     +'<div class="od-grid"><div><label class="lbl">Cliente</label><input class="inp" value="'+esc(o.cliente)+'" onchange="setOrdMeta(\''+I+'\',\'cliente\',this.value)"></div>'
-      +'<div><label class="lbl">Email</label><input class="inp" value="'+esc(o.cliente_email)+'" onchange="setOrdMeta(\''+I+'\',\'cliente_email\',this.value)"></div></div>'
+      +'<div><label class="lbl">Contacto</label><input class="inp" placeholder="Teléfono, email…" value="'+esc(o.cliente_email)+'" onchange="setOrdMeta(\''+I+'\',\'cliente_email\',this.value)"></div></div>'
     +'<div class="od-grid"><div><label class="lbl">Fecha</label><input class="inp" type="date" value="'+esc(o.fecha)+'" onchange="setOrdMeta(\''+I+'\',\'fecha\',this.value)"></div>'
       +'<div><label class="lbl">Nº de pedido</label><input class="inp" value="'+esc(o.number||'')+'" disabled></div></div>'
     +'<div class="fg"><label class="lbl">Descripción</label><input class="inp" value="'+esc(o.descripcion)+'" onchange="setOrdMeta(\''+I+'\',\'descripcion\',this.value)"></div>'
@@ -1770,7 +1814,7 @@ function loadOrderToCalc(id){ var o=getOrder(id); if(!o)return; var c=S.calc_sta
   c.is_shared=!!o.is_shared; if(o.shared_split){c.shared_percent_3dcc=num(o.shared_split['3DCC']);c.shared_percent_silab3d=num(o.shared_split['SILAB3D']);}
   save(); closeModal(); go('calc'); toast3('Parámetros cargados en la calculadora','#4D9FFF'); }
 function dupOrder(id){ var o=getOrder(id); if(!o)return; S.oseq=(S.oseq||0)+1; var c=JSON.parse(JSON.stringify(o)); c.id=uid(); c.number=randomOrderNo(); c.created_at=new Date().toISOString(); c.estado='Pendiente'; c.status_updated_at=Date.now(); c.notif_snooze_until=0; c.importe_pagado=0; c.payment_history=[]; c.material_contabilizado=false; c.archived=false; S.orders.unshift(c); save(); closeModal(); renderOrders(); toast3('Pedido duplicado','#34D399'); }
-function toggleArchive(id){ var o=getOrder(id); if(!o)return; o.archived=!o.archived; save(); reopenOrder(id); }
+function toggleArchive(id){ var o=getOrder(id); if(!o)return; o.archived=!o.archived; o.archived_at=o.archived?Date.now():null; save(); syncTracker(o); reopenOrder(id); }
 function setErr(id,d){ var o=getOrder(id); if(!o)return; o.repeticiones_error=Math.max(0,num(o.repeticiones_error)+d); save(); reopenOrder(id); }
 function attachImage(id,input){ var o=getOrder(id); if(!o||!input.files||!input.files[0])return; var f=input.files[0]; if(f.size>1600000){toast3('Imagen demasiado grande (máx ~1,5 MB)','#FF6B8A');return;} var rd=new FileReader(); rd.onload=function(){ o.imagen=rd.result; save(); reopenOrder(id); }; rd.readAsDataURL(f); }
 function computeOrder(o){

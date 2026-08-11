@@ -687,6 +687,31 @@ body.dp-authed #authGate{display:none}
   .dpn-panel{top:82px;bottom:auto;right:22px}
 }
 </style>
+<style>
+/* ── Cerrar sesión: solo icono cuando la ventana no está maximizada ───────── */
+@media(min-width:641px) and (max-width:1200px){
+  #dpLogout{width:40px;padding:0;justify-content:center}
+  #dpLogout .dpl-txt{display:none}
+}
+
+/* ── Tema claro: más contraste ────────────────────────────────────────────── */
+[data-theme=light]{
+  --bg:#F2F4F8;
+  --glass:rgba(255,255,255,.92);
+  --border:rgba(18,22,34,.16);
+  --t1:#12151C;--t2:#454C5C;--t3:#6E7688;
+}
+[data-theme=light] .card{background:#fff;border-color:rgba(18,22,34,.14);box-shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px rgba(16,24,40,.07)}
+[data-theme=light] .card:hover{border-color:rgba(18,22,34,.26);box-shadow:0 2px 6px rgba(16,24,40,.08),0 14px 32px rgba(16,24,40,.12)}
+[data-theme=light] .card .c-desc,[data-theme=light] .c-sub{color:#454C5C}
+[data-theme=light] #dpLogout,[data-theme=light] .fb-toggle,[data-theme=light] .dp-launch-toggle,[data-theme=light] .dpn-fab{background:#fff;border-color:rgba(18,22,34,.16);color:#12151C;box-shadow:0 2px 10px rgba(16,24,40,.10)}
+[data-theme=light] #dpLogout:hover,[data-theme=light] .fb-toggle:hover,[data-theme=light] .dp-launch-toggle:hover{border-color:rgba(18,22,34,.3);background:#F7F8FB}
+[data-theme=light] .dpn-panel{background:#fff;border-color:rgba(18,22,34,.16);box-shadow:0 12px 40px rgba(16,24,40,.16)}
+[data-theme=light] .dpn-item{background:#fff;border-color:rgba(18,22,34,.12)}
+[data-theme=light] .dpn-item:hover{background:#F5F7FB;border-color:rgba(18,22,34,.24)}
+[data-theme=light] .sort-btn,[data-theme=light] .dp-mobmenu{background:#fff;border-color:rgba(18,22,34,.16);color:#12151C}
+[data-theme=light] .foot{color:#6E7688}
+</style>
 </head>
 <body>
 <div id="authGate">
@@ -1150,7 +1175,7 @@ const APPS = {
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260728-1800';
+const APP_VER = '20260729-1300';
 
 function launchApp(id) {
   const a = APPS[id];

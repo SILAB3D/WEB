@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script type="module" src="../../firebase/dpcloud.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -69,10 +72,11 @@ body.side-off .side{margin-left:-249px}
 .dh-brand{display:flex;gap:14px;align-items:center}
 .dh-logo{width:74px;height:74px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .dh-logo img{max-width:100%;max-height:100%;object-fit:contain}
-.dh-company{font-family:'DM Serif Display',serif;font-size:24px;color:#111;letter-spacing:.5px}
+.dh-company{font-family:'Outfit',system-ui,sans-serif;font-weight:800;font-size:24px;color:#111;letter-spacing:.2px}
 .dh-slogan{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-top:3px}
 .dh-meta{text-align:right;flex-shrink:0;min-width:170px}
 .dh-title{font-size:22px;font-weight:800;letter-spacing:1px;color:#111}
+.dh-name{font-size:13px;font-weight:600;color:#444;margin-top:2px}
 .dt-toggle{margin-top:7px;border:1px solid #ccc;background:#f5f5f7;color:#333;font:600 12px 'Outfit',sans-serif;padding:5px 10px;border-radius:8px;cursor:pointer;outline:none}
 .dt-toggle option{color:#111;background:#fff}
 .dt-toggle:hover{color:#111;border-color:#F4B740}
@@ -173,7 +177,16 @@ option{background-color:#161922;color:#E8EBF4}
 /* panel derecho de presets (cabecera + frases) */
 .docside{width:300px;flex-shrink:0;border-left:1px solid var(--border);background:#0E1118;overflow-y:auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:22px}
 [data-theme=light] .docside{background:#FFFFFF}
-.dock-h{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
+.dock-top{display:flex;align-items:center;justify-content:space-between;font:700 12px 'Outfit',sans-serif;letter-spacing:.4px;text-transform:uppercase;color:var(--t2);padding-bottom:4px;border-bottom:1px solid var(--border)}
+.dock-x{background:transparent;border:1px solid var(--border);color:var(--t2);border-radius:8px;width:26px;height:26px;cursor:pointer;font-size:13px;line-height:1}
+.dock-x:hover{color:var(--t1);border-color:var(--t3)}
+.dock-h{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t2);margin-bottom:5px;display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;padding:7px 0}
+.dock-h:hover{color:var(--t1)}
+.dock-car{display:inline-block;transition:transform .16s;font-size:10px}
+.dock-sec.open .dock-car{transform:rotate(90deg)}
+.dock-sec .dock-body{display:none}
+.dock-sec.open .dock-body{display:block}
+.dock-sec{border-bottom:1px solid var(--border);padding-bottom:8px}
 .dock-sub{font-size:11.5px;color:var(--t3);margin-bottom:11px;line-height:1.5}
 .dock-form{margin-top:12px;border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:9px}
 .dock-form .mfield{margin-bottom:0}
@@ -239,6 +252,7 @@ option{background-color:#161922;color:#E8EBF4}
 .bd-rt{font-weight:800;color:var(--ac);flex-shrink:0}
 .bd-empty{color:var(--t2);font-size:13px;padding:14px 2px}
 table.lines td.imp{font-weight:700;color:#111;text-align:right;font-size:13.5px;padding:6px 8px;vertical-align:top}
+@media print{ .dh-meta{text-align:right!important;min-width:170px!important} .doc-head{flex-direction:row!important} }
 </style>
 <style>
 @media(max-width:760px){.side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:80vw;max-width:300px;margin-left:0;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}body.side-off .side{transform:translateX(-101%);margin-left:0}.main{padding:18px 12px}.sheet{padding:24px 18px}}
@@ -274,7 +288,7 @@ table.lines td.imp{font-weight:700;color:#111;text-align:right;font-size:13.5px;
   <span class="ab-sp"></span>
   <button class="tbtn dock-toggle" onclick="toggleDock()" title="Cabecera y frases (presets)">Presets</button>
   <button class="tbtn" onclick="duplicateReceipt()" id="btn-dup" title="Duplicar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> <span class="ablbl">Duplicar</span></button>
-  <button class="tbtn primary" onclick="printPDF()" id="btn-print"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg> <span class="ablbl">Imprimir / PDF</span></button>
+  <button class="tbtn primary" onclick="printPDF()" id="btn-print" title="Abrir el documento en PDF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg> <span class="ablbl">PDF</span></button>
   <button class="ab-theme" onclick="window.DPHelp&&DPHelp.open()" title="Cómo usar esta app" aria-label="Ayuda" style="width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.3"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></svg></button>
   <button class="ab-theme" id="dpThemeBtn" onclick="dpToggleTheme()" title="Cambiar tema" aria-label="Tema"></button>
 </div>
@@ -283,13 +297,31 @@ table.lines td.imp{font-weight:700;color:#111;text-align:right;font-size:13.5px;
     <button class="cta" onclick="newReceipt()"><svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg> Nuevo recibo</button>
     <div class="btree" id="rlist"></div>
     <div class="side-bottom">
-      <button onclick="toggleDock()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg> Cabecera (presets)</button>
     </div>
   </aside>
   <main class="main" id="main"></main>
   <aside class="docside" id="docside">
-    <div class="dock-sec">
-      <div class="dock-h">Cabecera del documento</div>
+    <div class="dock-top">
+      <span>Ajustes del documento</span>
+      <button class="dock-x" onclick="toggleDock()" title="Plegar el panel">✕</button>
+    </div>
+    <div class="dock-sec" data-sec="modalidad">
+      <div class="dock-h" onclick="toggleDockSec(this)"><span class="dock-car">▸</span>Modalidad</div>
+      <div class="dock-body">
+        <p class="dock-sub">Elige si este documento es un recibo o un presupuesto.</p>
+        <select class="dt-toggle" id="dockDocType" style="width:100%" onchange="setDocType(this.value)"><option value="Recibo">Recibo</option><option value="Presupuesto">Presupuesto</option></select>
+      </div>
+    </div>
+    <div class="dock-sec" data-sec="nombre">
+      <div class="dock-h" onclick="toggleDockSec(this)"><span class="dock-car">▸</span>Nombre del documento</div>
+      <div class="dock-body">
+        <p class="dock-sub">Un título propio para identificarlo; se muestra junto a su número.</p>
+        <div class="mfield"><input id="dockDocTitle" placeholder="Ej: Maqueta casa Javier" oninput="upd('title',this.value)"></div>
+      </div>
+    </div>
+    <div class="dock-sec" data-sec="cabecera">
+      <div class="dock-h" onclick="toggleDockSec(this)"><span class="dock-car">▸</span>Cabecera del documento</div>
+      <div class="dock-body">
       <p class="dock-sub">Elige una cabecera para este documento o crea una nueva.</p>
       <div id="presetList"></div>
       <div class="dock-form">
@@ -299,12 +331,15 @@ table.lines td.imp{font-weight:700;color:#111;text-align:right;font-size:13.5px;
         <div class="mfield"><label>Logo</label><div class="logo-up"><span class="prev" id="pf-prev">—</span><button class="btn ghost" onclick="document.getElementById('pf-logo').click()">Cargar…</button><input type="file" id="pf-logo" accept="image/*" style="display:none"></div></div>
         <button class="btn primary" style="width:100%" onclick="savePreset()">Guardar cabecera</button>
       </div>
+      </div>
     </div>
-    <div class="dock-sec">
-      <div class="dock-h">Presets de frases</div>
-      <p class="dock-sub">Guarda las frases del documento como preset y reutilízalas.</p>
-      <div id="phrasePresetList"></div>
-      <button class="btn primary" style="width:100%;margin-top:8px" onclick="savePhrasePreset()">Guardar frases actuales</button>
+    <div class="dock-sec" data-sec="frases">
+      <div class="dock-h" onclick="toggleDockSec(this)"><span class="dock-car">▸</span>Frases</div>
+      <div class="dock-body">
+        <p class="dock-sub">Guarda las frases del documento como preset y reutilízalas.</p>
+        <div id="phrasePresetList"></div>
+        <button class="btn primary" style="width:100%;margin-top:8px" onclick="savePhrasePreset()">Guardar frases actuales</button>
+      </div>
     </div>
   </aside>
 </div>
@@ -364,7 +399,7 @@ function renderSidebar(){
   var el=document.getElementById('rlist'); if(!el)return;
   var recs=S.receipts.filter(function(r){return (r.docType||'Recibo')!=='Presupuesto';});
   var pres=S.receipts.filter(function(r){return (r.docType||'Recibo')==='Presupuesto';});
-  function leaf(r){ return '<div class="bitem doc'+((billView!=='dash'&&r.id===S.cur)?' on':'')+'" onclick="selectReceipt(\''+r.id+'\')"><span class="bic">'+IC_DOC+'</span><span class="bi-main"><span class="bi-num">'+esc(r.number)+'</span><span class="bi-sub">'+esc(r.client&&r.client.name?r.client.name:'Sin cliente')+'</span></span><span class="bi-tot">'+eur(total(r))+'</span><button class="bi-del" onclick="deleteReceipt(\''+r.id+'\',event)" title="Eliminar">✕</button></div>'; }
+  function leaf(r){ return '<div class="bitem doc'+((billView!=='dash'&&r.id===S.cur)?' on':'')+'" onclick="selectReceipt(\''+r.id+'\')"><span class="bic">'+IC_DOC+'</span><span class="bi-main"><span class="bi-num">'+esc(r.number)+(String(r.title||'').trim()?(' · '+esc(r.title)):'')+'</span><span class="bi-sub">'+esc(r.client&&r.client.name?r.client.name:'Sin cliente')+'</span></span><span class="bi-tot">'+eur(total(r))+'</span><button class="bi-del" onclick="deleteReceipt(\''+r.id+'\',event)" title="Eliminar">✕</button></div>'; }
   function grp(title,key,arr){ var op=billExp[key]; var x='<div class="bgrp'+(op?' op':'')+'" onclick="toggleGrp(\''+key+'\')"><span class="bg-car">▶</span>'+title+'<span class="bg-n">'+arr.length+'</span></div>'; if(op){ x+= arr.length?arr.map(leaf).join(''):'<div class="bgrp-empty">Ninguno</div>'; } return x; }
   var html='<div class="bitem dash'+(billView==='dash'?' on':'')+'" onclick="goDash()"><span class="bic">'+IC_DASH+'</span>Dashboard</div>';
   html+=grp('Recibos','r',recs)+grp('Presupuestos','p',pres);
@@ -398,6 +433,7 @@ function logoHTML(p){
 function renderSheet(){
   var main=document.getElementById('main'); var r=cur();
   try{ renderPresetList(); renderPhrasePresetList(); }catch(e){}
+  try{ syncDockControls(); }catch(e){}
   if(billView==='dash'||!r){ renderBillDash(); return; }
   var p=preset(r.presetId);
   if(!Array.isArray(r.notes)){ r.notes=[{id:uid(),text:DEFAULT_TERMS,on:true}]; save(); }
@@ -414,7 +450,7 @@ function renderSheet(){
   main.innerHTML='<div class="sheet">'
     +'<div class="doc-head"><div class="dh-brand"><div class="dh-logo">'+logoHTML(p)+'</div>'
       +'<div><div class="dh-company">'+esc(p.company||'SILAB3D')+'</div><div class="dh-slogan">'+esc(p.slogan||'')+'</div></div></div>'
-      +'<div class="dh-meta"><div class="dh-title">'+((r.docType||'Recibo').toUpperCase())+'</div>'+'<select class="dt-toggle" onchange="setDocType(this.value)" title="Elige Recibo o Presupuesto"><option value="Recibo"'+((r.docType==='Presupuesto')?'':' selected')+'>Recibo</option><option value="Presupuesto"'+((r.docType==='Presupuesto')?' selected':'')+'>Presupuesto</option></select>'
+      +'<div class="dh-meta"><div class="dh-title">'+((r.docType||'Recibo').toUpperCase())+'</div>'+(String(r.title||'').trim()?('<div class="dh-name">'+esc(r.title)+'</div>'):'')
       +'<div class="dh-num"><textarea rows="1" class="gr" oninput="grow(this);upd(\'number\',this.value)">'+esc(r.number)+'</textarea></div>'
       +'<div class="dh-date"><input type="date" value="'+esc(r.date)+'" oninput="upd(\'date\',this.value)"></div></div></div>'
     +'<div class="doc-client"><div class="dc-field"><label>Cliente</label><textarea rows="1" class="gr" placeholder="Nombre del cliente" oninput="grow(this);upd(\'client.name\',this.value)">'+esc(r.client.name)+'</textarea></div>'
@@ -455,9 +491,104 @@ function savePhrasePreset(){ var r=cur(); if(!r)return; var notes=Array.isArray(
 function applyPhrasePreset(id){ var r=cur(); if(!r)return; var pr=(S.phrasePresets||[]).filter(function(x){return x.id===id;})[0]; if(!pr)return; if((r.notes&&r.notes.length) && !confirm('Se reemplazar\u00e1n las frases actuales del documento por el preset "'+pr.name+'". \u00bfContinuar?'))return; r.notes=(pr.notes||[]).map(function(x){return {id:uid(),text:x.text,on:x.on!==false,auto:x.auto||null};}); save(); renderSheet(); renderPhrasePresetList(); }
 function delPhrasePreset(id,ev){ if(ev)ev.stopPropagation(); if(!Array.isArray(S.phrasePresets))return; var pr=S.phrasePresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('\u00bfEliminar el preset "'+pr.name+'"?'))return; S.phrasePresets=S.phrasePresets.filter(function(x){return x.id!==id;}); save(); renderPhrasePresetList(); }
 function renderPhrasePresetList(){ var el=document.getElementById('phrasePresetList'); if(!el)return; var pr=S.phrasePresets||[]; el.innerHTML = pr.length ? pr.map(function(p){ return '<div class="preset-row" onclick="applyPhrasePreset(\''+p.id+'\')"><div class="pr-info"><div class="pr-name">'+esc(p.name)+'</div><div class="pr-meta">'+((p.notes&&p.notes.length)||0)+' frases</div></div><button class="pr-del" onclick="delPhrasePreset(\''+p.id+'\',event)" title="Eliminar">\u2715</button></div>'; }).join('') : '<div class="dock-empty">A\u00fan no hay presets de frases.</div>'; }
-function toggleDock(){ document.body.classList.toggle('dock-open'); }
+function toggleDock(){ document.body.classList.toggle('dock-open'); syncDockControls(); }
+/* Las categorías del panel derecho nacen plegadas; se abren al pulsar su título. */
+function toggleDockSec(h){ var s=h&&h.parentNode; if(s)s.classList.toggle('open'); }
+function syncDockControls(){ var r=cur(); if(!r)return;
+  var dt=document.getElementById('dockDocType'); if(dt)dt.value=(r.docType==='Presupuesto')?'Presupuesto':'Recibo';
+  var ti=document.getElementById('dockDocTitle'); if(ti&&document.activeElement!==ti)ti.value=(r.title||'');
+}
 function toggleOpenDock(){ if(window.innerWidth<=980) document.body.classList.add('dock-open'); }
-function printPDF(){ var r=cur(); if(!r){alert('Crea o selecciona un recibo primero.');return;} var old=document.title; document.title=(r.number||'documento'); var restore=function(){document.title=old; window.removeEventListener('afterprint',restore);}; window.addEventListener('afterprint',restore); setTimeout(restore,2000); window.print(); }
+/* ── PDF del documento ──────────────────────────────────────────────────────
+   El PDF debe verse EXACTAMENTE igual que el editor. Para lograrlo se captura
+   el propio documento (.sheet) como imagen y se coloca en un PDF A4, en lugar
+   de redibujarlo a mano. Antes de capturar se clona y se convierten los campos
+   editables (textarea/input) en texto plano y se ocultan los controles. */
+function _docPdfName(r){
+  var tipo=(r.docType==='Presupuesto')?'Presupuesto':'Recibo';
+  var partes=[String(r.date||'').replace(/-/g,''),tipo,(r.number||''),(r.title||''),((r.client&&r.client.name)||'')];
+  return partes.filter(Boolean).join('_').replace(/[\\/:*?"<>|\r\n\t]+/g,' ').replace(/\s+/g,' ').trim()+'.pdf';
+}
+function _staticFromField(el){
+  var d=document.createElement('div');
+  d.className=el.className;
+  var _v=(el.value!=null?el.value:el.textContent)||'';
+  if(el.type==='date' && /^\d{4}-\d{2}-\d{2}$/.test(_v)){ var _p=_v.split('-'); _v=_p[2]+'/'+_p[1]+'/'+_p[0]; }
+  d.textContent=_v;
+  var cs=getComputedStyle(el);
+  d.style.whiteSpace='pre-wrap';
+  d.style.font=cs.font;
+  d.style.textAlign=cs.textAlign;
+  d.style.color=cs.color;
+  d.style.lineHeight=cs.lineHeight;
+  d.style.width='100%';
+  d.style.minHeight='1em';
+  d.style.padding='0';
+  return d;
+}
+function _sanitizeSheet(sheet){
+  // fuera controles que no van en el documento
+  sheet.querySelectorAll('.no-print,.add-line,.dt-toggle,.dn-chk,.row-del,td.x,th.x').forEach(function(n){ n.remove(); });
+  // frases desmarcadas: se quitan
+  sheet.querySelectorAll('.dn-row.dn-off').forEach(function(n){ n.remove(); });
+  // campos editables -> texto
+  sheet.querySelectorAll('textarea,input').forEach(function(el){
+    if(el.type==='checkbox'||el.type==='radio'){ el.remove(); return; }
+    el.parentNode.replaceChild(_staticFromField(el), el);
+  });
+  return sheet;
+}
+function printPDF(){
+  var r=cur(); if(!r){ alert('Crea o selecciona un documento primero.'); return; }
+  var live=document.querySelector('#main .sheet');
+  var JS=window.jspdf&&window.jspdf.jsPDF;
+  if(!live||!window.html2canvas||!JS){ alert('El generador de PDF aún se está cargando. Inténtalo de nuevo en unos segundos.'); return; }
+
+  // contenedor a tamaño de documento, fuera de pantalla, tema claro
+  var wrap=document.createElement('div');
+  wrap.style.cssText='position:fixed;left:-10000px;top:0;width:760px;background:#fff;padding:42px 46px;z-index:-1';
+  wrap.setAttribute('data-theme','light');
+  var clone=live.cloneNode(true);
+  clone.style.width='100%'; clone.style.maxWidth='none'; clone.style.boxShadow='none';
+  clone.style.borderRadius='0'; clone.style.padding='0'; clone.style.background='#fff';
+  _sanitizeSheet(clone);
+  wrap.appendChild(clone);
+  document.body.appendChild(wrap);
+
+  html2canvas(wrap,{scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false}).then(function(canvas){
+    document.body.removeChild(wrap);
+    var doc=new JS({unit:'mm',format:'a4'});
+    var pw=doc.internal.pageSize.getWidth(), ph=doc.internal.pageSize.getHeight();
+    var margin=10, iw=pw-margin*2;
+    var ih=canvas.height*iw/canvas.width;      // alto total de la imagen escalada
+    var img=canvas.toDataURL('image/jpeg',0.95);
+    if(ih<=ph-margin*2){
+      doc.addImage(img,'JPEG',margin,margin,iw,ih);
+    } else {
+      // paginar recortando la imagen en trozos de altura de página
+      var pageH=ph-margin*2;
+      var pxPerMm=canvas.width/iw;
+      var sliceH=Math.floor(pageH*pxPerMm);   // px de canvas por página
+      var y=0, first=true;
+      while(y<canvas.height){
+        var h=Math.min(sliceH,canvas.height-y);
+        var c2=document.createElement('canvas'); c2.width=canvas.width; c2.height=h;
+        c2.getContext('2d').drawImage(canvas,0,y,canvas.width,h,0,0,canvas.width,h);
+        if(!first)doc.addPage();
+        doc.addImage(c2.toDataURL('image/jpeg',0.95),'JPEG',margin,margin,iw,h/pxPerMm);
+        first=false; y+=h;
+      }
+    }
+    try{
+      var b=doc.output('blob'), u=URL.createObjectURL(b);
+      var w=window.open(u,'_blank'); if(!w) doc.save(_docPdfName(r));
+      setTimeout(function(){ try{ URL.revokeObjectURL(u); }catch(e){} },60000);
+    }catch(e){ doc.save(_docPdfName(r)); }
+  }).catch(function(e){
+    try{ document.body.removeChild(wrap); }catch(_){}
+    alert('No se pudo generar el PDF: '+(e&&e.message||e));
+  });
+}
 var pfLogo='';
 function openPresets(){ pfLogo=''; document.getElementById('pf-name').value=''; document.getElementById('pf-company').value=''; document.getElementById('pf-slogan').value=''; document.getElementById('pf-prev').textContent='—'; renderPresetList(); document.getElementById('presetVeil').classList.add('open'); }
 function closePresets(){ document.getElementById('presetVeil').classList.remove('open'); }

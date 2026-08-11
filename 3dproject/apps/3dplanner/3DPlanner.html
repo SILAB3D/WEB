@@ -1028,6 +1028,20 @@ option{background-color:#161922;color:#E8EBF4}
       <input class="form-input" id="f-date" type="date">
     </div>
     <div class="form-row">
+      <div class="two-col-form">
+        <div>
+          <label class="form-label">Boquilla</label>
+          <input class="form-input" id="f-nozzle" list="nozzle-list" type="text" placeholder="Ej: 0.4 mm">
+          <datalist id="nozzle-list"><option value="0.2 mm"><option value="0.4 mm"><option value="0.6 mm"><option value="0.8 mm"></datalist>
+        </div>
+        <div>
+          <label class="form-label">Cama de impresión</label>
+          <input class="form-input" id="f-bed" list="bed-list" type="text" placeholder="Ej: PEI texturizada">
+          <datalist id="bed-list"><option value="PEI lisa"><option value="PEI texturizada"><option value="Cristal"><option value="Adhesiva"></datalist>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
       <label class="form-label">Color</label>
       <div class="hue-row">
         <div class="hue-dot" id="hue-dot"></div>
@@ -1128,6 +1142,20 @@ option{background-color:#161922;color:#E8EBF4}
         <div class="ct-desc">Las impresiones con mayor número de colores idénticos se planifican consecutivamente</div>
       </div>
       <div class="toggle-track" id="color-toggle"></div>
+    </label>
+    <label class="color-toggle-row" onclick="toggleNozzleGroup()">
+      <div class="ct-body">
+        <div class="ct-name">Agrupar por boquilla</div>
+        <div class="ct-desc">Encadena las impresiones que usan la misma boquilla para evitar cambios innecesarios</div>
+      </div>
+      <div class="toggle-track" id="nozzle-toggle"></div>
+    </label>
+    <label class="color-toggle-row" onclick="toggleBedGroup()">
+      <div class="ct-body">
+        <div class="ct-name">Agrupar por cama de impresión</div>
+        <div class="ct-desc">Agrupa las que comparten superficie para no cambiar de cama entre trabajos</div>
+      </div>
+      <div class="toggle-track" id="bed-toggle"></div>
     </label>
 
     <!-- Stats -->
@@ -1811,6 +1839,8 @@ function openAddModal(date, startMins){
   $('f-start').value=startMins!==undefined ? minsToTime(startMins) : S.params.start;
   $('f-date').value=date||dateKey(S.cur);
   $('f-color-name').value='';
+  if($('f-nozzle'))$('f-nozzle').value='';
+  if($('f-bed'))$('f-bed').value='';
   $('f-id').value='';
   setHue(270);
   wireModalInputs();
@@ -1827,6 +1857,8 @@ function openEditModal(id){
   $('f-start').value=minsToTime(ev.startMins);
   $('f-date').value=ev.date;
   $('f-color-name').value=ev.colorName||'';
+  if($('f-nozzle'))$('f-nozzle').value=(ev.nozzle||'');
+  if($('f-bed'))$('f-bed').value=(ev.bed||'');
   $('f-id').value=ev.id;
   setHue(ev.hue||270);
   wireModalInputs();
@@ -1885,15 +1917,17 @@ function saveEvent(){
   const startMins=timeToMins($('f-start').value);
   const date=$('f-date').value;
   const colorName=$('f-color-name').value.trim();
+  const nozzle=($('f-nozzle')?$('f-nozzle').value.trim():'');
+  const bed=($('f-bed')?$('f-bed').value.trim():'');
   const id=$('f-id').value;
   if(!date){ toast('Selecciona una fecha','var(--orange)'); return; }
   pushHistory();
   if(id && S.editingId){
     const idx=S.events.findIndex(e=>e.id===id);
-    if(idx>=0) S.events[idx]={...S.events[idx],title,durationMins:durMins,startMins,date,hue:S.hue,colorName};
+    if(idx>=0) S.events[idx]={...S.events[idx],title,durationMins:durMins,startMins,date,hue:S.hue,colorName,nozzle,bed};
     toast('✏️ Impresión actualizada','var(--teal)');
   } else {
-    S.events.push({id:uid(),title,durationMins:durMins,startMins,date,hue:S.hue,colorName});
+    S.events.push({id:uid(),title,durationMins:durMins,startMins,date,nozzle,bed,hue:S.hue,colorName});
     toast('✅ Impresión añadida','var(--teal)');
   }
   save(); closeAdd(); render(); checkOverlaps(true);
@@ -1977,6 +2011,19 @@ function toggleColorGroup(){
   ct.innerHTML='<div class="toggle-thumb"></div>';
   updateSmartStats();
 }
+/* Agrupar por boquilla y por cama: evita cambios de hardware entre trabajos. */
+function toggleNozzleGroup(){
+  S.nozzleGroup=!S.nozzleGroup;
+  const ct=$('nozzle-toggle'); ct.className='toggle-track'+(S.nozzleGroup?' on':'');
+  ct.innerHTML='<div class="toggle-thumb"></div>';
+  updateSmartStats();
+}
+function toggleBedGroup(){
+  S.bedGroup=!S.bedGroup;
+  const ct=$('bed-toggle'); ct.className='toggle-track'+(S.bedGroup?' on':'');
+  ct.innerHTML='<div class="toggle-thumb"></div>';
+  updateSmartStats();
+}
 
 function buildPlan(method, colorGroup){
   const dk=dateKey(S.cur);
@@ -1986,6 +2033,20 @@ function buildPlan(method, colorGroup){
   if(method==='fifo')   cands.sort((a,b)=>b.durationMins-a.durationMins);
   if(method==='short')  cands.sort((a,b)=>a.durationMins-b.durationMins);
   if(method==='maxfit') cands.sort((a,b)=>a.durationMins-b.durationMins);
+  // Primero el hardware (cama y boquilla): son los cambios más costosos.
+  if(cands.length>1 && (S.bedGroup||S.nozzleGroup)){
+    const durCmp0=method==='fifo'?(a,b)=>b.durationMins-a.durationMins:(a,b)=>a.durationMins-b.durationMins;
+    const key=(ev,f)=>String(ev&&ev[f]||'').trim().toLowerCase();
+    const cntBy=(f)=>{ const c={}; cands.forEach(e=>{ const k=key(e,f); c[k]=(c[k]||0)+1; }); return c; };
+    const cb=S.bedGroup?cntBy('bed'):null, cn=S.nozzleGroup?cntBy('nozzle'):null;
+    cands.sort((a,b)=>{
+      if(cb){ const d=(cb[key(b,'bed')]||0)-(cb[key(a,'bed')]||0); if(d!==0)return d;
+              const ka=key(a,'bed'),kb=key(b,'bed'); if(ka<kb)return -1; if(ka>kb)return 1; }
+      if(cn){ const d=(cn[key(b,'nozzle')]||0)-(cn[key(a,'nozzle')]||0); if(d!==0)return d;
+              const ka=key(a,'nozzle'),kb=key(b,'nozzle'); if(ka<kb)return -1; if(ka>kb)return 1; }
+      return durCmp0(a,b);
+    });
+  }
   if(colorGroup && cands.length>1){
     const sig=ev=>{
       const cols=ev.colors?.length ? ev.colors : [{h:ev.hue??0}];

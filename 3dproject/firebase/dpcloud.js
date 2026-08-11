@@ -67,6 +67,11 @@ async function createOrder({ customer_email, customer_name, description, order_c
   });
   return { id: code, order_code: code, customer_email, customer_name, description };
 }
+// Actualiza campos sueltos del pedido (lo usa 3DCalc para sincronizar su estado).
+async function updateOrder(code, fields) {
+  if (!code) return;
+  await updateDoc(doc(db, "orders", code), { ...fields, updated_at: serverTimestamp() });
+}
 async function getOrderById(code) { return getOrderByCode(code); }
 async function getOrderByCode(code) {
   const d = await getDoc(doc(db, "orders", code));
@@ -168,7 +173,7 @@ window.DPCloud = {
   logout: () => signOut(auth),
   onAuth: (cb) => onAuthStateChanged(auth, cb),
   currentUser: () => auth.currentUser,
-  listOrders, createOrder, getOrderById, getOrderByCode,
+  listOrders, createOrder, updateOrder, getOrderById, getOrderByCode,
   addStep, setStepStatus, updateStep, deleteStep, deleteOrder,
   listFeedback, addFeedback, updateFeedback, deleteFeedback,
   loadState, saveState, watchState, watchOrders, watchFeedback, watchOrderByCode,
