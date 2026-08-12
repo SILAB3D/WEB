@@ -861,7 +861,7 @@ function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
     h+='</div></div>'; }
   h+='<div class="fg prod-im"><label class="lbl">Tiempo de impresión <em class="prod-src">de «Tiempo» (hh:mm)</em></label><div class="suffix"><input class="inp ro" readonly tabindex="-1" value="'+decToHM(hh)+'"><span class="u">'+iDays+' d</span></div></div>';
   var _autoSt=_simStartDay(p,dm,hrs,urg?'Urgente':'Normal'); var _stVal=(p.startDay||_autoSt||'');
-  h+='<div class="fg prod-st"><label class="lbl">Primer día de inicio <em class="prod-src">'+(p.startDay?'fijado manualmente':'primer día disponible (auto)')+'</em></label><div class="date-row"><input class="inp" type="date" min="'+esc(_autoSt||'')+'" value="'+esc(_stVal)+'" onchange="EPSET(\'startDay\',(this.value&&this.value<this.min)?\'\':this.value)"><button type="button" class="btn ghost date-hoy'+(p.startDay?'':' date-hoy-on')+'" title="Poner automáticamente el primer día disponible" onclick="EPSET(\'startDay\',\'\')">Auto</button></div></div>';
+  h+='<div class="fg prod-st"><label class="lbl">Primer día de inicio <em class="prod-src">'+(p.startDay?(p.startDay<_dk(_md(Date.now()))?'fijado manualmente · anterior a hoy':'fijado manualmente'):'primer día disponible (auto) · puedes adelantarlo')+'</em></label><div class="date-row"><input class="inp" type="date" value="'+esc(_stVal)+'" onchange="EPSET(\'startDay\',this.value)"><button type="button" class="btn ghost date-hoy'+(p.startDay?'':' date-hoy-on')+'" title="Poner automáticamente el primer día disponible" onclick="EPSET(\'startDay\',\'\')">Auto</button></div></div>';
   h+='<div class="prod-sum-box">'+_prodSumHTML(prodDays(p,hrs,dm,urg),finDate,sim,finUrg,(p.startDay||_autoSt||null))+'</div>';
   return h;
 }
@@ -899,9 +899,11 @@ function _cloneCaps(C){ return {w:JSON.parse(JSON.stringify(C.w)),p:JSON.parse(J
 function _placeOrder(C,o,urg,useUrgDur,startOverride){
   var pd=prodDays(o.prod,o.horas,o.diseno_modelado,useUrgDur); if(!pd||pd.total<=0)return null;
   var mod=pd.tipo, tasks=pd.tasks;
+  var manualStart=!startOverride && !!(o.prod&&o.prod.startDay);
   var anchor=_md(startOverride||(o.prod&&o.prod.startDay)||o.created_at||o.fecha||Date.now());
   if(isNaN(anchor.getTime()))anchor=_md(Date.now());
-  var tf=_md(Date.now()); if(anchor<tf)anchor=tf;
+  // Con inicio manual se respeta la fecha aunque sea anterior a hoy; en automático nunca se programa en el pasado.
+  var tf=_md(Date.now()); if(anchor<tf && !manualStart)anchor=tf;
   var start=anchor;
   for(var guard=0;guard<2000;guard++){
     var cur=_md(start), ok=true, placed=[], tmp=_cloneCaps(C), own={dt:{},pr:{}};

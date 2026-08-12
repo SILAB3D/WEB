@@ -546,8 +546,30 @@ function printPDF(){
 
   // contenedor a tamaño de documento, fuera de pantalla, tema claro
   var wrap=document.createElement('div');
+  wrap.id='__pdfwrap';
   wrap.style.cssText='position:fixed;left:-10000px;top:0;width:760px;background:#fff;padding:42px 46px;z-index:-1';
   wrap.setAttribute('data-theme','light');
+  // Override: fuerza SIEMPRE el diseño de tabla de escritorio, sin depender de la
+  // ventana. Neutraliza las reglas móviles (data-label repetidos, filas apiladas).
+  var ovStyle=document.createElement('style');
+  ovStyle.textContent=''
+    +'#__pdfwrap .sheet{width:100%!important;max-width:none!important;box-shadow:none!important;border-radius:0!important;padding:0!important}'
+    +'#__pdfwrap table.lines{table-layout:fixed!important;width:100%!important;margin-top:18px!important}'
+    +'#__pdfwrap table.lines thead{display:table-header-group!important}'
+    +'#__pdfwrap table.lines tbody{display:table-row-group!important}'
+    +'#__pdfwrap table.lines tr{display:table-row!important;border:none!important;border-radius:0!important;padding:0!important;margin:0!important;background:transparent!important;position:static!important}'
+    +'#__pdfwrap table.lines th,#__pdfwrap table.lines td{display:table-cell!important;text-align:left;vertical-align:top;padding:6px 8px!important}'
+    +'#__pdfwrap table.lines th{border-bottom:1.5px solid #E8E8E8!important;padding:8px!important}'
+    +'#__pdfwrap table.lines td{border-bottom:1px solid #F0F0F0!important}'
+    +'#__pdfwrap table.lines td::before,#__pdfwrap table.lines th::before{content:none!important;display:none!important}'
+    +'#__pdfwrap table.lines th.num,#__pdfwrap table.lines td.num{width:92px;text-align:right!important}'
+    +'#__pdfwrap table.lines td.num .num,#__pdfwrap table.lines td.imp{text-align:right!important;font-weight:600}'
+    +'#__pdfwrap table.lines th.u,#__pdfwrap table.lines td.u{width:56px;text-align:center!important}'
+    +'#__pdfwrap table.lines td.cell-name,#__pdfwrap table.lines td.cell-sub{flex-direction:column}'
+    +'#__pdfwrap .doc-head{flex-direction:row!important}'
+    +'#__pdfwrap .dh-meta{text-align:right!important;min-width:170px!important}'
+    +'#__pdfwrap .doc-client{flex-direction:row!important;gap:24px!important}';
+  wrap.appendChild(ovStyle);
   var clone=live.cloneNode(true);
   clone.style.width='100%'; clone.style.maxWidth='none'; clone.style.boxShadow='none';
   clone.style.borderRadius='0'; clone.style.padding='0'; clone.style.background='#fff';
@@ -555,7 +577,12 @@ function printPDF(){
   wrap.appendChild(clone);
   document.body.appendChild(wrap);
 
-  html2canvas(wrap,{scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false}).then(function(canvas){
+  // El PDF NO debe depender del tamaño de la ventana: forzamos a html2canvas a
+  // renderizar con un viewport de escritorio fijo, de modo que las media queries
+  // (que colapsan la tabla en pantallas estrechas) nunca se activen.
+  var _wh=Math.max(wrap.scrollHeight+120,1600);
+  html2canvas(wrap,{scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false,
+    windowWidth:1280,windowHeight:_wh}).then(function(canvas){
     document.body.removeChild(wrap);
     var doc=new JS({unit:'mm',format:'a4'});
     var pw=doc.internal.pageSize.getWidth(), ph=doc.internal.pageSize.getHeight();
