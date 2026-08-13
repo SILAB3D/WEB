@@ -426,6 +426,10 @@ option{background-color:#161922;color:#E8EBF4}
 .cfield-car{color:var(--t3);font-size:11px;flex:0 0 auto}
 .cpick-panel{display:none;position:absolute;z-index:40;left:0;right:0;top:calc(100% + 5px);max-height:300px;overflow-y:auto;background:var(--panel,#12141c);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
 .cpick-panel.open{display:block}
+.cpick-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 4px 8px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.cpick-top span{font-size:11.5px;font-weight:600;color:var(--t2)}
+.cpick-clear{background:transparent;border:1px solid var(--border);color:var(--t2);border-radius:8px;padding:4px 10px;font:600 11.5px inherit;cursor:pointer;white-space:nowrap}
+.cpick-clear:hover{color:#FF6B8A;border-color:#FF6B8A}
 .cpick-g{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin:8px 4px 4px}
 .crow{display:flex;align-items:center;gap:9px;width:100%;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--t2)}
 .crow:hover{background:rgba(255,255,255,.05);color:var(--t1)}
@@ -955,6 +959,8 @@ function toggleColor(name){
 /* El panel se mantiene abierto mientras se marcan colores: como cada cambio repinta
    el formulario, el estado se guarda aquí y se reaplica al volver a dibujarlo. */
 var colorPanelOpen=false;
+/* Deja el campo sin ningún color marcado. */
+function clearColors(){ S.calc_state.filamento_color=''; save(); renderCalc(); }
 function colorPanelToggle(){
   colorPanelOpen=!colorPanelOpen;
   var p=document.getElementById('colorPanel'); if(p)p.classList.toggle('open',colorPanelOpen);
@@ -980,31 +986,38 @@ function colorFieldHTML(c){
   if(cat===null) lista='<div class="cpick-load">Cargando colores del catálogo…</div>';
   else if(!cat.length) lista='<div class="cpick-load">No se pudo leer el catálogo. Escribe el color a mano abajo.</div>';
   else{
-    /* Un mismo color puede existir en varios materiales (p. ej. Black en PLA y PETG).
-       Como la selección se guarda por nombre, se lista una sola vez para que no se
-       marquen dos filas a la vez. */
-    var grupos={}, vistos={};
+    /* Se listan TODOS los colores del catálogo. Como la selección se guarda por
+       nombre, los que se repiten en varios materiales (p. ej. Black en PLA y PETG)
+       se distinguen añadiendo el material, para que no se marquen dos a la vez. */
+    var veces={};
+    cat.forEach(function(x){ veces[x.nombre]=(veces[x.nombre]||0)+1; });
+    var grupos={};
     cat.forEach(function(x){
-      if(vistos[x.nombre])return; vistos[x.nombre]=1;
-      var g=x.material||'Otros'; (grupos[g]=grupos[g]||[]).push(x);
+      var g=x.material||'Otros';
+      var clave=(veces[x.nombre]>1)?(x.nombre+' ('+g+')'):x.nombre;
+      (grupos[g]=grupos[g]||[]).push({material:g,nombre:x.nombre,hex:x.hex,clave:clave});
     });
     /* Colores escritos a mano que no están en el catálogo: se listan aparte. */
-    var enCat={}; cat.forEach(function(x){ enCat[x.nombre]=1; });
+    var enCat={};
+    cat.forEach(function(x){ enCat[x.nombre]=1; if(veces[x.nombre]>1)enCat[x.nombre+' ('+(x.material||'Otros')+')']=1; });
     var propios=sel.filter(function(n){ return !enCat[n]; });
-    if(propios.length) grupos['Añadidos a mano']=propios.map(function(n){ return {material:'',nombre:n,hex:'#888888'}; });
+    if(propios.length) grupos['Añadidos a mano']=propios.map(function(n){ return {material:'',nombre:n,hex:'#888888',clave:n}; });
     lista=Object.keys(grupos).map(function(g){
       return '<div class="cpick-g">'+esc(g)+'</div>'
         +grupos[g].map(function(x){
-            var on=sel.indexOf(x.nombre)>=0;
-            return '<label class="crow'+(on?' on':'')+'"><input type="checkbox" '+(on?'checked':'')+' onchange="toggleColor(\''+jsq(x.nombre)+'\')">'
+            var k=x.clave||x.nombre, on=sel.indexOf(k)>=0;
+            return '<label class="crow'+(on?' on':'')+'"><input type="checkbox" '+(on?'checked':'')+' onchange="toggleColor(\''+jsq(k)+'\')">'
               +'<i style="background:'+esc(x.hex)+'"></i><span>'+esc(x.nombre)+'</span></label>';
           }).join('');
     }).join('');
   }
+  var cabecera = sel.length
+    ? '<div class="cpick-top"><span>'+resumen+'</span><button type="button" class="cpick-clear" onclick="clearColors()">Desmarcar todos</button></div>'
+    : '';
   return '<div class="cfield">'
     +'<button type="button" class="cfield-btn" onclick="colorPanelToggle()">'
       +'<span class="cfield-txt'+(sel.length?' has':'')+'">'+resumen+'</span><span class="cfield-car">▾</span></button>'
-    +'<div class="cpick-panel'+(colorPanelOpen?' open':'')+'" id="colorPanel">'+lista
+    +'<div class="cpick-panel'+(colorPanelOpen?' open':'')+'" id="colorPanel">'+cabecera+lista
       +'<div class="cpick-manual"><input class="inp" placeholder="…o escribe un color y pulsa Intro" onkeydown="if(event.key===\'Enter\'){event.preventDefault();var v=this.value.trim();if(v){toggleColor(v);}}"></div>'
     +'</div></div>';
 }
