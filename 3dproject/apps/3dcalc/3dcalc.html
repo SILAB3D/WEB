@@ -1476,7 +1476,7 @@ function saveAsOrder(){ var c=S.calc_state; var dup=_findDupOrder(c.cliente,c.de
     +'<button class="btn ghost" onclick="closeModal()">Cancelar</button></div>'); return; }
   _doSaveOrder();
 }
-function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',tipo_proyecto:(c.tipo_proyecto||'Técnico'),precio_base_cajon:roundMoney(r.precioPrevio||0),descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?r.precio:null),precio_urgente:(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:null),urg_days:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),promised:null,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); var _new=S.orders[0]; var _wasUrg=(_new.urgencia_nivel==='Urgente'&&_new.prod&&!_new.cal_off);
+function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',tipo_proyecto:(c.tipo_proyecto||'Técnico'),precio_base_cajon:roundMoney(r.bloqueA||0),descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?r.precio:null),precio_urgente:(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:null),urg_days:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),promised:null,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); var _new=S.orders[0]; var _wasUrg=(_new.urgencia_nivel==='Urgente'&&_new.prod&&!_new.cal_off);
   var _before=null; if(_wasUrg){ try{ var _tmp=S.orders; S.orders=_tmp.filter(function(x){return x.id!==_new.id;}); _before=_schedSnapshot(); S.orders=_tmp; }catch(e){} }
   save(); try{ _ensurePromised(); }catch(e){}
   if(_wasUrg&&_before){ try{ var _after=_schedSnapshot(); closeModal(); go('ord'); openModal(urgentImpactHTML(_before,_after,_new.id)); toast3('Pedido urgente guardado','#F4B740'); return; }catch(e){} }
@@ -1530,7 +1530,7 @@ function _doSendToBilling(){
   try{ window.parent.postMessage({__dp3:true,type:'openBilling'},'*'); }catch(e){}
   toast3('Enviando '+n+' pedido(s) a 3DBilling…','#F4B740'); renderOrders();
 }
-function ordRowHTML(o){ var col=estColor(o.estado), st=ordState(o); var I=o.id; var _sched=!!(o.prod&&!o.cal_off&&!o.archived); var fch=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
+function ordRowHTML(o){ var col=estColor(o.estado), st=ordState(o); var I=o.id; var _sched=!!(o.prod&&!o.cal_off&&!o.archived); var fch=_fmtDMY(o.fecha||(o.created_at?String(o.created_at).slice(0,10):''));
   return '<div class="ord-row" onclick="openOrder(\''+I+'\')">'
     +'<label class="ord-sel-w" onclick="event.stopPropagation()"><input type="checkbox" class="ord-sel" '+(billingSel[I]?'checked':'')+' onchange="toggleBillingSel(\''+I+'\',this.checked)"></label>'
     +'<button class="ord-cyc" style="color:'+col+'" title="'+st+' — clic para reclasificar" onclick="event.stopPropagation();cycleOrderState(\''+I+'\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>'
@@ -1785,7 +1785,7 @@ function pdfTokens(o,r,priceOverride,plazoText){
   var resto=Math.floor((precio/2)/5)*5;
   var anticipo=roundMoney(precio-resto);
   var br=pdfBrand();
-  return { '{empresa}':br.company,'{lema}':br.slogan,'{cliente}':(o.cliente||'—'),'{fecha}':(o.fecha||''),'{numero}':(o.number||''),'{descripcion}':(o.descripcion||'—'),
+  return { '{empresa}':br.company,'{lema}':br.slogan,'{cliente}':(o.cliente||'—'),'{fecha}':_fmtDMY(o.fecha||''),'{numero}':(o.number||''),'{descripcion}':(o.descripcion||'—'),
     '{precio}':eur(precio),'{cantidad}':String(o.cantidad||1),'{material}':(o.filamento||'—'),'{peso}':((o.peso_g||0)+' g'),'{tiempo}':(decToHM(o.horas)+' h'),
     '{anticipo50}':eur(anticipo50),'{anticipo}':eur(anticipo),'{resto}':eur(resto),'{plazo}':(plazoText||'—') };
 }
@@ -1921,7 +1921,7 @@ function renderDash(){
   var nAll=lastMonth.length, nAcc=accepted.length;
   var pct=nAll? Math.round(nAcc/nAll*100):0;
   var recent=S.orders.slice().sort(function(a,b){return (toTs(b.created_at)||0)-(toTs(a.created_at)||0);}).slice(0,5);
-  var recentHTML=recent.length?recent.map(function(o){ var st=ordState(o), col=estColor(o.estado); var fch=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
+  var recentHTML=recent.length?recent.map(function(o){ var st=ordState(o), col=estColor(o.estado); var fch=_fmtDMY(o.fecha||(o.created_at?String(o.created_at).slice(0,10):''));
     return '<div class="ri" onclick="openOrder(\''+o.id+'\')" style="cursor:pointer"><div class="ic"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><path d="M6 2h8l3 3v15H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div style="flex:1;min-width:0"><div class="who">'+esc(o.cliente||'—')+' <span style="color:var(--t3);font-weight:400;font-size:11.5px">#'+esc(o.number||'')+'</span></div><div class="desc">'+esc(o.descripcion||'')+'</div></div><div style="text-align:right"><div style="font-weight:700;font-size:13px">'+eur(o.precio_final)+'</div><span class="stbadge" style="color:'+col+'">'+esc(st)+' · '+esc(fch)+'</span></div></div>';
   }).join(''):'<div class="empty">No hay pedidos registrados.</div>';
   var ring='<div class="dash-ring" style="background:conic-gradient(#2FBF71 0% '+pct+'%, rgba(150,150,170,.16) '+pct+'% 100%)"><div class="dash-ring-in"><div class="dash-ring-pct">'+pct+'%</div><div class="dash-ring-lb">aceptados</div></div></div>';
@@ -2203,7 +2203,7 @@ function computeOrder(o){
   var cajonPct=cajonBase?cajonRate(cajonTipo,cajonBase):0;
   var bloqueC=accessoriesTotal(o);
   return {filName:filName,filColor:filColor,peso:peso,horas:horas,filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,markupVal:markupVal,errorVal:errorVal,cant:cant,precioMin:precioMin,minAplicado:minAplicado,
-    bloqueA:roundMoney(bloqueA),bloqueC:roundMoney(bloqueC),
+    bloqueA:roundMoney(bloqueA),bloqueC:roundMoney(bloqueC),accesorios:roundMoney(bloqueC),
     cajonTipo:cajonTipo,cajonTasa:cajonTasa,cajonPct:cajonPct};
 }
 function ticketLines(o,kind){
@@ -2382,6 +2382,7 @@ function renderTicketPage(doc,o,kind){
       if(r.recargo>0) push('Plus urgencia',r.recargo);
       if(_urgExtra>0) push('Recargo urgencia'+((_urgD!=null)?(' ('+_urgD+' día'+(_urgD===1?'':'s')+' · +'+_urgPct+'%)'):(' (+'+_urgPct+'%)')),_urgExtra);
       if(r.gastoMisc>0) push('Extras / misc.',r.gastoMisc);
+      if(r.cajonTasa>0) push('Tasa de ahorro ('+(r.cajonPct*100).toFixed((r.cajonPct*100)%1?1:0)+'% · '+(r.cajonTipo||'')+')',r.cajonTasa);
       if(r.accesorios>0) push('Utilitarios (accesorios)',r.accesorios);
     }
     doc.autoTable({ startY:_ty+_tbh+16, head:[['Concepto','Importe']], body:body, theme:'grid',
@@ -2414,7 +2415,7 @@ function renderTicketPage(doc,o,kind){
   doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(165,168,176);
   doc.text(TT(CS.footer),M,289);
 }
-function calcStateToOrder(){ var c=S.calc_state, r=compute(); return {number:'PRESUPUESTO',fecha:(c.fecha||todayISO()),cliente:c.cliente,cliente_email:c.cliente_email,descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),prod:(c.prod_on&&c.prod?c.prod:null),util:JSON.parse(JSON.stringify(c.util||{}))}; }
+function calcStateToOrder(){ var c=S.calc_state, r=compute(); return {number:'PRESUPUESTO',fecha:(c.fecha||todayISO()),cliente:c.cliente,cliente_email:c.cliente_email,tipo_proyecto:(c.tipo_proyecto||'Técnico'),precio_base_cajon:roundMoney(r.bloqueA||0),descripcion:c.descripcion,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:r.precio,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),prod:(c.prod_on&&c.prod?c.prod:null),util:JSON.parse(JSON.stringify(c.util||{}))}; }
 function pdfFileName(o,kind){
   var f=String((o&&o.fecha)||todayISO()).slice(0,10).replace(/-/g,''); if(!/^[0-9]{8}$/.test(f))f=todayISO().replace(/-/g,'');
   var tipo=(kind==='empresa')?'Presupuesto interno':(kind==='ambos'?'Presupuesto cliente e interno':'Presupuesto cliente');

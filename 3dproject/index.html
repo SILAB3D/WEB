@@ -145,7 +145,9 @@ body::after {
     border-color .3s ease,
     background .3s ease;
   opacity: 0;
-  animation: dpReveal .6s cubic-bezier(.22,.9,.32,1) both;
+  /* La animación de entrada espera a que termine el arranque (body.dp-ready): así
+     no se ejecuta oculta tras la pantalla de carga y no parece que recargue. */
+  animation: none;
 
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.07),
@@ -712,6 +714,64 @@ body.dp-authed #authGate{display:none}
 [data-theme=light] .sort-btn,[data-theme=light] .dp-mobmenu{background:#fff;border-color:rgba(18,22,34,.16);color:#12151C}
 [data-theme=light] .foot{color:#6E7688}
 </style>
+<style>
+/* ── Arranque: animación breve del icono ─────────────────────────────────────
+   Mientras se comprueba la sesión guardada no se enseña el panel de acceso (antes
+   aparecía «Conectando con Firebase…»), sino el icono de la app. */
+body.dp-ready .card{ animation: dpReveal .6s cubic-bezier(.22,.9,.32,1) both; }
+/* Si el navegador congela la animación (pestaña en segundo plano), las tarjetas
+   se muestran igualmente: nunca deben quedarse invisibles. */
+body.dp-shown .card{ opacity:1 !important; animation:none !important; }
+body:not(.dp-ready) #authGate{ display:none !important; }
+#dpSplash{position:fixed;inset:0;z-index:11000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:var(--bg);transition:opacity .45s ease,transform .45s ease}
+#dpSplash.gone{opacity:0;transform:scale(1.06);pointer-events:none}
+body.dp-ready #dpSplash{display:none}
+html.dp-noboot #dpSplash{display:none!important}
+html.dp-noboot .card{opacity:1!important;animation:none!important}
+
+/* halo que respira detrás del icono */
+.dps-stage{position:relative;width:132px;height:132px;display:flex;align-items:center;justify-content:center}
+.dps-halo{position:absolute;inset:-18px;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, rgba(0,221,184,.30), rgba(139,124,255,.16) 42%, transparent 68%);
+  filter:blur(14px);opacity:0;animation:dpsHalo 1.5s ease-out both}
+/* anillo que gira mientras se dibuja el icono */
+.dps-ring{position:absolute;inset:-2px;border-radius:50%;border:4px solid transparent;
+  border-top-color:rgba(0,221,184,.9);border-right-color:rgba(139,124,255,.6);
+  opacity:0;animation:dpsRingIn .5s ease-out .1s both, dpsSpin 1.15s cubic-bezier(.5,.05,.35,1) .1s both}
+.dps-svg{position:relative;width:78px;height:78px;opacity:0;animation:dpsPop .62s cubic-bezier(.22,1.1,.36,1) both}
+/* el hexágono se dibuja solo */
+.dps-hex{stroke-dasharray:104;stroke-dashoffset:104;animation:dpsDraw .72s cubic-bezier(.65,0,.35,1) .18s both}
+/* las aristas brotan desde el centro, una tras otra */
+.dps-edge{stroke-dasharray:18;stroke-dashoffset:18;animation:dpsDrawEdge .42s cubic-bezier(.4,0,.2,1) both}
+.dps-e1{animation-delay:.60s} .dps-e2{animation-delay:.70s} .dps-e3{animation-delay:.80s} .dps-e4{animation-delay:.90s}
+/* destello que recorre el icono al terminar */
+.dps-shine{position:absolute;inset:0;border-radius:50%;overflow:hidden;pointer-events:none}
+.dps-shine::after{content:'';position:absolute;top:-60%;left:-120%;width:60%;height:220%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);
+  transform:rotate(14deg);animation:dpsShine .85s cubic-bezier(.35,0,.2,1) .95s both}
+/* firma bajo el icono */
+.dps-word{font-family:'DM Serif Display',serif;font-style:italic;font-size:21px;letter-spacing:-.4px;
+  background:linear-gradient(120deg,#00DDB8,#8B7CFF);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;opacity:0;animation:dpsWord .55s cubic-bezier(.22,.9,.32,1) .78s both}
+.dps-dots{display:flex;gap:6px;margin-top:-10px}
+.dps-dots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.30);animation:dpsDot 1s ease-in-out infinite}
+.dps-dots i:nth-child(2){animation-delay:.13s} .dps-dots i:nth-child(3){animation-delay:.26s}
+[data-theme=light] .dps-dots i{background:rgba(0,0,0,.22)}
+
+@keyframes dpsPop{0%{opacity:0;transform:scale(.62) rotate(-8deg);filter:blur(9px)}
+  55%{opacity:1;transform:scale(1.06) rotate(2deg);filter:blur(0)}
+  100%{opacity:1;transform:scale(1) rotate(0);filter:blur(0)}}
+@keyframes dpsFade{to{opacity:1}}
+@keyframes dpsDraw{to{stroke-dashoffset:0}}
+@keyframes dpsDrawEdge{to{stroke-dashoffset:0}}
+@keyframes dpsHalo{0%{opacity:0;transform:scale(.7)}55%{opacity:1;transform:scale(1.04)}100%{opacity:.75;transform:scale(1)}}
+@keyframes dpsRingIn{to{opacity:.9}}
+@keyframes dpsSpin{0%{transform:rotate(0)}100%{transform:rotate(300deg)}}
+@keyframes dpsShine{0%{left:-120%}100%{left:130%}}
+@keyframes dpsWord{0%{opacity:0;transform:translateY(9px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes dpsDot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){ #dpSplash *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important} body.dp-ready .card{animation:none;opacity:1} }
+</style>
 </head>
 <body>
 <div id="authGate">
@@ -728,6 +788,43 @@ body.dp-authed #authGate{display:none}
     </form>
     <div class="ag-note" id="agNote"></div>
   </div>
+</div>
+<script>
+/* La animación de arranque es solo para la entrada directa a la suite. Si venimos
+   de una de las apps (volver a 3DProject), se entra sin animación. */
+(function(){
+  try{
+    var deApp=false;
+    var ref=document.referrer||'';
+    if(ref && /\/apps\//.test(ref)) deApp=true;
+    if(sessionStorage.getItem('dp3-from-app')==='1') deApp=true;
+    sessionStorage.removeItem('dp3-from-app');
+    if(deApp){ document.documentElement.className+=' dp-noboot'; }
+  }catch(e){}
+  /* Al abrir cualquier app se deja la marca para la vuelta. */
+  document.addEventListener('click',function(e){
+    var a=e.target.closest?e.target.closest('a[href*="/apps/"]'):null;
+    if(a){ try{ sessionStorage.setItem('dp3-from-app','1'); }catch(_){} }
+  },true);
+})();
+</script>
+<div id="dpSplash" role="status" aria-label="Cargando 3DProject">
+  <div class="dps-stage">
+    <span class="dps-halo"></span>
+    <span class="dps-ring"></span>
+    <svg class="dps-svg" viewBox="0 0 64 64" aria-hidden="true">
+      <defs><linearGradient id="dpsG" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#00DDB8"/><stop offset="1" stop-color="#8B7CFF"/></linearGradient></defs>
+      <path class="dps-hex" d="M32 15 L47 23.5 L47 40.5 L32 49 L17 40.5 L17 23.5 Z" fill="none" stroke="url(#dpsG)" stroke-width="3.2" stroke-linejoin="round"/>
+      <path class="dps-edge dps-e1" d="M32 32 L32 15" fill="none" stroke="url(#dpsG)" stroke-width="3.2" stroke-linecap="round"/>
+      <path class="dps-edge dps-e2" d="M32 32 L47 23.5" fill="none" stroke="url(#dpsG)" stroke-width="3.2" stroke-linecap="round"/>
+      <path class="dps-edge dps-e3" d="M32 32 L17 23.5" fill="none" stroke="url(#dpsG)" stroke-width="3.2" stroke-linecap="round"/>
+      <path class="dps-edge dps-e4" d="M32 32 L32 49" fill="none" stroke="url(#dpsG)" stroke-width="3.2" stroke-linecap="round"/>
+    </svg>
+    <span class="dps-shine"></span>
+  </div>
+  <div class="dps-word">3DProject</div>
+  <div class="dps-dots"><i></i><i></i><i></i></div>
 </div>
 <button id="dpLogout" onclick="dpLogout()" title="Cerrar sesión">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -1175,7 +1272,7 @@ const APPS = {
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260730-1500';
+const APP_VER = '20260730-1700';
 
 function launchApp(id) {
   const a = APPS[id];
@@ -1357,6 +1454,7 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
     msg('Introduce tus credenciales.','info'); note('');
     window.DPCloud.ready.then(function(){
       window.DPCloud.onAuth(function(user){
+        try{ if(window.__dpBootDone)window.__dpBootDone(); }catch(e){}
         if(user && user.email){
           authedOnce=true; loggingOut=false;
           document.body.classList.add('dp-authed');
@@ -1412,11 +1510,31 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
   })();
   /* Red de seguridad de sesion: entra a la suite si hay sesion; si hay Firebase
      sin sesion, asegura el formulario; tolera fallos de temporizacion. */
+  /* Fin del arranque: se muestra la interfaz (o el acceso) una sola vez, tras la
+     animación del icono. Mínimo 1 s para que no dé un parpadeo brusco. */
+  var t0=Date.now(), listo=false;
+  var sinAnim=/(^|\s)dp-noboot(\s|$)/.test(document.documentElement.className);
+  if(sinAnim){ document.body.classList.add('dp-ready','dp-shown'); }
+  function terminarArranque(){
+    if(listo)return; listo=true;
+    if(sinAnim){ var s0=document.getElementById('dpSplash'); if(s0&&s0.parentNode)s0.parentNode.removeChild(s0);
+      document.body.classList.add('dp-ready','dp-shown'); return; }
+    var espera=Math.max(0, 1400-(Date.now()-t0));
+    setTimeout(function(){
+      var s=document.getElementById('dpSplash'); if(s)s.classList.add('gone');
+      document.body.classList.add('dp-ready');
+      setTimeout(function(){ if(s&&s.parentNode)s.parentNode.removeChild(s); }, 400);
+      setTimeout(function(){ document.body.classList.add('dp-shown'); }, 1500);
+    }, espera);
+  }
+  window.__dpBootDone=terminarArranque;
+  setTimeout(terminarArranque, 6000);   // red muy lenta: no dejar la pantalla colgada
+
   (function(){
     var n=0; var iv=setInterval(function(){ n++;
       if(window.DPCloud && window.DPCloud.configured){
         if(!setupRan){ try{ setup(); }catch(e){} }
-        try{ var u=window.DPCloud.currentUser && window.DPCloud.currentUser(); if(u && u.email){ document.body.classList.add('dp-authed'); clearInterval(iv); return; } }catch(e){}
+        try{ var u=window.DPCloud.currentUser && window.DPCloud.currentUser(); if(u && u.email){ document.body.classList.add('dp-authed'); terminarArranque(); clearInterval(iv); return; } }catch(e){}
         try{ var m=document.getElementById('agMsg'); if(m && m.textContent.indexOf('Conectando')>=0){ m.textContent='Introduce tus credenciales.'; m.className='ag-msg info'; } }catch(e){}
       }
       if(n>160) clearInterval(iv);
