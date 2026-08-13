@@ -1128,13 +1128,20 @@ function resultHTML(){
 }
 
 /* ===== tiempo de producción + calendario ===== */
-var DESIGN_DAYS_MAP={'No necesario':0,'Chorrada - En Slicer':1,"Fácil - Fusión 30'":1,"Medio - Fusión 60'":2,'Avanzado - AI + Remesh':3};
-var DESIGN_DAYS_URG={'No necesario':0,'Chorrada - En Slicer':0.5,"Fácil - Fusión 30'":1,"Medio - Fusión 60'":1,'Avanzado - AI + Remesh':2};
+/* Días de producción que reserva el diseño, por nivel (estándar / urgente). */
+var DESIGN_DAYS_MAP={'No necesario':0,'Búsqueda de modelos':1,'Básica (solo slicer)':1,'Media (Fusion <1h)':2,'Alta (Fusion >1h / Artístico)':3};
+var DESIGN_DAYS_URG={'No necesario':0,'Búsqueda de modelos':0,'Básica (solo slicer)':0.5,'Media (Fusion <1h)':1,'Alta (Fusion >1h / Artístico)':2};
+/* Los pedidos guardados con los nombres antiguos se traducen al nivel actual. */
+function designDays(dm,urg){
+  var k=(typeof disenoNivel==='function')?disenoNivel(dm):dm;
+  var m=urg?DESIGN_DAYS_URG:DESIGN_DAYS_MAP;
+  return m[k]||0;
+}
 function fmtDays(n){ n=Math.round((Number(n)||0)*10)/10; return (n%1?String(n).replace('.',','):String(n)); }
 function _isUrgOrder(o){ return !!(o&&o.urgencia_nivel==='Urgente'); }
 var TESTDIFF={'Sencillo':1,'Complicado':2};
 var CDLBL={vac:'Vacaciones',noart:'Sin artístico',notec:'Sin técnico',noimp:'Sin impresión'};
-function prodDays(p,hrs,dm,urg){ p=p||{}; var tasks=[],a; var D=(urg?DESIGN_DAYS_URG:DESIGN_DAYS_MAP)[dm]||0; while(D>0.0001){ a=(D>=1?1:0.5); tasks.push({ph:'design',amt:a}); D=Math.round((D-a)*10)/10; } (p.tests||[]).forEach(function(x){ var compl=(x==='Complicado'); var amt=urg?(compl?1:0.5):(compl?2:1); while(amt>0.0001){ var b=(amt>=1?1:0.5); tasks.push({ph:'test',amt:b,simple:!compl}); amt=Math.round((amt-b)*10)/10; } }); var ph=num(hrs!=null?hrs:p.printh), pr=ph>0?Math.ceil(ph/12):0; for(a=0;a<pr;a++)tasks.push({ph:'print',amt:1}); var d=0,te=0,im=0; tasks.forEach(function(x){ if(x.ph==='design')d+=x.amt; else if(x.ph==='test')te+=x.amt; else im+=x.amt; }); return {diseno:d,testado:te,impresion:im,total:Math.round((d+te+im)*10)/10,tipo:(p.tipo==='Artístico'?'art':'tec'),urg:!!urg,tasks:tasks,testPlan:tasks.filter(function(x){return x.ph==='test';})}; }
+function prodDays(p,hrs,dm,urg){ p=p||{}; var tasks=[],a; var D=designDays(dm,urg); while(D>0.0001){ a=(D>=1?1:0.5); tasks.push({ph:'design',amt:a}); D=Math.round((D-a)*10)/10; } (p.tests||[]).forEach(function(x){ var compl=(x==='Complicado'); var amt=urg?(compl?1:0.5):(compl?2:1); while(amt>0.0001){ var b=(amt>=1?1:0.5); tasks.push({ph:'test',amt:b,simple:!compl}); amt=Math.round((amt-b)*10)/10; } }); var ph=num(hrs!=null?hrs:p.printh), pr=ph>0?Math.ceil(ph/12):0; for(a=0;a<pr;a++)tasks.push({ph:'print',amt:1}); var d=0,te=0,im=0; tasks.forEach(function(x){ if(x.ph==='design')d+=x.amt; else if(x.ph==='test')te+=x.amt; else im+=x.amt; }); return {diseno:d,testado:te,impresion:im,total:Math.round((d+te+im)*10)/10,tipo:(p.tipo==='Artístico'?'art':'tec'),urg:!!urg,tasks:tasks,testPlan:tasks.filter(function(x){return x.ph==='test';})}; }
 function _ensureProd(){ if(!S.calc_state.prod)S.calc_state.prod={tipo:'Técnico',diseno:'Nulo',tests:[],printh:''}; if(!Array.isArray(S.calc_state.prod.tests))S.calc_state.prod.tests=[]; return S.calc_state.prod; }
 function setProd(f,v){ _ensureProd()[f]=v; save(); renderCalc(); }
 function setProdTest(i,v){ var p=_ensureProd(); p.tests[i]=v; save(); renderCalc(); }
@@ -1183,7 +1190,7 @@ function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
   if(!on) return '<div class="h-sub" style="margin:0">Actívalo para calcular el tiempo de producción del pedido y programarlo automáticamente en el Calendario.</div>';
   var typeOpts=['Técnico','Artístico'].map(function(x){return '<option value="'+x+'"'+((p.tipo||'Técnico')===x?' selected':'')+'>'+x+'</option>';}).join('');
   var tests=Array.isArray(p.tests)?p.tests:[];
-  var dDays=(urg?DESIGN_DAYS_URG:DESIGN_DAYS_MAP)[dm]||0, hh=num(hrs), iDays=hh>0?Math.ceil(hh/12):0;
+  var dDays=designDays(dm,urg), hh=num(hrs), iDays=hh>0?Math.ceil(hh/12):0;
   /* El tipo de proyecto se elige ahora en «Información del proyecto». */
   var h='';
   h+='<div class="fg prod-dz"><label class="lbl">Diseño <em class="prod-src">de «Diseño / modelado»</em></label><div class="suffix"><input class="inp ro" readonly tabindex="-1" value="'+esc(dm||'No necesario')+'"><span class="u">'+fmtDays(dDays)+' d</span></div></div>';
@@ -1210,7 +1217,7 @@ function refreshProdCard(){
   if(!S.calc_state||!S.calc_state.prod_on)return;
   var card=document.getElementById('prodCard'); if(!card)return;
   var p=S.calc_state.prod||{}, dm=S.calc_state.diseno_modelado, hrs=(typeof compute==='function'?(compute().horas||0):0);
-  var _urgn=(S.calc_state.urgencia_nivel==='Urgente'), _urgAmb=(S.calc_state.urgencia_nivel==='Ambos'); var dDays=(_urgn?DESIGN_DAYS_URG:DESIGN_DAYS_MAP)[dm]||0, hh=num(hrs), iDays=hh>0?Math.ceil(hh/12):0;
+  var _urgn=(S.calc_state.urgencia_nivel==='Urgente'), _urgAmb=(S.calc_state.urgencia_nivel==='Ambos'); var dDays=designDays(dm,_urgn), hh=num(hrs), iDays=hh>0?Math.ceil(hh/12):0;
   var dz=card.querySelector('.prod-dz .inp'); if(dz)dz.value=(dm||'No necesario');
   var dzu=card.querySelector('.prod-dz .u'); if(dzu)dzu.textContent=dDays+' d';
   var im=card.querySelector('.prod-im .inp'); if(im)im.value=decToHM(hh);
