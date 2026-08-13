@@ -52,7 +52,11 @@ body.side-off .side{margin-left:-231px}
 .h-sub{font-size:13.5px;color:var(--t2);margin-bottom:22px}
 /* form */
 .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:start}
-@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}
+/* Móvil: una sola columna. El total y el desglose van bajo el formulario de
+   producción, y el panel deja de ser fijo para no tapar contenido. */
+.res{position:static!important;top:auto!important}
+}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px}
 .card+.card{margin-top:16px}
 .card-h{font-size:13px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--t2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
