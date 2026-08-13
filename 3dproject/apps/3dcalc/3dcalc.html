@@ -286,6 +286,34 @@ option{background-color:#161922;color:#E8EBF4}
 .dtile{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 17px}
 .dtile-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:11px}
 .dtile-v{font-size:24px;font-weight:800;color:var(--t1);line-height:1.1}
+.cajon-card{padding:16px 18px}
+.cj-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.cj-lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3)}
+.cj-saldo{font-size:30px;font-weight:800;letter-spacing:-.5px;color:var(--t1);line-height:1.15;margin-top:2px}
+.cj-saldo.neg{color:#FF6B8A}
+.cj-in{color:#2FBF71;font-weight:600}
+.cj-out{color:#FF6B8A;font-weight:600}
+.cj-sub{font-size:12px;color:var(--t3);margin-top:2px}
+.cj-add{white-space:nowrap;flex:0 0 auto}
+.cj-toggle{width:100%;margin-top:14px;background:transparent;border:1px solid var(--border);color:var(--t2);border-radius:10px;padding:9px 12px;font:600 12.5px inherit;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px}
+.cj-toggle:hover{color:var(--t1);border-color:var(--t3)}
+.cj-toggle b{margin-left:auto;color:var(--t3)}
+.cj-movs{display:none;margin-top:10px;max-height:320px;overflow-y:auto}
+.cj-movs.open{display:block}
+.cj-row{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--border)}
+.cj-row:last-child{border-bottom:none}
+.cj-ic{width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:0 0 auto}
+.cj-ic.in{background:rgba(47,191,113,.16);color:#2FBF71}
+.cj-ic.out{background:rgba(255,107,138,.16);color:#FF6B8A}
+.cj-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.cj-txt b{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cj-txt span{font-size:11px;color:var(--t3)}
+.cj-amt{font-size:13.5px;font-weight:700;flex:0 0 auto}
+.cj-amt.in{color:#2FBF71}
+.cj-amt.out{color:#FF6B8A}
+.cj-x{background:transparent;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:2px 4px;flex:0 0 auto}
+.cj-x:hover{color:#FF6B8A}
+.cj-empty{font-size:12.5px;color:var(--t3);padding:12px 2px}
 .dtile-of{font-size:14px;font-weight:600;color:var(--t3)}
 .dtile-l{font-size:12.5px;color:var(--t2);margin-top:6px;display:flex;flex-direction:column;line-height:1.35}
 .dtile-l span{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
@@ -388,6 +416,29 @@ option{background-color:#161922;color:#E8EBF4}
 .prod-sum{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:3px}
 .prod-sum b{font-size:15px;color:var(--ac)}
 .prod-sum span{font-size:11.5px;color:var(--t2)}
+.cfield{position:relative}
+.cfield-btn{width:100%;min-height:38px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--in-bg,rgba(255,255,255,.04));border:1px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer;text-align:left;color:var(--t1);font:inherit}
+.cfield-btn:hover{border-color:var(--t3)}
+.cfield-txt{font-size:13px;color:var(--t3)}
+.cfield-txt.has{color:var(--t1);font-weight:600}
+.cfield-car{color:var(--t3);font-size:11px;flex:0 0 auto}
+.cpick-panel{display:none;position:absolute;z-index:40;left:0;right:0;top:calc(100% + 5px);max-height:300px;overflow-y:auto;background:var(--panel,#12141c);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.cpick-panel.open{display:block}
+.cpick-g{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin:8px 4px 4px}
+.crow{display:flex;align-items:center;gap:9px;width:100%;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--t2)}
+.crow:hover{background:rgba(255,255,255,.05);color:var(--t1)}
+.crow.on{color:var(--t1)}
+.crow input{width:15px;height:15px;flex:0 0 auto;accent-color:var(--acc);cursor:pointer;margin:0}
+.crow i{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.3);flex:0 0 auto}
+.crow span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cpick-load{font-size:12px;color:var(--t3);padding:6px 4px}
+.cpick-manual{margin-top:8px;border-top:1px solid var(--border);padding-top:8px}
+.dz-row{display:flex;gap:8px;align-items:stretch}
+.dz-row .selx{flex:1;min-width:0}
+.dz-opt{display:flex;align-items:center;gap:7px;white-space:nowrap;flex:0 0 auto;font-size:12.5px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--t2);cursor:pointer;user-select:none}
+.dz-opt:hover{border-color:var(--t3);color:var(--t1)}
+.dz-opt input{width:15px;height:15px;margin:0;accent-color:var(--acc);cursor:pointer}
+.dz-opt.on{border-color:var(--acc);color:var(--t1);background:rgba(255,255,255,.06);font-weight:600}
 .prod-src{color:var(--t3);font-weight:400;font-size:10.5px;font-style:normal}
 .inp.ro{color:var(--t2);cursor:default;background:rgba(255,255,255,.025)}
 .inp.ro:focus{border-color:var(--border);box-shadow:none}
@@ -430,6 +481,10 @@ option{background-color:#161922;color:#E8EBF4}
 .ps-fin{display:flex;align-items:center;gap:11px;margin-top:13px;padding-top:12px;border-top:1px solid var(--border)}
 .ps-fin-i{font-size:20px;line-height:1}
 .ps-fin-l{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px}
+.ps-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.ps-date{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ps-date-l{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t3)}
+.ps-date b{font-size:12.5px;font-weight:600;color:var(--t1);line-height:1.35;display:block}
 .ps-start{display:flex;flex-direction:column;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--t2)}
 .ps-start b{color:var(--t1)}
 .ps-wait{font-size:11px;color:var(--t3);line-height:1.45}
@@ -536,6 +591,16 @@ window.addEventListener('message',function(e){var d=e.data;if(d&&d.__dp3&&d.type
 
 /* ===== estado (modelo del repositorio de referencia) ===== */
 var SK='dp3_3dcalc';
+/* Tarifas de diseño: importes FIJOS en € (antes eran fracciones de hora × coste/hora).
+   «Búsqueda de modelos» pasa a ser un nivel más de esta misma lista. */
+var DISENO_PRECIO={'No necesario':0,'Búsqueda de modelos':3.75,'Básica (solo slicer)':2.25,'Media (Fusion <1h)':7.5,'Alta (Fusion >1h / Artístico)':15};
+var DISENO_OPT_PCT=0.30;   // valor por defecto; se ajusta en Configuración
+/* Porcentaje de la tarifa que se cobra en los pedidos de optimización. */
+function disenoOptPct(){ var v=num(S.global_config&&S.global_config.optimizacion_pct); if(!v)return DISENO_OPT_PCT; return Math.max(0,Math.min(100,v))/100; }
+/* Equivalencias de los niveles antiguos, para que los pedidos ya guardados sigan valorándose bien. */
+var DISENO_LEGACY={'Chorrada - En Slicer':'Básica (solo slicer)',"Fácil - Fusión 30'":'Media (Fusion <1h)',"Medio - Fusión 60'":'Alta (Fusion >1h / Artístico)','Avanzado - AI + Remesh':'Alta (Fusion >1h / Artístico)'};
+function disenoNivel(v){ v=String(v||'No necesario'); return DISENO_LEGACY[v]||v; }
+function disenoImporte(v,opt){ var p=DISENO_PRECIO[disenoNivel(v)]; if(p==null)p=0; return roundMoney(p*(opt?disenoOptPct():1)); }
 var DISENO_MODELADO={'No necesario':0,'Chorrada - En Slicer':0.15,"Fácil - Fusión 30'":1/3,"Medio - Fusión 60'":2/3,'Avanzado - AI + Remesh':1};
 var BUSQUEDA_MODELOS={'No':0,'Sí':0.25};
 var ELIMINACION_SOPORTES={'No':0,'Simples (no comprometen el producto)':15,'Complejos (comprometen el producto)':30};
@@ -566,9 +631,10 @@ function defData(){return {
   printers:[{name:'Creality K1SE Combo',material_diameter_mm:1.75,price_eur:738,depreciation_time_h:3000,service_costs_life_eur:100,energy_consumption_kwh:0.15}],
   filament_types:[{name:'PLA',price_per_kg:20},{name:'PETG',price_per_kg:18},{name:'PLA SILK/MARBLE',price_per_kg:23},{name:'ASA',price_per_kg:24},{name:'TPU',price_per_kg:21}],
   filament_stock:[{material:'PLA',color:'Negro',remaining_g:1000,buy_threshold_g:150},{material:'PLA',color:'Blanco',remaining_g:1000,buy_threshold_g:150},{material:'PETG',color:'Transparente',remaining_g:1000,buy_threshold_g:150}],
-  global_config:{energy_cost_kwh:0.24,labor_cost_h:15,money_unit:'€',precio_minimo:3,brand_color:'#3b82f6',util_prices:{simple:0.30,caja_m:1,caja_l:2,bolsa_s:0.15,bolsa_m:0.80,bolsa_l:1.50}},
-  calc_state:{empresa:'3DCC',cliente:'',cliente_email:'',fecha:new Date().toISOString().slice(0,10),descripcion:'',impresora:'Creality K1SE Combo',filamento_tipo:'PLA',filamento_color:'Negro',is_multimaterial:false,material_breakdown:[],peso_g:'50',tiempo_h:'1',diseno_modelado:'No necesario',busqueda_modelos:'No',eliminacion_soportes:'No',postprocesado:'No',probabilidad_error:'Baja (25%)',markup:'Normal (230%)',urgencia_nivel:'Normal',gasto_misc:0,cantidad:1,is_shared:false,shared_percent_3dcc:50,shared_percent_silab3d:50,prod_on:false,prod:null},
-  orders:[], oseq:0, clients:[], calDays:[], purge:{values:[],active:{},colors:[]}
+  global_config:{energy_cost_kwh:0.24,labor_cost_h:15,money_unit:'€',precio_minimo:3,optimizacion_pct:30,brand_color:'#3b82f6',util_prices:{simple:0.30,caja_m:1,caja_l:2,bolsa_s:0.15,bolsa_m:0.80,bolsa_l:1.50}},
+  calc_state:{empresa:'3DCC',cliente:'',cliente_email:'',tipo_proyecto:'Técnico',fecha:new Date().toISOString().slice(0,10),descripcion:'',impresora:'Creality K1SE Combo',filamento_tipo:'PLA',filamento_color:'Negro',is_multimaterial:false,material_breakdown:[],peso_g:'50',tiempo_h:'1',diseno_modelado:'No necesario',busqueda_modelos:'No',eliminacion_soportes:'No',postprocesado:'No',probabilidad_error:'Baja (25%)',markup:'Normal (230%)',urgencia_nivel:'Normal',gasto_misc:0,cantidad:1,is_shared:false,shared_percent_3dcc:50,shared_percent_silab3d:50,prod_on:false,prod:null},
+  orders:[], oseq:0, clients:[], calDays:[], purge:{values:[],active:{},colors:[]},
+  cajon:{movs:[]}
 };}
 var S=defData();
 var view='dash';
@@ -576,6 +642,8 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function num(v){ v=Number(String(v).replace(',','.')); return isFinite(v)?v:0; }
 function round4(v){return Math.round(num(v)*10000)/10000;}
 function roundMoney(v){return Math.round(Math.max(0,num(v))*100)/100;}
+/* Los precios nunca son negativos, pero el balance del cajón sí puede serlo. */
+function roundSigned(v){return Math.round(num(v)*100)/100;}
 function roundUpToNickel(v){var a=Math.max(0,num(v));return Math.ceil((a+Number.EPSILON)/0.05)*0.05;}
 function eur(n){ return (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s==null?'':String(s)));return d.innerHTML;}
@@ -627,8 +695,8 @@ function compute(c){
   var labor=num(g.labor_cost_h);
   var filamento=round4(peso*pricekg/1000); if(filOverride!=null)filamento=filOverride;
   var electricidad=round4(horas*num(printer.energy_consumption_kwh)*num(g.energy_cost_kwh));
-  var diseno=round4((DISENO_MODELADO[c.diseno_modelado]||0)*labor);
-  var busqueda=round4((BUSQUEDA_MODELOS[c.busqueda_modelos]||0)*labor);
+  var diseno=round4(disenoImporte(c.diseno_modelado,c.diseno_opt));
+  var busqueda=0;   // integrado como un nivel más del propio diseño
   var soportes=round4(((ELIMINACION_SOPORTES[c.eliminacion_soportes]||0)/60)*labor);
   var deterioro=round4(horas*depPerHour(printer));
   var postproc=round4(((POSTPROCESADO[c.postprocesado]||0)/60)*labor);
@@ -640,7 +708,12 @@ function compute(c){
   var precioMin=num(g.precio_minimo);
   var accesorios=accessoriesTotal(c);
   var precioSinMisc=roundUpToNickel(Math.max(precioCalcUrg,precioMin));
-  var precio=roundUpToNickel(precioSinMisc+gastoMisc+accesorios);
+  /* Tasa del cajón de ahorro: se calcula sobre el total PREVIO a la tasa y se suma al final. */
+  var precioPrevio=roundUpToNickel(precioSinMisc+gastoMisc+accesorios);
+  var cajonTipo=(c.tipo_proyecto||(c.prod&&c.prod.tipo)||'Técnico');
+  var cajonPct=cajonRate(cajonTipo,precioPrevio);
+  var cajonTasa=cajonFee(cajonTipo,precioPrevio);
+  var precio=roundUpToNickel(precioPrevio+cajonTasa);
   var recargo=subtotalTM*urg;
   var minAplicado=precioSinMisc>precioCalcUrg;
   var cant=Math.max(1,Math.floor(num(c.cantidad)||1));
@@ -651,6 +724,7 @@ function compute(c){
     filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,
     bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,
     markupVal:markupVal,errorVal:errorVal,beneficioNeto:beneficioNeto,
+    precioPrevio:precioPrevio,cajonTipo:cajonTipo,cajonPct:cajonPct,cajonTasa:cajonTasa,
     precio:precio,precioUnit:roundMoney(precio/cant),cant:cant,precioMin:precioMin,minAplicado:minAplicado,accesorios:accesorios};
 }
 
@@ -711,13 +785,223 @@ function setShare(v){ v=Math.max(0,Math.min(100,num(v))); S.calc_state.shared_pe
 
 /* ===== navegación ===== */
 function go(v){ view=v; document.getElementById('vtitle').textContent=({dash:'Dashboard',calc:'Calculadora',ord:'Pedidos',cal:'Calendario',cli:'Clientes',plantillas:'Plantillas',cfg:'Configuración'}[v]||''); document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); if(window.innerWidth<=760)document.body.classList.add('side-off'); render(); }
-function render(){ try{ if(!window.__purgedTrk){ window.__purgedTrk=1; setTimeout(purgeOldTracking,4000); } }catch(e){}
+/* En 3DCalc no se borra NADA de forma automática: la purga de seguimiento quedó
+   desactivada a petición del usuario (se conserva la función por si se quisiera
+   lanzar a mano algún día). */
+function render(){
   if(view==='dash')renderDash(); else if(view==='cli')renderClients(); else if(view==='calc')renderCalc(); else if(view==='ord')renderOrders(); else if(view==='cal')renderCalendar(); else if(view==='plantillas')renderPlantillas(); else renderCfg(); }
 function updateResult(){ var el=document.getElementById('resultBox'); if(el)el.innerHTML=resultHTML(); try{refreshProdCard();}catch(e){} }
 
+/* ===== cajón de ahorro =====================================================
+   Ingresos automáticos: cada pedido activo/finalizado aporta una tasa calculada
+   sobre su total PREVIO a la tasa, según tipo de proyecto y tramo de importe.
+   Gastos: se añaden a mano. El saldo es la suma de todos los movimientos. */
+var CAJON_TASA={ 'Técnico':{bajo:0.05,alto:0.05}, 'Artístico':{bajo:0.15,alto:0.075} };
+var CAJON_TRAMO=50;   // € que separan el tramo bajo del alto
+function cajon(){ if(!S.cajon||typeof S.cajon!=='object')S.cajon={movs:[]}; if(!Array.isArray(S.cajon.movs))S.cajon.movs=[]; return S.cajon; }
+function cajonRate(tipo,base){
+  var tf=CAJON_TASA[tipo]||CAJON_TASA['Técnico'];
+  return (num(base)<CAJON_TRAMO)?tf.bajo:tf.alto;
+}
+function cajonFee(tipo,base){ return roundMoney(num(base)*cajonRate(tipo,base)); }
+function cajonSaldo(){ return roundSigned(cajon().movs.reduce(function(s,m){ return s+num(m.amount); },0)); }
+function cajonMovOf(orderId){ return cajon().movs.filter(function(m){ return m.orderId===orderId; })[0]||null; }
+/* Un pedido aporta al cajón si está activo o finalizado (aunque esté archivado). */
+function cajonAplica(o){ if(!o)return false; var e=ordState(o); return e==='Activo'||e==='Finalizado'; }
+function cajonSync(o){
+  try{
+    if(!o)return;
+    /* Solo aportan los pedidos que llevan la tasa incluida en su precio, es decir,
+       los guardados a partir de que existe el cajón. Los anteriores no se tocan. */
+    if(!num(o.precio_base_cajon)){ if(cajonMovOf(o.id))cajonDropOrder(o.id,true); return; }
+    var mv=cajonMovOf(o.id), aplica=cajonAplica(o);
+    if(!aplica){ if(mv)cajonDropOrder(o.id,true); return; }
+    var tipo=(o.tipo_proyecto||(o.prod&&o.prod.tipo)||'Técnico');
+    var base=num(o.precio_base_cajon);
+    var fee=cajonFee(tipo,base);
+    if(mv){ mv.amount=fee; mv.tipo=tipo; mv.base=base; mv.rate=cajonRate(tipo,base); mv.ts=mv.ts||Date.now(); }
+    else{
+      cajon().movs.push({ id:'cj'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+        kind:'in', orderId:o.id, label:'Tasa · '+(o.number||o.cliente||'pedido'), tipo:tipo,
+        base:base, rate:cajonRate(tipo,base), amount:fee, ts:Date.now() });
+    }
+    save();
+  }catch(e){}
+}
+function cajonDropOrder(orderId,skipSave){
+  var c=cajon(), before=c.movs.length;
+  c.movs=c.movs.filter(function(m){ return m.orderId!==orderId; });
+  if(c.movs.length!==before && !skipSave)save();
+  if(c.movs.length!==before && skipSave)save();
+}
+function cajonAddGasto(){
+  var lbl=prompt('Concepto del gasto (p. ej. «Suscripción Fusion 360»):'); if(lbl==null)return;
+  lbl=String(lbl).trim(); if(!lbl)return;
+  var v=prompt('Importe del gasto en €:'); if(v==null)return;
+  var amt=Math.abs(num(String(v).replace(',','.'))); if(!amt){ alert('Importe no válido.'); return; }
+  cajon().movs.push({ id:'cj'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    kind:'out', label:lbl, amount:-roundSigned(amt), ts:Date.now() });
+  save(); renderDash();
+}
+function cajonDelMov(id){
+  var m=cajon().movs.filter(function(x){return x.id===id;})[0]; if(!m)return;
+  if(m.kind==='in'){ alert('Este movimiento lo genera un pedido: cámbialo a pendiente o elimínalo para retirarlo del cajón.'); return; }
+  if(!confirm('¿Eliminar el gasto «'+m.label+'»?'))return;
+  S.cajon.movs=cajon().movs.filter(function(x){return x.id!==id;}); save(); renderDash();
+}
+function cajonToggle(){ var el=document.getElementById('cajonMovs'); if(!el)return; el.classList.toggle('open');
+  var b=document.getElementById('cajonCar'); if(b)b.textContent=el.classList.contains('open')?'▾':'▸'; }
+/* Pone al día el cajón con todos los pedidos guardados (por ejemplo, los que ya
+   estaban activos antes de existir el cajón, o si se editó un precio). */
+function cajonReconcile(){
+  try{
+    var ch=false;
+    (S.orders||[]).forEach(function(o){
+      if(!o)return;
+      var mv=cajonMovOf(o.id), aplica=cajonAplica(o)&&!!num(o.precio_base_cajon);
+      if(aplica&&!mv){ cajonSync(o); ch=true; }
+      else if(!aplica&&mv){ cajonDropOrder(o.id,true); ch=true; }
+    });
+    /* movimientos huérfanos: su pedido ya no existe */
+    var ids={}; (S.orders||[]).forEach(function(o){ if(o)ids[o.id]=1; });
+    var c=cajon(), n0=c.movs.length;
+    c.movs=c.movs.filter(function(m){ return m.kind!=='in' || !m.orderId || ids[m.orderId]; });
+    if(c.movs.length!==n0)ch=true;
+    if(ch)save();
+  }catch(e){}
+}
+function cajonHTML(){
+  cajonReconcile();
+  var movs=cajon().movs.slice().sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+  var saldo=cajonSaldo();
+  var ing=roundSigned(movs.filter(function(m){return m.amount>0;}).reduce(function(s,m){return s+m.amount;},0));
+  var gas=roundSigned(-movs.filter(function(m){return m.amount<0;}).reduce(function(s,m){return s+m.amount;},0));
+  var filas=movs.length?movs.map(function(m){
+    var pos=m.amount>0, f=new Date(m.ts||0);
+    var fecha=isNaN(f)?'':(('0'+f.getDate()).slice(-2)+'/'+('0'+(f.getMonth()+1)).slice(-2)+'/'+f.getFullYear());
+    return '<div class="cj-row">'
+      +'<span class="cj-ic '+(pos?'in':'out')+'">'+(pos?'↑':'↓')+'</span>'
+      +'<div class="cj-txt"><b>'+esc(m.label||'')+'</b><span>'+fecha+(pos&&m.rate?(' · '+(m.rate*100).toFixed(m.rate*100%1?1:0)+'% de '+eur(m.base)+' · '+esc(m.tipo||'')):'')+'</span></div>'
+      +'<span class="cj-amt '+(pos?'in':'out')+'">'+(pos?'+':'')+eur(m.amount)+'</span>'
+      +(pos?'':'<button class="cj-x" title="Eliminar gasto" onclick="cajonDelMov(\''+m.id+'\')">✕</button>')
+      +'</div>';
+  }).join(''):'<div class="cj-empty">Todavía no hay movimientos.</div>';
+  /* El importe destacado es el BALANCE: ingresos por tasas menos gastos registrados. */
+  return '<div class="card cajon-card">'
+    +'<div class="cj-head"><div><div class="cj-lbl">Balance del cajón</div>'
+      +'<div class="cj-saldo'+(saldo<0?' neg':'')+'">'+eur(saldo)+'</div>'
+      +'<div class="cj-sub"><span class="cj-in">+'+eur(ing)+' beneficios</span> · <span class="cj-out">−'+eur(gas)+' gastos</span></div></div>'
+      +'<button class="btn ghost cj-add" onclick="cajonAddGasto()" title="Registrar un gasto">− Añadir gasto</button></div>'
+    +'<button class="cj-toggle" onclick="cajonToggle()"><span id="cajonCar">▸</span> Movimientos <b>'+movs.length+'</b></button>'
+    +'<div class="cj-movs" id="cajonMovs">'+filas+'</div>'
+  +'</div>';
+}
+/* Escapa un texto para meterlo dentro de un atributo onclick="...('aquí')". */
+function jsq(s){ return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+/* ===== catálogo de colores (silab3d.com/admin) ==============================
+   Se lee en vivo de la tabla «filamentos» de Supabase (lo que edites en el admin
+   aparece al momento) y, si no hay red, del respaldo /data/filamentos.json. */
+var SILAB_SB={ url:'https://yyezkumbjqnushwgqkzf.supabase.co', key:'sb_publishable_S-YCLKYozH7T9DFE1gMtUw_1jWLZnIf' };
+var COLOR_CAT=null, COLOR_CAT_LOADING=false;
+function colorCatalog(){ return COLOR_CAT; }
+function loadColorCatalog(force){
+  if(COLOR_CAT_LOADING || (COLOR_CAT && !force))return Promise.resolve(COLOR_CAT);
+  COLOR_CAT_LOADING=true;
+  var url=SILAB_SB.url+'/rest/v1/filamentos?select=material,nombre,hex&visible=eq.true&order=material.asc,nombre.asc';
+  return fetch(url,{headers:{apikey:SILAB_SB.key,Authorization:'Bearer '+SILAB_SB.key},cache:'no-store'})
+    .then(function(r){ return r.ok?r.json():Promise.reject(); })
+    .then(function(rows){
+      if(!Array.isArray(rows)||!rows.length)return Promise.reject();
+      return rows.map(function(r){ return {material:String(r.material||''),nombre:String(r.nombre||''),hex:r.hex||'#cccccc'}; });
+    })
+    .catch(function(){
+      return fetch('../../../data/filamentos.json',{cache:'no-store'}).then(function(r){return r.json();})
+        .then(function(d){
+          var out=[];
+          (d&&d.filamentos||[]).forEach(function(f){ (f.colores||[]).forEach(function(c){
+            out.push({material:f.nombre||'',nombre:c.nombre||'',hex:c.hex||'#cccccc'}); }); });
+          return out;
+        }).catch(function(){ return []; });
+    })
+    .then(function(list){
+      COLOR_CAT=list||[]; COLOR_CAT_LOADING=false;
+      try{ if(view==='calc')renderCalc(); }catch(e){}
+      return COLOR_CAT;
+    });
+}
+function selectedColors(c){
+  var v=c.filamento_color;
+  if(Array.isArray(v))return v.slice();
+  return String(v||'').split(/\s*[·,]\s*/).filter(Boolean);
+}
+function toggleColor(name){
+  var c=S.calc_state, sel=selectedColors(c), i=sel.indexOf(name);
+  if(i>=0)sel.splice(i,1); else sel.push(name);
+  c.filamento_color=sel.join(' · ');
+  save(); renderCalc();
+}
+/* El panel se mantiene abierto mientras se marcan colores: como cada cambio repinta
+   el formulario, el estado se guarda aquí y se reaplica al volver a dibujarlo. */
+var colorPanelOpen=false;
+function colorPanelToggle(){
+  colorPanelOpen=!colorPanelOpen;
+  var p=document.getElementById('colorPanel'); if(p)p.classList.toggle('open',colorPanelOpen);
+}
+function colorPanelClose(){
+  colorPanelOpen=false;
+  var p=document.getElementById('colorPanel'); if(p)p.classList.remove('open');
+}
+/* Se cierra al pulsar fuera o con Escape. */
+document.addEventListener('mousedown',function(e){
+  if(!colorPanelOpen)return;
+  var f=e.target.closest?e.target.closest('.cfield'):null;
+  if(!f)colorPanelClose();
+});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&colorPanelOpen)colorPanelClose(); });
+function colorFieldHTML(c){
+  var sel=selectedColors(c), cat=colorCatalog();
+  if(cat===null){ loadColorCatalog(); }
+  /* Cerrado: solo el número de colores elegidos. */
+  var resumen = sel.length===0 ? 'Sin color seleccionado'
+              : (sel.length===1 ? '1 color seleccionado' : sel.length+' colores seleccionados');
+  var lista;
+  if(cat===null) lista='<div class="cpick-load">Cargando colores del catálogo…</div>';
+  else if(!cat.length) lista='<div class="cpick-load">No se pudo leer el catálogo. Escribe el color a mano abajo.</div>';
+  else{
+    /* Un mismo color puede existir en varios materiales (p. ej. Black en PLA y PETG).
+       Como la selección se guarda por nombre, se lista una sola vez para que no se
+       marquen dos filas a la vez. */
+    var grupos={}, vistos={};
+    cat.forEach(function(x){
+      if(vistos[x.nombre])return; vistos[x.nombre]=1;
+      var g=x.material||'Otros'; (grupos[g]=grupos[g]||[]).push(x);
+    });
+    /* Colores escritos a mano que no están en el catálogo: se listan aparte. */
+    var enCat={}; cat.forEach(function(x){ enCat[x.nombre]=1; });
+    var propios=sel.filter(function(n){ return !enCat[n]; });
+    if(propios.length) grupos['Añadidos a mano']=propios.map(function(n){ return {material:'',nombre:n,hex:'#888888'}; });
+    lista=Object.keys(grupos).map(function(g){
+      return '<div class="cpick-g">'+esc(g)+'</div>'
+        +grupos[g].map(function(x){
+            var on=sel.indexOf(x.nombre)>=0;
+            return '<label class="crow'+(on?' on':'')+'"><input type="checkbox" '+(on?'checked':'')+' onchange="toggleColor(\''+jsq(x.nombre)+'\')">'
+              +'<i style="background:'+esc(x.hex)+'"></i><span>'+esc(x.nombre)+'</span></label>';
+          }).join('');
+    }).join('');
+  }
+  return '<div class="cfield">'
+    +'<button type="button" class="cfield-btn" onclick="colorPanelToggle()">'
+      +'<span class="cfield-txt'+(sel.length?' has':'')+'">'+resumen+'</span><span class="cfield-car">▾</span></button>'
+    +'<div class="cpick-panel'+(colorPanelOpen?' open':'')+'" id="colorPanel">'+lista
+      +'<div class="cpick-manual"><input class="inp" placeholder="…o escribe un color y pulsa Intro" onkeydown="if(event.key===\'Enter\'){event.preventDefault();var v=this.value.trim();if(v){toggleColor(v);}}"></div>'
+    +'</div></div>';
+}
 /* ===== calculadora ===== */
 function setCalc(f,v){ S.calc_state[f]=v; save(); updateResult(); }
 function setCalcRe(f,v){ S.calc_state[f]=v; save(); renderCalc(); }
+/* Conmuta el modo optimización. Repinta el formulario para que el botón refleje
+   su estado real (antes el onclick conservaba el valor anterior y parecía atascado). */
+function toggleDisenoOpt(){ S.calc_state.diseno_opt=!S.calc_state.diseno_opt; save(); renderCalc(); }
 function addMix(){ if(!Array.isArray(S.calc_state.material_breakdown))S.calc_state.material_breakdown=[]; S.calc_state.material_breakdown.push({material:(S.filament_types[0]||{}).name||'',color:'Negro',grams:0}); save(); renderCalc(); }
 function setMix(i,f,v){ var a=S.calc_state.material_breakdown; if(a&&a[i]){a[i][f]=v; save(); updateResult();} }
 function delMix(i){ var a=S.calc_state.material_breakdown; if(a){a.splice(i,1); save(); renderCalc();} }
@@ -743,36 +1027,40 @@ function renderCalc(){
   document.getElementById('view').innerHTML=
    '<div class="h1">Calculadora de presupuesto</div><div class="h-sub">Réplica fiel de la calculadora de referencia: mismos factores y misma fórmula de precio.</div>'
    +'<div class="grid2"><div>'
+   /* ── Información del proyecto ─────────────────────────────────────────────
+      Filas según esquema: empresa+fecha · cliente+descripción · contacto solo. */
    +'<div class="card"><div class="card-h">Información del proyecto</div>'
      +'<div class="fg row"><div><label class="lbl">Empresa</label><select class="selx" onchange="setCalc(\'empresa\',this.value)">'+empresaOpts+'</select></div>'
-       +'<div><label class="lbl">Información del cliente</label><input class="inp" value="'+esc(c.cliente)+'" oninput="setCalc(\'cliente\',this.value)"></div></div>'
+       +'<div><label class="lbl">Fecha</label><div class="date-row"><input class="inp" type="date" value="'+esc(c.fecha)+'" onchange="setCalc(\'fecha\',this.value)"><button type="button" class="btn ghost date-hoy" title="Actualizar a la fecha de hoy" onclick="calcFechaHoy()">Hoy</button></div></div></div>'
+     +'<div class="fg row"><div><label class="lbl">Nombre del cliente</label><input class="inp" value="'+esc(c.cliente)+'" oninput="setCalc(\'cliente\',this.value)"></div>'
+       +'<div><label class="lbl">Descripción del proyecto</label><input class="inp" value="'+esc(c.descripcion)+'" oninput="setCalc(\'descripcion\',this.value)"></div></div>'
      +'<div class="fg"><label class="lbl">Información de contacto <em class="prod-src">teléfono, email o lo que prefieras</em></label><input class="inp" value="'+esc(c.cliente_email||'')+'" placeholder="Ej. 600 123 456 · cliente@correo.com" oninput="setCalc(\'cliente_email\',this.value)"></div>'
-     +'<div class="fg"><label class="lbl">Fecha</label><div class="date-row"><input class="inp" type="date" value="'+esc(c.fecha)+'" onchange="setCalc(\'fecha\',this.value)"><button type="button" class="btn ghost date-hoy" title="Actualizar a la fecha de hoy" onclick="calcFechaHoy()">Hoy</button></div></div>'
-     +'<div class="fg"><label class="lbl">Descripción / proyecto</label><input class="inp" value="'+esc(c.descripcion)+'" oninput="setCalc(\'descripcion\',this.value)"></div>'
+     +'<div class="fg"><label class="lbl">Tipo de proyecto <em class="prod-src">define la tasa del cajón y el reparto de producción</em></label><select class="selx" onchange="setCalc(\'tipo_proyecto\',this.value)">'+['Técnico','Artístico'].map(function(x){return '<option value="'+x+'"'+((c.tipo_proyecto||'Técnico')===x?' selected':'')+'>'+x+'</option>';}).join('')+'</select></div>'
    +'</div>'
+   /* ── Parámetros básicos: impresora+unidades · filamento+color · peso+tiempo ── */
    +'<div class="card"><div class="card-h">Parámetros básicos</div>'
-     +'<div class="fg"><label class="lbl">Impresora</label><select class="selx" onchange="setCalc(\'impresora\',this.value)">'+printerOpts+'</select></div>'
-     +'<label class="chk"><input type="checkbox" '+(c.is_multimaterial?'checked':'')+' onchange="setCalcRe(\'is_multimaterial\',this.checked)"> Multicolor / multimaterial</label>'
+     +'<div class="fg row"><div><label class="lbl">Impresora</label><select class="selx" onchange="setCalc(\'impresora\',this.value)">'+printerOpts+'</select></div>'
+       +'<div><label class="lbl">Unidades (cantidad)</label><input class="inp" type="number" step="1" min="1" value="'+esc(c.cantidad)+'" oninput="setCalc(\'cantidad\',this.value)"></div></div>'
      +(c.is_multimaterial?mix
        :'<div class="fg row"><div><label class="lbl">Tipo de filamento</label><select class="selx" onchange="setCalc(\'filamento_tipo\',this.value)">'+ftypeOpts+'</select></div>'
-         +'<div><label class="lbl">Color</label><input class="inp" list="colorlist" value="'+esc(c.filamento_color)+'" placeholder="Escribe o elige un color" onchange="setCalc(\'filamento_color\',this.value)"><datalist id="colorlist">'+colorOpts+'</datalist></div></div>')
+         +'<div><label class="lbl">Color</label>'+colorFieldHTML(c)+'</div></div>')
      +'<div class="fg row"><div><label class="lbl">Peso estimado</label><div class="suffix"><input class="inp" type="number" step="1" value="'+esc(c.peso_g)+'" '+(c.is_multimaterial?'disabled':'')+' oninput="setCalc(\'peso_g\',this.value)"><span class="u">g</span></div></div>'
        +'<div><label class="lbl">Tiempo ('+(c.time_min?'min':'hh:mm')+') <button type="button" class="mini-tgl" title="Cambiar entre hh:mm y minutos" onclick="toggleTimeFmt()">'+(c.time_min?'→ hh:mm':'→ min')+'</button></label><div class="suffix"><input class="inp" type="text" inputmode="numeric" placeholder="'+(c.time_min?'min':'hh:mm')+'" value="'+esc(c.time_min?String(Math.round(num(c.tiempo_h)*60)):decToHM(c.tiempo_h))+'" onchange="setTimeField(this)"><span class="u">'+(c.time_min?'min':'h:m')+'</span></div></div></div>'
-     +'<div class="fg row"><div><label class="lbl">Unidades (cantidad)</label><input class="inp" type="number" step="1" min="1" value="'+esc(c.cantidad)+'" oninput="setCalc(\'cantidad\',this.value)"></div><div></div></div>'
    +'</div>'
+   /* ── Complementarios: diseño solo · soportes+postproc · error+asistente · urgencia+misc ── */
    +'<div class="card"><div class="card-h">Parámetros complementarios</div>'
-     +'<div class="fg"><label class="lbl">Diseño / modelado</label><select class="selx" onchange="setCalc(\'diseno_modelado\',this.value)">'+optList(Object.keys(DISENO_MODELADO),c.diseno_modelado)+'</select></div>'
-     +'<div class="fg"><label class="lbl">Búsqueda de modelos</label><select class="selx" onchange="setCalc(\'busqueda_modelos\',this.value)">'+optList(Object.keys(BUSQUEDA_MODELOS),c.busqueda_modelos)+'</select></div>'
-     +'<div class="fg"><label class="lbl">Eliminación de soportes</label><select class="selx" onchange="setCalc(\'eliminacion_soportes\',this.value)">'+optList(Object.keys(ELIMINACION_SOPORTES),c.eliminacion_soportes)+'</select></div>'
-     +'<div class="fg"><label class="lbl">Post-procesado</label><select class="selx" onchange="setCalc(\'postprocesado\',this.value)">'+optList(Object.keys(POSTPROCESADO),c.postprocesado)+'</select></div>'
-     +'<div class="fg row"><div><label class="lbl">Probabilidad de error</label><select class="selx" onchange="setCalc(\'probabilidad_error\',this.value)">'+optList(Object.keys(PROBABILIDAD_ERROR),c.probabilidad_error)+'</select><button class="btn ghost" style="padding:6px 10px;margin-top:6px;font-size:12px;width:100%" onclick="openRisk()">⚙ Asistente de riesgo</button></div>'
-       +'<div><label class="lbl">Markup</label><select class="selx" onchange="setCalc(\'markup\',this.value)">'+optList(Object.keys(MARKUP),c.markup)+'</select></div></div>'
+     +'<div class="fg"><label class="lbl">Diseño / modelado <em class="prod-src">'+eur(disenoImporte(c.diseno_modelado,c.diseno_opt))+(c.diseno_opt?(' · optimización ('+Math.round(disenoOptPct()*100)+'%)'):'')+'</em></label>'
+       +'<div class="dz-row"><select class="selx" onchange="setCalc(\'diseno_modelado\',this.value)">'+optList(Object.keys(DISENO_PRECIO),disenoNivel(c.diseno_modelado))+'</select>'
+       +'<label class="dz-opt'+(c.diseno_opt?' on':'')+'" title="Pedido de optimización: se cobra el porcentaje indicado en Configuración"><input type="checkbox" '+(c.diseno_opt?'checked':'')+' onchange="toggleDisenoOpt()">Optimización</label></div></div>'
+     +'<div class="fg row"><div><label class="lbl">Eliminación de soportes</label><select class="selx" onchange="setCalc(\'eliminacion_soportes\',this.value)">'+optList(Object.keys(ELIMINACION_SOPORTES),c.eliminacion_soportes)+'</select></div>'
+       +'<div><label class="lbl">Post-procesado</label><select class="selx" onchange="setCalc(\'postprocesado\',this.value)">'+optList(Object.keys(POSTPROCESADO),c.postprocesado)+'</select></div></div>'
+     +'<div class="fg row"><div><label class="lbl">Probabilidad de error</label><select class="selx" onchange="setCalc(\'probabilidad_error\',this.value)">'+optList(Object.keys(PROBABILIDAD_ERROR),c.probabilidad_error)+'</select></div>'
+       +'<div><label class="lbl">Asistente de riesgo</label><button class="btn ghost" style="width:100%;padding:9px 10px;font-size:12.5px" onclick="openRisk()">⚙ Abrir asistente</button></div></div>'
      +'<div class="fg row"><div><label class="lbl">Urgencia</label><select class="selx" onchange="setCalc(\'urgencia_nivel\',this.value)">'+optList(URG_OPTS,c.urgencia_nivel)+'</select></div>'
        +'<div><label class="lbl">Gastos extra / misc.</label><div class="suffix"><input class="inp" type="number" step="0.01" value="'+esc(c.gasto_misc)+'" oninput="setCalc(\'gasto_misc\',this.value)"><span class="u">'+esc(u)+'</span></div></div></div>'
    +'</div>'
    +'<div class="card"><div class="card-h">Utilitarios</div>'+utilHTML(c)
    +'</div>'
-   
    +prodFormHTML(c)+'</div><div><div class="card res" id="resultBox">'+resultHTML()+'</div></div></div>';
 }
 function resultHTML(){
@@ -803,6 +1091,7 @@ function resultHTML(){
   if(r.gastoMisc>0)html+='<div class="r"><span>Extras / misc.</span><b>+'+fmt(r.gastoMisc)+'</b></div>';
   html+='<div class="r sub"><span>Beneficio neto</span><b>'+fmt(r.beneficioNeto)+'</b></div>';
   if(r.accesorios>0)html+='<div class="grp">Utilitarios</div><div class="r"><span>Accesorios</span><b>+'+fmt(r.accesorios)+'</b></div>';
+  if(r.cajonTasa>0)html+='<div class="grp">Cajón de ahorro</div><div class="r"><span>Tasa de ahorro ('+(r.cajonPct*100).toFixed((r.cajonPct*100)%1?1:0)+'% · '+esc(r.cajonTipo)+')</span><b>+'+fmt(r.cajonTasa)+'</b></div>';
   html+='<div class="sep"></div>'
     +'<div class="r big"><span>PVP final</span><b>'+fmt(r.precio)+'</b></div>'
     +'</div>';
@@ -825,6 +1114,16 @@ function _ensureProd(){ if(!S.calc_state.prod)S.calc_state.prod={tipo:'Técnico'
 function setProd(f,v){ _ensureProd()[f]=v; save(); renderCalc(); }
 function setProdTest(i,v){ var p=_ensureProd(); p.tests[i]=v; save(); renderCalc(); }
 function setProdN(v){ var n=Math.max(0,Math.min(60,parseInt(v,10)||0)); var p=_ensureProd(); while(p.tests.length<n)p.tests.push('Sencillo'); p.tests.length=n; save(); renderCalc(); }
+/* Fecha corta en formato español: dd/mm/aaaa. */
+function _fmtDMY(v){
+  if(!v)return '';
+  var s=String(v);
+  var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if(m)return m[3]+'/'+m[2]+'/'+m[1];
+  var d=(v instanceof Date)?v:new Date(s);
+  if(isNaN(d))return s;
+  return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear();
+}
 function _fmtFin(d){ if(!d)return '—'; var dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado']; var mn=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']; return dias[d.getDay()]+', '+d.getDate()+' '+mn[d.getMonth()]+' '+d.getFullYear(); }
 function _deliveryText(fin){ if(!fin)return null; var dow=fin.getDay(); var mon=new Date(fin.getTime()); mon.setDate(fin.getDate()-((dow+6)%7)); var _mn=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; var pref=(dow>=1&&dow<=2)?'Inicios (L-M)':((dow<=4)?'Mediados (X-J)':'Finales (V-S)'); return pref+' de la semana del '+mon.getDate()+' de '+_mn[mon.getMonth()]; }
 function _finFromSched(s){ if(!s)return null; var last=(s.print&&s.print.length)?s.print[s.print.length-1]:s.end; if(!last)return null; var d=_addD(_md(last),1); while(_isSun(d))d=_addD(d,1); return d; }
@@ -837,11 +1136,19 @@ function _prodSumHTML(pd,finDate,sim,finUrg,startDk){
     var _st=_md(startDk), _fi=_md(finDate);
     var _span=Math.round((_fi-_st)/86400000);           // días naturales de inicio a entrega
     var _espera=(_span>(pd.total+1));                    // hay huecos de espera dentro del bloque
-    _stTxt='<div class="ps-start">▶ Empieza el <b>'+_fmtFin(_st)+'</b>'
-      +(_espera?'<span class="ps-wait">La impresora está ocupada antes: el diseño y el testado se hacen durante esa espera, así que añadir días no siempre retrasa la entrega.</span>':'')
-      +'</div>';
+    _stTxt='<div class="ps-dates">'
+      +'<div class="ps-date"><span class="ps-date-l">Inicio</span><b>'+_fmtFin(_st)+'</b></div>'
+      +'<div class="ps-date"><span class="ps-date-l">Entrega'+(sim?' · si lo guardas ahora':'')+'</span>'
+        +(finUrg?('<b>Estándar · '+_fmtFin(_fi)+'</b><b style="color:#F4B740">Urgente · '+_fmtFin(finUrg)+'</b>')
+                :('<b>'+_fmtFin(_fi)+'</b>'))+'</div>'
+      +'</div>'
+      +(_espera?'<div class="ps-wait">La impresora está ocupada antes: el diseño y el testado se hacen durante esa espera, así que añadir días no siempre retrasa la entrega.</div>':'');
   }
-  var finRow = finUrg ? ('<div class="ps-fin"><span class="ps-fin-i">🏁</span><div><div class="ps-fin-l">Entrega estimada'+(sim?' · si lo guardas ahora':'')+'</div><div class="ps-fin-d">Estándar · '+_fmtFin(finDate)+'</div><div class="ps-fin-d" style="color:#F4B740">Urgente · '+_fmtFin(finUrg)+'</div></div></div>') : (finDate ? ('<div class="ps-fin"><span class="ps-fin-i">🏁</span><div><div class="ps-fin-l">Entrega estimada'+(sim?' · si lo guardas ahora':'')+'</div><div class="ps-fin-d">'+_fmtFin(finDate)+'</div></div></div>') : '');
+  /* Sin fecha de inicio no hay grid, así que ahí sí se muestra la entrega suelta. */
+  var finRow = (_stTxt || !finDate) ? '' :
+    ('<div class="ps-fin"><span class="ps-fin-i">🏁</span><div><div class="ps-fin-l">Entrega estimada'+(sim?' · si lo guardas ahora':'')+'</div>'
+      +(finUrg?('<div class="ps-fin-d">Estándar · '+_fmtFin(finDate)+'</div><div class="ps-fin-d" style="color:#F4B740">Urgente · '+_fmtFin(finUrg)+'</div>')
+              :('<div class="ps-fin-d">'+_fmtFin(finDate)+'</div>'))+'</div></div>');
   return '<div class="ps-head"><span class="ps-num">'+fmtDays(pd.total)+'</span><span class="ps-lbl">día'+(pd.total===1?'':'s')+' de producción</span></div>'
     +'<div class="ps-bar">'+(pd.total>0?(seg(pd.diseno,'psb-d')+seg(pd.testado,'psb-t')+seg(pd.impresion,'psb-i')):'<i class="psb-e"></i>')+'</div>'
     +'<div class="ps-legend"><span class="ps-seg"><i class="pdot pd-d"></i>Diseño <b>'+fmtDays(pd.diseno)+' d</b></span><span class="ps-seg"><i class="pdot pd-t"></i>Testado <b>'+fmtDays(pd.testado)+' d</b></span><span class="ps-seg"><i class="pdot pd-i"></i>Impresión <b>'+fmtDays(pd.impresion)+' d</b></span></div>'
@@ -852,7 +1159,8 @@ function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
   var typeOpts=['Técnico','Artístico'].map(function(x){return '<option value="'+x+'"'+((p.tipo||'Técnico')===x?' selected':'')+'>'+x+'</option>';}).join('');
   var tests=Array.isArray(p.tests)?p.tests:[];
   var dDays=(urg?DESIGN_DAYS_URG:DESIGN_DAYS_MAP)[dm]||0, hh=num(hrs), iDays=hh>0?Math.ceil(hh/12):0;
-  var h='<div class="fg"><label class="lbl">Tipo de proyecto</label><select class="selx" onchange="EPSET(\'tipo\',this.value)">'+typeOpts+'</select></div>';
+  /* El tipo de proyecto se elige ahora en «Información del proyecto». */
+  var h='';
   h+='<div class="fg prod-dz"><label class="lbl">Diseño <em class="prod-src">de «Diseño / modelado»</em></label><div class="suffix"><input class="inp ro" readonly tabindex="-1" value="'+esc(dm||'No necesario')+'"><span class="u">'+fmtDays(dDays)+' d</span></div></div>';
   h+='<div class="fg"><label class="lbl">Nº de tests diferentes</label><input class="inp" type="number" min="0" step="1" value="'+tests.length+'" onchange="EPSETN(this.value)"></div>';
   if(tests.length){ h+='<div class="fg"><label class="lbl">Dificultad de cada test</label><div class="prod-tests">';
@@ -866,7 +1174,9 @@ function _prodInner(p,on,dm,hrs,finDate,sim,urg,finUrg){
   return h;
 }
 function prodFormHTML(c){
-  var on=!!c.prod_on; var p=c.prod||{tipo:'Técnico',diseno:'Nulo',tests:[],printh:''}; var _hrs=(typeof compute==='function'?(compute().horas||0):0); var _urgn=(c.urgencia_nivel==='Urgente'), _urgAmb=(c.urgencia_nivel==='Ambos'); var _fin=on?_simFinish(p,c.diseno_modelado,_hrs,_urgn?'Urgente':'Normal'):null, _finU=(on&&_urgAmb)?_simFinish(p,c.diseno_modelado,_hrs,'Urgente'):null;
+  var on=!!c.prod_on; var p=c.prod||{tipo:'Técnico',diseno:'Nulo',tests:[],printh:''};
+  if(c.tipo_proyecto)p.tipo=c.tipo_proyecto;   /* el tipo vive en «Información del proyecto» */
+  var _hrs=(typeof compute==='function'?(compute().horas||0):0); var _urgn=(c.urgencia_nivel==='Urgente'), _urgAmb=(c.urgencia_nivel==='Ambos'); var _fin=on?_simFinish(p,c.diseno_modelado,_hrs,_urgn?'Urgente':'Normal'):null, _finU=(on&&_urgAmb)?_simFinish(p,c.diseno_modelado,_hrs,'Urgente'):null;
   return ('<div class="card prod-card" id="prodCard"><div class="card-h" style="display:flex;align-items:center;justify-content:space-between;gap:10px">Tiempo de producción'
     +'<label class="chk" style="margin:0;font-size:12.5px"><input type="checkbox" '+(on?'checked':'')+' onchange="setCalcRe(\'prod_on\',this.checked)"> Activar</label></div>'
     +_prodInner(p,on,c.diseno_modelado,_hrs,_fin,true,_urgn,_finU)+'</div>').replace(/EPSET\('/g,"setProd('").replace(/EPSETN\(/g,'setProdN(').replace(/EPSETT\(/g,'setProdTest(');
@@ -1141,7 +1451,7 @@ function saveAsOrder(){ var c=S.calc_state; var dup=_findDupOrder(c.cliente,c.de
     +'<button class="btn ghost" onclick="closeModal()">Cancelar</button></div>'); return; }
   _doSaveOrder();
 }
-function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0).total:r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?r.precio:null),precio_urgente:(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0).total:null),urg_days:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),promised:null,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); var _new=S.orders[0]; var _wasUrg=(_new.urgencia_nivel==='Urgente'&&_new.prod&&!_new.cal_off);
+function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',tipo_proyecto:(c.tipo_proyecto||'Técnico'),precio_base_cajon:roundMoney(r.precioPrevio||0),descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0).total:r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?r.precio:null),precio_urgente:(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0).total:null),urg_days:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),promised:null,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); var _new=S.orders[0]; var _wasUrg=(_new.urgencia_nivel==='Urgente'&&_new.prod&&!_new.cal_off);
   var _before=null; if(_wasUrg){ try{ var _tmp=S.orders; S.orders=_tmp.filter(function(x){return x.id!==_new.id;}); _before=_schedSnapshot(); S.orders=_tmp; }catch(e){} }
   save(); try{ _ensurePromised(); }catch(e){}
   if(_wasUrg&&_before){ try{ var _after=_schedSnapshot(); closeModal(); go('ord'); openModal(urgentImpactHTML(_before,_after,_new.id)); toast3('Pedido urgente guardado','#F4B740'); return; }catch(e){} }
@@ -1150,7 +1460,7 @@ function _saveOrderNewName(){ var c=S.calc_state; var base=String(c.descripcion|
 function _overwriteOrder(id){ var o=getOrder(id); if(!o){ closeModal(); return; } var r=compute(),c=S.calc_state; o.fecha=(c.fecha||o.fecha||todayISO()); o.empresa=c.empresa; o.cliente=c.cliente; o.cliente_email=c.cliente_email||''; o.descripcion=c.descripcion; o.impresora=(r.printer.name||''); o.filamento=r.filName; o.filamento_color=r.filColor; o.peso_g=String(r.peso); o.horas=String(r.horas); o.cantidad=r.cant; o.precio_final=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0).total:r.precio); o.precio_normal=(c.urgencia_nivel==='Ambos'?r.precio:null); o.precio_urgente=(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0).total:null); o.urg_days=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null); o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); o.diseno_modelado=c.diseno_modelado; o.busqueda_modelos=c.busqueda_modelos; o.eliminacion_soportes=c.eliminacion_soportes; o.postprocesado=c.postprocesado; o.probabilidad_error=c.probabilidad_error; o.markup=c.markup; o.urgencia_nivel=c.urgencia_nivel; o.gasto_misc=num(c.gasto_misc); o.is_multimaterial=!!c.is_multimaterial; o.material_breakdown=JSON.parse(JSON.stringify(c.material_breakdown||[])); o.util=JSON.parse(JSON.stringify(c.util||{})); o.is_shared=!!c.is_shared; o.shared_split=c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null; o.status_updated_at=Date.now(); o.material_contabilizado=false; ensureClient(o); save(); closeModal(); go('ord'); toast3('Pedido sobrescrito','#34D399'); }
 function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:''}); save(); renderOrders(); }
 function setOrd(id,f,v){ var o=S.orders.filter(function(x){return x.id===id;})[0]; if(!o)return; if(f==='precio_final'||f==='importe_pagado')v=num(v); o[f]=v; if(f==='cliente'||f==='cliente_email')ensureClient(o); if(f==='importe_pagado'||f==='precio_final')autoArchive(o); save(); updateOrdBadge(); var pe=document.getElementById('pend-'+id); if(pe){var p=num(o.precio_final)-num(o.importe_pagado); pe.innerHTML=p>0.005?'<span class="pend">'+eur(p)+'</span>':'<span class="paid">Pagado</span>';} }
-function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
+function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; cajonDropOrder(id,true); S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
 var ordQ='';
 function ordSearch(v){ ordQ=(v||'').toLowerCase(); renderOrders(); }
 function activeOrders(){ return S.orders.filter(function(o){return !o.archived && ordState(o)==='Activo';}); }
@@ -1485,7 +1795,7 @@ function paramPriceCard(){ var labor=num(S.global_config.labor_cost_h);
       return '<div class="pp-ro"><span class="pp-ro-n">'+esc(k)+'</span>'+(tt?'<span class="pp-ro-t">'+tt+'</span>':'')+'<span class="pp-ro-p'+(free?' free':'')+'">'+(free?'Sin coste':eur(cost))+'</span></div>'; }).join('');
     return '<div class="pp-grp"><div class="pp-grp-h">'+title+'</div>'+rows+'</div>'; }
   return '<div class="card"><div class="card-h">Precios de parámetros complementarios <span class="cfg-ro-tag">solo informativo</span></div>'
-    +'<div class="pp-grid">'+grp('Diseño / modelado',DISENO_MODELADO,'h')+grp('Búsqueda de modelos',BUSQUEDA_MODELOS,'h')+grp('Eliminación de soportes',ELIMINACION_SOPORTES,'min')+grp('Post-procesado',POSTPROCESADO,'min')+'</div>'
+    +'<div class="pp-grid">'+grp('Diseño / modelado',DISENO_PRECIO,'eur')+grp('Eliminación de soportes',ELIMINACION_SOPORTES,'min')+grp('Post-procesado',POSTPROCESADO,'min')+'</div>'
     +'<div class="note" style="margin-top:14px">Tiempo estimado y su coste con la mano de obra actual (<b>'+eur(labor)+'/h</b>). Para cambiarlos, ajusta el «Coste de mano de obra» en Configuración global.</div></div>';
 }
 function formulaCard(){ function fx(k,v){ return '<div class="fx"><span class="fx-k">'+k+'</span><span class="fx-v">'+v+'</span></div>'; }
@@ -1536,6 +1846,7 @@ function renderCfg(){
      +gcField('Coste de la energía','energy_cost_kwh','€/kWh')
      +gcField('Coste de mano de obra','labor_cost_h','€/h')
      +gcField('Precio mínimo','precio_minimo','€')
+     +gcField('Pedidos de optimización','optimizacion_pct','% de la tarifa de diseño')
      +'<div class="fg"><label class="lbl">Unidad monetaria</label><input class="inp" value="'+esc(S.global_config.money_unit)+'" oninput="setGC(\'money_unit\',this.value)"></div>'
      +'<div class="fg"><label class="lbl">Color de marca</label><div style="display:flex;gap:8px;align-items:center"><input type="color" value="'+esc(S.global_config.brand_color||'#00DDB8')+'" style="width:42px;height:38px;border:none;background:none;cursor:pointer" onchange="setBrand(this.value)"><input class="inp" value="'+esc(S.global_config.brand_color||'')+'" placeholder="#00DDB8" onchange="setBrand(this.value)"></div></div>'
    +'</div></div>'
@@ -1588,6 +1899,7 @@ function renderDash(){
        +'<div class="dtile"><div class="dtile-ic" style="background:rgba(52,211,153,.18);color:#34D399;font-weight:800;font-size:17px">€</div><div class="dtile-v">'+eur(acceptedAmt)+'</div><div class="dtile-l">Importe aceptado<span>último mes</span></div></div>'
      +'</div>'
    +'</div>'
+   +'<div class="card-h" style="margin:22px 0 10px">Cajón de ahorro</div>'+cajonHTML()
    +'<div class="card-h" style="margin:22px 0 10px">Actividad reciente</div><div class="card dash-recent">'+recentHTML+'</div>';
 }
 
@@ -1674,7 +1986,7 @@ function consumeStock(o){
   o.material_contabilizado=true;
   if(low.length) toast3('Stock bajo → '+low.join(' · '),'#F4B740'); else toast3('Material descontado del inventario','#34D399');
 }
-function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; o.status_updated_at=Date.now(); o.notif_snooze_until=0; if(estado==='Activo' && !o.material_contabilizado) consumeStock(o); save(); updateOrdBadge(); syncTracker(o); }
+function setOrderEstado(id,estado){ var o=getOrder(id); if(!o)return; o.estado=estado; o.status_updated_at=Date.now(); o.notif_snooze_until=0; if(estado==='Activo' && !o.material_contabilizado) consumeStock(o); save(); updateOrdBadge(); syncTracker(o); cajonSync(o); }
 /* ── Sincronización con 3DTracker ────────────────────────────────────────────
    Los pedidos con seguimiento activado (o.tracked) replican su clasificación
    de 3DCalc en 3DTracker: activo / finalizado / archivado. */
@@ -1785,7 +2097,7 @@ function orderModalHTML(o){
       +'<button class="btn ghost" onclick="closeModal()">Cerrar</button></div>';
 }
 
-function delOrderM(id){ if(!confirm('¿Eliminar este pedido?'))return; S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); closeModal(); renderOrders(); }
+function delOrderM(id){ if(!confirm('¿Eliminar este pedido?'))return; cajonDropOrder(id,true); S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); closeModal(); renderOrders(); }
 function chooseUrg(id){ var o=getOrder(id); if(!o)return; var d=orderDual(o); var _df=(o.prod?dualFinish(id):{std:null,urg:null});
   var finN=_df.std?('<span class="uo-d">Entrega: '+_fmtFin(_df.std)+'</span>'):'';
   var finU=_df.urg?('<span class="uo-d">Entrega: '+_fmtFin(_df.urg)+'</span>'):'';
@@ -1816,7 +2128,7 @@ function loadOrderToCalc(id){ var o=getOrder(id); if(!o)return; var c=S.calc_sta
   c.is_shared=!!o.is_shared; if(o.shared_split){c.shared_percent_3dcc=num(o.shared_split['3DCC']);c.shared_percent_silab3d=num(o.shared_split['SILAB3D']);}
   save(); closeModal(); go('calc'); toast3('Parámetros cargados en la calculadora','#4D9FFF'); }
 function dupOrder(id){ var o=getOrder(id); if(!o)return; S.oseq=(S.oseq||0)+1; var c=JSON.parse(JSON.stringify(o)); c.id=uid(); c.number=randomOrderNo(); c.created_at=new Date().toISOString(); c.estado='Pendiente'; c.status_updated_at=Date.now(); c.notif_snooze_until=0; c.importe_pagado=0; c.payment_history=[]; c.material_contabilizado=false; c.archived=false; S.orders.unshift(c); save(); closeModal(); renderOrders(); toast3('Pedido duplicado','#34D399'); }
-function toggleArchive(id){ var o=getOrder(id); if(!o)return; o.archived=!o.archived; o.archived_at=o.archived?Date.now():null; save(); syncTracker(o); reopenOrder(id); }
+function toggleArchive(id){ var o=getOrder(id); if(!o)return; o.archived=!o.archived; o.archived_at=o.archived?Date.now():null; save(); syncTracker(o); cajonSync(o); reopenOrder(id); }
 function setErr(id,d){ var o=getOrder(id); if(!o)return; o.repeticiones_error=Math.max(0,num(o.repeticiones_error)+d); save(); reopenOrder(id); }
 function attachImage(id,input){ var o=getOrder(id); if(!o||!input.files||!input.files[0])return; var f=input.files[0]; if(f.size>1600000){toast3('Imagen demasiado grande (máx ~1,5 MB)','#FF6B8A');return;} var rd=new FileReader(); rd.onload=function(){ o.imagen=rd.result; save(); reopenOrder(id); }; rd.readAsDataURL(f); }
 function computeOrder(o){
@@ -1835,8 +2147,8 @@ function computeOrder(o){
   var labor=num(g.labor_cost_h);
   var filamento=round4(peso*pricekg/1000); if(filOverride!=null)filamento=filOverride;
   var electricidad=round4(horas*num(printer.energy_consumption_kwh)*num(g.energy_cost_kwh));
-  var diseno=round4((DISENO_MODELADO[o.diseno_modelado]||0)*labor);
-  var busqueda=round4((BUSQUEDA_MODELOS[o.busqueda_modelos]||0)*labor);
+  var diseno=round4(disenoImporte(o.diseno_modelado,o.diseno_opt));
+  var busqueda=0;   // integrado como un nivel más del propio diseño
   var soportes=round4(((ELIMINACION_SOPORTES[o.eliminacion_soportes]||0)/60)*labor);
   var deterioro=round4(horas*depPerHour(printer));
   var postproc=round4(((POSTPROCESADO[o.postprocesado]||0)/60)*labor);
@@ -1849,7 +2161,13 @@ function computeOrder(o){
   var minAplicado=precioSinMisc>subtotalTM*(1+urg);
   var cant=Math.max(1,Math.floor(num(o.cantidad)||1));
   var markupVal=Math.max(0,bruto*(markup-1)), errorVal=Math.max(0,bruto*errorRate);
-  return {filName:filName,filColor:filColor,peso:peso,horas:horas,filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,markupVal:markupVal,errorVal:errorVal,cant:cant,precioMin:precioMin,minAplicado:minAplicado};
+  /* Tasa del cajón: se guardó con el pedido, así que se refleja tal cual se cobró. */
+  var cajonTipo=(o.tipo_proyecto||(o.prod&&o.prod.tipo)||'Técnico');
+  var cajonBase=num(o.precio_base_cajon);
+  var cajonTasa=cajonBase?cajonFee(cajonTipo,cajonBase):0;
+  var cajonPct=cajonBase?cajonRate(cajonTipo,cajonBase):0;
+  return {filName:filName,filColor:filColor,peso:peso,horas:horas,filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,markupVal:markupVal,errorVal:errorVal,cant:cant,precioMin:precioMin,minAplicado:minAplicado,
+    cajonTipo:cajonTipo,cajonTasa:cajonTasa,cajonPct:cajonPct};
 }
 function ticketLines(o,kind){
   var u=S.global_config.money_unit||'€';
@@ -1885,6 +2203,7 @@ function ticketLines(o,kind){
   var beneficio=r.markupVal+r.errorVal+r.recargo;
   lines.push(SUB,L('BENEFICIO NETO',beneficio.toFixed(2)+' '+u));
   if(r.minAplicado)lines.push('  * Tarifa minima aplicada: '+r.precioMin.toFixed(2)+' '+u);
+  if(r.cajonTasa>0)lines.push('','-- CAJON DE AHORRO --',L('Tasa de ahorro ('+(r.cajonPct*100).toFixed((r.cajonPct*100)%1?1:0)+'% · '+(r.cajonTipo||'')+')','+'+r.cajonTasa.toFixed(2)+' '+u));
   lines.push(SEP,L('PRECIO UNITARIO',(total/cant).toFixed(2)+' '+u),L('CANTIDAD',cant+' ud.'),SUB,L('PVP FINAL',total.toFixed(2)+' '+u),SEP,
     '','Opciones: Dis='+(o.diseno_modelado||'-')+' | Busq='+(o.busqueda_modelos||'-'),
     '          Sop='+(o.eliminacion_soportes||'-')+' | Post='+(o.postprocesado||'-'),
@@ -1928,7 +2247,7 @@ var CONFIG_URL='https://silab3d.com/pages/configurador-color.html';
 function renderTicketPage(doc,o,kind){
   var internal=(kind==='empresa'); var ac=[22,127,111];
   var br=pdfBrand(); var M=16, W=210;
-  var cliente=o.cliente||'—', desc=o.descripcion||'—', fecha=o.fecha||(o.created_at?String(o.created_at).slice(0,10):'');
+  var cliente=o.cliente||'—', desc=o.descripcion||'—', fecha=_fmtDMY(o.fecha||(o.created_at?String(o.created_at).slice(0,10):''));
   var r=null; try{ r=compute(orderToCalcState(o)); }catch(e){}
   var _ordLvl=(o.urgencia_nivel==='Urgente'?'Urgente':'Normal'); var _finD=null; try{ if(o.id&&o.prod&&o.urgencia_nivel!=='Ambos'){ _finD=_finFromSched(scheduleOrders()[o.id]); } else if(o.prod){ _finD=_simFinish(o.prod,o.diseno_modelado,o.horas,_ordLvl); } }catch(e){} var _dvBox=(o.urgencia_nivel==='Ambos')?!!(_delivStd||_delivUrg):!!((o.urgencia_nivel==='Urgente')?(_delivUrg||_deliv):(_delivStd||_deliv));
   var _stdPrice=(r?roundMoney(r.precio):0);
