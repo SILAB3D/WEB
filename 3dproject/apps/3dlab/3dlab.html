@@ -75,7 +75,7 @@ input,textarea{font-family:inherit}
 .lab-empty .le-ic{font-size:42px;margin-bottom:10px;color:var(--ac)}
 .lab-empty h3{color:var(--t1);font-size:18px;margin-bottom:6px}
 .lab-empty p{font-size:13.5px;max-width:360px;line-height:1.6}
-.lab-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:14px 22px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.lab-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:14px var(--lab-pad);background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
 .lab-bc{font-size:12px;color:var(--t2);font-weight:600}
 .lab-bc span{opacity:.5;margin:0 3px}
 .lab-tname{flex:0 1 320px;min-width:160px;background:transparent;border:1px solid transparent;border-radius:9px;color:var(--t1);font:700 18px 'Outfit';padding:6px 10px}
@@ -84,20 +84,39 @@ input,textarea{font-family:inherit}
 .tbtn{height:34px;padding:0 14px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--t1);font:600 12.5px 'Outfit';display:flex;align-items:center;gap:6px}
 .tbtn:hover{background:var(--glass)}
 .tbtn.danger:hover{border-color:#FF7A7A;color:#FF7A7A}
-.lab-body{padding:24px;display:flex;flex-direction:column;gap:18px;max-width:1180px}
-.lab-cols{display:flex;flex-direction:column;gap:18px}
-.lab-card.params{max-width:560px}
+/* Espaciado uniforme en toda la app: un único paso de separación. */
+:root{--lab-gap:18px;--lab-pad:24px}
+.lab-body{padding:var(--lab-pad);display:flex;flex-direction:column;gap:var(--lab-gap);max-width:1560px;margin:0 auto;width:100%}
+/* Prioridad al espacio de las tablas: los estudios ocupan el ancho completo y
+   los parámetros del test quedan arriba en una tarjeta compacta. */
+.lab-cols{display:flex;flex-direction:column;gap:var(--lab-gap)}
+.lab-card.params{padding:14px 16px}
+.lab-card.params .lab-h{margin-bottom:10px}
+/* la tabla de parámetros se reparte en columnas para no crecer a lo alto */
+/* Parámetros del test en rejilla: varios por fila, con márgenes constantes. */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.pitem{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:5px 6px 5px 10px}
+.pitem:hover{border-color:var(--t3)}
+.pitem .pname{flex:1 1 45%;min-width:0;background:transparent;border:none;color:var(--t2);font:600 12.5px 'Outfit';outline:none;padding:3px 0}
+.pitem .pval{flex:1 1 55%;min-width:0;background:transparent;border:none;border-left:1px solid var(--border);color:var(--t1);font:400 13px 'Outfit';outline:none;padding:3px 0 3px 9px}
+.pitem .del{flex:0 0 auto;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:13px;line-height:1}
+[data-theme=light] .pitem{background:rgba(0,0,0,.02)}
+.lab-card.cond{padding:16px 16px 14px}
+.lab-body{max-width:none}
+.lab-card.params{max-width:none}
 .lab-card.cond{min-width:0}
 .lab-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px 20px}
-.lab-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.lab-card + .lab-card{margin-top:0}
+.estudios-wrap{display:flex;flex-direction:column;gap:var(--lab-gap)}
+.lab-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .lab-h h2{font-size:15px;font-weight:700}
 .mini{height:32px;padding:0 13px;border-radius:9px;border:1px solid var(--ac);background:rgba(139,124,255,.12);color:var(--ac);font:600 12.5px 'Outfit'}
 .mini:hover{background:rgba(139,124,255,.2)}
 .lab-none{color:var(--t2);font-size:13px;padding:10px 2px}
 table{border-collapse:collapse;width:100%}
 .ptable td,.ptable th,.ctable td,.ctable th{border:1px solid var(--border);padding:0;text-align:left}
-.ptable th,.ctable th{padding:9px 12px;font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--t2);background:rgba(255,255,255,.02)}
-.ptable td input,.ctable td input{width:100%;background:transparent;border:none;color:var(--t1);font:400 13.5px 'Outfit';padding:9px 12px;outline:none}
+.ptable th,.ctable th{padding:8px 9px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--t2);background:rgba(255,255,255,.02)}
+.ptable td input,.ctable td input{width:100%;background:transparent;border:none;color:var(--t1);font:400 13px 'Outfit';padding:6px 9px;outline:none}
 .ptable td input:focus,.ctable td input:focus{background:rgba(139,124,255,.08)}
 .ptable td:last-child,.ctable td:last-child{width:38px;text-align:center}
 .ptable th:last-child,.ctable th:last-child{width:38px}
@@ -157,7 +176,7 @@ table{border-collapse:collapse;width:100%}
 .mini.ghost{border-color:var(--border);background:transparent;color:var(--t1)}
 .mini.ghost:hover{background:var(--glass);border-color:var(--ac)}
 .ctable th.rh{width:98px;text-align:center}
-.ctable td.rescell{text-align:center;width:98px;padding:0}
+.ctable td.rescell{text-align:center;width:74px;padding:0}
 .resdot{width:20px;height:20px;border-radius:50%;border:2px solid var(--t3);background:transparent;cursor:pointer;vertical-align:middle;transition:transform .1s}
 .resdot:hover{transform:scale(1.18)}
 .resdot.r1{background:#FF6B6B;border-color:#FF6B6B}
@@ -182,22 +201,42 @@ table{border-collapse:collapse;width:100%}
 .lab-descin{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:12px;color:var(--t1);font:400 13.5px 'Outfit',sans-serif;padding:11px 14px;outline:none;resize:none;line-height:1.5;min-height:44px;overflow:hidden}
 .lab-descin:focus{border-color:var(--ac)}
 .lab-descin::placeholder{color:var(--t3)}
-.ctable th.ph{padding:0;min-width:142px;white-space:normal}
+.ctable th.ph{padding:0;min-width:118px;white-space:normal}
 .ph-row{display:flex;align-items:center}
 .ctable th.ph .ph-row .phn{flex:1;min-width:0;width:auto}
 .ph-cm{font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3);font-size:10.5px;padding:0 10px 7px 12px;white-space:normal;line-height:1.3}
 .thcm{width:20px;height:22px;border:none;background:transparent;color:var(--t3);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .thcm:hover{background:rgba(255,255,255,.08);color:var(--t1)}
 .thcm.has{color:var(--ac)}
-.ctable td.actcell{width:84px;padding:0}
+.ctable td.actcell{width:52px;padding:0}
 .ctable thead th:last-child{width:84px}
 .rowacts{display:flex;align-items:center;justify-content:center;gap:1px}
 .rmv{width:22px;height:26px;border:none;background:transparent;color:var(--t3);border-radius:6px;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .rmv:hover{background:rgba(139,124,255,.16);color:var(--ac)}
-.ctable td.studycell{vertical-align:top;background:rgba(139,124,255,.06);border-right:1px solid var(--border);min-width:160px;padding:0}
+.ctable td.studycell{vertical-align:middle;background:rgba(139,124,255,.06);border-right:1px solid var(--border);min-width:172px;padding:0}
 [data-theme=light] .ctable td.studycell{background:rgba(108,92,231,.05)}
-.stwrap{display:flex;flex-direction:column;gap:6px;padding:7px 10px}
-.stname{background:transparent;border:1px solid transparent;border-radius:8px;color:var(--t1);font:700 13.5px 'Outfit';padding:6px 8px;width:100%;outline:none}
+/* Altura de fila uniforme: la celda de estudio se dispone en línea para no
+   estirar las impresiones de una sola fila (antes medían 105 px frente a 27). */
+.stwrap{display:flex;flex-wrap:nowrap;align-items:center;gap:3px;padding:0 6px;height:28px;box-sizing:border-box}
+/* El nombre dispone de TODO el ancho de la celda; los controles flotan encima y
+   solo aparecen al pasar el ratón, sin ocupar espacio en el flujo. */
+.stwrap{position:relative}
+.stwrap .stname{flex:1 1 auto;width:100%;min-width:0;text-overflow:ellipsis}
+.ctable .stacts,.ctable .stwrap .addprint{position:absolute;top:50%;transform:translateY(-50%);
+  opacity:0;transition:opacity .15s;pointer-events:none;z-index:2}
+.ctable .stwrap .addprint{right:5px}
+.ctable .stacts{right:28px;background:var(--panel,#12141c);border-radius:7px;padding:0 2px;box-shadow:0 0 0 3px var(--panel,#12141c)}
+[data-theme=light] .ctable .stacts{background:#fff;box-shadow:0 0 0 3px #fff}
+.ctable tr:hover .stacts,.ctable tr:hover .stwrap .addprint,
+.ctable .studycell:focus-within .stacts,.ctable .studycell:focus-within .stwrap .addprint{opacity:1;pointer-events:auto}
+@media(hover:none){ .ctable .stacts,.ctable .stwrap .addprint{opacity:1;pointer-events:auto} }
+.ctable tbody tr{height:28px}
+.ctable tbody td{height:28px;padding-top:0;padding-bottom:0;vertical-align:middle}
+.ctable .studycell{vertical-align:middle}
+.ctable .stacts{display:flex;gap:2px;flex:0 0 auto}
+.ctable .stwrap .addprint{flex:0 0 auto;width:19px;height:19px;padding:0;font-size:12px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.ctable .stwrap .rmv,.ctable .stwrap .del{padding:0 3px;height:19px;line-height:1;font-size:10.5px;display:inline-flex;align-items:center}
+.stname{background:transparent;border:1px solid transparent;border-radius:8px;color:var(--t1);font:700 12.5px 'Outfit';padding:2px 6px;width:100%;height:22px;outline:none}
 .stname:hover{border-color:var(--border)}
 .stname:focus{border-color:var(--ac);background:var(--glass)}
 .stacts{display:flex;gap:2px}
@@ -212,7 +251,8 @@ table{border-collapse:collapse;width:100%}
   .layout{top:52px}
   .side{position:fixed;top:52px;bottom:0;left:0;z-index:60;width:82vw;max-width:300px;transform:translateX(0);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.4)}
   body.side-off .side{transform:translateX(-101%)}
-  .lab-body{padding:16px 12px}
+  .lab-body{padding:14px;gap:14px}
+.lab-bar{padding:12px 14px}
   /* barra del test: no fija, titulo a linea completa, botones repartidos sin recortes */
   .lab-bar{position:static;padding:10px 12px;gap:8px}
   .lab-bar .lab-bc{width:100%;order:-1}
@@ -398,7 +438,7 @@ function findEst(t,eid){ return t?(t.estudios||[]).filter(function(x){return x.i
 function findImp(est,iid){ return est?(est.imps||[]).filter(function(x){return x.id===iid;})[0]:null; }
 function findPrint(imp,pid){ return imp?(imp.prints||[]).filter(function(x){return x.id===pid;})[0]:null; }
 function getPrint(eid,iid,pid){ return findPrint(findImp(findEst(curTest(),eid),iid),pid); }
-function cyclePrintResult(eid,iid,pid){ var pr=getPrint(eid,iid,pid); if(!pr)return; pr.result=((pr.result||0)+1)%4; save(); renderMain(); }
+function cyclePrintResult(eid,iid,pid){ var pr=getPrint(eid,iid,pid); if(!pr)return; pr.result=((pr.result||0)+1)%4; save(); renderMainKeepView(); }
 /* presets de parametros definidos */
 var presetOpen=false;
 function togglePresets(){ presetOpen=!presetOpen; renderMain(); }
@@ -415,7 +455,7 @@ function applyColPreset(eid,pid){ var est=findEst(curTest(),eid); var pr=colPres
   if((est.cols||[]).length && !confirm('Se reemplazarán los parámetros de «'+(est.name||'')+'» por el preset "'+pr.name+'". ¿Continuar?'))return;
   est.cols=(pr.cols||[]).map(function(c){ return {id:uid(),name:c.name}; });
   (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(p){ var nv={}; est.cols.forEach(function(c){ nv[c.id]=''; }); p.vals=nv; }); });
-  save(); renderMain(); }
+  save(); renderMainKeepView(); }
 function delColPreset(pid){ var pr=colPresets().filter(function(x){return x.id===pid;})[0]; if(!pr)return;
   if(!confirm('¿Eliminar el preset "'+pr.name+'"?'))return; S.colPresets=colPresets().filter(function(x){return x.id!==pid;}); save(); renderMain(); }
 function colPresetMenu(eid){
@@ -430,16 +470,16 @@ function colPresetMenu(eid){
   var p=list[parseInt(r,10)-1]; if(p)applyColPreset(eid,p.id); else alert('No hay ningún preset con ese número.');
 }
 function delPreset(id){ if(!Array.isArray(S.paramPresets))return; var pr=S.paramPresets.filter(function(x){return x.id===id;})[0]; if(!pr)return; if(!confirm('¿Eliminar el preset "'+pr.name+'"?'))return; S.paramPresets=S.paramPresets.filter(function(x){return x.id!==id;}); save(); renderMain(); }
-function addParam(){ var t=curTest(); if(!t)return; t.params.push({id:uid(),name:'Parámetro '+(t.params.length+1),val:''}); save(); renderMain(); }
+function addParam(){ var t=curTest(); if(!t)return; t.params.push({id:uid(),name:'Parámetro '+(t.params.length+1),val:''}); save(); renderMainKeepView(); }
 function setParamName(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.name=v;save();} }
 function setParamVal(id,v){ var t=curTest(); if(!t)return; var p=t.params.filter(function(x){return x.id===id;})[0]; if(p){p.val=v;save();} }
-function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(function(x){return x.id!==id;}); save(); renderMain(); }
-function addCol(eid){ var est=findEst(curTest(),eid); if(!est)return; if(!Array.isArray(est.cols))est.cols=[]; var c={id:uid(),name:'Parámetro '+(est.cols.length+1)}; est.cols.push(c); (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(pr){ if(pr.vals[c.id]==null)pr.vals[c.id]=''; }); }); save(); renderMain(); }
+function delParam(id){ var t=curTest(); if(!t)return; t.params=t.params.filter(function(x){return x.id!==id;}); save(); renderMainKeepView(); }
+function addCol(eid){ var est=findEst(curTest(),eid); if(!est)return; if(!Array.isArray(est.cols))est.cols=[]; var c={id:uid(),name:'Parámetro '+(est.cols.length+1)}; est.cols.push(c); (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(pr){ if(pr.vals[c.id]==null)pr.vals[c.id]=''; }); }); save(); renderMainKeepView(); }
 function setColName(eid,cid,v){ var est=findEst(curTest(),eid); if(!est)return; var c=(est.cols||[]).filter(function(x){return x.id===cid;})[0]; if(c){c.name=v;save();} }
-function delCol(eid,cid){ var est=findEst(curTest(),eid); if(!est)return; est.cols=(est.cols||[]).filter(function(x){return x.id!==cid;}); (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(pr){ delete pr.vals[cid]; }); }); save(); renderMain(); }
+function delCol(eid,cid){ var est=findEst(curTest(),eid); if(!est)return; est.cols=(est.cols||[]).filter(function(x){return x.id!==cid;}); (est.imps||[]).forEach(function(imp){ (imp.prints||[]).forEach(function(pr){ delete pr.vals[cid]; }); }); save(); renderMainKeepView(); }
 function setTestDesc(v){ var t=curTest(); if(!t)return; t.desc=v; save(); }
 function growLD(el){ try{ el.style.height='auto'; el.style.height=(el.scrollHeight)+'px'; }catch(e){} }
-function moveEstudio(eid,dir){ var t=curTest(); if(!t)return; var a=t.estudios; var i=a.findIndex(function(x){return x.id===eid;}); if(i<0)return; var j=i+dir; if(j<0||j>=a.length)return; var tmp=a[i]; a[i]=a[j]; a[j]=tmp; save(); renderMain(); }
+function moveEstudio(eid,dir){ var t=curTest(); if(!t)return; var a=t.estudios; var i=a.findIndex(function(x){return x.id===eid;}); if(i<0)return; var j=i+dir; if(j<0||j>=a.length)return; var tmp=a[i]; a[i]=a[j]; a[j]=tmp; save(); renderMainKeepView(); }
 function moveImp(eid,iid,dir){ var est=findEst(curTest(),eid); if(!est)return; var a=est.imps; var i=a.findIndex(function(x){return x.id===iid;}); if(i<0)return; var j=i+dir; if(j<0||j>=a.length)return; var tmp=a[i]; a[i]=a[j]; a[j]=tmp; save(); renderMain(); }
 
 /* ===== estudios / impresiones / identificadores ===== */
@@ -447,11 +487,11 @@ function newPrint(est){ var pr={id:uid(),ident:'',result:0,vals:{},comment:''}; 
 function addEstudio(){ var t=curTest(); if(!t)return; if(!Array.isArray(t.estudios))t.estudios=[]; var est={id:uid(),name:'Estudio '+(t.estudios.length+1),cols:[],imps:[]}; est.imps.push({id:uid(),name:'Impresión 1',prints:[newPrint(est)]}); t.estudios.push(est); save(); renderMain(); }
 function delEstudio(eid){ var t=curTest(); if(!t)return; var est=findEst(t,eid); if(!est)return; if(!confirm('¿Eliminar el estudio "'+(est.name||'')+'" con todas sus impresiones?'))return; t.estudios=t.estudios.filter(function(x){return x.id!==eid;}); save(); renderMain(); }
 function setEstName(eid,v){ var est=findEst(curTest(),eid); if(est){est.name=v;save();} }
-function addImp(eid){ var est=findEst(curTest(),eid); if(!est)return; if(!Array.isArray(est.imps))est.imps=[]; est.imps.push({id:uid(),name:'Impresión '+(est.imps.length+1),prints:[newPrint(est)]}); save(); renderMain(); }
-function delImp(eid,iid){ var est=findEst(curTest(),eid); if(!est)return; est.imps=(est.imps||[]).filter(function(x){return x.id!==iid;}); save(); renderMain(); }
+function addImp(eid){ var est=findEst(curTest(),eid); if(!est)return; if(!Array.isArray(est.imps))est.imps=[]; est.imps.push({id:uid(),name:'Impresión '+(est.imps.length+1),prints:[newPrint(est)]}); save(); renderMainKeepView(); }
+function delImp(eid,iid){ var est=findEst(curTest(),eid); if(!est)return; est.imps=(est.imps||[]).filter(function(x){return x.id!==iid;}); save(); renderMainKeepView(); }
 function setImpName(eid,iid,v){ var imp=findImp(findEst(curTest(),eid),iid); if(imp){imp.name=v;save();} }
-function addPrint(eid,iid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; if(!Array.isArray(imp.prints))imp.prints=[]; imp.prints.push(newPrint(est)); save(); renderMain(); }
-function delPrint(eid,iid,pid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; imp.prints=(imp.prints||[]).filter(function(x){return x.id!==pid;}); if(!imp.prints.length)est.imps=est.imps.filter(function(x){return x.id!==iid;}); save(); renderMain(); }
+function addPrint(eid,iid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; if(!Array.isArray(imp.prints))imp.prints=[]; imp.prints.push(newPrint(est)); save(); renderMainKeepView(); }
+function delPrint(eid,iid,pid){ var est=findEst(curTest(),eid); var imp=findImp(est,iid); if(!imp)return; imp.prints=(imp.prints||[]).filter(function(x){return x.id!==pid;}); if(!imp.prints.length)est.imps=est.imps.filter(function(x){return x.id!==iid;}); save(); renderMainKeepView(); }
 function setPrintIdent(eid,iid,pid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.ident=v;save();} }
 function setPrintVal(eid,iid,pid,cid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.vals[cid]=v;save();scheduleHighlights();} }
 function setPrintComment(eid,iid,pid,v){ var pr=getPrint(eid,iid,pid); if(pr){pr.comment=v;save();} }
@@ -555,10 +595,39 @@ function renderPurgeLab(main){
     +'</div>';
 }
 var condExpanded=null;
+/* Repinta la tabla sin que se pierda la vista: conserva el desplazamiento de la
+   página y de la tabla, la celda enfocada, la posición del cursor y la selección.
+   Antes, al pegar valores, todo saltaba al principio y parecía que recargaba. */
+function renderMainKeepView(){
+  var st={ y:window.scrollY||window.pageYOffset||0, scrolls:[] };
+  [].forEach.call(document.querySelectorAll('.lab-scroll, .cond-modal'), function(el,i){
+    st.scrolls.push({i:i, l:el.scrollLeft, t:el.scrollTop});
+  });
+  var a=document.activeElement;
+  if(a && (a.tagName==='INPUT'||a.tagName==='TEXTAREA')){
+    var tb=(typeof _condTableOf==='function')?_condTableOf(a):null;
+    st.foco={ eid:(tb?tb.getAttribute('data-eid'):null),
+      r:a.getAttribute('data-r'), c:a.getAttribute('data-c'),
+      ini:a.selectionStart, fin:a.selectionEnd };
+  }
+  renderMain();
+  try{
+    var cont=document.querySelectorAll('.lab-scroll, .cond-modal');
+    st.scrolls.forEach(function(s){ var el=cont[s.i]; if(el){ el.scrollLeft=s.l; el.scrollTop=s.t; } });
+    window.scrollTo(0, st.y);
+    if(st.foco && st.foco.r!=null){
+      var sel='table.ctable'+(st.foco.eid?'[data-eid="'+st.foco.eid+'"]':'')+' input[data-r="'+st.foco.r+'"][data-c="'+st.foco.c+'"]';
+      var el2=document.querySelector(sel);
+      if(el2){ el2.focus({preventScroll:true});
+        try{ el2.setSelectionRange(st.foco.ini==null?el2.value.length:st.foco.ini, st.foco.fin==null?el2.value.length:st.foco.fin); }catch(e){}
+      }
+    }
+  }catch(e){}
+}
 function toggleCondExpand(eid){ condExpanded=(condExpanded===eid?null:eid); renderMain(); }
 var condGrids={};
 function applyCellRaw(eid,r,c,val){ var g=condGrids[eid]; if(!g)return; var row=g.rows[r], col=g.cols[c]; if(!row||!col)return; var est=findEst(curTest(),eid); if(!est)return; var imp=findImp(est,row.iid); if(!imp)return; var pr=findPrint(imp,row.pid); if(!pr)return; if(col.field==='ident')pr.ident=val; else if(col.field==='comment')pr.comment=val; else if(col.field==='param'){ if(!pr.vals||typeof pr.vals!=='object')pr.vals={}; pr.vals[col.cid]=val; } }
-function condPaste(ev,eid,r,c){ var cd=ev.clipboardData||window.clipboardData; if(!cd)return; var txt=cd.getData('text'); if(txt==null)txt=''; ev.preventDefault(); var rows=txt.replace(/\r/g,'').split('\n'); if(rows.length>1 && rows[rows.length-1]==='')rows.pop(); for(var i=0;i<rows.length;i++){ var cells=rows[i].split('\t'); for(var j=0;j<cells.length;j++){ applyCellRaw(eid,r+i,c+j,cells[j]); } } save(); renderMain(); }
+function condPaste(ev,eid,r,c){ var cd=ev.clipboardData||window.clipboardData; if(!cd)return; var txt=cd.getData('text'); if(txt==null)txt=''; ev.preventDefault(); var rows=txt.replace(/\r/g,'').split('\n'); if(rows.length>1 && rows[rows.length-1]==='')rows.pop(); for(var i=0;i<rows.length;i++){ var cells=rows[i].split('\t'); for(var j=0;j<cells.length;j++){ applyCellRaw(eid,r+i,c+j,cells[j]); } } save(); renderMainKeepView(); }
 function condKey(ev){
   var el=ev.target;
   if((ev.ctrlKey||ev.metaKey) && (ev.key==='c'||ev.key==='C')){ if(condSelActive()){ ev.preventDefault(); copyCondSel(); } else if(el.selectionStart===el.selectionEnd){ try{ el.select(); }catch(e){} } return; }
@@ -578,7 +647,7 @@ function condMove(el, dr, dc){
   var t=table.querySelector('input[data-r="'+(r+dr)+'"][data-c="'+(c+dc)+'"]');
   if(!t && dc>0) t=table.querySelector('input[data-r="'+(r+1)+'"][data-c="0"]');
   if(!t && dc<0){ var prev=[].slice.call(table.querySelectorAll('input[data-r="'+(r-1)+'"]')); if(prev.length) t=prev.reduce(function(a,b){ return parseInt(b.getAttribute('data-c'),10)>parseInt(a.getAttribute('data-c'),10)?b:a; }); }
-  if(t){ try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } try{ t.select(); }catch(e){} }
+  if(t){ try{ t.focus({preventScroll:true}); _condVisible(t); }catch(e){ t.focus(); } try{ t.select(); }catch(e){} }
 }
 function refreshCondHighlights(){
   var _t=curTest(); if(!_t)return;
@@ -598,7 +667,25 @@ var condSel=null, _condEnterCol=null, _condExtending=false, _condFromTab=false, 
 function scheduleHighlights(){ if(_rchRAF)return; _rchRAF=true; requestAnimationFrame(function(){ _rchRAF=false; try{ refreshCondHighlights(); }catch(e){} }); }
 function _condTableOf(el){ return (el&&el.closest)?el.closest('table.ctable'):null; }
 function _condCellAt(table,r,c){ return table?table.querySelector('input[data-r="'+r+'"][data-c="'+c+'"]'):null; }
-function _condFocus(t){ if(!t)return; try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } try{ t.select(); }catch(e){} }
+function _condFocus(t){ if(!t)return; try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } try{ t.select(); }catch(e){} _condVisible(t); }
+/* Desplaza lo justo para que la celda enfocada quede a la vista, tanto dentro de
+   la tabla (scroll horizontal) como en la página. */
+function _condVisible(el){
+  if(!el||!el.getBoundingClientRect)return;
+  try{
+    var cont=el.closest('.lab-scroll')||el.closest('.cond-modal');
+    if(cont){
+      var e=el.getBoundingClientRect(), c=cont.getBoundingClientRect(), M=8;
+      if(e.left < c.left+M)      cont.scrollLeft -= (c.left+M-e.left);
+      else if(e.right > c.right-M) cont.scrollLeft += (e.right-(c.right-M));
+      if(e.top < c.top+M)        cont.scrollTop  -= (c.top+M-e.top);
+      else if(e.bottom > c.bottom-M) cont.scrollTop += (e.bottom-(c.bottom-M));
+    }
+    var b=el.getBoundingClientRect(), vh=window.innerHeight||0, mv=70;
+    if(b.top < mv) window.scrollBy(0, b.top-mv);
+    else if(b.bottom > vh-mv) window.scrollBy(0, b.bottom-(vh-mv));
+  }catch(e){}
+}
 function condSetAnchor(el){ var table=_condTableOf(el); if(!table)return; var r=parseInt(el.getAttribute('data-r'),10), c=parseInt(el.getAttribute('data-c'),10); if(isNaN(r)||isNaN(c))return; condSel={eid:table.getAttribute('data-eid'),ar:r,ac:c,fr:r,fc:c}; paintCondSel(); }
 function paintCondSel(){ [].forEach.call(document.querySelectorAll('.ctable td.rng'), function(td){ td.classList.remove('rng'); }); if(!condSel||(condSel.ar===condSel.fr&&condSel.ac===condSel.fc))return; var r0=Math.min(condSel.ar,condSel.fr),r1=Math.max(condSel.ar,condSel.fr),c0=Math.min(condSel.ac,condSel.fc),c1=Math.max(condSel.ac,condSel.fc); [].forEach.call(document.querySelectorAll('table.ctable[data-eid="'+condSel.eid+'"]'), function(table){ for(var r=r0;r<=r1;r++)for(var c=c0;c<=c1;c++){ var inp=_condCellAt(table,r,c); if(inp&&inp.parentNode)inp.parentNode.classList.add('rng'); } }); }
 function condExtendSel(el,dr,dc){ if(!condSel)condSetAnchor(el); if(!condSel)return; var table=_condTableOf(el); if(!table)return; var nr=condSel.fr+dr,nc=condSel.fc+dc; var t=_condCellAt(table,nr,nc); if(!t)return; condSel.fr=nr; condSel.fc=nc; _condExtending=true; _condFocus(t); _condExtending=false; paintCondSel(); }
@@ -624,7 +711,7 @@ function condTableHTML(est,map){
       prints.forEach(function(pr,pi){
         R++; g.rows.push({iid:imp.id,pid:pr.id});
         h+='<tr>';
-        if(pi===0){ h+='<td class="studycell" rowspan="'+n+'"><div class="stwrap"><input class="stname" value="'+escAttr(imp.name)+'" onchange="setImpName(\''+eid+'\',\''+imp.id+'\',this.value)" placeholder="Impresión"><div class="stacts"><button class="rmv" title="Subir impresión" onclick="moveImp(\''+eid+'\',\''+imp.id+'\',-1)">▲</button><button class="rmv" title="Bajar impresión" onclick="moveImp(\''+eid+'\',\''+imp.id+'\',1)">▼</button><button class="del" title="Eliminar impresión" onclick="delImp(\''+eid+'\',\''+imp.id+'\')">&times;</button></div><button class="addprint" onclick="addPrint(\''+eid+'\',\''+imp.id+'\')">+ Identificador</button></div></td>'; }
+        if(pi===0){ h+='<td class="studycell" rowspan="'+n+'"><div class="stwrap"><input class="stname" title="'+escAttr(imp.name)+'" value="'+escAttr(imp.name)+'" onchange="setImpName(\''+eid+'\',\''+imp.id+'\',this.value)" placeholder="Impresión"><div class="stacts"><button class="rmv" title="Subir impresión" onclick="moveImp(\''+eid+'\',\''+imp.id+'\',-1)">▲</button><button class="rmv" title="Bajar impresión" onclick="moveImp(\''+eid+'\',\''+imp.id+'\',1)">▼</button><button class="del" title="Eliminar impresión" onclick="delImp(\''+eid+'\',\''+imp.id+'\')">&times;</button></div><button class="addprint" title="Anadir identificador" onclick="addPrint(\''+eid+'\',\''+imp.id+'\')">+</button></div></td>'; }
         h+='<td><input value="'+escAttr(pr.ident)+'" data-r="'+R+'" data-c="0" onpaste="condPaste(event,\''+eid+'\','+R+',0)" onkeydown="condKey(event)" onchange="setPrintIdent(\''+eid+'\',\''+imp.id+'\',\''+pr.id+'\',this.value)" placeholder="Identificador"></td>';
         h+='<td class="rescell"><button class="resdot r'+(pr.result||0)+'" title="'+RES[pr.result||0]+' — clic para cambiar" onclick="cyclePrintResult(\''+eid+'\',\''+imp.id+'\',\''+pr.id+'\')"></button></td>';
         (est.cols||[]).forEach(function(pa,ci){ var cc=ci+1; var v=pr.vals[pa.id]!=null?pr.vals[pa.id]:''; var hl=map[imp.id]&&map[imp.id][pa.id]; h+='<td'+(hl?' class="cv"':'')+'><input value="'+escAttr(v)+'" data-r="'+R+'" data-c="'+cc+'" onpaste="condPaste(event,\''+eid+'\','+R+','+cc+')" onkeydown="condKey(event)" onchange="setPrintVal(\''+eid+'\',\''+imp.id+'\',\''+pr.id+'\',\''+pa.id+'\',this.value)" placeholder="—"></td>'; });
@@ -657,12 +744,18 @@ function renderMain(){
   h+='<div class="lab-descwrap"><textarea class="lab-descin" rows="1" placeholder="Descripci\u00f3n del test: objetivo, condiciones generales, notas\u2026" oninput="growLD(this);setTestDesc(this.value)">'+esc(t.desc||'')+'</textarea></div>';
   // parámetros
   h+='<div class="lab-cols">';
-  h+='<section class="lab-card params"><div class="lab-h"><h2>Parámetros definidos</h2><div class="lab-hbtns"><button class="mini ghost" onclick="togglePresets()">Presets'+((S.paramPresets&&S.paramPresets.length)?(' ('+S.paramPresets.length+')'):'')+'</button><button class="mini" onclick="addParam()">+ Parámetro</button></div></div>';
+  h+='<section class="lab-card params"><div class="lab-h"><h2>Parámetros definidos</h2><div class="lab-hbtns"><button class="mini ghost" onclick="togglePresets()" title="Presets de los parámetros definidos del test">Presets del test'+((S.paramPresets&&S.paramPresets.length)?(' ('+S.paramPresets.length+')'):'')+'</button><button class="mini" onclick="addParam()">+ Parámetro</button></div></div>';
   h+=presetPanel();
   if(t.params.length){
-    h+='<table class="ptable"><thead><tr><th>Parámetro</th><th>Valor</th><th></th></tr></thead><tbody>';
-    t.params.forEach(function(pa){ h+='<tr><td><input value="'+escAttr(pa.name)+'" onchange="setParamName(\''+pa.id+'\',this.value)"></td><td><input value="'+escAttr(pa.val)+'" onchange="setParamVal(\''+pa.id+'\',this.value)" placeholder="—"></td><td><button class="del" title="Eliminar" onclick="delParam(\''+pa.id+'\')">&times;</button></td></tr>'; });
-    h+='</tbody></table>';
+    h+='<div class="pgrid">';
+    t.params.forEach(function(pa){
+      h+='<div class="pitem">'
+        +'<input class="pname" value="'+escAttr(pa.name)+'" placeholder="Parámetro" onchange="setParamName(\''+pa.id+'\',this.value)">'
+        +'<input class="pval" value="'+escAttr(pa.val)+'" placeholder="—" onchange="setParamVal(\''+pa.id+'\',this.value)">'
+        +'<button class="del" title="Eliminar parámetro" onclick="delParam(\''+pa.id+'\')">&times;</button>'
+      +'</div>';
+    });
+    h+='</div>';
   } else h+='<div class="lab-none">Sin parámetros. Añade el primero con <b>+ Parámetro</b>.</div>';
   h+='</section>';
   // condiciones
@@ -674,7 +767,7 @@ function renderMain(){
         +'<button class="rmv" title="Subir estudio" onclick="moveEstudio(\''+est.id+'\',-1)">▲</button>'
         +'<button class="rmv" title="Bajar estudio" onclick="moveEstudio(\''+est.id+'\',1)">▼</button>'
         +'<button class="mini ghost" onclick="toggleCondExpand(\''+est.id+'\')" title="Ver la tabla en grande">⤢ Expandir</button>'
-        +'<button class="mini ghost" onclick="colPresetMenu(\''+est.id+'\')" title="Presets de parámetros de estudio">Presets'+((S.colPresets&&S.colPresets.length)?(' ('+S.colPresets.length+')'):'')+'</button>'+'<button class="mini" onclick="addCol(\''+est.id+'\')">+ Parámetro</button>'
+        +'<button class="mini ghost" onclick="colPresetMenu(\''+est.id+'\')" title="Presets de los parámetros de este estudio">Presets del estudio'+((S.colPresets&&S.colPresets.length)?(' ('+S.colPresets.length+')'):'')+'</button>'+'<button class="mini" onclick="addCol(\''+est.id+'\')">+ Parámetro</button>'
         +'<button class="mini" onclick="addImp(\''+est.id+'\')">+ Impresión</button>'
         +'<button class="del" title="Eliminar estudio" onclick="delEstudio(\''+est.id+'\')">&times;</button>'
         +'</div></div><div class="lab-scroll">'+condTableHTML(est,emap)+'</div></div>';
