@@ -329,6 +329,8 @@ option{background-color:#161922;color:#E8EBF4}
 .pp-ro-p{font-size:12.5px;font-weight:700;color:var(--t1);background:rgba(139,124,255,.12);border:1px solid rgba(139,124,255,.28);border-radius:20px;padding:2px 10px;white-space:nowrap}
 .pp-ro-p.free{color:var(--t3);background:transparent;border-color:var(--border);font-weight:600}
 /* === diagrama de la formula === */
+.fxd-bl{font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);margin:14px 0 8px;text-align:center}
+.fxd-bl:first-child{margin-top:0}
 .fxd-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t2);margin:20px 0 12px}
 .fxd{display:flex;flex-direction:column;align-items:center}
 .fxd-inrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
@@ -615,7 +617,12 @@ var URG_OPTS=['Normal','Urgente','Ambos'];
 function computeUrg(cs,lvl){ return compute(Object.assign({},cs,{urgencia_nivel:lvl})); }
 var URG_PCT_DAY=0.05, URG_PCT_MAX=0.50;
 function urgRate(days){ var d=Math.max(0,Math.round(Number(days)||0)); return Math.min(URG_PCT_MAX, d*URG_PCT_DAY); }
-function urgSurcharge(stdPrice,days){ var r=urgRate(days), p=num(stdPrice); return {rate:r,days:Math.max(0,Math.round(Number(days)||0)),amount:roundMoney(p*r),total:roundUpToNickel(p*(1+r))}; }
+/* El recargo de urgencia multiplica el BLOQUE A (no el precio final), así no
+   infla accesorios ni la tasa de ahorro. Si no se pasa base, se usa el total. */
+function urgSurcharge(stdPrice,days,baseA){
+  var r=urgRate(days), p=num(stdPrice), b=(baseA==null?p:num(baseA));
+  return {rate:r,days:Math.max(0,Math.round(Number(days)||0)),amount:roundMoney(b*r),total:roundUpToNickel(p+b*r)};
+}
 function _daysBetween(a,b){ if(!a||!b)return 0; return Math.round((_md(a)-_md(b))/86400000); }
 function calcDaysGained(){ var c=S.calc_state; if(!c.prod_on||!c.prod)return null; var h=0; try{ h=compute().horas||0; }catch(e){}
   var fs=_simFinish(c.prod,c.diseno_modelado,h,'Normal'), fu=_simFinish(c.prod,c.diseno_modelado,h,'Urgente');
@@ -701,21 +708,25 @@ function compute(c){
   var deterioro=round4(horas*depPerHour(printer));
   var postproc=round4(((POSTPROCESADO[c.postprocesado]||0)/60)*labor);
   var gastoMisc=round4(Math.max(0,num(c.gasto_misc)));
+  /* ── MODELO DE BLOQUES ──────────────────────────────────────────────────────
+     A = básicos + complementarios + fondo de error + markup  (nunca < mínimo)
+     B = multiplicadores sobre A: recargo de urgencia y tasa de ahorro
+     C = accesorios, que se suman a A sin multiplicadores
+     PVP = A + A×urgencia + A×tasa + C                                        */
   var bruto=filamento+electricidad+deterioro;
-  var resto=diseno+busqueda+soportes+postproc;
-  var subtotalTM=bruto*markup+bruto*errorRate+resto;
-  var precioCalcUrg=subtotalTM*(1+urg);
+  var resto=diseno+busqueda+soportes+postproc+gastoMisc;
   var precioMin=num(g.precio_minimo);
-  var accesorios=accessoriesTotal(c);
-  var precioSinMisc=roundUpToNickel(Math.max(precioCalcUrg,precioMin));
-  /* Tasa del cajón de ahorro: se calcula sobre el total PREVIO a la tasa y se suma al final. */
-  var precioPrevio=roundUpToNickel(precioSinMisc+gastoMisc+accesorios);
+  var bloqueA=Math.max(bruto*markup+bruto*errorRate+resto, precioMin);
+  var minAplicado=(bruto*markup+bruto*errorRate+resto)<precioMin;
+  var accesorios=accessoriesTotal(c);         // bloque C
+  var bloqueC=accesorios;
+  var recargo=bloqueA*urg;                    // bloque B · urgencia
   var cajonTipo=(c.tipo_proyecto||(c.prod&&c.prod.tipo)||'Técnico');
-  var cajonPct=cajonRate(cajonTipo,precioPrevio);
-  var cajonTasa=cajonFee(cajonTipo,precioPrevio);
-  var precio=roundUpToNickel(precioPrevio+cajonTasa);
-  var recargo=subtotalTM*urg;
-  var minAplicado=precioSinMisc>precioCalcUrg;
+  var cajonPct=cajonRate(cajonTipo,bloqueA);  // bloque B · tasa de ahorro
+  var cajonTasa=roundMoney(bloqueA*cajonPct);
+  var precioPrevio=roundUpToNickel(bloqueA+recargo+bloqueC);   // total antes de la tasa
+  var precio=roundUpToNickel(bloqueA+recargo+cajonTasa+bloqueC);
+  var precioSinMisc=roundUpToNickel(bloqueA);
   var cant=Math.max(1,Math.floor(num(c.cantidad)||1));
   var markupVal=Math.max(0,bruto*(markup-1));
   var errorVal=Math.max(0,bruto*errorRate);
@@ -724,6 +735,7 @@ function compute(c){
     filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,
     bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,
     markupVal:markupVal,errorVal:errorVal,beneficioNeto:beneficioNeto,
+    bloqueA:roundMoney(bloqueA),bloqueC:roundMoney(bloqueC),
     precioPrevio:precioPrevio,cajonTipo:cajonTipo,cajonPct:cajonPct,cajonTasa:cajonTasa,
     precio:precio,precioUnit:roundMoney(precio/cant),cant:cant,precioMin:precioMin,minAplicado:minAplicado,accesorios:accesorios};
 }
@@ -1068,7 +1080,7 @@ function resultHTML(){
   function fmt(n){return (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+u;}
   function row(l,v){return '<div class="r"><span>'+l+'</span><b>'+fmt(v)+'</b></div>';}
   var _lvl=S.calc_state.urgencia_nivel, _dual=(_lvl==='Ambos'||_lvl==='Urgente');
-  var _dg=_dual?calcDaysGained():null, _su=_dual?urgSurcharge(r.precio,_dg||0):null;
+  var _dg=_dual?calcDaysGained():null, _su=_dual?urgSurcharge(r.precio,_dg||0,r.bloqueA):null;
   var _ru=_su?{precio:_su.total}:null;
   var _noProd=(_dual&&(!S.calc_state.prod_on||!S.calc_state.prod));
   var _ponF=(_dual&&S.calc_state.prod_on&&S.calc_state.prod), _fS=_ponF?_simFinish(S.calc_state.prod,S.calc_state.diseno_modelado,r.horas,'Normal'):null, _fU=_ponF?_simFinish(S.calc_state.prod,S.calc_state.diseno_modelado,r.horas,'Urgente'):null;
@@ -1451,13 +1463,13 @@ function saveAsOrder(){ var c=S.calc_state; var dup=_findDupOrder(c.cliente,c.de
     +'<button class="btn ghost" onclick="closeModal()">Cancelar</button></div>'); return; }
   _doSaveOrder();
 }
-function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',tipo_proyecto:(c.tipo_proyecto||'Técnico'),precio_base_cajon:roundMoney(r.precioPrevio||0),descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0).total:r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?r.precio:null),precio_urgente:(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0).total:null),urg_days:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),promised:null,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); var _new=S.orders[0]; var _wasUrg=(_new.urgencia_nivel==='Urgente'&&_new.prod&&!_new.cal_off);
+function _doSaveOrder(descOverride){ var r=compute(),c=S.calc_state; var desc=(descOverride!=null?descOverride:c.descripcion); S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:(c.fecha||todayISO()),empresa:c.empresa,cliente:c.cliente,cliente_email:c.cliente_email||'',tipo_proyecto:(c.tipo_proyecto||'Técnico'),precio_base_cajon:roundMoney(r.precioPrevio||0),descripcion:desc,impresora:(r.printer.name||''),filamento:r.filName,filamento_color:r.filColor,peso_g:String(r.peso),horas:String(r.horas),cantidad:r.cant,precio_final:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:r.precio),precio_normal:(c.urgencia_nivel==='Ambos'?r.precio:null),precio_urgente:(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:null),urg_days:((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null),coste_bruto:roundMoney(r.bruto),beneficio_neto:roundMoney(r.beneficioNeto),importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,diseno_modelado:c.diseno_modelado,busqueda_modelos:c.busqueda_modelos,eliminacion_soportes:c.eliminacion_soportes,postprocesado:c.postprocesado,probabilidad_error:c.probabilidad_error,markup:c.markup,urgencia_nivel:c.urgencia_nivel,gasto_misc:num(c.gasto_misc),is_multimaterial:!!c.is_multimaterial,material_breakdown:JSON.parse(JSON.stringify(c.material_breakdown||[])),util:JSON.parse(JSON.stringify(c.util||{})),payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:'',is_shared:!!c.is_shared,prod:(c.prod_on&&c.prod?JSON.parse(JSON.stringify(c.prod)):null),cal_at:(c.prod_on&&c.prod?Date.now():null),promised:null,shared_split:c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null}); ensureClient(S.orders[0]); var _new=S.orders[0]; var _wasUrg=(_new.urgencia_nivel==='Urgente'&&_new.prod&&!_new.cal_off);
   var _before=null; if(_wasUrg){ try{ var _tmp=S.orders; S.orders=_tmp.filter(function(x){return x.id!==_new.id;}); _before=_schedSnapshot(); S.orders=_tmp; }catch(e){} }
   save(); try{ _ensurePromised(); }catch(e){}
   if(_wasUrg&&_before){ try{ var _after=_schedSnapshot(); closeModal(); go('ord'); openModal(urgentImpactHTML(_before,_after,_new.id)); toast3('Pedido urgente guardado','#F4B740'); return; }catch(e){} }
   closeModal(); go('ord'); toast3('Pedido guardado','#34D399'); }
 function _saveOrderNewName(){ var c=S.calc_state; var base=String(c.descripcion||''); var nd=prompt('Nueva descripción para diferenciar este pedido:', base?(base+' (2)'):''); if(nd==null)return; nd=nd.trim(); if(!nd){ toast3('La descripción no puede estar vacía','#FF6B8A'); return; } _doSaveOrder(nd); }
-function _overwriteOrder(id){ var o=getOrder(id); if(!o){ closeModal(); return; } var r=compute(),c=S.calc_state; o.fecha=(c.fecha||o.fecha||todayISO()); o.empresa=c.empresa; o.cliente=c.cliente; o.cliente_email=c.cliente_email||''; o.descripcion=c.descripcion; o.impresora=(r.printer.name||''); o.filamento=r.filName; o.filamento_color=r.filColor; o.peso_g=String(r.peso); o.horas=String(r.horas); o.cantidad=r.cant; o.precio_final=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0).total:r.precio); o.precio_normal=(c.urgencia_nivel==='Ambos'?r.precio:null); o.precio_urgente=(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0).total:null); o.urg_days=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null); o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); o.diseno_modelado=c.diseno_modelado; o.busqueda_modelos=c.busqueda_modelos; o.eliminacion_soportes=c.eliminacion_soportes; o.postprocesado=c.postprocesado; o.probabilidad_error=c.probabilidad_error; o.markup=c.markup; o.urgencia_nivel=c.urgencia_nivel; o.gasto_misc=num(c.gasto_misc); o.is_multimaterial=!!c.is_multimaterial; o.material_breakdown=JSON.parse(JSON.stringify(c.material_breakdown||[])); o.util=JSON.parse(JSON.stringify(c.util||{})); o.is_shared=!!c.is_shared; o.shared_split=c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null; o.status_updated_at=Date.now(); o.material_contabilizado=false; ensureClient(o); save(); closeModal(); go('ord'); toast3('Pedido sobrescrito','#34D399'); }
+function _overwriteOrder(id){ var o=getOrder(id); if(!o){ closeModal(); return; } var r=compute(),c=S.calc_state; o.fecha=(c.fecha||o.fecha||todayISO()); o.empresa=c.empresa; o.cliente=c.cliente; o.cliente_email=c.cliente_email||''; o.descripcion=c.descripcion; o.impresora=(r.printer.name||''); o.filamento=r.filName; o.filamento_color=r.filColor; o.peso_g=String(r.peso); o.horas=String(r.horas); o.cantidad=r.cant; o.precio_final=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:r.precio); o.precio_normal=(c.urgencia_nivel==='Ambos'?r.precio:null); o.precio_urgente=(c.urgencia_nivel==='Ambos'?urgSurcharge(r.precio,calcDaysGained()||0,r.bloqueA).total:null); o.urg_days=((c.urgencia_nivel==='Ambos'||c.urgencia_nivel==='Urgente')?(calcDaysGained()||0):null); o.coste_bruto=roundMoney(r.bruto); o.beneficio_neto=roundMoney(r.beneficioNeto); o.diseno_modelado=c.diseno_modelado; o.busqueda_modelos=c.busqueda_modelos; o.eliminacion_soportes=c.eliminacion_soportes; o.postprocesado=c.postprocesado; o.probabilidad_error=c.probabilidad_error; o.markup=c.markup; o.urgencia_nivel=c.urgencia_nivel; o.gasto_misc=num(c.gasto_misc); o.is_multimaterial=!!c.is_multimaterial; o.material_breakdown=JSON.parse(JSON.stringify(c.material_breakdown||[])); o.util=JSON.parse(JSON.stringify(c.util||{})); o.is_shared=!!c.is_shared; o.shared_split=c.is_shared?{'3DCC':num(c.shared_percent_3dcc),'SILAB3D':num(c.shared_percent_silab3d)}:null; o.status_updated_at=Date.now(); o.material_contabilizado=false; ensureClient(o); save(); closeModal(); go('ord'); toast3('Pedido sobrescrito','#34D399'); }
 function newOrder(){ S.oseq=(S.oseq||0)+1; S.orders.unshift({id:uid(),number:randomOrderNo(),created_at:new Date().toISOString(),fecha:todayISO(),empresa:'3DCC',cliente:'',descripcion:'',precio_final:0,importe_pagado:0,estado:'Pendiente',status_updated_at:Date.now(),notif_snooze_until:0,payment_history:[],material_contabilizado:false,archived:false,repeticiones_error:0,imagen:''}); save(); renderOrders(); }
 function setOrd(id,f,v){ var o=S.orders.filter(function(x){return x.id===id;})[0]; if(!o)return; if(f==='precio_final'||f==='importe_pagado')v=num(v); o[f]=v; if(f==='cliente'||f==='cliente_email')ensureClient(o); if(f==='importe_pagado'||f==='precio_final')autoArchive(o); save(); updateOrdBadge(); var pe=document.getElementById('pend-'+id); if(pe){var p=num(o.precio_final)-num(o.importe_pagado); pe.innerHTML=p>0.005?'<span class="pend">'+eur(p)+'</span>':'<span class="paid">Pagado</span>';} }
 function delOrder(id){ if(!confirm('¿Eliminar este pedido?'))return; cajonDropOrder(id,true); S.orders=S.orders.filter(function(x){return x.id!==id;}); save(); renderOrders(); }
@@ -1791,36 +1803,46 @@ function tokensRefCard(){
 function renderPlantillas(){ document.getElementById('view').innerHTML='<div class="h1">Plantillas</div><div class="h-sub">Personaliza la marca, el contenido y las frases de los PDF (cliente e interno).</div>'+pdfBrandCard('renderPlantillas')+clientPdfCard()+tokensRefCard()+internalPdfCard(); }
 function paramPriceCard(){ var labor=num(S.global_config.labor_cost_h);
   function fmtMin(m){ m=Math.round(m); if(m<=0)return ''; if(m<60)return m+' min'; var h=Math.floor(m/60), mm=m%60; return mm?(h+' h '+mm+' min'):(h+' h'); }
-  function grp(title,map,mode){ var rows=Object.keys(map).map(function(k){ var v=map[k]; var mins=(mode==='min'?v:v*60); var cost=(mins/60)*labor; var free=cost<=0; var tt=fmtMin(mins);
+  function grp(title,map,mode){ var rows=Object.keys(map).map(function(k){ var v=map[k];
+      /* 'eur' = tarifa fija en euros (diseño); el resto se valora por tiempo × mano de obra. */
+      if(mode==='eur'){ var free0=(v<=0);
+        return '<div class="pp-ro"><span class="pp-ro-n">'+esc(k)+'</span><span class="pp-ro-p'+(free0?' free':'')+'">'+(free0?'Sin coste':eur(v))+'</span></div>'; }
+      var mins=(mode==='min'?v:v*60); var cost=(mins/60)*labor; var free=cost<=0; var tt=fmtMin(mins);
       return '<div class="pp-ro"><span class="pp-ro-n">'+esc(k)+'</span>'+(tt?'<span class="pp-ro-t">'+tt+'</span>':'')+'<span class="pp-ro-p'+(free?' free':'')+'">'+(free?'Sin coste':eur(cost))+'</span></div>'; }).join('');
     return '<div class="pp-grp"><div class="pp-grp-h">'+title+'</div>'+rows+'</div>'; }
   return '<div class="card"><div class="card-h">Precios de parámetros complementarios <span class="cfg-ro-tag">solo informativo</span></div>'
     +'<div class="pp-grid">'+grp('Diseño / modelado',DISENO_PRECIO,'eur')+grp('Eliminación de soportes',ELIMINACION_SOPORTES,'min')+grp('Post-procesado',POSTPROCESADO,'min')+'</div>'
-    +'<div class="note" style="margin-top:14px">Tiempo estimado y su coste con la mano de obra actual (<b>'+eur(labor)+'/h</b>). Para cambiarlos, ajusta el «Coste de mano de obra» en Configuración global.</div></div>';
+    +'<div class="note" style="margin-top:14px">El <b>diseño</b> son tarifas fijas (las mismas que ves en la calculadora); en los pedidos de optimización se cobra el <b>'+Math.round(disenoOptPct()*100)+'%</b> de la tarifa, ajustable en Configuración global. Soportes y post-procesado se valoran por tiempo con la mano de obra actual (<b>'+eur(labor)+'/h</b>).</div></div>';
 }
 function formulaCard(){ function fx(k,v){ return '<div class="fx"><span class="fx-k">'+k+'</span><span class="fx-v">'+v+'</span></div>'; }
   function conn(lbl){ return '<div class="fxd-conn"><span class="fxd-line"></span>'+(lbl?'<span class="fxd-lbl">'+lbl+'</span><span class="fxd-line"></span>':'')+'</div>'; }
   function box(txt,cls){ return '<div class="fxd-box'+(cls?(' '+cls):'')+'">'+txt+'</div>'; }
   function boxN(main,sub,cls){ return '<div class="fxd-box'+(cls?(' '+cls):'')+'">'+main+(sub?'<span class="fxd-sub">'+sub+'</span>':'')+'</div>'; }
   var diagram='<div class="fxd">'
+    +'<div class="fxd-bl">Bloque A · base del pedido</div>'
     +'<div class="fxd-inrow">'+box('Filamento','in')+'<span class="fxd-plus">+</span>'+box('Electricidad','in')+'<span class="fxd-plus">+</span>'+box('Deterioro','in')+'</div>'
     +conn('')+box('Coste bruto','brute')
     +conn('')
-    +'<div class="fxd-inrow">'+box('Bruto × Markup + Fondo de error')+'<span class="fxd-plus">+</span>'+boxN('Complementos','diseño · búsqueda · soportes · post-proc','in')+'</div>'
-    +conn('')+box('Subtotal')
-    +conn('+ Recargo de urgencia (%)')+box('Con urgencia')
-    +conn('+ Utilitarios (sin markup)')+box('+ Accesorios')
-    +conn('Redondeo a 0,05 € · nunca &lt; mínimo')+box('PVP FINAL','final')
+    +'<div class="fxd-inrow">'+box('Bruto × Markup + Fondo de error')+'<span class="fxd-plus">+</span>'+boxN('Complementos','diseño · soportes · post-proc · misc.','in')+'</div>'
+    +conn('nunca &lt; precio mínimo')+box('BLOQUE A','brute')
+    +conn('')
+    +'<div class="fxd-bl">Bloque B · multiplicadores sobre A</div>'
+    +'<div class="fxd-inrow">'+boxN('A × Urgencia','% según días ganados','in')+'<span class="fxd-plus">+</span>'+boxN('A × Tasa de ahorro','% según tipo e importe','in')+'</div>'
+    +conn('')
+    +'<div class="fxd-bl">Bloque C · se suma sin multiplicar</div>'
+    +box('Accesorios / utilitarios','in')
+    +conn('Redondeo a 0,05 €')+box('PVP FINAL = A + B + C','final')
     +'</div>';
   return '<div class="card"><div class="card-h">Fórmula de cálculo</div><div class="fx-grid">'
     +fx('Filamento','peso (g) × €/kg ÷ 1000')
     +fx('Electricidad','horas × consumo (kWh) × €/kWh')
     +fx('Deterioro','horas × (precio + mantenimiento) ÷ amortización')
     +fx('Coste bruto','filamento + electricidad + deterioro')
-    +fx('Complementos','diseño + búsqueda + soportes + post-procesado (× €/h)')
-    +fx('Precio base','bruto × markup + bruto × prob. error + complementos')
-    +fx('Urgencia','+ recargo % sobre el subtotal')
-    +fx('Utilitarios','uds × precio de accesorio — se suman al final <b>sin markup ni multiplicadores</b>')
+    +fx('Complementos','diseño (tarifa fija) + soportes + post-procesado (× €/h) + misceláneos')
+    +fx('Bloque A','bruto × markup + bruto × prob. error + complementos (nunca por debajo del mínimo)')
+    +fx('Bloque B','recargo de urgencia y tasa de ahorro — cada uno <b>multiplica el bloque A</b>')
+    +fx('Bloque C','utilitarios: uds × precio de accesorio — <b>se suman a A sin multiplicadores</b>')
+    +fx('PVP','A + A×urgencia + A×tasa + C')
     +fx('Redondeo','a múltiplos de 0,05 € · nunca por debajo del precio mínimo')
     +'</div>'
     +'<div class="fxd-title">Diagrama del cálculo</div>'+diagram
@@ -2153,12 +2175,12 @@ function computeOrder(o){
   var deterioro=round4(horas*depPerHour(printer));
   var postproc=round4(((POSTPROCESADO[o.postprocesado]||0)/60)*labor);
   var gastoMisc=round4(Math.max(0,num(o.gasto_misc)));
-  var bruto=filamento+electricidad+deterioro, resto=diseno+busqueda+soportes+postproc;
-  var subtotalTM=bruto*markup+bruto*errorRate+resto;
+  var bruto=filamento+electricidad+deterioro, resto=diseno+busqueda+soportes+postproc+gastoMisc;
   var precioMin=num(g.precio_minimo);
-  var precioSinMisc=roundUpToNickel(Math.max(subtotalTM*(1+urg),precioMin));
-  var recargo=subtotalTM*urg;
-  var minAplicado=precioSinMisc>subtotalTM*(1+urg);
+  var bloqueA=Math.max(bruto*markup+bruto*errorRate+resto, precioMin);
+  var minAplicado=(bruto*markup+bruto*errorRate+resto)<precioMin;
+  var recargo=bloqueA*urg;
+  var precioSinMisc=roundUpToNickel(bloqueA);
   var cant=Math.max(1,Math.floor(num(o.cantidad)||1));
   var markupVal=Math.max(0,bruto*(markup-1)), errorVal=Math.max(0,bruto*errorRate);
   /* Tasa del cajón: se guardó con el pedido, así que se refleja tal cual se cobró. */
@@ -2166,7 +2188,9 @@ function computeOrder(o){
   var cajonBase=num(o.precio_base_cajon);
   var cajonTasa=cajonBase?cajonFee(cajonTipo,cajonBase):0;
   var cajonPct=cajonBase?cajonRate(cajonTipo,cajonBase):0;
+  var bloqueC=accessoriesTotal(o);
   return {filName:filName,filColor:filColor,peso:peso,horas:horas,filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,markupVal:markupVal,errorVal:errorVal,cant:cant,precioMin:precioMin,minAplicado:minAplicado,
+    bloqueA:roundMoney(bloqueA),bloqueC:roundMoney(bloqueC),
     cajonTipo:cajonTipo,cajonTasa:cajonTasa,cajonPct:cajonPct};
 }
 function ticketLines(o,kind){
