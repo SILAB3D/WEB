@@ -627,7 +627,34 @@ function renderMainKeepView(){
 function toggleCondExpand(eid){ condExpanded=(condExpanded===eid?null:eid); renderMain(); }
 var condGrids={};
 function applyCellRaw(eid,r,c,val){ var g=condGrids[eid]; if(!g)return; var row=g.rows[r], col=g.cols[c]; if(!row||!col)return; var est=findEst(curTest(),eid); if(!est)return; var imp=findImp(est,row.iid); if(!imp)return; var pr=findPrint(imp,row.pid); if(!pr)return; if(col.field==='ident')pr.ident=val; else if(col.field==='comment')pr.comment=val; else if(col.field==='param'){ if(!pr.vals||typeof pr.vals!=='object')pr.vals={}; pr.vals[col.cid]=val; } }
-function condPaste(ev,eid,r,c){ var cd=ev.clipboardData||window.clipboardData; if(!cd)return; var txt=cd.getData('text'); if(txt==null)txt=''; ev.preventDefault(); var rows=txt.replace(/\r/g,'').split('\n'); if(rows.length>1 && rows[rows.length-1]==='')rows.pop(); for(var i=0;i<rows.length;i++){ var cells=rows[i].split('\t'); for(var j=0;j<cells.length;j++){ applyCellRaw(eid,r+i,c+j,cells[j]); } } save(); renderMainKeepView(); }
+function condPaste(ev,eid,r,c){ var cd=ev.clipboardData||window.clipboardData; if(!cd)return; var txt=cd.getData('text'); if(txt==null)txt=''; ev.preventDefault(); var rows=txt.replace(/\r/g,'').split('\n'); if(rows.length>1 && rows[rows.length-1]==='')rows.pop(); for(var i=0;i<rows.length;i++){ var cells=rows[i].split('\t'); for(var j=0;j<cells.length;j++){ applyCellRaw(eid,r+i,c+j,cells[j]); } }
+  save();
+  var filas=rows.length, cols=0; rows.forEach(function(x){ cols=Math.max(cols,x.split('\t').length); });
+  if(!condSyncCells(eid,r,c,filas,cols)) renderMainKeepView();   // respaldo si algo no cuadra
+}
+/* Vuelca en la tabla los valores ya guardados, sin reconstruir el DOM. */
+function condSyncCells(eid,r0,c0,nFilas,nCols){
+  try{
+    var est=findEst(curTest(),eid), g=condGrids[eid];
+    if(!est||!g)return false;
+    var table=document.querySelector('table.ctable[data-eid="'+eid+'"]');
+    if(!table)return false;
+    for(var i=0;i<nFilas;i++){
+      for(var j=0;j<nCols;j++){
+        var R=r0+i, C=c0+j;
+        var row=g.rows[R], col=g.cols[C];
+        if(!row||!col)continue;                 // fuera de la tabla: no hay nada que pintar
+        var imp=findImp(est,row.iid); if(!imp)continue;
+        var pr=findPrint(imp,row.pid); if(!pr)continue;
+        var v=(col.field==='ident')?pr.ident:(col.field==='comment')?(pr.comment||''):((pr.vals&&pr.vals[col.cid]!=null)?pr.vals[col.cid]:'');
+        var inp=table.querySelector('tbody input[data-r="'+R+'"][data-c="'+C+'"]');
+        if(inp && inp.value!==String(v==null?'':v)) inp.value=(v==null?'':v);
+      }
+    }
+    refreshCondHighlights();
+    return true;
+  }catch(e){ return false; }
+}
 function condKey(ev){
   var el=ev.target;
   if((ev.ctrlKey||ev.metaKey) && (ev.key==='c'||ev.key==='C')){ if(condSelActive()){ ev.preventDefault(); copyCondSel(); } else if(el.selectionStart===el.selectionEnd){ try{ el.select(); }catch(e){} } return; }
