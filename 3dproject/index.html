@@ -1166,7 +1166,7 @@ html.dp-noboot .card{opacity:1!important;animation:none!important}
     </a>
   </div>
   <div class="vframe-wrap">
-    <iframe class="vframe" id="v-frame" title="Aplicación" src="about:blank"></iframe>
+    <iframe class="vframe" id="v-frame" title="Aplicación" src="about:blank" allow="clipboard-read; clipboard-write"></iframe>
   </div>
 </div>
 
@@ -1272,7 +1272,7 @@ const APPS = {
 let currentApp = null;
 /* Versión de despliegue: fuerza recarga sin caché de las subapps tras cada cambio.
    Súbela (bump) cuando cambies el código de una subapp. */
-const APP_VER = '20260731-1300';
+const APP_VER = '20260731-1400';
 
 function launchApp(id) {
   const a = APPS[id];

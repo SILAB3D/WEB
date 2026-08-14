@@ -717,7 +717,31 @@ function condSetAnchor(el){ var table=_condTableOf(el); if(!table)return; var r=
 function paintCondSel(){ [].forEach.call(document.querySelectorAll('.ctable td.rng'), function(td){ td.classList.remove('rng'); }); if(!condSel||(condSel.ar===condSel.fr&&condSel.ac===condSel.fc))return; var r0=Math.min(condSel.ar,condSel.fr),r1=Math.max(condSel.ar,condSel.fr),c0=Math.min(condSel.ac,condSel.fc),c1=Math.max(condSel.ac,condSel.fc); [].forEach.call(document.querySelectorAll('table.ctable[data-eid="'+condSel.eid+'"]'), function(table){ for(var r=r0;r<=r1;r++)for(var c=c0;c<=c1;c++){ var inp=_condCellAt(table,r,c); if(inp&&inp.parentNode)inp.parentNode.classList.add('rng'); } }); }
 function condExtendSel(el,dr,dc){ if(!condSel)condSetAnchor(el); if(!condSel)return; var table=_condTableOf(el); if(!table)return; var nr=condSel.fr+dr,nc=condSel.fc+dc; var t=_condCellAt(table,nr,nc); if(!t)return; condSel.fr=nr; condSel.fc=nc; _condExtending=true; _condFocus(t); _condExtending=false; paintCondSel(); }
 function condSelActive(){ return !!(condSel&&(condSel.ar!==condSel.fr||condSel.ac!==condSel.fc)); }
-function copyCondSel(){ if(!condSel)return; var g=condGrids[condSel.eid], est=findEst(curTest(),condSel.eid); if(!g||!est)return; var r0=Math.min(condSel.ar,condSel.fr),r1=Math.max(condSel.ar,condSel.fr),c0=Math.min(condSel.ac,condSel.fc),c1=Math.max(condSel.ac,condSel.fc); var lines=[]; for(var r=r0;r<=r1;r++){ var row=g.rows[r]; var cells=[]; for(var c=c0;c<=c1;c++){ var col=g.cols[c],v=''; if(row&&col){ var imp=findImp(est,row.iid), pr=imp&&findPrint(imp,row.pid); if(pr){ if(col.field==='ident')v=pr.ident||''; else if(col.field==='comment')v=pr.comment||''; else if(col.field==='param')v=(pr.vals&&pr.vals[col.cid]!=null)?pr.vals[col.cid]:''; } } cells.push(v==null?'':String(v)); } lines.push(cells.join('\t')); } var tsv=lines.join('\n'); try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(tsv); } else { throw 0; } }catch(e){ var ta=document.createElement('textarea'); ta.value=tsv; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(_){} ta.remove(); } }
+function copyCondSel(){ if(!condSel)return; var g=condGrids[condSel.eid], est=findEst(curTest(),condSel.eid); if(!g||!est)return; var r0=Math.min(condSel.ar,condSel.fr),r1=Math.max(condSel.ar,condSel.fr),c0=Math.min(condSel.ac,condSel.fc),c1=Math.max(condSel.ac,condSel.fc); var lines=[]; for(var r=r0;r<=r1;r++){ var row=g.rows[r]; var cells=[]; for(var c=c0;c<=c1;c++){ var col=g.cols[c],v=''; if(row&&col){ var imp=findImp(est,row.iid), pr=imp&&findPrint(imp,row.pid); if(pr){ if(col.field==='ident')v=pr.ident||''; else if(col.field==='comment')v=pr.comment||''; else if(col.field==='param')v=(pr.vals&&pr.vals[col.cid]!=null)?pr.vals[col.cid]:''; } } cells.push(v==null?'':String(v)); } lines.push(cells.join('\t')); } var tsv=lines.join('\n'); _copiarAlPortapapeles(tsv); }
+/* Copia al portapapeles con respaldo. La API asíncrona falla dentro de un iframe
+   o sin foco y DEVUELVE UNA PROMESA RECHAZADA: si no se encadena el .catch, el
+   respaldo nunca se ejecutaba y no se copiaba nada. */
+function _copiarAlPortapapeles(txt){
+  function respaldo(){
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=txt; ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select(); ta.setSelectionRange(0,txt.length);
+      var ok=false; try{ ok=document.execCommand('copy'); }catch(_){}
+      ta.remove();
+      return ok;
+    }catch(e){ return false; }
+  }
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).catch(function(){ respaldo(); });
+      return;
+    }
+  }catch(e){}
+  respaldo();
+}
 function condMoveEnter(el,dir){ var table=_condTableOf(el); if(!table)return; var r=parseInt(el.getAttribute('data-r'),10); if(isNaN(r))return; var c=(_condEnterCol!=null?_condEnterCol:parseInt(el.getAttribute('data-c'),10)); var t=_condCellAt(table,r+dir,c); if(!t){ condMove(el,dir,0); return; } _condFocus(t); }
 document.addEventListener('mousedown', function(e){ if(!e.shiftKey||!condSel)return; var el=e.target; if(el&&el.tagName==='INPUT'&&el.hasAttribute('data-r')&&el.closest&&el.closest('.ctable')){ var table=el.closest('table.ctable'); if(table&&table.getAttribute('data-eid')===condSel.eid){ e.preventDefault(); condSel.fr=parseInt(el.getAttribute('data-r'),10); condSel.fc=parseInt(el.getAttribute('data-c'),10); _condExtending=true; _condFocus(el); _condExtending=false; paintCondSel(); } } });
 document.addEventListener('focusin', function(e){ var el=e.target; if(el&&el.tagName==='INPUT'&&el.hasAttribute('data-r')&&el.closest&&el.closest('.ctable')){ if(!_condExtending){ condSetAnchor(el); if(!_condFromTab){ var _c=parseInt(el.getAttribute('data-c'),10); if(!isNaN(_c))_condEnterCol=_c; } } _condFromTab=false; requestAnimationFrame(function(){ if(document.activeElement===el){ try{ el.select(); }catch(_){} } }); } });
