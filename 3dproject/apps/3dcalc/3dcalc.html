@@ -215,6 +215,9 @@ option{background-color:#161922;color:#E8EBF4}
 .ord-cyc{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:7px;opacity:.85}
 .ord-cal{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:7px;color:var(--t3);opacity:.6;transition:all .12s}
 .ord-cal:hover{opacity:1;background:var(--sel)}
+.ord-arch{background:transparent;border:none;color:var(--t3);cursor:pointer;padding:4px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;opacity:.6;transition:all .12s}
+.ord-arch:hover{opacity:1;background:var(--sel);color:var(--t1)}
+.ord-arch.on{color:var(--ac);opacity:1}
 .ord-cal.on{color:var(--ac);opacity:1}
 .date-row{display:flex;gap:8px;align-items:stretch}.date-row .inp{flex:1}
 .date-hoy{flex:0 0 auto;padding:0 14px;white-space:nowrap;font-size:13px}
@@ -734,7 +737,7 @@ function compute(c){
   var bloqueC=accesorios;
   var recargo=bloqueA*urg;                    // bloque B · urgencia
   var cajonTipo=(c.tipo_proyecto||(c.prod&&c.prod.tipo)||'Técnico');
-  var cajonPct=cajonRate(cajonTipo,bloqueA);  // bloque B · tasa de ahorro
+  var cajonPct=cajonRate(cajonTipo,bloqueA,c.diseno_modelado);  // bloque B · tasa de ahorro
   var cajonTasa=roundMoney(bloqueA*cajonPct);
   var precioPrevio=roundUpToNickel(bloqueA+recargo+bloqueC);   // total antes de la tasa
   var precio=roundUpToNickel(bloqueA+recargo+cajonTasa+bloqueC);
@@ -823,11 +826,24 @@ function updateResult(){ var el=document.getElementById('resultBox'); if(el)el.i
 var CAJON_TASA={ 'Técnico':{bajo:0.05,alto:0.05}, 'Artístico':{bajo:0.15,alto:0.075} };
 var CAJON_TRAMO=50;   // € que separan el tramo bajo del alto
 function cajon(){ if(!S.cajon||typeof S.cajon!=='object')S.cajon={movs:[]}; if(!Array.isArray(S.cajon.movs))S.cajon.movs=[]; return S.cajon; }
-function cajonRate(tipo,base){
+/* Los pedidos sin diseño propio («No necesario» y «Búsqueda de modelos») pagan
+   siempre el 5%, sea cual sea el tipo de proyecto y el importe. */
+var CAJON_SIN_DISENO=['No necesario','Búsqueda de modelos'];
+var CAJON_TASA_SIN_DISENO=0.05;
+function cajonSinDiseno(dm){
+  if(dm==null||dm==='')return false;
+  var niv=(typeof disenoNivel==='function')?disenoNivel(dm):dm;
+  return CAJON_SIN_DISENO.indexOf(niv)>=0;
+}
+function cajonRate(tipo,base,dm){
+  if(cajonSinDiseno(dm))return CAJON_TASA_SIN_DISENO;
+  return _cajonRateTipo(tipo,base);
+}
+function _cajonRateTipo(tipo,base){
   var tf=CAJON_TASA[tipo]||CAJON_TASA['Técnico'];
   return (num(base)<CAJON_TRAMO)?tf.bajo:tf.alto;
 }
-function cajonFee(tipo,base){ return roundMoney(num(base)*cajonRate(tipo,base)); }
+function cajonFee(tipo,base,dm){ return roundMoney(num(base)*cajonRate(tipo,base,dm)); }
 function cajonSaldo(){ return roundSigned(cajon().movs.reduce(function(s,m){ return s+num(m.amount); },0)); }
 function cajonMovOf(orderId){ return cajon().movs.filter(function(m){ return m.orderId===orderId; })[0]||null; }
 /* Un pedido aporta al cajón si está activo o finalizado (aunque esté archivado). */
@@ -842,12 +858,13 @@ function cajonSync(o){
     if(!aplica){ if(mv)cajonDropOrder(o.id,true); return; }
     var tipo=(o.tipo_proyecto||(o.prod&&o.prod.tipo)||'Técnico');
     var base=num(o.precio_base_cajon);
-    var fee=cajonFee(tipo,base);
-    if(mv){ mv.amount=fee; mv.tipo=tipo; mv.base=base; mv.rate=cajonRate(tipo,base); mv.ts=mv.ts||Date.now(); }
+    var dm=o.diseno_modelado;
+    var fee=cajonFee(tipo,base,dm);
+    if(mv){ mv.amount=fee; mv.tipo=tipo; mv.base=base; mv.rate=cajonRate(tipo,base,dm); mv.ts=mv.ts||Date.now(); }
     else{
       cajon().movs.push({ id:'cj'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
         kind:'in', orderId:o.id, label:'Tasa · '+(o.number||o.cliente||'pedido'), tipo:tipo,
-        base:base, rate:cajonRate(tipo,base), amount:fee, ts:Date.now() });
+        base:base, rate:cajonRate(tipo,base,dm), amount:fee, ts:Date.now() });
     }
     save();
   }catch(e){}
@@ -1557,7 +1574,8 @@ function ordRowHTML(o){ var col=estColor(o.estado), st=ordState(o); var I=o.id; 
     +'<span class="ord-cli">'+esc(o.cliente||'—')+'</span>'
     +'<span class="ord-desc">'+esc(o.descripcion||'')+'</span>'
     +(o.urgencia_nivel==='Ambos'?'<button class="ord-price ord-pend" title="Elegir tarifa (normal/urgente)" onclick="event.stopPropagation();chooseUrg(\''+I+'\')">Pendiente</button>':'<span class="ord-price">'+eur(o.precio_final)+'</span>')
-    +'<button class="ord-cal'+(_sched?' on':'')+'" title="'+(_sched?'En el calendario · clic para retirar el tiempo':'Fuera del calendario · clic para programar el tiempo')+'" onclick="event.stopPropagation();toggleCalOrder(\''+I+'\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>'+'<button class="del ord-del" title="Eliminar" onclick="event.stopPropagation();delOrder(\''+I+'\')">✕</button>'
+    +'<button class="ord-cal'+(_sched?' on':'')+'" title="'+(_sched?'En el calendario · clic para retirar el tiempo':'Fuera del calendario · clic para programar el tiempo')+'" onclick="event.stopPropagation();toggleCalOrder(\''+I+'\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>'+'<button class="ord-arch'+(o.archived?' on':'')+'" title="'+(o.archived?'Archivado · clic para restaurar':'Archivar pedido')+'" onclick="event.stopPropagation();toggleArchive(\''+I+'\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg></button>'
+    +'<button class="del ord-del" title="Eliminar" onclick="event.stopPropagation();delOrder(\''+I+'\')">✕</button>'
     +'</div>';
 }
 function ordSectionHTML(title,col,arr){ var rows=arr.length? arr.map(ordRowHTML).join('') : '<div class="ord-empty">Sin pedidos</div>';
@@ -2217,8 +2235,8 @@ function computeOrder(o){
   /* Tasa del cajón: se guardó con el pedido, así que se refleja tal cual se cobró. */
   var cajonTipo=(o.tipo_proyecto||(o.prod&&o.prod.tipo)||'Técnico');
   var cajonBase=num(o.precio_base_cajon);
-  var cajonTasa=cajonBase?cajonFee(cajonTipo,cajonBase):0;
-  var cajonPct=cajonBase?cajonRate(cajonTipo,cajonBase):0;
+  var cajonTasa=cajonBase?cajonFee(cajonTipo,cajonBase,o.diseno_modelado):0;
+  var cajonPct=cajonBase?cajonRate(cajonTipo,cajonBase,o.diseno_modelado):0;
   var bloqueC=accessoriesTotal(o);
   return {filName:filName,filColor:filColor,peso:peso,horas:horas,filamento:filamento,electricidad:electricidad,diseno:diseno,busqueda:busqueda,soportes:soportes,deterioro:deterioro,postproc:postproc,gastoMisc:gastoMisc,bruto:bruto,resto:resto,markup:markup,errorRate:errorRate,urg:urg,recargo:recargo,markupVal:markupVal,errorVal:errorVal,cant:cant,precioMin:precioMin,minAplicado:minAplicado,
     bloqueA:roundMoney(bloqueA),bloqueC:roundMoney(bloqueC),accesorios:roundMoney(bloqueC),
