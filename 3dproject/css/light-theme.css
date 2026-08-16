@@ -1,0 +1,157 @@
+/* ============================================================================
+   3DProject · Ajustes del TEMA CLARO
+   ----------------------------------------------------------------------------
+   Solo afecta al aspecto: sube el contraste de textos secundarios, marca los
+   bordes y da superficie blanca real a tarjetas y paneles. No cambia ninguna
+   funcionalidad ni la estructura de las apps.
+
+   Referencia de contraste sobre el fondo claro (#F5F6FA):
+     antes  --t3 #AEB4C2 → 1.9:1   (ilegible)
+     ahora  --t3 #656C79 → 4.8:1   (cumple AA para texto de apoyo)
+     antes  --t2 #5A6172 → 6.1:1   →  ahora #454C5C → 8.0:1
+   ========================================================================== */
+
+[data-theme=light]{
+  /* ── Esquema común (3dcalc, 3dlab, 3dbilling, 3dstock, 3dtracker) ── */
+  --bg:#F2F4F8;
+  --glass:#FFFFFF;
+  --panel:#FFFFFF;
+  --sel:#FFFFFF;
+  --border:rgba(18,22,34,.16);
+  --t1:#12151C;
+  --t2:#454C5C;
+  --t3:#656C79;
+
+  /* ── 3DPlanner ── */
+  --surface:#FFFFFF;
+  --surface2:#F4F6FA;
+  --surface3:#E9ECF3;
+  --border2:rgba(18,22,34,.26);
+
+  /* ── Rebranding ── */
+  --bg2:#FFFFFF;
+  --panel2:#F4F6FA;
+  --line:rgba(18,22,34,.16);
+  --line2:rgba(18,22,34,.26);
+  --text:#12151C;
+  --muted:#454C5C;
+  --faint:#656C79;
+
+  /* ── PrintFlow ── */
+  --sf:#FFFFFF;
+  --sf2:#F4F6F8;
+  --sf3:#E9EDF1;
+  --sf-hi:#FFFFFF;
+  --bd:rgba(18,22,34,.16);
+  --bd2:rgba(18,22,34,.22);
+  --bd3:rgba(18,22,34,.30);
+  --tx:#12161B;
+  --tx2:#464F5A;
+  --tx3:#69737F;
+  --sb-tx:#464F5A;
+  --grid:#DDE3E9;
+  --eg:#B4BFC9;
+  --nd-bd:#D7DDE4;
+
+  /* ── 3MF Viewer ── */
+  --bambu-black:#12151C;
+  --bambu-gray:#454C5C;
+  --bambu-border:rgba(18,22,34,.16);
+  --s-line:rgba(18,22,34,.16);
+  --s-line2:rgba(18,22,34,.26);
+  --s-panel:#F4F6FA;
+}
+
+/* ── Superficies: blanco real y separación con sombra suave ───────────────── */
+[data-theme=light] .card,
+[data-theme=light] .lab-card,
+[data-theme=light] .cfgcard,
+[data-theme=light] .kpi,
+[data-theme=light] .sheet,
+[data-theme=light] .modal,
+[data-theme=light] .dpn-panel{
+  background:#FFFFFF;
+  border-color:rgba(18,22,34,.14);
+  box-shadow:0 1px 2px rgba(16,24,40,.05), 0 6px 20px rgba(16,24,40,.06);
+}
+
+/* ── Campos de formulario: borde visible y foco claro ─────────────────────── */
+[data-theme=light] .inp,
+[data-theme=light] .selx,
+[data-theme=light] input[type=text],
+[data-theme=light] input[type=number],
+[data-theme=light] input[type=date],
+[data-theme=light] input[type=time],
+[data-theme=light] input[type=email],
+[data-theme=light] select,
+[data-theme=light] textarea{
+  background:#FFFFFF;
+  border-color:rgba(18,22,34,.20);
+  color:#12151C;
+}
+[data-theme=light] .inp::placeholder,
+[data-theme=light] textarea::placeholder,
+[data-theme=light] input::placeholder{ color:#8A93A0; }
+[data-theme=light] .inp:focus,
+[data-theme=light] .selx:focus,
+[data-theme=light] input:focus,
+[data-theme=light] select:focus,
+[data-theme=light] textarea:focus{ border-color:rgba(18,22,34,.42); }
+
+/* ── Botones secundarios / fantasma: dejaban de verse sobre blanco ────────── */
+[data-theme=light] .btn.ghost,
+[data-theme=light] .tbtn,
+[data-theme=light] .mini.ghost,
+[data-theme=light] .ab-theme,
+[data-theme=light] .ab-back,
+[data-theme=light] .ab-ic-btn{
+  background:#FFFFFF;
+  border-color:rgba(18,22,34,.18);
+  color:#2A303C;
+}
+[data-theme=light] .btn.ghost:hover,
+[data-theme=light] .tbtn:hover,
+[data-theme=light] .mini.ghost:hover{
+  background:#F4F6FA;
+  border-color:rgba(18,22,34,.32);
+  color:#12151C;
+}
+
+/* ── Tablas: cabecera y líneas legibles ───────────────────────────────────── */
+[data-theme=light] th,
+[data-theme=light] .ctable th,
+[data-theme=light] table.lines th{ color:#4A5262; background:#F4F6FA; }
+[data-theme=light] td,
+[data-theme=light] .ctable td{ border-color:rgba(18,22,34,.10); }
+[data-theme=light] tr:hover > td{ background:rgba(18,22,34,.025); }
+
+/* ── Textos de apoyo que quedaban lavados ─────────────────────────────────── */
+[data-theme=light] .h-sub,
+[data-theme=light] .lbl,
+[data-theme=light] .note,
+[data-theme=light] .hint,
+[data-theme=light] .sub,
+[data-theme=light] .muted,
+[data-theme=light] .prod-src,
+[data-theme=light] .dtile-l,
+[data-theme=light] .k-l{ color:#5B6472; }
+
+/* ── Barras laterales y superiores ────────────────────────────────────────── */
+[data-theme=light] .side,
+[data-theme=light] #sidebar,
+[data-theme=light] .sidebar,
+[data-theme=light] .appbar,
+[data-theme=light] .lab-bar,
+[data-theme=light] .topbar{
+  background:#FFFFFF;
+  border-color:rgba(18,22,34,.14);
+}
+[data-theme=light] .navitem,
+[data-theme=light] .nav-item{ color:#454C5C; }
+[data-theme=light] .navitem:hover,
+[data-theme=light] .nav-item:hover{ background:#F1F4F9; color:#12151C; }
+
+/* ── Separadores ──────────────────────────────────────────────────────────── */
+[data-theme=light] hr,
+[data-theme=light] .sep,
+[data-theme=light] .divider{ border-color:rgba(18,22,34,.14); background:rgba(18,22,34,.14); }
