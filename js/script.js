@@ -1199,10 +1199,10 @@ Quedo a la espera de respuesta. ¡Muchas gracias!`;
                     <h2 id="palomiteraPopupTitle" class="palomitera-popup-title">Cuadros bicolor Juego de Tronos</h2>
                 </div>
                 <div class="palomitera-carousel" id="palomiteraCarousel">
-                    <img src="${imagePrefix}Cuadros-GOT-1.jpg" alt="Cuadros bicolor de Juego de Tronos" class="palomitera-slide active" loading="eager" decoding="async">
-                    <img src="${imagePrefix}Cuadros-GOT-2.jpg" alt="Colección de cuadros de las casas de Juego de Tronos" class="palomitera-slide" loading="eager" decoding="async">
-                    <img src="${imagePrefix}Cuadros-GOT-3.jpg" alt="Detalle de los emblemas impresos en 3D" class="palomitera-slide" loading="eager" decoding="async">
-                    <img src="${imagePrefix}Cuadros-GOT-4.jpg" alt="Detalle de los cuadros Tully y Targaryen" class="palomitera-slide" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-1.webp" alt="Cuadros bicolor de Juego de Tronos" class="palomitera-slide active" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-2.webp" alt="Colección de cuadros de las casas de Juego de Tronos" class="palomitera-slide" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-3.webp" alt="Detalle de los emblemas impresos en 3D" class="palomitera-slide" loading="eager" decoding="async">
+                    <img src="${imagePrefix}Cuadros-GOT-4.webp" alt="Detalle de los cuadros Tully y Targaryen" class="palomitera-slide" loading="eager" decoding="async">
                 </div>
                 <p class="palomitera-popup-description">Hazte con los emblemas de las <strong>grandes casas de Poniente</strong>. ¡Elige tus <strong>casas favoritas</strong> y colecciónalos!</p>
                 <button type="button" class="palomitera-popup-cta" id="palomiteraPopupCTA">Lo quiero</button>

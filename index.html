@@ -193,6 +193,10 @@
       border-radius: 10px;
       transition: all 0.2s;
       position: relative;
+      /* index.html es la única página que carga css/custom.css, que aplica
+         border-bottom a .nav-links a y lo colorea en .active. Eso duplicaba el
+         subrayado del enlace activo (borde ancho + guion del ::after). */
+      border-bottom: none;
     }
     .nav-links a:hover { color: var(--primary); background: var(--primary-light); }
     .nav-links a.active {
